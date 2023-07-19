@@ -65,10 +65,16 @@ void Error_Handler(void);
 #define switch_1_GPIO_Port GPIOB
 #define LED_3_Pin GPIO_PIN_8
 #define LED_3_GPIO_Port GPIOE
-#define switch_2__Pin GPIO_PIN_3
-#define switch_2__GPIO_Port GPIOB
-#define switch_3_Pin GPIO_PIN_5
+#define switch_7_Pin GPIO_PIN_8
+#define switch_7_GPIO_Port GPIOD
+#define switch_2_Pin GPIO_PIN_3
+#define switch_2_GPIO_Port GPIOB
+#define switch_3_Pin GPIO_PIN_4
 #define switch_3_GPIO_Port GPIOB
+#define switch_4_Pin GPIO_PIN_5
+#define switch_4_GPIO_Port GPIOB
+#define switch_5_Pin GPIO_PIN_6
+#define switch_5_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

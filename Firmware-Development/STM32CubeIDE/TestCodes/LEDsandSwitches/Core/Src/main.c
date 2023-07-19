@@ -87,22 +87,47 @@ int main(void)
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
   while (1)
-  {  if (HAL_GPIO_ReadPin (switch_1_GPIO_Port , switch_1_Pin) == GPIO_PIN_RESET) {
-	    HAL_GPIO_WritePin(LED_1_GPIO_Port , LED_1_Pin, GPIO_PIN_RESET);
-	} else {
-	    HAL_GPIO_WritePin(LED_1_GPIO_Port , LED_1_Pin, GPIO_PIN_SET);
+  {
+
+	if (HAL_GPIO_ReadPin (switch_1_GPIO_Port , switch_1_Pin) == GPIO_PIN_RESET) {
+		HAL_GPIO_TogglePin(LED_1_GPIO_Port , LED_1_Pin);
+		HAL_GPIO_TogglePin(LED_2_GPIO_Port , LED_2_Pin);
+		HAL_GPIO_TogglePin(LED_3_GPIO_Port , LED_3_Pin);
 	}
 
-	if (HAL_GPIO_ReadPin (switch_2__GPIO_Port , switch_2__Pin) == GPIO_PIN_RESET) {
-	    HAL_GPIO_WritePin(LED_2_GPIO_Port , LED_2_Pin, GPIO_PIN_RESET);
-	} else {
-	    HAL_GPIO_WritePin(LED_2_GPIO_Port , LED_2_Pin, GPIO_PIN_SET);
+	if (HAL_GPIO_ReadPin (switch_2_GPIO_Port , switch_2_Pin) == GPIO_PIN_RESET) {
+		HAL_GPIO_TogglePin(LED_1_GPIO_Port , LED_1_Pin);
+		HAL_GPIO_TogglePin(LED_2_GPIO_Port , LED_2_Pin);
+		HAL_GPIO_TogglePin(LED_3_GPIO_Port , LED_3_Pin);
+
 	}
 
 	if (HAL_GPIO_ReadPin (switch_3_GPIO_Port , switch_3_Pin) == GPIO_PIN_RESET) {
-	    HAL_GPIO_WritePin(LED_3_GPIO_Port , LED_3_Pin, GPIO_PIN_RESET);
-	} else {
-	    HAL_GPIO_WritePin(LED_3_GPIO_Port , LED_3_Pin, GPIO_PIN_SET);
+		HAL_GPIO_TogglePin(LED_1_GPIO_Port , LED_1_Pin);
+		HAL_GPIO_TogglePin(LED_2_GPIO_Port , LED_2_Pin);
+		HAL_GPIO_TogglePin(LED_3_GPIO_Port , LED_3_Pin);
+
+	}
+
+	if (HAL_GPIO_ReadPin (switch_4_GPIO_Port , switch_4_Pin) == GPIO_PIN_RESET) {
+		HAL_GPIO_TogglePin(LED_1_GPIO_Port , LED_1_Pin);
+		HAL_GPIO_TogglePin(LED_2_GPIO_Port , LED_2_Pin);
+		HAL_GPIO_TogglePin(LED_3_GPIO_Port , LED_3_Pin);
+
+	}
+
+	if (HAL_GPIO_ReadPin (switch_5_GPIO_Port , switch_5_Pin) == GPIO_PIN_RESET) {
+		HAL_GPIO_TogglePin(LED_1_GPIO_Port , LED_1_Pin);
+		HAL_GPIO_TogglePin(LED_2_GPIO_Port , LED_2_Pin);
+		HAL_GPIO_TogglePin(LED_3_GPIO_Port , LED_3_Pin);
+
+	}
+
+	if (HAL_GPIO_ReadPin (switch_7_GPIO_Port , switch_7_Pin) == GPIO_PIN_RESET) {
+		HAL_GPIO_TogglePin(LED_1_GPIO_Port , LED_1_Pin);
+		HAL_GPIO_TogglePin(LED_2_GPIO_Port , LED_2_Pin);
+		HAL_GPIO_TogglePin(LED_3_GPIO_Port , LED_3_Pin);
+
 	}
 
 
