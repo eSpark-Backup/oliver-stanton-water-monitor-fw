@@ -31,7 +31,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-#define time 10 *1000  //in seconds (remove "*1000" for milliseconds)
+#define TIME 2 *1000  //in seconds (remove "*1000" for milliseconds)
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -52,7 +52,7 @@ TIM_HandleTypeDef htim2;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
-void SystemClock_Config(void);
+extern "C" void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
@@ -61,7 +61,7 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+MainApp app;
 /* USER CODE END 0 */
 
 /**
@@ -95,38 +95,19 @@ int main(void)
   MX_USB_DEVICE_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-  HAL_GPIO_WritePin(GPIOE, PWM_CNTRL_Pin,GPIO_PIN_SET);
-  HAL_TIM_Base_Start_IT(&htim2);
-  HAL_TIM_Base_Stop_IT(&htim2);
-  program_init();
-  registerHandler(WLED_func);
-  registerHandler1(timerElapsed_func);
+ app.setup();
+
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-//
-
- uint8_t delayStarted[] = "Delay started\r\n";
- uint8_t delayended[] = "Delay ended\r\n";
- //	  for(int i=0; i<1000;i++)
- //  {
- //	  delay(1000);
- //  }
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//	  CDC_Transmit_FS(delayStarted, sizeof(delayStarted));
-//	  HAL_Delay(1000);
-	  if(!HAL_GPIO_ReadPin(SW2_GPIO_Port, SW2_Pin)){
-		  lcd_sequence();
-
-		    }
-	  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin,GPIO_PIN_SET);
-	  CDC_Transmit_FS(delayended, sizeof(delayended));
+    app.loop();
   }
 
   /* USER CODE END 3 */
@@ -136,7 +117,7 @@ int main(void)
   * @brief System Clock Configuration
   * @retval None
   */
-void SystemClock_Config(void)
+extern "C" void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
@@ -195,7 +176,7 @@ static void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 47999;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = time;
+  htim2.Init.Period = TIME;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
@@ -264,11 +245,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LED_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : SW2_Pin PIR_OUT_Pin */
-  GPIO_InitStruct.Pin = SW2_Pin|PIR_OUT_Pin;
+  /*Configure GPIO pin : SW2_Pin */
+  GPIO_InitStruct.Pin = SW2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  HAL_GPIO_Init(SW2_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : DB4_Pin DB5_Pin DB6_Pin DB7_Pin */
   GPIO_InitStruct.Pin = DB4_Pin|DB5_Pin|DB6_Pin|DB7_Pin;
@@ -284,11 +265,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(W_LED_CTRL_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : SW5_Pin */
-  GPIO_InitStruct.Pin = SW5_Pin;
+  /*Configure GPIO pins : SW5_Pin PIR_OUT_Pin */
+  GPIO_InitStruct.Pin = SW5_Pin|PIR_OUT_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-  HAL_GPIO_Init(SW5_GPIO_Port, &GPIO_InitStruct);
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI4_15_IRQn, 0, 0);
@@ -299,15 +280,6 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-	handler(GPIO_Pin,&htim2);
-
-}
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
-{
-	handler1(htim);
-}
 
 // EXTI Line9 External Interrupt ISR Handler CallBackFun
 

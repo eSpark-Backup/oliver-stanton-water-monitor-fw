@@ -82,6 +82,7 @@ void Error_Handler(void);
 #define SW5_EXTI_IRQn EXTI4_15_IRQn
 #define PIR_OUT_Pin GPIO_PIN_8
 #define PIR_OUT_GPIO_Port GPIOB
+#define PIR_OUT_EXTI_IRQn EXTI4_15_IRQn
 
 /* USER CODE BEGIN Private defines */
 

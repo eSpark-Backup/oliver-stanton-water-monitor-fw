@@ -1,30 +1,34 @@
+#pragma once
 
-#ifndef mainApp_H_
-#define mainApp_H_
-
+#include <main.h>
 #include "stm32f0xx_hal.h"
 #include "stdio.h"
-#include "main.h"
 
-#ifdef __cplusplus
-extern "C"{
-#endif
+//#ifdef __cplusplus
+//extern "C"{
+//#endif
 
-typedef void (*funcPtrEXTI)(uint16_t GPIO_Pin,TIM_HandleTypeDef* htim);
+typedef void (*extiCallback)(uint16_t GPIO_Pin,TIM_HandleTypeDef* htim);
+typedef void (*motionCallback)(void);
+typedef void (*timerCallback)(TIM_HandleTypeDef* htim);
 
-typedef void (*funcPtrTimer)(TIM_HandleTypeDef* htim);
+class MainApp {
+public:
+	void setup();
+	void loop();
 
-void program_init();
-void lcd_sequence();
-void registerHandler(funcPtrEXTI ptr);
-void registerHandler1(funcPtrTimer ptr);
-void handler(uint16_t GPIO_Pin,TIM_HandleTypeDef* htim);
-void handler1(TIM_HandleTypeDef* htim);
-void WLED_func(uint16_t GPIO_Pin,TIM_HandleTypeDef* htim);
-void timerElapsed_func(TIM_HandleTypeDef* htim);
+};
 
-#ifdef __cplusplus
-}
-#endif
+void lcdSequence();
+void lcdSequence(bool motion);
+void motionDetected();
+void registerCallback(extiCallback ptr);
+void registerCallback(timerCallback ptr);
+void registerCallback(motionCallback ptr);
+void WLED_callback(uint16_t GPIO_Pin,TIM_HandleTypeDef* htim);
+void timerElapsed(TIM_HandleTypeDef* htim);
 
-#endif /* mainApp_H_ */
+
+//#ifdef __cplusplus
+//}
+//#endif
