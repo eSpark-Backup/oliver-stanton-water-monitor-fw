@@ -8,9 +8,9 @@
 #ifndef LCD_H_
 #define LCD_H_
 
-#ifdef __cplusplus
- extern "C" {
-#endif
+//#ifdef __cplusplus
+// extern "C" {
+//#endif
 
 #include "stm32f0xx_hal.h"
 #include "string.h"
@@ -75,8 +75,8 @@ extern const uint8_t ROW_20[];
 
 
 /************************************** LCD typedefs **************************************/
-#define Lcd_PortType GPIO_TypeDef*
-#define Lcd_PinType uint16_t
+#define LCD_PORT_TYPE GPIO_TypeDef*
+#define LCD_PIN_TYPE uint16_t
 
 typedef enum {
 	LCD_4_BIT_MODE,
@@ -85,14 +85,14 @@ typedef enum {
 
 
 typedef struct {
-	Lcd_PortType * data_port;
-	Lcd_PinType * data_pin;
+	LCD_PORT_TYPE * data_port;
+	LCD_PIN_TYPE * data_pin;
 
-	Lcd_PortType rs_port;
-	Lcd_PinType rs_pin;
+	LCD_PORT_TYPE rs_port;
+	LCD_PIN_TYPE rs_pin;
 
-	Lcd_PortType en_port;
-	Lcd_PinType en_pin;
+	LCD_PORT_TYPE en_port;
+	LCD_PIN_TYPE en_pin;
 
 	Lcd_ModeTypeDef mode;
 
@@ -100,19 +100,23 @@ typedef struct {
 
 
 /************************************** Public functions **************************************/
-void Lcd_init(Lcd_HandleTypeDef * lcd);
-void Lcd_int(Lcd_HandleTypeDef * lcd, int number);
-void Lcd_string(Lcd_HandleTypeDef * lcd, char * string);
-void Lcd_cursor(Lcd_HandleTypeDef * lcd, uint8_t row, uint8_t col);
-Lcd_HandleTypeDef Lcd_create(
-		Lcd_PortType port[], Lcd_PinType pin[],
-		Lcd_PortType rs_port, Lcd_PinType rs_pin,
-		Lcd_PortType en_port, Lcd_PinType en_pin, Lcd_ModeTypeDef mode);
-void Lcd_define_char(Lcd_HandleTypeDef * lcd, uint8_t code, uint8_t bitmap[]);
-void Lcd_clear(Lcd_HandleTypeDef * lcd);
-
-#ifdef __cplusplus
-}
-#endif
+class LCD{
+public:
+void lcdSequence();
+void lcdSequence(bool motion);
+void lcdInit(Lcd_HandleTypeDef * lcd);
+void lcdInt(Lcd_HandleTypeDef * lcd, int number);
+void lcdString(Lcd_HandleTypeDef * lcd, char * string);
+void lcdCursor(Lcd_HandleTypeDef * lcd, uint8_t row, uint8_t col);
+Lcd_HandleTypeDef lcdCreate(
+		LCD_PORT_TYPE port[], LCD_PIN_TYPE pin[],
+		LCD_PORT_TYPE rs_port, LCD_PIN_TYPE rs_pin,
+		LCD_PORT_TYPE en_port, LCD_PIN_TYPE en_pin, Lcd_ModeTypeDef mode);
+void lcdDefineChar(Lcd_HandleTypeDef * lcd, uint8_t code, uint8_t bitmap[]);
+void lcdClear(Lcd_HandleTypeDef * lcd);
+};
+//#ifdef __cplusplus
+//}
+//#endif
 
 #endif /* LCD_H_ */

@@ -5,16 +5,19 @@
 #include "lcd.h"
 #include "switches.hpp"
 #include "main.h"
+#include "motion.hpp"
+#include <functional>
+
 
 Switches switche;
 extiCallback extiPtr;
 timerCallback timerPtr;
 motionCallback motionPtr;
-Lcd_HandleTypeDef lcd;
+MotionSensor motion;
+MotionSensor* mtnPtr=&motion;
+LCD lcdObj;
 extern TIM_HandleTypeDef htim2;
-bool motionWakeUp=true;
-bool motionWelcome=true;
-bool motionFlag=false;
+
 
 void MainApp::setup(){
 	switche.setState(GPIOE, PWM_CNTRL_Pin,GPIO_PIN_SET);
@@ -27,45 +30,20 @@ void MainApp::setup(){
 void MainApp::loop(){
 	if(!switche.getState(SW2_GPIO_Port, SW2_Pin))
 	{
-			  lcdSequence();
+		lcdObj.lcdSequence();
 	}
 		  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-	if(motionFlag){
-		if(motionWakeUp==true){
-				lcdSequence();
+	if(motion.getMotionFlag()){
+		if(motion.getMotionWU()==true){
+			lcdObj.lcdSequence();
 			}
-		if(motionWelcome==true)
+		if(motion.getMotionWelcome()==true)
 			{
 				switche.setState(W_LED_CTRL_GPIO_Port,W_LED_CTRL_Pin,GPIO_PIN_SET);
 				HAL_TIM_Base_Start_IT(&htim2);
-				lcdSequence(motionWelcome);
+				lcdObj.lcdSequence(motion.getMotionWelcome());
 			}
-	}
-}
-
-void lcdSequence()
-{
-	Lcd_PortType ports[] = {D4_GPIO_Port, D5_GPIO_Port, D6_GPIO_Port, D7_GPIO_Port};
-	Lcd_PinType pins[] = {D4_Pin, D5_Pin, D6_Pin, D7_Pin};
-	lcd = Lcd_create(ports, pins, RS_GPIO_Port, RS_Pin, EN_GPIO_Port, EN_Pin, LCD_4_BIT_MODE);
-	Lcd_string(&lcd,"qwertyuiopasdfghABCD");
-	Lcd_cursor(&lcd,1,0);
-	Lcd_string(&lcd,"QWERTYUIOPASDFGH");
-	Lcd_cursor(&lcd,2,0);
-	Lcd_string(&lcd,"qwertyuiopasdfgh");
-	Lcd_cursor(&lcd,3,0);
-	Lcd_string(&lcd,"QWERTYUIOPASDFGH");
-}
-
-void lcdSequence(bool motion)
-{
-	Lcd_PortType ports[] = {D4_GPIO_Port, D5_GPIO_Port, D6_GPIO_Port, D7_GPIO_Port};
-	Lcd_PinType pins[] = {D4_Pin, D5_Pin, D6_Pin, D7_Pin};
-	lcd = Lcd_create(ports, pins, RS_GPIO_Port, RS_Pin, EN_GPIO_Port, EN_Pin, LCD_4_BIT_MODE);
-	if(motion)
-	{
-	Lcd_string(&lcd,"Motion Welcome");
-	Lcd_cursor(&lcd,1,0);
+		motion.setMotionFlag(0);
 	}
 }
 
@@ -94,7 +72,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			}
 	}
 	else if(GPIO_Pin==PIR_OUT_Pin){
-		registerCallback(motionDetected);
+
+		motion.setup();
 		if(motionPtr!=NULL)
 			{
 				motionPtr();
@@ -124,8 +103,4 @@ void timerElapsed(TIM_HandleTypeDef* htim)
 {
 	switche.setState(W_LED_CTRL_GPIO_Port,W_LED_CTRL_Pin,GPIO_PIN_RESET);
 	HAL_TIM_Base_Stop_IT(htim);
-}
-
-void motionDetected(){
-		motionFlag=true;
 }
