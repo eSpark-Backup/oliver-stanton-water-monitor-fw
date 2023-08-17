@@ -1,7 +1,7 @@
 #include <RH_ASK.h>
 #include <SPI.h> // Not actualy used but needed to compile
-
-RH_ASK driver;
+              
+RH_ASK driver(2000, PE14 , PE13); //(speed,RX,TX)
 // RX DATA arduino pin 11
 void setup()
 {
@@ -9,9 +9,9 @@ void setup()
     if (!driver.init())
          Serial.println("init failed");
 }
-
+  
 void loop()
-{
+{   //Serial.println("abcd"); 
     uint8_t buf[16];
     uint8_t buflen = sizeof(buf);
     if (driver.recv(buf, &buflen)) // Non-blocking
@@ -19,6 +19,9 @@ void loop()
       int i;
       // Message with a good checksum received, dump it.
       Serial.print("Message: ");
-      Serial.println((char*)buf);         
+      Serial.println((char*)buf);   
+      extern uint32_t duration;
+      Serial.println(duration);      
     }
+
 }

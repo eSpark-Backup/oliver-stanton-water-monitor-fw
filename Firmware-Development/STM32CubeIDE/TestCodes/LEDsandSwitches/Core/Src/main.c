@@ -86,11 +86,12 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
+  int a = 0;
   while (1)
   {
-
+    a++;
 	if (HAL_GPIO_ReadPin (switch_1_GPIO_Port , switch_1_Pin) == GPIO_PIN_RESET) {
-		HAL_GPIO_TogglePin(LED_1_GPIO_Port , LED_1_Pin);
+ 		HAL_GPIO_TogglePin(LED_1_GPIO_Port , LED_1_Pin);
 		HAL_GPIO_TogglePin(LED_2_GPIO_Port , LED_2_Pin);
 		HAL_GPIO_TogglePin(LED_3_GPIO_Port , LED_3_Pin);
 	}
