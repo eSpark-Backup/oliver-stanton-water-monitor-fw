@@ -81,7 +81,7 @@ extern const uint8_t ROW_20[];
 typedef enum {
 	LCD_4_BIT_MODE,
 	LCD_8_BIT_MODE
-} Lcd_ModeTypeDef;
+} LCD_MODE_TYPEDEF;
 
 
 typedef struct {
@@ -94,26 +94,30 @@ typedef struct {
 	LCD_PORT_TYPE en_port;
 	LCD_PIN_TYPE en_pin;
 
-	Lcd_ModeTypeDef mode;
+	LCD_MODE_TYPEDEF mode;
 
 } Lcd_HandleTypeDef;
 
 
 /************************************** Public functions **************************************/
 class LCD{
+private:
+	static void lcdWriteData(Lcd_HandleTypeDef * lcd, uint8_t data);
+	static void lcdWriteCommand(Lcd_HandleTypeDef * lcd, uint8_t command);
+	static void lcdWrite(Lcd_HandleTypeDef * lcd, uint8_t data, uint8_t len);
 public:
-void lcdSequence();
-void lcdSequence(bool motion);
-void lcdInit(Lcd_HandleTypeDef * lcd);
-void lcdInt(Lcd_HandleTypeDef * lcd, int number);
-void lcdString(Lcd_HandleTypeDef * lcd, char * string);
-void lcdCursor(Lcd_HandleTypeDef * lcd, uint8_t row, uint8_t col);
-Lcd_HandleTypeDef lcdCreate(
+	void lcdSequence();
+	void lcdSequence(bool motion);
+	void lcdInit(Lcd_HandleTypeDef * lcd);
+	void lcdInt(Lcd_HandleTypeDef * lcd, int number);
+	void lcdString(Lcd_HandleTypeDef * lcd, char * string);
+	void lcdCursor(Lcd_HandleTypeDef * lcd, uint8_t row, uint8_t col);
+	Lcd_HandleTypeDef lcdCreate(
 		LCD_PORT_TYPE port[], LCD_PIN_TYPE pin[],
 		LCD_PORT_TYPE rs_port, LCD_PIN_TYPE rs_pin,
-		LCD_PORT_TYPE en_port, LCD_PIN_TYPE en_pin, Lcd_ModeTypeDef mode);
-void lcdDefineChar(Lcd_HandleTypeDef * lcd, uint8_t code, uint8_t bitmap[]);
-void lcdClear(Lcd_HandleTypeDef * lcd);
+		LCD_PORT_TYPE en_port, LCD_PIN_TYPE en_pin, LCD_MODE_TYPEDEF mode);
+	void lcdDefineChar(Lcd_HandleTypeDef * lcd, uint8_t code, uint8_t bitmap[]);
+	void lcdClear(Lcd_HandleTypeDef * lcd);
 };
 //#ifdef __cplusplus
 //}

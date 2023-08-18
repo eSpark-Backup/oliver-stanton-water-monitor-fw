@@ -95,7 +95,7 @@ int main(void)
   MX_USB_DEVICE_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
- app.setup();
+  app.setup();
 
 
   /* USER CODE END 2 */

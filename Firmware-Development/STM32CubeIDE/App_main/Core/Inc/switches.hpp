@@ -8,8 +8,15 @@
 #pragma once
 #include "stm32f0xx_hal.h"
 
+typedef enum{
+	SW2,
+	SW3,
+	SW4,
+	SW5,
+	SW6,
+	SW7
+}SWITCH;
 class Switches {
 public:
-	bool getState(GPIO_TypeDef * GPIO_Port, uint16_t GPIO_Pin);
-	void setState(GPIO_TypeDef * GPIO_Port, uint16_t GPIO_Pin,GPIO_PinState state);
+	bool getState(SWITCH);
 };

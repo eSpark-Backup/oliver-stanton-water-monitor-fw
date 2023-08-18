@@ -8,11 +8,7 @@
 #include "lcd.h"
 const uint8_t ROW_16[] = {0x00, 0x40, 0x10, 0x50};
 const uint8_t ROW_20[] = {0x00, 0x40, 0x14, 0x54};
-/************************************** Static declarations **************************************/
 
-static void lcdWriteData(Lcd_HandleTypeDef * lcd, uint8_t data);
-static void lcdWriteCommand(Lcd_HandleTypeDef * lcd, uint8_t command);
-static void lcdWrite(Lcd_HandleTypeDef * lcd, uint8_t data, uint8_t len);
 Lcd_HandleTypeDef lcd;
 
 
@@ -24,7 +20,7 @@ Lcd_HandleTypeDef lcd;
 Lcd_HandleTypeDef LCD::lcdCreate(
 		LCD_PORT_TYPE port[], LCD_PIN_TYPE pin[],
 		LCD_PORT_TYPE rs_port, LCD_PIN_TYPE rs_pin,
-		LCD_PORT_TYPE en_port, LCD_PIN_TYPE en_pin, Lcd_ModeTypeDef mode)
+		LCD_PORT_TYPE en_port, LCD_PIN_TYPE en_pin, LCD_MODE_TYPEDEF mode)
 {
 	Lcd_HandleTypeDef lcd;
 
@@ -141,12 +137,12 @@ void LCD::lcdSequence(bool motionDetect)
 	}
 }
 
-/************************************** Static function definition **************************************/
+/************************************** Private function definition **************************************/
 
 /**
  * Write a byte to the command register
  */
-void lcdWriteCommand(Lcd_HandleTypeDef * lcd, uint8_t command)
+void LCD::lcdWriteCommand(Lcd_HandleTypeDef * lcd, uint8_t command)
 {
 	HAL_GPIO_WritePin(lcd->rs_port, lcd->rs_pin, LCD_COMMAND_REG);		// Write to command register
 
@@ -165,7 +161,7 @@ void lcdWriteCommand(Lcd_HandleTypeDef * lcd, uint8_t command)
 /**
  * Write a byte to the data register
  */
-void lcdWriteData(Lcd_HandleTypeDef * lcd, uint8_t data)
+void LCD::lcdWriteData(Lcd_HandleTypeDef * lcd, uint8_t data)
 {
 	HAL_GPIO_WritePin(lcd->rs_port, lcd->rs_pin, LCD_DATA_REG);			// Write to data register
 
@@ -184,7 +180,7 @@ void lcdWriteData(Lcd_HandleTypeDef * lcd, uint8_t data)
 /**
  * Set len bits on the bus and toggle the enable line
  */
-void lcdWrite(Lcd_HandleTypeDef * lcd, uint8_t data, uint8_t len)
+void LCD::lcdWrite(Lcd_HandleTypeDef * lcd, uint8_t data, uint8_t len)
 {
 	for(uint8_t i = 0; i < len; i++)
 	{

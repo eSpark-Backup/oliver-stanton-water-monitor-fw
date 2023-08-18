@@ -25,12 +25,7 @@ bool MotionSensor::getMotionFlag(){
 }
 
 void MotionSensor::setMotionFlag(bool state){
-	if(state==true){
-		this->motionFlag=true;
-	}
-	else{
-		this->motionFlag=false;
-	}
+		this->motionFlag=state;
 }
 void MotionSensor::setup()
 {

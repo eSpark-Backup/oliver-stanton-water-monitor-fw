@@ -6,6 +6,7 @@
 #include "switches.hpp"
 #include "main.h"
 #include "motion.hpp"
+#include "LED.h"
 #include <functional>
 
 
@@ -16,35 +17,38 @@ motionCallback motionPtr;
 MotionSensor motion;
 MotionSensor* mtnPtr=&motion;
 LCD lcdObj;
+W_LED wLED;
 extern TIM_HandleTypeDef htim2;
 
 
 void MainApp::setup(){
-	switche.setState(GPIOE, PWM_CNTRL_Pin,GPIO_PIN_SET);
-	switche.setState(GPIOE,PWM_CNTRL_Pin,GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOE, PWM_CNTRL_Pin,GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOE,PWM_CNTRL_Pin,GPIO_PIN_SET);
 	registerCallback(timerElapsed);
 	HAL_TIM_Base_Start_IT(&htim2);
 	HAL_TIM_Base_Stop_IT(&htim2);
 }
 
 void MainApp::loop(){
-	if(!switche.getState(SW2_GPIO_Port, SW2_Pin))
+	if(!switche.getState(SW2))
 	{
 		lcdObj.lcdSequence();
 	}
 		  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-	if(motion.getMotionFlag()){
-		if(motion.getMotionWU()==true){
-			lcdObj.lcdSequence();
-			}
-		if(motion.getMotionWelcome()==true)
-			{
-				switche.setState(W_LED_CTRL_GPIO_Port,W_LED_CTRL_Pin,GPIO_PIN_SET);
+		  if(motion.getMotionFlag())
+		  {
+			  if(motion.getMotionWU()==true)
+			  {
+				  lcdObj.lcdSequence();
+			  }
+			  if(motion.getMotionWelcome()==true)
+			  {
+				wLED.setWLED();
 				HAL_TIM_Base_Start_IT(&htim2);
 				lcdObj.lcdSequence(motion.getMotionWelcome());
-			}
-		motion.setMotionFlag(0);
-	}
+			  }
+			  motion.setMotionFlag(0);
+		  }
 }
 
 void registerCallback(extiCallback ptr)
@@ -94,13 +98,13 @@ void WLED_callback(uint16_t GPIO_Pin,TIM_HandleTypeDef* htim)
 {
 	if(GPIO_Pin == GPIO_PIN_5) // If The INT Source Is EXTI Line9 (A9 Pin)
     {
-    	switche.setState(W_LED_CTRL_GPIO_Port,W_LED_CTRL_Pin,GPIO_PIN_SET);
+		wLED.setWLED();
     	HAL_TIM_Base_Start_IT(htim);
     }
 }
 
 void timerElapsed(TIM_HandleTypeDef* htim)
 {
-	switche.setState(W_LED_CTRL_GPIO_Port,W_LED_CTRL_Pin,GPIO_PIN_RESET);
+	wLED.resetWLED();
 	HAL_TIM_Base_Stop_IT(htim);
 }
