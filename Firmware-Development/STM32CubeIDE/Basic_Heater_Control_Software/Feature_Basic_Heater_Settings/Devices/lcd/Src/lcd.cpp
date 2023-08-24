@@ -1,24 +1,12 @@
 
 #include "lcd.h"
-#include "switches.hpp"
-#include "LED.h"
 #include "main.h"
 #include "mainApp.hpp"
 #include "usb_device.h"
 #include "stm32f0xx_hal.h"
-#include <string>
 const uint8_t ROW_16[] = {0x00, 0x40, 0x10, 0x50};
 const uint8_t ROW_20[] = {0x00, 0x40, 0x14, 0x54};
 
-//Lcd_HandleTypeDef lcd;
-int track=0;
-Switches Switch;
-bool swFlag=false,swFlag1=false;
-W_LED Wled;
-#define Blink_interval  500            // Set at top of source code file
-unsigned long previousMillis = 0;
-bool BlankOnOff = false;
-std::string blnk = "";
 LCD_PORT_TYPE ports[] = {D4_GPIO_Port, D5_GPIO_Port, D6_GPIO_Port, D7_GPIO_Port};
 LCD_PIN_TYPE pins[] = {D4_Pin, D5_Pin, D6_Pin, D7_Pin};
 
@@ -75,18 +63,17 @@ void LCD::init(Lcd_HandleTypeDef * lcd)
 /**
  * Write a number on the current position
  */
-void LCD::Int(Lcd_HandleTypeDef * lcd, int number)
+void LCD::putInt(Lcd_HandleTypeDef * lcd, int number)
 {
 	char buffer[11];
 	sprintf(buffer, "%d", number);
-
-	string(buffer);
+	this->putString(buffer);
 }
 
 /**
  * Write a string on the current position
  */
-void LCD::string( char const* String)
+void LCD::putString( char const* String)
 {
 	for(uint8_t i = 0; i < strlen(String); i++)
 	{
@@ -97,7 +84,7 @@ void LCD::string( char const* String)
 /**
  * Set the cursor position
  */
-void LCD::cursor( uint8_t row, uint8_t col)
+void LCD::setCursor( uint8_t row, uint8_t col)
 {
 	#ifdef LCD20xN
 	writeCommand(&this->lcd, SET_DDRAM_ADDR + ROW_20[row] + col);
@@ -123,50 +110,14 @@ void LCD::defineChar(Lcd_HandleTypeDef * lcd, uint8_t code, uint8_t bitmap[]){
 
 }
 
-//void LCD::blinkText(char *msgtxt, int col, int row){
-//	 unsigned long currentMillis = HAL_GetTick();
-//
-//	  if(currentMillis - previousMillis > Blink_interval)   {
-//	    this->cursor(&lcd,col, row);
-//	    previousMillis = currentMillis;
-//
-//	    if(BlankOnOff){
-//	      this->string(&lcd,msgtxt);
-//	    }
-//	    else {
-//	      //for loop creates a String of spaces same length as word specified
-//	      for(int i = 1; i <= strlen(msgtxt); i++) {
-//	        blnk += " ";
-//	      }
-//	      this->string(&lcd,blnk.c_str());
-//	      blnk="";  //need to reset this back to blank otherwise it'll keep adding spaces to it on next iteration.
-//	    }
-//	    BlankOnOff = !BlankOnOff;
-//	  }
-//}
-
-//void LCD::lcdSequence(bool motionDetect)
-//{
-////	LCD_PORT_TYPE ports[] = {D4_GPIO_Port, D5_GPIO_Port, D6_GPIO_Port, D7_GPIO_Port};
-////	LCD_PIN_TYPE pins[] = {D4_Pin, D5_Pin, D6_Pin, D7_Pin};
-////	lcd = lcdCreate(ports, pins, RS_GPIO_Port, RS_Pin, EN_GPIO_Port, EN_Pin, LCD_4_BIT_MODE);
-////	if(motionDetect)
-////	{
-////		this->lcdString(&lcd,"Motion Welcome");
-////		this->lcdCursor(&lcd,1,0);
-////	}
-//}
-
 void LCD::start()
 {
 	this->lcd = create(ports, pins, RS_GPIO_Port, RS_Pin, EN_GPIO_Port, EN_Pin, LCD_4_BIT_MODE);
-	this->cursor(1,4);
-	this->string("Basic Heat");
-	this->cursor(2,0);
-	this->string("Control Software");
+	this->setCursor(1,4);
+	this->putString("Basic Heat");
+	this->setCursor(2,0);
+	this->putString("Control Software");
 }
-
-
 
 /************************************** Private function definition **************************************/
 

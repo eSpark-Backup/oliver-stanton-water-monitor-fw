@@ -13,8 +13,6 @@ Switches switche;
 extiCallback extiPtr;
 timerCallback timerPtr;
 motionCallback motionPtr;
-//MotionSensor motion;
-//MotionSensor* mtnPtr=&motion;
 LCD lcdObj;
 W_LED wLED;
 Menu menu;
@@ -23,10 +21,12 @@ extern TIM_HandleTypeDef htim2;
 
 const char* mainMenu[]= {"Heater: On","Frost Prev: On","Frost Pump: Off",NULL};
 
-void MainApp::setup(){
+void MainApp::setup()
+{
 	HAL_GPIO_WritePin(GPIOE, PWM_CNTRL_Pin,GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOE,PWM_CNTRL_Pin,GPIO_PIN_SET);
 	registerCallback(timerElapsed);
+	registerCallback(WLEDCallback);
 	HAL_TIM_Base_Start_IT(&htim2);
 	HAL_TIM_Base_Stop_IT(&htim2);
 	lcdObj.start();
@@ -39,32 +39,19 @@ void MainApp::loop(){
 		flag=true;
 	}
 	if(!switche.getState(SW2) && flag)
-		{
-			menu.next();
-		}
-	if(!switche.getState(SW6) && flag){
+	{
+		menu.next();
+	}
+	if(!switche.getState(SW6) && flag)
+	{
 		HAL_Delay(250);
 		menu.arrowDown();
 	}
-	if(!switche.getState(SW4) && flag){
-			HAL_Delay(250);
-			menu.arrowUp();
-		}
-		  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-//		  if(motion.getMotionFlag())
-//		  {
-//			  if(motion.getMotionWU()==true)
-//			  {
-//				  lcdObj.lcdSequence();
-//			  }
-//			  if(motion.getMotionWelcome()==true)
-//			  {
-//				wLED.setWLED();
-//				HAL_TIM_Base_Start_IT(&htim2);
-//				lcdObj.lcdSequence(motion.getMotionWelcome());
-//			  }
-//			  motion.setMotionFlag(0);
-//		  }
+	if(!switche.getState(SW4) && flag)
+	{
+		HAL_Delay(250);
+		menu.arrowUp();
+	}
 }
 
 void registerCallback(extiCallback ptr)
@@ -84,22 +71,13 @@ void registerCallback(motionCallback ptr)
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-	if(GPIO_Pin==SW5_Pin){
-		registerCallback(WLEDCallback);
+	if(GPIO_Pin==SW5_Pin)
+	{
 		if(extiPtr!=NULL)
 			{
 				extiPtr(GPIO_Pin,&htim2);
 			}
 	}
-//	else if(GPIO_Pin==PIR_OUT_Pin){
-//
-//		motion.setup();
-//		if(motionPtr!=NULL)
-//			{
-//				motionPtr();
-//			}
-//	}
-
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
@@ -112,13 +90,13 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 
 void WLEDCallback(uint16_t GPIO_Pin,TIM_HandleTypeDef* htim)
 {
-		wLED.setWLED();
+		wLED.set();
     	HAL_TIM_Base_Start_IT(htim);
 }
 
 void timerElapsed(TIM_HandleTypeDef* htim)
 {
-	wLED.resetWLED();
+	wLED.reset();
 	HAL_TIM_Base_Stop_IT(htim);
 }
 

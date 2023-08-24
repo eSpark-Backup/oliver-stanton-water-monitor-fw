@@ -22,8 +22,8 @@ void Menu::createMenu(const char** menu)
 	}
 	while(w<this->numberOfItems)
 	{
-		lcdObj.cursor(w,1);
-		lcdObj.string(menu[w]);
+		lcdObj.setCursor(w,1);
+		lcdObj.putString(menu[w]);
 		w++;
 	}
 	displayArrow();
@@ -32,9 +32,9 @@ void Menu::createMenu(const char** menu)
 void Menu::arrowDown()
 {
 	if(Arrow==(this->numberOfItems)-1)
-			Arrow=0;
-		else
-			Arrow++;
+		Arrow=0;
+	else
+		Arrow++;
 	displayArrow();
 }
 
@@ -51,11 +51,11 @@ void Menu::displayArrow()
 {
 	for(int i=0;i<this->numberOfItems;i++)
 	{
-		lcdObj.cursor(i,0);
-		lcdObj.string(" ");
+		lcdObj.setCursor(i,0);
+		lcdObj.putString(" ");
 	}
-	lcdObj.cursor(Arrow,0);
-	lcdObj.string(">");
+	lcdObj.setCursor(Arrow,0);
+	lcdObj.putString(">");
 }
 
 void Menu::next()

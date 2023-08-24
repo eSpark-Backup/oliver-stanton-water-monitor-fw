@@ -5,6 +5,6 @@
 
 class W_LED{
 public:
-	void setWLED();
-	void resetWLED();
+	void set();
+	void reset();
 };
