@@ -19,34 +19,38 @@ W_LED wLED;
 extern TIM_HandleTypeDef htim2;
 
 
-void MainApp::setup(){
+void MainApp::setup()
+{
 	HAL_GPIO_WritePin(GPIOE, PWM_CNTRL_Pin,GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOE,PWM_CNTRL_Pin,GPIO_PIN_SET);
 	registerCallback(timerElapsed);
 	HAL_TIM_Base_Start_IT(&htim2);
 	HAL_TIM_Base_Stop_IT(&htim2);
+	motion.setup();
+	registerCallback(WLEDCallback);
 }
 
-void MainApp::loop(){
+void MainApp::loop()
+{
 	if(!switche.getState(SW2))
 	{
 		lcdObj.sequence();
 	}
-		  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-		  if(motion.getMotionFlag())
-		  {
-			  if(motion.getMotionWU()==true)
-			  {
-				  lcdObj.sequence();
-			  }
-			  if(motion.getMotionWelcome()==true)
-			  {
-				wLED.setWLED();
-				HAL_TIM_Base_Start_IT(&htim2);
-				lcdObj.sequence(motion.getMotionWelcome());
-			  }
-			  motion.setMotionFlag(0);
-		  }
+	HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);  //for testing
+	if(motion.getMotionFlag())
+	{
+		if(motion.getMotionWU()==true)
+		{
+			 lcdObj.sequence();
+		}
+		if(motion.getMotionWelcome()==true)
+		{
+			wLED.set();
+			HAL_TIM_Base_Start_IT(&htim2);
+			lcdObj.sequence(motion.getMotionWelcome());
+		}
+		motion.setMotionFlag(0);
+	}
 }
 
 void registerCallback(extiCallback ptr)
@@ -66,20 +70,19 @@ void registerCallback(motionCallback ptr)
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-	if(GPIO_Pin==SW5_Pin){
-		registerCallback(WLEDCallback);
+	if(GPIO_Pin==SW5_Pin)
+	{
 		if(extiPtr!=NULL)
-			{
-				extiPtr(GPIO_Pin,&htim2);
-			}
+		{
+			extiPtr(GPIO_Pin,&htim2);
+		}
 	}
-	else if(GPIO_Pin==PIR_OUT_Pin){
-
-		motion.setup();
+	else if(GPIO_Pin==PIR_OUT_Pin)
+	{
 		if(motionPtr!=NULL)
-			{
-				motionPtr();
-			}
+		{
+			motionPtr();
+		}
 	}
 
 }
@@ -87,22 +90,19 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 {
 	if(timerPtr!=NULL)
-		{
-			timerPtr(htim);
-		}
+	{
+		timerPtr(htim);
+	}
 }
 
 void WLEDCallback(uint16_t GPIO_Pin,TIM_HandleTypeDef* htim)
 {
-	if(GPIO_Pin == GPIO_PIN_5) // If The INT Source Is EXTI Line9 (A9 Pin)
-    {
-		wLED.setWLED();
-    	HAL_TIM_Base_Start_IT(htim);
-    }
+	wLED.set();
+    HAL_TIM_Base_Start_IT(htim);
 }
 
 void timerElapsed(TIM_HandleTypeDef* htim)
 {
-	wLED.resetWLED();
+	wLED.reset();
 	HAL_TIM_Base_Stop_IT(htim);
 }

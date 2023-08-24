@@ -99,9 +99,9 @@ public:
 	void sequence();
 	void sequence(bool motion);
 	void init(Lcd_HandleTypeDef * lcd);
-	void Int(Lcd_HandleTypeDef * lcd, int number);
-	void string(Lcd_HandleTypeDef * lcd, char * string);
-	void cursor(Lcd_HandleTypeDef * lcd, uint8_t row, uint8_t col);
+	void putInt(Lcd_HandleTypeDef * lcd, int number);
+	void putString(Lcd_HandleTypeDef * lcd, char * string);
+	void setCursor(Lcd_HandleTypeDef * lcd, uint8_t row, uint8_t col);
 	Lcd_HandleTypeDef create(
 		LCD_PORT_TYPE port[], LCD_PIN_TYPE pin[],
 		LCD_PORT_TYPE rs_port, LCD_PIN_TYPE rs_pin,

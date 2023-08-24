@@ -48,7 +48,6 @@ void LCD::init(Lcd_HandleTypeDef * lcd)
 	else
 		writeCommand(lcd, FUNCTION_SET | OPT_DL | OPT_N);
 
-
 	writeCommand(lcd, CLEAR_DISPLAY);						// Clear screen
 	writeCommand(lcd, DISPLAY_ON_OFF_CONTROL | OPT_D);		// Lcd-on, cursor-off, no-blink
 	writeCommand(lcd, ENTRY_MODE_SET | OPT_INC);			// Increment cursor
@@ -59,7 +58,8 @@ void LCD::init(Lcd_HandleTypeDef * lcd)
  * LCD Setup
  */
 
-void LCD::setup(){
+void LCD::setup()
+{
 	LCD_PORT_TYPE ports[] = {D4_GPIO_Port, D5_GPIO_Port, D6_GPIO_Port, D7_GPIO_Port};
 	LCD_PIN_TYPE pins[] = {D4_Pin, D5_Pin, D6_Pin, D7_Pin};
 	lcd = create(ports, pins, RS_GPIO_Port, RS_Pin, EN_GPIO_Port, EN_Pin, LCD_4_BIT_MODE);
@@ -67,18 +67,17 @@ void LCD::setup(){
 /**
  * Write a number on the current position
  */
-void LCD::Int(Lcd_HandleTypeDef * lcd, int number)
+void LCD::putInt(Lcd_HandleTypeDef * lcd, int number)
 {
 	char buffer[11];
 	sprintf(buffer, "%d", number);
-
-	string(lcd, buffer);
+	putString(lcd, buffer);
 }
 
 /**
  * Write a string on the current position
  */
-void LCD::string(Lcd_HandleTypeDef * lcd, char * String)
+void LCD::putString(Lcd_HandleTypeDef * lcd, char * String)
 {
 	for(uint8_t i = 0; i < strlen(String); i++)
 	{
@@ -89,7 +88,7 @@ void LCD::string(Lcd_HandleTypeDef * lcd, char * String)
 /**
  * Set the cursor position
  */
-void LCD::cursor(Lcd_HandleTypeDef * lcd, uint8_t row, uint8_t col)
+void LCD::setCursor(Lcd_HandleTypeDef * lcd, uint8_t row, uint8_t col)
 {
 	#ifdef LCD20xN
 	writeCommand(lcd, SET_DDRAM_ADDR + ROW_20[row] + col);
@@ -103,11 +102,13 @@ void LCD::cursor(Lcd_HandleTypeDef * lcd, uint8_t row, uint8_t col)
 /**
  * Clear the screen
  */
-void LCD::clear(Lcd_HandleTypeDef * lcd) {
+void LCD::clear(Lcd_HandleTypeDef * lcd)
+{
 	writeCommand(lcd, CLEAR_DISPLAY);
 }
 
-void LCD::defineChar(Lcd_HandleTypeDef * lcd, uint8_t code, uint8_t bitmap[]){
+void LCD::defineChar(Lcd_HandleTypeDef * lcd, uint8_t code, uint8_t bitmap[])
+{
 	writeCommand(lcd, SETCGRAM_ADDR + (code << 3));
 	for(uint8_t i=0;i<8;++i){
 		writeData(lcd, bitmap[i]);
@@ -120,13 +121,13 @@ void LCD::sequence()
 	LCD_PORT_TYPE ports[] = {D4_GPIO_Port, D5_GPIO_Port, D6_GPIO_Port, D7_GPIO_Port};
 	LCD_PIN_TYPE pins[] = {D4_Pin, D5_Pin, D6_Pin, D7_Pin};
 	lcd = create(ports, pins, RS_GPIO_Port, RS_Pin, EN_GPIO_Port, EN_Pin, LCD_4_BIT_MODE);
-	this->string(&lcd,"qwertyuiopasdfghABCD");
-	this->cursor(&lcd,1,0);
-	this->string(&lcd,"QWERTYUIOPASDFGH");
-	this->cursor(&lcd,2,0);
-	this->string(&lcd,"qwertyuiopasdfgh");
-	this->cursor(&lcd,3,0);
-	this->string(&lcd,"QWERTYUIOPASDFGH");
+	this->putString(&lcd,"qwertyuiopasdfghABCD");
+	this->setCursor(&lcd,1,0);
+	this->putString(&lcd,"QWERTYUIOPASDFGH");
+	this->setCursor(&lcd,2,0);
+	this->putString(&lcd,"qwertyuiopasdfgh");
+	this->setCursor(&lcd,3,0);
+	this->putString(&lcd,"QWERTYUIOPASDFGH");
 }
 
 void LCD::sequence(bool motionDetect)
@@ -136,8 +137,8 @@ void LCD::sequence(bool motionDetect)
 	lcd = create(ports, pins, RS_GPIO_Port, RS_Pin, EN_GPIO_Port, EN_Pin, LCD_4_BIT_MODE);
 	if(motionDetect)
 	{
-		this->string(&lcd,"Motion Welcome");
-		this->cursor(&lcd,1,0);
+		this->putString(&lcd,"Motion Welcome");
+		this->setCursor(&lcd,1,0);
 	}
 }
 
