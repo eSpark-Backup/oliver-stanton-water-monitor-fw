@@ -100,7 +100,7 @@ public:
 	void sequence();
 	void sequence(bool motion);
 	void init(Lcd_HandleTypeDef * lcd);
-	void putInt(Lcd_HandleTypeDef * lcd, int number);
+	void putInt( int number);
 	void putString( char const* string);
 	void setCursor( uint8_t row, uint8_t col);
 	Lcd_HandleTypeDef create(

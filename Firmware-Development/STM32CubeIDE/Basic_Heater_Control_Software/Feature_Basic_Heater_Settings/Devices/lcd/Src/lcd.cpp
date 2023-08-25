@@ -63,7 +63,7 @@ void LCD::init(Lcd_HandleTypeDef * lcd)
 /**
  * Write a number on the current position
  */
-void LCD::putInt(Lcd_HandleTypeDef * lcd, int number)
+void LCD::putInt(int number)
 {
 	char buffer[11];
 	sprintf(buffer, "%d", number);

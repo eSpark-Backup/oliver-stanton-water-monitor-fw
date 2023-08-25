@@ -49,7 +49,7 @@ void Menu::arrowUp()
 
 void Menu::displayArrow()
 {
-	for(int i=0;i<this->numberOfItems;i++)
+	for(int i=0;i<this->numberOfItems+1;i++)
 	{
 		lcdObj.setCursor(i,0);
 		lcdObj.putString(" ");
@@ -69,6 +69,7 @@ void Menu::next()
 		break;
 	case 2:
 		createMenu(frostPumpN);
+		Arrow=numberOfItems-1;
 		break;
 	default:
 		lcdObj.clear();
