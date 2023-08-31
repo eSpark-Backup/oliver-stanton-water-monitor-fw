@@ -16,16 +16,15 @@ timerCallback flamePtr;
 timerCallback pumpConPtr;
 motionCallback motionPtr;
 extern ADC_HandleTypeDef hadc;
-//flameIconCb flamePtr;
 LCD lcdObj;
 W_LED wLED;
 Menu menu;
 bool flag=false;
 bool flameFlag=false;
-bool SW3flag=true;
+bool sw3Flag=true;
 extern bool pumpConnectivityFlag;
 extern TIM_HandleTypeDef htim2;
-extern int Next;
+extern int nextMenu;
 double voltage  = 0;
 double current = 0;
 double sensitivity = 0.2 ; // volts/Amp
@@ -68,14 +67,14 @@ uint8_t customChar2[] = {
 };
 
 uint8_t customChar3[] = {
-		0b00001,
-		0b00011,
-		0b00111,
-		0b01111,
-		0b11110,
-		0b11100,
-		0b11000,
-		0b10000
+  0b00001,
+  0b00011,
+  0b00111,
+  0b01111,
+  0b11110,
+  0b11100,
+  0b11000,
+  0b10000
 };
 
 uint8_t customChar4[] = {
@@ -100,24 +99,24 @@ uint8_t customChar5[]={
    0b11111
 };
 uint8_t customChar6[]={
-		 0b00100,
-		  0b01110,
-		  0b11111,
-		  0b11111,
-		  0b01110,
-		  0b00100,
-		  0b00000,
-		  0b00000
+	0b00100,
+	0b01110,
+	0b11111,
+	0b11111,
+	0b01110,
+	0b00100,
+	0b00000,
+	0b00000
 };
 uint8_t customChar7[]={
-		0b00000,
-		0b00000,
-		0b00000,
-		0b00100,
-		0b01010,
-		0b10001,
-		0b11011,
-		0b01110
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00100,
+	0b01010,
+	0b10001,
+	0b11011,
+	0b01110
 };
 
 
@@ -132,18 +131,18 @@ void MainApp::setup()
 	HAL_TIM_Base_Stop_IT(&htim2);
 	lcdObj.start();
 	HAL_GPIO_WritePin(IOC9_GPIO_Port,IOC9_Pin,GPIO_PIN_SET);
-	  HAL_GPIO_WritePin(INB_GPIO_Port, INB_Pin, GPIO_PIN_SET);
-	  HAL_GPIO_WritePin(INA_GPIO_Port, INA_Pin, GPIO_PIN_SET);
-	  // Start ADC Conversion
-	  HAL_ADC_Start(&hadc);
-	  HAL_ADC_PollForConversion(&hadc, 10);
-	  adc_val = HAL_ADC_GetValue(&hadc); // get the adc value
-	  Vref_PB1 = adc_val * 3.3/4096;
-	  HAL_GPIO_WritePin(Enable_GPIO_Port, Enable_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(INB_GPIO_Port, INB_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(INA_GPIO_Port, INA_Pin, GPIO_PIN_SET);
+	// Start ADC Conversion
+	HAL_ADC_Start(&hadc);
+	HAL_ADC_PollForConversion(&hadc, 10);
+	adc_val = HAL_ADC_GetValue(&hadc); // get the adc value
+	Vref_PB1 = adc_val * 3.3/4096;
+	HAL_GPIO_WritePin(Enable_GPIO_Port, Enable_Pin, GPIO_PIN_SET);
 
-	  /*Configure GPIO pin Output Level */
-	  HAL_GPIO_WritePin(INB_GPIO_Port, INB_Pin, GPIO_PIN_RESET);
-	  HAL_GPIO_WritePin(INA_GPIO_Port, INA_Pin, GPIO_PIN_RESET);
+	/*Configure GPIO pin Output Level */
+	HAL_GPIO_WritePin(INB_GPIO_Port, INB_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(INA_GPIO_Port, INA_Pin, GPIO_PIN_RESET);
 
 	lcdObj.defineChar(0,customChar);
 	lcdObj.defineChar(1,customChar1);
@@ -152,8 +151,6 @@ void MainApp::setup()
 	lcdObj.defineChar(4,customChar4);
 	lcdObj.defineChar(5,customChar5);
 	lcdObj.defineChar(6,customChar7);
-
-
 }
 
 void MainApp::loop()
@@ -167,8 +164,8 @@ void MainApp::loop()
 	if(!switche.getState(SW2) && flag)
 	{
 		HAL_Delay(250);
-		extern int Next;
-		Next++;
+		extern int nextMenu;
+		nextMenu++;
 		menu.next();
 	}
 	if(!switche.getState(SW6) && flag)
@@ -186,12 +183,12 @@ void MainApp::loop()
 			HAL_Delay(250);
 			menu.back();
 		}
-	if(SW3flag==false){
+	if(sw3Flag==false){
 		HAL_GPIO_WritePin(IOC9_GPIO_Port,IOC9_Pin,GPIO_PIN_RESET);
 		lcdObj.clear();
 		lcdObj.setCursor(1,0);
 		lcdObj.putString("log to master");
-		SW3flag=true;
+		sw3Flag=true;
 	}
 }
 
@@ -224,35 +221,37 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 				extiPtr(GPIO_Pin,&htim2);
 			}
 	}
-	if(GPIO_Pin==SW3_Pin){
-		SW3flag=false;
+	if(GPIO_Pin==SW3_Pin)
+	{
+		sw3Flag=false;
 		extern bool ui;
-
 		ui=false;
-		Next=-1;
+		nextMenu=-1;
 	}
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 {
-	if(pumpConPtr!=NULL){
+	if(pumpConPtr!=NULL)
+	{
 		pumpConPtr(htim);
 	}
-	if(flamePtr!=NULL){
+	if(flamePtr!=NULL)
+	{
 		flamePtr(htim);
 		flamePtr=NULL;
 	}
 	if(timerPtr!=NULL)
-		{
-			timerPtr(htim);
-		}
+	{
+		timerPtr(htim);
+	}
 }
 
 void WLEDCallback(uint16_t GPIO_Pin,TIM_HandleTypeDef* htim)
 {
-		SW3flag=false;
-		wLED.set();
-    	HAL_TIM_Base_Start_IT(htim);
+	sw3Flag=false;
+	wLED.set();
+    HAL_TIM_Base_Start_IT(htim);
 }
 
 void timerElapsed(TIM_HandleTypeDef* htim)
@@ -264,13 +263,13 @@ void timerElapsed(TIM_HandleTypeDef* htim)
 void flameIconCallback(TIM_HandleTypeDef* htim)
 {
 	flameFlag=true;
-	Next=0;
+	nextMenu=0;
 	HAL_TIM_Base_Stop_IT(htim);
 }
 
 float getCurrent(){
 	HAL_ADC_Start(&hadc);
-			  // Poll ADC1 Peripheral & TimeOut = 1mSec
+	// Poll ADC1 Peripheral & TimeOut = 1mSec
 	HAL_ADC_PollForConversion(&hadc, 10);
 
 	adc_val = HAL_ADC_GetValue(&hadc); // get the adc value

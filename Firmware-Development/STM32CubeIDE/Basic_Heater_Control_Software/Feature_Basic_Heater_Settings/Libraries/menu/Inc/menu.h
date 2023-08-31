@@ -18,6 +18,8 @@ public:
 	void displayArrow();
 	void next();
 	void back();
+	void printFlame();
+	void pumpConnection();
 };
 
 
