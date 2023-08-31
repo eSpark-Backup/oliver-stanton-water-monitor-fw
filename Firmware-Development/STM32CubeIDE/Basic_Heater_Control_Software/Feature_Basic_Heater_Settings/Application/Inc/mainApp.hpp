@@ -17,8 +17,11 @@ public:
 };
 
 void registerCallback(extiCallback ptr);
-void registerCallback(timerCallback ptr);
+void registerCallback(timerCallback ptr,int n);
 void registerCallback(motionCallback ptr);
 void WLEDCallback(uint16_t GPIO_Pin,TIM_HandleTypeDef* htim);
 void timerElapsed(TIM_HandleTypeDef* htim);
+void flameIconCallback(TIM_HandleTypeDef* htim);
+void pumpConnectivityCallback(TIM_HandleTypeDef* htim);
+float getCurrent();
 

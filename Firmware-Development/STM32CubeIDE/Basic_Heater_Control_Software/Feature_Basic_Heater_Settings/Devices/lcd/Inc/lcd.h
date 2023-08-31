@@ -107,7 +107,7 @@ public:
 		LCD_PORT_TYPE port[], LCD_PIN_TYPE pin[],
 		LCD_PORT_TYPE rs_port, LCD_PIN_TYPE rs_pin,
 		LCD_PORT_TYPE en_port, LCD_PIN_TYPE en_pin, LCD_MODE_TYPEDEF mode);
-	void defineChar(Lcd_HandleTypeDef * lcd, uint8_t code, uint8_t bitmap[]);
+	void defineChar( uint8_t code, uint8_t bitmap[]);
 	void clear();
 	void start();
 	void blinkText(char *msgtxt, int col, int row);
@@ -115,6 +115,7 @@ public:
 	void arrowDown();
 	void arrowUp();
 	void displayArrow();
+	void fireIcon(uint8_t r, uint8_t column, uint8_t code);
 };
 
 

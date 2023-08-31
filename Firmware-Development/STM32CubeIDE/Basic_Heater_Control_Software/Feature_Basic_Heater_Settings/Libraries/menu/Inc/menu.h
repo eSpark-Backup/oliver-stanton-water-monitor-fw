@@ -17,6 +17,7 @@ public:
 	void arrowUp();
 	void displayArrow();
 	void next();
+	void back();
 };
 
 

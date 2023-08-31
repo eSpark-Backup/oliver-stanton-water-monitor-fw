@@ -73,11 +73,11 @@ void LCD::putInt(int number)
 /**
  * Write a string on the current position
  */
-void LCD::putString( char const* String)
+void LCD::putString( char const* Str)
 {
-	for(uint8_t i = 0; i < strlen(String); i++)
+	for(uint8_t i = 0; i < strlen(Str); i++)
 	{
-		writeData(&this->lcd, String[i]);
+		writeData(&this->lcd, Str[i]);
 	}
 }
 
@@ -102,12 +102,11 @@ void LCD::clear() {
 	writeCommand(&this->lcd, CLEAR_DISPLAY);
 }
 
-void LCD::defineChar(Lcd_HandleTypeDef * lcd, uint8_t code, uint8_t bitmap[]){
-	writeCommand(lcd, SETCGRAM_ADDR + (code << 3));
+void LCD::defineChar(uint8_t code, uint8_t bitmap[]){
+	writeCommand(&this->lcd, SETCGRAM_ADDR + (code << 3));
 	for(uint8_t i=0;i<8;++i){
-		writeData(lcd, bitmap[i]);
+		writeData(&this->lcd, bitmap[i]);
 	}
-
 }
 
 void LCD::start()
@@ -117,6 +116,7 @@ void LCD::start()
 	this->putString("Basic Heat");
 	this->setCursor(2,0);
 	this->putString("Control Software");
+
 }
 
 /************************************** Private function definition **************************************/
@@ -174,4 +174,9 @@ void LCD::write(Lcd_HandleTypeDef * lcd, uint8_t data, uint8_t len)
 	HAL_GPIO_WritePin(lcd->en_port, lcd->en_pin,(GPIO_PinState) 0); 		// Data receive on falling edge
 }
 
+void LCD::fireIcon(uint8_t r, uint8_t column, uint8_t code)
+{
+	setCursor(r,column);
+	writeData(&this->lcd,(uint8_t)code);
+}
 
