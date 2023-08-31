@@ -12,7 +12,7 @@ extern LCD lcdObj;
 extern W_LED wLED;
 extern const char* mainMenu[];
 volatile bool pumpConnectivityFlag=true;
-static int Arrow=0;
+static int arrow=0;
 int nextMenu=0;
 bool ui;
 
@@ -37,26 +37,26 @@ void Menu::createMenu(const char** menu)
 		lcdObj.putString(menu[w]);
 		w++;
 	}
-	if(Arrow==numberOfItems)
-	Arrow=numberOfItems-1;
+	if(arrow==numberOfItems)
+	arrow=numberOfItems-1;
 	displayArrow();
 }
 
 void Menu::arrowDown()
 {
-	if(Arrow==(this->numberOfItems)-1)
-		Arrow=0;
+	if(arrow==(this->numberOfItems)-1)
+		arrow=0;
 	else
-		Arrow++;
+		arrow++;
 	displayArrow();
 }
 
 void Menu::arrowUp()
 {
-	if(Arrow==0)
-		Arrow=(this->numberOfItems)-1;
+	if(arrow==0)
+		arrow=(this->numberOfItems)-1;
 	else
-		Arrow--;
+		arrow--;
 	displayArrow();
 }
 
@@ -67,17 +67,17 @@ void Menu::displayArrow()
 		lcdObj.setCursor(i,0);
 		lcdObj.putString(" ");
 	}
-	lcdObj.setCursor(Arrow,0);
+	lcdObj.setCursor(arrow,0);
 	lcdObj.putString(">");
 }
 
 void Menu::next()
 {
 	extern bool sw3Flag;
-	if(Arrow==0){
+	if(arrow==0){
 	if(nextMenu==2)
 	{
-		switch(Arrow){
+		switch(arrow){
 			case 1:
 				printFlame();
 				registerCallback(flameIconCallback,1);
@@ -131,7 +131,7 @@ void Menu::next()
 	}
 	if(nextMenu==1)
 	{
-		switch(Arrow)
+		switch(arrow)
 		{
 		case 0:
 			createMenu(heaterN);
