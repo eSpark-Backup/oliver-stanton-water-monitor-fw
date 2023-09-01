@@ -33,7 +33,7 @@ uint32_t adc_val;
 
 const char* mainMenu[]= {"Heater: On","Frost Prev: On","Frost Pump: Off",NULL};
 
-uint8_t customChar[] = {
+uint8_t  customChar[] = {
   0b11111,
   0b11111,
   0b11111,
@@ -44,7 +44,7 @@ uint8_t customChar[] = {
   0b11111
 };
 
-uint8_t customChar1[] = {
+uint8_t  customChar1[] = {
   0b11100,
   0b11110,
   0b11111,
@@ -55,7 +55,7 @@ uint8_t customChar1[] = {
   0b11111
 };
 
-uint8_t customChar2[] = {
+uint8_t  customChar2[] = {
   0b00111,
   0b01111,
   0b11111,
@@ -66,7 +66,7 @@ uint8_t customChar2[] = {
   0b11111
 };
 
-uint8_t customChar3[] = {
+uint8_t  customChar3[] = {
   0b00001,
   0b00011,
   0b00111,
@@ -77,7 +77,7 @@ uint8_t customChar3[] = {
   0b10000
 };
 
-uint8_t customChar4[] = {
+uint8_t  customChar4[] = {
   0b00000,
   0b00000,
   0b00000,
@@ -88,7 +88,7 @@ uint8_t customChar4[] = {
   0b00011
 };
 
-uint8_t customChar5[]={
+uint8_t  customChar5[]={
    0b00000,
    0b00000,
    0b00100,
@@ -98,7 +98,7 @@ uint8_t customChar5[]={
    0b11111,
    0b11111
 };
-uint8_t customChar6[]={
+uint8_t  customChar6[]={
 	0b00100,
 	0b01110,
 	0b11111,
@@ -164,8 +164,6 @@ void MainApp::loop()
 	if(!switche.getState(SW2) && flag)
 	{
 		HAL_Delay(250);
-		extern int nextMenu;
-		nextMenu++;
 		menu.next();
 	}
 	if(!switche.getState(SW6) && flag)
@@ -179,11 +177,12 @@ void MainApp::loop()
 		menu.arrowUp();
 	}
 	if(!switche.getState(SW5) && flag)
-		{
-			HAL_Delay(250);
-			menu.back();
-		}
-	if(sw3Flag==false){
+	{
+		HAL_Delay(250);
+		menu.back();
+	}
+	if(sw3Flag==false)
+	{
 		HAL_GPIO_WritePin(IOC9_GPIO_Port,IOC9_Pin,GPIO_PIN_RESET);
 		lcdObj.clear();
 		lcdObj.setCursor(1,0);

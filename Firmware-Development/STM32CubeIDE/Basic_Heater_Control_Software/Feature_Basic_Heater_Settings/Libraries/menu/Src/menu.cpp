@@ -15,6 +15,7 @@ volatile bool pumpConnectivityFlag=true;
 static int arrow=0;
 int nextMenu=0;
 bool ui;
+bool heaterFlag=false;
 
 const char* heaterN[]={"On","Off",NULL};
 const char* frostN[]={"On","Off",NULL};
@@ -73,83 +74,90 @@ void Menu::displayArrow()
 
 void Menu::next()
 {
+	nextMenu++;
 	extern bool sw3Flag;
-	if(arrow==0){
-	if(nextMenu==2)
-	{
-		switch(arrow){
-			case 1:
-				printFlame();
-				registerCallback(flameIconCallback,1);
-				HAL_TIM_Base_Start_IT(&htim2);
-				break;
-			case 0:
-				lcdObj.clear();
-				ui=true;
-				while(ui && sw3Flag)
-				{
-					if(!Switch.getState(SW5))
-					{
-						HAL_Delay(250);
-						back();
-						ui=false;
-					}
-					if(!Switch.getState(SW2))
-					{
-						HAL_GPIO_WritePin(IOC9_GPIO_Port,IOC9_Pin,GPIO_PIN_SET);
-						pumpConnection();
-						if(ui)
-						{
-							registerCallback(pumpConnectivityCallback,2);
-							HAL_TIM_Base_Start_IT(&htim2);
-							while(pumpConnectivityFlag==true && sw3Flag)
-							{
-								lcdObj.setCursor(3,4);
-								lcdObj.putString("Preheating");
-							}
-
-							lcdObj.clear();
-							while(sw3Flag)
-							{
-							lcdObj.setCursor(0,4);
-							lcdObj.putString("Heater On");
-							if(getCurrent()<0.5)
-								pumpConnection();
-							else if(!Switch.getState(SW5)){
-								back();
-								ui=false;}
-							}
-						}
-					}
-				}
-				break;
-			default:
-				lcdObj.clear();
-				break;
-		}
-			}
-	}
 	if(nextMenu==1)
 	{
 		switch(arrow)
 		{
 		case 0:
 			createMenu(heaterN);
+			heaterFlag=true;
 			break;
 		case 1:
 			createMenu(frostN);
+			heaterFlag=false;
 			break;
 		case 2:
 			createMenu(frostPumpN);
+			heaterFlag=false;
 			break;
 		default:
 			lcdObj.clear();
+			heaterFlag=false;
 			break;
 		}
 	}
 	else if(nextMenu==0){
 		createMenu(mainMenu);
 	}
+	else if(nextMenu==2 && heaterFlag)
+		{
+			switch(arrow)
+			{
+				case 1:
+					printFlame();
+					registerCallback(flameIconCallback,1);
+					HAL_TIM_Base_Start_IT(&htim2);
+					break;
+				case 0:
+					lcdObj.clear();
+					ui=true;
+					while(ui && sw3Flag)
+					{
+						if(!Switch.getState(SW5))
+						{
+							HAL_Delay(250);
+							back();
+							ui=false;
+						}
+						if(!Switch.getState(SW2))
+						{
+							HAL_GPIO_WritePin(IOC9_GPIO_Port,IOC9_Pin,GPIO_PIN_SET);
+							pumpConnection();
+							if(ui)
+							{
+								registerCallback(pumpConnectivityCallback,2);
+								HAL_TIM_Base_Start_IT(&htim2);
+								while(pumpConnectivityFlag==true && sw3Flag)
+								{
+									lcdObj.setCursor(3,4);
+									lcdObj.putString("Preheating");
+								}
+
+								lcdObj.clear();
+								while(sw3Flag)
+								{
+								lcdObj.setCursor(0,4);
+								lcdObj.putString("Heater On");
+								if(getCurrent()<0.5)
+									pumpConnection();
+								else if(!Switch.getState(SW5)){
+									back();
+									ui=false;}
+								}
+							}
+						}
+					}
+
+					break;
+				default:
+					lcdObj.clear();
+					break;
+			}
+				}
+		else
+			nextMenu--;
 
 }
 
@@ -157,9 +165,11 @@ void Menu::back(){
 	if(nextMenu>0)
 	{
 		nextMenu=nextMenu-1;
+		nextMenu--;
 		this->next();
 	}
 	else{
+		nextMenu--;
 		this->next();
 	}
 }
