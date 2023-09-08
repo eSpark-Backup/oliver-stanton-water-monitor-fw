@@ -5,7 +5,8 @@
 #include "stdio.h"
 #include <functional>
 
-typedef std::function<void(void)> motionCallback ;
+typedef std::function<void(TIM_HandleTypeDef* htim)> pumpCallback;
+typedef std::function<void(TIM_HandleTypeDef* htim)> flameCallback;
 typedef void (*extiCallback)(uint16_t GPIO_Pin,TIM_HandleTypeDef* htim);
 typedef void (*timerCallback)(TIM_HandleTypeDef* htim);
 
@@ -18,10 +19,11 @@ public:
 
 void registerCallback(extiCallback ptr);
 void registerCallback(timerCallback ptr,int n);
-void registerCallback(motionCallback ptr);
+void registerCallback(pumpCallback ptr);
 void WLEDCallback(uint16_t GPIO_Pin,TIM_HandleTypeDef* htim);
 void timerElapsed(TIM_HandleTypeDef* htim);
 void flameIconCallback(TIM_HandleTypeDef* htim);
 void pumpConnectivityCallback(TIM_HandleTypeDef* htim);
-float getCurrent();
+void startADC();
+
 

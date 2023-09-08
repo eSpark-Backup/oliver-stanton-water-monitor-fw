@@ -102,7 +102,7 @@ void LCD::clear() {
 	writeCommand(&this->lcd, CLEAR_DISPLAY);
 }
 
-void LCD::defineChar(uint8_t code, uint8_t bitmap[]){
+void LCD::defineChar(uint8_t code, uint8_t const bitmap[]){
 	writeCommand(&this->lcd, SETCGRAM_ADDR + (code << 3));
 	for(uint8_t i=0;i<8;++i){
 		writeData(&this->lcd, bitmap[i]);

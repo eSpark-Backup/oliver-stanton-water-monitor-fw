@@ -107,7 +107,7 @@ public:
 		LCD_PORT_TYPE port[], LCD_PIN_TYPE pin[],
 		LCD_PORT_TYPE rs_port, LCD_PIN_TYPE rs_pin,
 		LCD_PORT_TYPE en_port, LCD_PIN_TYPE en_pin, LCD_MODE_TYPEDEF mode);
-	void defineChar( uint8_t code, uint8_t bitmap[]);
+	void defineChar( uint8_t code, uint8_t const bitmap[]);
 	void clear();
 	void start();
 	void blinkText(char *msgtxt, int col, int row);

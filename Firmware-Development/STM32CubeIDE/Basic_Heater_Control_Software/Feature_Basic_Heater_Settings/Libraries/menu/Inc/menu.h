@@ -1,5 +1,6 @@
 #pragma once
 
+#include "stm32f0xx_hal.h"
 struct level {
    char name[16];
    struct level *next;
@@ -20,6 +21,7 @@ public:
 	void back();
 	void printFlame();
 	void pumpConnection();
+	void flameIconCallback(TIM_HandleTypeDef* htim);
 };
 
 
