@@ -8,14 +8,14 @@
 #include "switches.hpp"
 #include "motorDriver.h"
 #include "flash.h"
+#include "callbacks.h"
 
 Switches Switch;
-MotorDriver motor;
+extern MotorDriver motor;
 FlashStorage flashMem;
 extern LCD lcdObj;
-extern W_LED wLED;
+extern WLED wLED;
 extern const char* mainMenu[];
-volatile bool pumpConnectivityFlag=true;
 extern bool flameFlag;
 typedef enum{
 	OPTION_1,
@@ -157,14 +157,14 @@ void Menu::next()
 						flashMem.writeNum(HEATER_STATE_ADDRESS,On);
 						if(ui)
 						{
-							registerCallback(std::bind(&MotorDriver::pumpConnectivityCallback,motor,std::placeholders::_1));
+							registerCallback(std::bind(&MotorDriver::pumpConnectivityCallback,&motor,std::placeholders::_1));
 							HAL_TIM_Base_Start_IT(&htim2);
-							while(pumpConnectivityFlag==true && sw3Flag)
+							while((motor.getFlag()==true) && sw3Flag)
 							{
 								lcdObj.setCursor(3,4);
 								lcdObj.putString("Preheating");
 							}
-							pumpConnectivityFlag=true;
+							motor.setFlag(true);
 							lcdObj.clear();
 							while(sw3Flag && ui)
 							{
@@ -227,6 +227,8 @@ void Menu::pumpConnection()
 		lcdObj.putString("Heater On");
 		lcdObj.setCursor(1,0);
 		lcdObj.putString("Water not heatin");
+		lcdObj.setCursor(3,2);
+		lcdObj.putInt(pumpC);
 		if(!Switch.getState(SW5))
 		{
 			HAL_Delay(250);

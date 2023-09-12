@@ -43,6 +43,7 @@
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths.1773813767" name="Include paths (-I)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;C:\Users\eSpark\STM32CubeIDE\workspace_1.12.1\Feature_Basic_Heater_Settings\Devices\lcd\Inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\eSpark\STM32CubeIDE\workspace_1.12.1\Feature_Basic_Heater_Settings\Libraries\callbacks\Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\eSpark\STM32CubeIDE\workspace_1.12.1\Feature_Basic_Heater_Settings\Libraries\flash\Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\eSpark\STM32CubeIDE\workspace_1.12.1\Feature_Basic_Heater_Settings\Devices\LED\Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\eSpark\STM32CubeIDE\workspace_1.12.1\Feature_Basic_Heater_Settings\Libraries\motorDriver\Inc&quot;"/>
@@ -72,6 +73,7 @@
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.includepaths.2131673530" name="Include paths (-I)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.includepaths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;C:\Users\eSpark\STM32CubeIDE\workspace_1.12.1\Feature_Basic_Heater_Settings\Devices\lcd\Inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\eSpark\STM32CubeIDE\workspace_1.12.1\Feature_Basic_Heater_Settings\Libraries\callbacks\Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\eSpark\STM32CubeIDE\workspace_1.12.1\Feature_Basic_Heater_Settings\Libraries\flash\Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\eSpark\STM32CubeIDE\workspace_1.12.1\Feature_Basic_Heater_Settings\Libraries\motorDriver\Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\eSpark\STM32CubeIDE\workspace_1.12.1\Feature_Basic_Heater_Settings\Devices\LED\Inc&quot;"/>

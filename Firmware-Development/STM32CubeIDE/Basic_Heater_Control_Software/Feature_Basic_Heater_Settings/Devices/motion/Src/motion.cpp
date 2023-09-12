@@ -2,6 +2,7 @@
 #include "motion.hpp"
 #include "mainApp.hpp"
 #include <functional>
+#include "callbacks.h"
 
 void MotionSensor::motionDetected(){
 	this->setMotionFlag(1);

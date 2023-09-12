@@ -3,12 +3,10 @@
 #include "main.h"
 #include "stm32f0xx_hal.h"
 
-extern bool pumpConnectivityFlag;
-double voltage  = 0;
-double current = 0;
-double sensitivity = 0.2 ; // volts/Amp
-extern float Vref_PB1;
 extern ADC_HandleTypeDef hadc;
+MotorDriver::MotorDriver(){
+	this->pumpConnectivityFlag=true;
+}
 
 void MotorDriver::enablePump1(){
 	HAL_GPIO_WritePin(INA_GPIO_Port, INA_Pin, GPIO_PIN_RESET);
@@ -36,12 +34,20 @@ void MotorDriver::disableDT1(){
 
 void MotorDriver::pumpConnectivityCallback(TIM_HandleTypeDef* htim)
 {
-	pumpConnectivityFlag=false;
+	this->setFlag(false);
 	HAL_TIM_Base_Stop_IT(htim);
 }
 
-void MotorDriver::enablePumps(){
+void MotorDriver::enable(){
 	HAL_GPIO_WritePin(Enable_GPIO_Port, Enable_Pin, GPIO_PIN_SET);
+}
+
+void MotorDriver::setFlag(bool state){
+	this->pumpConnectivityFlag=state;
+}
+
+bool MotorDriver::getFlag(){
+	return this->pumpConnectivityFlag;
 }
 
 float MotorDriver::getCurrent(){
@@ -52,11 +58,18 @@ float MotorDriver::getCurrent(){
 
 	adc_val = HAL_ADC_GetValue(&hadc); // get the adc value
 
-	voltage = adc_val * 3.3/4096; //reference voltage (volts) when 0 current is flowing
+	this->voltage = adc_val * 3.3/4096; //reference voltage (volts) when 0 current is flowing
 
-	current = (Vref_PB1-voltage)/sensitivity;
+	this->current = (this->vRefPB1-this->voltage)/this->sensitivity;
 
-	return current;
-	return (float)3.142;
+	return this->current;
 }
 
+
+void MotorDriver::setZeroReference()
+{
+	// Start ADC Conversion
+	HAL_ADC_Start(&hadc);
+	HAL_ADC_PollForConversion(&hadc, 10);
+	this->vRefPB1 = (HAL_ADC_GetValue(&hadc)) * 3.3/4096;
+}
