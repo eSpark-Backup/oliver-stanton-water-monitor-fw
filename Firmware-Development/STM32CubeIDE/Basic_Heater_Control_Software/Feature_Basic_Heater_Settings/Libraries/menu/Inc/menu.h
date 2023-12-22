@@ -1,30 +1,40 @@
 #pragma once
 
-#include "stm32f0xx_hal.h"
-struct level {
-   char name[16];
-   struct level *next;
-   struct level *prev;
-   struct level *down;
-   struct level *up;
-   void (*DoWork)(void);
+#include "string.h"
+#include "lcd.h"
+#include "mainApp.hpp"
+#include "CDC_Serial.h"
+
+
+struct MenuItem {
+    const char* label;          //Name of the menu Element
+    bool (*DoWork)(void);     //Function invoked when element is selected
+    const MenuItem* next;       //SubMenu which it points to
+    const MenuItem* prev;       //Parent Menu
+//    short num_childmenus;         //No. of child menu
+    short num_parentmenuItems;		//No. of items in parent menu
+    short num_items;			//No. of items in current menu
 };
+extern struct MenuItem mainMenu[], fodMenu[], ro_saver[], fodOptns[];
+
+
 class Menu{
 public:
 	int numberOfItems;
-	void BuildMenu(struct level *currentNode, char name[16], void (*DoWork)(void) , struct level *prevNode, struct level *nextNode,struct level *upNode,struct level *downNode);
-	void createMenu(const char** menu);
-	void arrowDown();
-	void arrowUp();
-	void displayArrow();
-	void next();
-	void back();
-	void printFlame();
-	void pumpConnection();
-	void flameIconCallback(TIM_HandleTypeDef* htim);
+//	void BuildMenu(int *currentNode);//const struct MenuItem *currentNode);// void (*DoWork)(void) , struct MenuItem *prevNode, struct MenuItem *nextNode,short num_submenus);
+	void displayString(char* strng);
+	void displayVar(short var);
+
+	void displayMenu(const MenuItem* menu, int elements);
+	void navigateMenu(const char* optn, MenuItem* currentMenu);
+
+//	void createMenu(const char** menu);
+//	void arrowDown();
+//	void arrowUp();
+//	void displayArrow();
+//	void next();
+//	void back();
+//	void printFlame();
+//	void pumpConnection();
+//	void flameIconCallback(TIM_HandleTypeDef* htim);
 };
-
-
-
-
-

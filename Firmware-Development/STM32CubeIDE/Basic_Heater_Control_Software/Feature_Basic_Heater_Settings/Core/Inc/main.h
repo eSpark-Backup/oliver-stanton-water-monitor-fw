@@ -49,6 +49,8 @@ extern "C" {
 
 /* USER CODE END EM */
 
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
@@ -65,8 +67,13 @@ void Error_Handler(void);
 #define VIOUT1_GPIO_Port GPIOB
 #define SW2_Pin GPIO_PIN_2
 #define SW2_GPIO_Port GPIOB
+#define SW2_EXTI_IRQn EXTI2_3_IRQn
 #define LCD_EN_Pin GPIO_PIN_7
 #define LCD_EN_GPIO_Port GPIOE
+#define LED_TOGGLE_Pin GPIO_PIN_8
+#define LED_TOGGLE_GPIO_Port GPIOE
+#define MEM_SAVER_Pin GPIO_PIN_10
+#define MEM_SAVER_GPIO_Port GPIOE
 #define PWM_CNTRL_Pin GPIO_PIN_12
 #define PWM_CNTRL_GPIO_Port GPIOE
 #define DB4_Pin GPIO_PIN_12
@@ -81,8 +88,12 @@ void Error_Handler(void);
 #define SHDN_GPIO_Port GPIOC
 #define IOC9_Pin GPIO_PIN_9
 #define IOC9_GPIO_Port GPIOC
+#define BUZZER_Pin GPIO_PIN_8
+#define BUZZER_GPIO_Port GPIOA
 #define Enable_Pin GPIO_PIN_12
 #define Enable_GPIO_Port GPIOC
+#define LEVEL_SENSOR_Pin GPIO_PIN_3
+#define LEVEL_SENSOR_GPIO_Port GPIOD
 #define W_LED_CTRL_Pin GPIO_PIN_4
 #define W_LED_CTRL_GPIO_Port GPIOD
 #define SW3_Pin GPIO_PIN_3
@@ -90,10 +101,13 @@ void Error_Handler(void);
 #define SW3_EXTI_IRQn EXTI2_3_IRQn
 #define SW4_Pin GPIO_PIN_4
 #define SW4_GPIO_Port GPIOB
+#define SW4_EXTI_IRQn EXTI4_15_IRQn
 #define SW5_Pin GPIO_PIN_5
 #define SW5_GPIO_Port GPIOB
+#define SW5_EXTI_IRQn EXTI4_15_IRQn
 #define SW6_Pin GPIO_PIN_6
 #define SW6_GPIO_Port GPIOB
+#define SW6_EXTI_IRQn EXTI4_15_IRQn
 #define INB_Pin GPIO_PIN_7
 #define INB_GPIO_Port GPIOB
 #define INA_Pin GPIO_PIN_8

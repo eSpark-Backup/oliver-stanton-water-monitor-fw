@@ -1,5 +1,5 @@
-
 #pragma once
+
 #include "stm32f0xx_hal.h"
 
 typedef enum{
@@ -10,6 +10,8 @@ typedef enum{
 	SW6,
 	SW7
 }SWITCH;
+
+
 class Switches {
 public:
 	bool getState(SWITCH);

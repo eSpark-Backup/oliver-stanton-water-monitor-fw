@@ -3,6 +3,7 @@
 #include <functional>
 #include <main.h>
 #include "stm32f0xx_hal.h"
+
 typedef std::function<void(TIM_HandleTypeDef* htim)> pumpCallback;
 typedef std::function<void(TIM_HandleTypeDef* htim)> flameCallback;
 typedef void (*extiCallback)(uint16_t GPIO_Pin,TIM_HandleTypeDef* htim);
