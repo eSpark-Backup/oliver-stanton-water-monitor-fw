@@ -14,9 +14,12 @@
 
 class CDC_Serial: public Display{
 public:
+	void itemsToDisplay(int elements) override;
 	void displayString(const char* strng) override;
 	void displayChoice(short var) override;
-	void displayVar(short var, char* n) override;
+	void displayVar(uint32_t var, char* n) override;
+
+	~CDC_Serial() override {}
 };
 
 

@@ -57,8 +57,6 @@
 /* External variables --------------------------------------------------------*/
 extern PCD_HandleTypeDef hpcd_USB_FS;
 extern TIM_HandleTypeDef htim1;
-extern TIM_HandleTypeDef htim2;
-extern TIM_HandleTypeDef htim17;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -169,7 +167,7 @@ void EXTI4_15_IRQHandler(void)
   HAL_GPIO_EXTI_IRQHandler(SW4_Pin);
   HAL_GPIO_EXTI_IRQHandler(SW5_Pin);
   HAL_GPIO_EXTI_IRQHandler(SW6_Pin);
-  HAL_GPIO_EXTI_IRQHandler(PIR_OUT_Pin);
+  HAL_GPIO_EXTI_IRQHandler(SW7_Pin);
   /* USER CODE BEGIN EXTI4_15_IRQn 1 */
 
   /* USER CODE END EXTI4_15_IRQn 1 */
@@ -201,34 +199,6 @@ void TIM1_CC_IRQHandler(void)
   /* USER CODE BEGIN TIM1_CC_IRQn 1 */
 
   /* USER CODE END TIM1_CC_IRQn 1 */
-}
-
-/**
-  * @brief This function handles TIM2 global interrupt.
-  */
-void TIM2_IRQHandler(void)
-{
-  /* USER CODE BEGIN TIM2_IRQn 0 */
-
-  /* USER CODE END TIM2_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim2);
-  /* USER CODE BEGIN TIM2_IRQn 1 */
-
-  /* USER CODE END TIM2_IRQn 1 */
-}
-
-/**
-  * @brief This function handles TIM17 global interrupt.
-  */
-void TIM17_IRQHandler(void)
-{
-  /* USER CODE BEGIN TIM17_IRQn 0 */
-
-  /* USER CODE END TIM17_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim17);
-  /* USER CODE BEGIN TIM17_IRQn 1 */
-
-  /* USER CODE END TIM17_IRQn 1 */
 }
 
 /**

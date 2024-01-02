@@ -13,10 +13,13 @@
 #include "CDC_Serial.h"
 
 
+void CDC_Serial::itemsToDisplay(int elements){
+
+}
 
 void CDC_Serial::displayString(const char* strng){
 	char buffer[100];
-	int len = sprintf(buffer, "%s\r\n", strng);
+	int len = sprintf(buffer, "%s\r\n", strng);					//------  %s\r\n  -----
     HAL_Delay(1);    CDC_Transmit_FS((uint8_t *)buffer, len);
 }
 
@@ -26,9 +29,9 @@ void CDC_Serial::displayChoice(short ch){
     HAL_Delay(1);    CDC_Transmit_FS((uint8_t *)buffer, len);
 }
 
-void CDC_Serial::displayVar(short var, char* n){
+void CDC_Serial::displayVar(uint32_t var, char* n){
 	char buffer[50];  // Adjust the buffer size accordingly
-	int len = sprintf(buffer, "Variable is: %s ", n);
+	int len = sprintf(buffer, "%s", n);
 	HAL_Delay(1);    CDC_Transmit_FS((uint8_t *)buffer, len);
 	len = sprintf(buffer, " %d\r\n", var);
     HAL_Delay(1);    CDC_Transmit_FS((uint8_t *)buffer, len);

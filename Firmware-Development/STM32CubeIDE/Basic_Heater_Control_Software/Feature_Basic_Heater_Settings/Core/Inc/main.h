@@ -36,6 +36,7 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
+static TIM_HandleTypeDef htim1;
 
 /* USER CODE END ET */
 
@@ -59,39 +60,36 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define LCD_RS_Pin GPIO_PIN_6
-#define LCD_RS_GPIO_Port GPIOE
-#define LED_Pin GPIO_PIN_13
-#define LED_GPIO_Port GPIOC
-#define VIOUT1_Pin GPIO_PIN_0
-#define VIOUT1_GPIO_Port GPIOB
+#define LED1_Pin GPIO_PIN_13
+#define LED1_GPIO_Port GPIOC
+#define LED2_Pin GPIO_PIN_6
+#define LED2_GPIO_Port GPIOA
 #define SW2_Pin GPIO_PIN_2
 #define SW2_GPIO_Port GPIOB
 #define SW2_EXTI_IRQn EXTI2_3_IRQn
-#define LCD_EN_Pin GPIO_PIN_7
-#define LCD_EN_GPIO_Port GPIOE
-#define LED_TOGGLE_Pin GPIO_PIN_8
-#define LED_TOGGLE_GPIO_Port GPIOE
+#define LED3_Pin GPIO_PIN_8
+#define LED3_GPIO_Port GPIOE
 #define MEM_SAVER_Pin GPIO_PIN_10
 #define MEM_SAVER_GPIO_Port GPIOE
 #define PWM_CNTRL_Pin GPIO_PIN_12
 #define PWM_CNTRL_GPIO_Port GPIOE
-#define DB4_Pin GPIO_PIN_12
-#define DB4_GPIO_Port GPIOB
-#define DB5_Pin GPIO_PIN_13
-#define DB5_GPIO_Port GPIOB
-#define DB6_Pin GPIO_PIN_14
-#define DB6_GPIO_Port GPIOB
-#define DB7_Pin GPIO_PIN_15
-#define DB7_GPIO_Port GPIOB
-#define SHDN_Pin GPIO_PIN_6
-#define SHDN_GPIO_Port GPIOC
-#define IOC9_Pin GPIO_PIN_9
-#define IOC9_GPIO_Port GPIOC
+#define SW7_Pin GPIO_PIN_8
+#define SW7_GPIO_Port GPIOD
+#define SW7_EXTI_IRQn EXTI4_15_IRQn
+#define AuxHeater_Pin GPIO_PIN_9
+#define AuxHeater_GPIO_Port GPIOD
+#define SHDN_shutdown_Pin GPIO_PIN_6
+#define SHDN_shutdown_GPIO_Port GPIOC
+#define AUTO_FILL_Pin GPIO_PIN_7
+#define AUTO_FILL_GPIO_Port GPIOC
+#define MainHeater_Pin GPIO_PIN_9
+#define MainHeater_GPIO_Port GPIOC
 #define BUZZER_Pin GPIO_PIN_8
 #define BUZZER_GPIO_Port GPIOA
-#define Enable_Pin GPIO_PIN_12
-#define Enable_GPIO_Port GPIOC
+#define PUMPS_Control_Pin GPIO_PIN_12
+#define PUMPS_Control_GPIO_Port GPIOC
+#define RO_SAVER_Pin GPIO_PIN_2
+#define RO_SAVER_GPIO_Port GPIOD
 #define LEVEL_SENSOR_Pin GPIO_PIN_3
 #define LEVEL_SENSOR_GPIO_Port GPIOD
 #define W_LED_CTRL_Pin GPIO_PIN_4
@@ -108,13 +106,12 @@ void Error_Handler(void);
 #define SW6_Pin GPIO_PIN_6
 #define SW6_GPIO_Port GPIOB
 #define SW6_EXTI_IRQn EXTI4_15_IRQn
-#define INB_Pin GPIO_PIN_7
-#define INB_GPIO_Port GPIOB
-#define INA_Pin GPIO_PIN_8
-#define INA_GPIO_Port GPIOB
-#define PIR_OUT_Pin GPIO_PIN_9
-#define PIR_OUT_GPIO_Port GPIOB
-#define PIR_OUT_EXTI_IRQn EXTI4_15_IRQn
+#define _PUMP2_Pin GPIO_PIN_7
+#define _PUMP2_GPIO_Port GPIOB
+#define _PUMP1_Pin GPIO_PIN_8
+#define _PUMP1_GPIO_Port GPIOB
+#define PIR_Pin GPIO_PIN_9
+#define PIR_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
