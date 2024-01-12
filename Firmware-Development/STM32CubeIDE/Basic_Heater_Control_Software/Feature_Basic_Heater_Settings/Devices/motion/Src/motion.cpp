@@ -25,6 +25,6 @@ void MotionSensor::setMotionFlag(bool state){
 }
 void MotionSensor::setup()
 {
-	registerCallback(std::bind(&MotionSensor::motionDetected,this));
+//	registerCallback(std::bind(&MotionSensor::motionDetected,this));
 }
 

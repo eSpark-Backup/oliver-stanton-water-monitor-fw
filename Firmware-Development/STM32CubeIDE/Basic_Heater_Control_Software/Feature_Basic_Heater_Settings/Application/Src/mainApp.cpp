@@ -1,19 +1,19 @@
 #include "main.h"
 #include "mainApp.hpp"
 #include "stm32f0xx_hal.h"
-//#include "usb_device.h"
 #include "switches.hpp"
-//#include "motion.hpp"
 #include "menu.h"
 #include "menuList.h"
 #include "motorDriver.h"
 #include "flash.h"
-//#include "callbacks.h"
 #include "Display.h"
 #include "CDC_Serial.h"
 #include "controls.h"
 #include "flagHandle.h"
 #include "eventHandle.hpp"
+//#include "TDS.hpp"
+
+#include "_DEBUG_.h"
 
 //#include "usbd_cdc_if.h"
 
@@ -24,9 +24,21 @@ BUTTON buttonStateE;			//Enter/OK button obj
 BUTTON buttonStateB;			//Back button obj
 BUTTON buttonStateU;			//UP button obj
 BUTTON buttonStateD;			//Down button obj
-//Display* disp = new CDC_Serial;
-//flagHandle flags;
-//Menu menu;
+
+// generating struct for storing GPIO_Port and GPIO_Pins for TDS sensors
+static GPIOConfig TDS1;// = {TDS1_T2_GPIO_Port, TDS1_T1_GPIO_Port, ADC_CHANNEL_10, TDS1_T2_Pin, TDS1_T1_Pin, ADC_CHANNEL_11};
+static GPIOConfig TDS2;// = {TDS2_T2_GPIO_Port, TDS2_T1_GPIO_Port, ADC_CHANNEL_14, TDS2_T2_Pin, TDS2_T1_Pin, ADC_CHANNEL_15};
+static GPIOConfig TDS3;// = {TDS3_T2_GPIO_Port, TDS3_T1_GPIO_Port, ADC_CHANNEL_12, TDS3_T2_Pin, TDS3_T1_Pin, ADC_CHANNEL_13};
+static GPIOConfig TDS4;// = {TDS4_T2_GPIO_Port, TDS4_T1_GPIO_Port, ADC_CHANNEL_1, TDS4_T2_Pin, TDS4_T1_Pin, ADC_CHANNEL_2};
+//Now declare TDS class objects for TDS sensors
+extern TDS tds1; //= TDS(TDS1);
+extern TDS tds2; //= TDS(TDS2);
+extern TDS tds3; //= TDS(TDS3);
+extern TDS tds4; //= TDS(TDS4);
+
+extern eventHandle Buzzzer;
+extern eventHandle WLED1;
+
 
 //motionCallback motionPtr;
 //extern ADC_HandleTypeDef hadc;
@@ -61,12 +73,7 @@ uint32_t buttonPressTime;
 //extern int nextMenu;
 //#define HEATER_STATE_ADDRESS 0x0801F800
 
-///-------------------------------------Function declarations--------------
-//--------------------------------------declared in controls.h-------------
 
-
-///-----------------------------------Creating Menu Items List-------------
-//-------------------------------------created in  menuList.h-------------
 
 
 void MainApp::setup()
@@ -82,21 +89,19 @@ void MainApp::setup()
 //	motor.enablePump2();
 //	motor.setZeroReference();
 
+
+
 	currentM = (int*)(Intro);
 	currentE = sizeof(Intro) / sizeof(Intro[0]);
 	HAL_Delay(2000);  		menu.displayMenu((MenuItem*)currentM, currentE);
 
-	TIM17->CCR1 = 50;
-	TIM1->SR &= ~TIM_SR_UIF;
+//	TIM17->CCR1 = 50;
+//	TIM1->SR &= ~TIM_SR_UIF;
 
-	HAL_TIM_Base_Start_IT(&htim1);
+//	HAL_TIM_Base_Start_IT(&htim6);
 
-//	int time = HAL_GetTick();
-//	char strng[50];
-//	int len = sprintf(strng, "Time: %d\r\n", time);
-//	HAL_Delay(1);    CDC_Transmit_FS((uint8_t *)strng, len);
-
-//	flags.flagsInit();
+	flags.flagsInit();
+	DEBUG_A("Heater Controller Initialization complete.");
 }
 
 void MainApp::loop()
@@ -107,50 +112,40 @@ void MainApp::loop()
 	buttonStateU = switche.getState(UP);
 	buttonStateD = switche.getState(DOWN);
 	if (buttonStateU.state){//sw4Flag==true){
+		DEBUG_I("*******up button pressed.*******");
+		DEBUG_("buttonStateU.state : %d\nbuttonStateU.period : %d", buttonStateU.state, buttonStateU.period);
 		if(buttonStateU.period < single_press)
 			menu.navigateMenu("up", (MenuItem*)currentM);
-#ifdef _DEBUG_
-		dispdebug->displayString("*******up button pressed.*******");
-		dispdebug->displayVar(buttonStateU.state, "buttonStateU.state : ");
-		dispdebug->displayVar(buttonStateU.period, "buttonStateU.period : ");
-#endif
 		buttonStateU = {false, 0};
 	}
 	if (buttonStateD.state){
+		DEBUG_I("*******down button pressed.*******");
+		DEBUG_("buttonStateD.state : %d\nbuttonStateD.period : %d", buttonStateD.state, buttonStateD.period);
 		if(buttonStateD.period < single_press)
 			menu.navigateMenu("down", (MenuItem*)currentM);
-#ifdef _DEBUG_
-		dispdebug->displayString("*******down button pressed.*******");
-		dispdebug->displayVar(buttonStateD.state, "buttonStateD.state : ");
-		dispdebug->displayVar(buttonStateD.period, "buttonStateD.period : ");
-#endif
 		buttonStateD = {false, 0};
 		}
 	if (buttonStateE.state){
+		DEBUG_I("*******enter button pressed.*******");
+		DEBUG_("buttonStateE.state : %d\nbuttonStateE.period : %d", buttonStateE.state, buttonStateE.period);
 //		if(buttonStateE.period < single_press)
 			menu.navigateMenu("enter", (MenuItem*)currentM);
-#ifdef _DEBUG_
-		dispdebug->displayString("*******enter button pressed.*******");
-		dispdebug->displayVar(buttonStateE.state, "buttonStateE.state : ");
-		dispdebug->displayVar(buttonStateE.period, "buttonStateE.period : ");
-#endif
 		buttonStateE = {false, 0};
 		}
 	if (buttonStateB.state){
+		DEBUG_I("*******back button pressed.*******");
+		DEBUG_("buttonStateB.state : %d\nbuttonStateB.period : %d", buttonStateB.state, buttonStateB.period);
 		if(buttonStateB.period < single_press)
 			menu.navigateMenu("back", (MenuItem*)currentM);
-#ifdef _DEBUG_
-		dispdebug->displayString("*******back button pressed.*******");
-		dispdebug->displayVar(buttonStateB.state, "buttonStateB.state : ");
-		dispdebug->displayVar(buttonStateB.period, "buttonStateB.period : ");
-#endif
 		buttonStateB = {false, 0};
 		}
 
 	flags.update();
 	Mem_Saver_ST3();
-//	RO_Saver_ST1();
-//	dispdebug->displayVar(flags.timeElapsed(MEM_Saver, MEM_Saver_Pause_Timeout), " MEM_Saver_Pause_Timeout: ");
+	RO_Saver_ST1();
+	Buzzzer.Run();
+	WLED1.Run();
+
 
 //	HAL_Delay(1000);
 }
@@ -164,20 +159,41 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	{	}
 	else if(GPIO_Pin==UP_Button)		{
 			UP_Flag=true;
-//			switche.saveTime();
 		}
 	else if(GPIO_Pin==ENTER_Button)		{
 			ENTER_Flag=true;
-//			switche.saveTime();
 		}
 	else if(GPIO_Pin==BACK_Button)		{
 			BACK_Flag=true;
-//			switche.saveTime();
 		}
 	else if(GPIO_Pin==DOWN_Button)		{
 			DOWN_Flag=true;
-//			switche.saveTime();
 		}
 	}
 }
 
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
+{
+	if(htim->Instance == TIM6)
+	{
+		DEBUG_E("%d", HAL_GetTick());
+	}
+}
+
+#ifdef  USE_FULL_ASSERT
+/**
+  * @brief  Reports the name of the source file and the source line number
+  *         where the assert_param error has occurred.
+  * @param  file: pointer to the source file name
+  * @param  line: assert_param error line source number
+  * @retval None
+  */
+void assert_failed(uint8_t *file, uint32_t line)
+{
+  /* USER CODE BEGIN 6 */
+  /* User can add his own implementation to report the file name and line number,
+     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+	DEBUG_E("Error@%s on line %d", file, line);
+  /* USER CODE END 6 */
+}
+#endif /* USE_FULL_ASSERT */

@@ -33,7 +33,7 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu){
 	uint8_t num_childs = currentMenu->num_childmenus;
 	uint8_t num_items = currentMenu->num_items;
 	uint8_t c = choiceSelect ;				//when referencing value of "c" in currentMenu we will use "c-1" since arrays start from 0
-
+//	DEBUG_I("Inside navigateMenu()");
 	//when UP button is pressed
 	if(strcmp(optn, "up") == 0 && num_items > 1){
 		if(c==num_items){

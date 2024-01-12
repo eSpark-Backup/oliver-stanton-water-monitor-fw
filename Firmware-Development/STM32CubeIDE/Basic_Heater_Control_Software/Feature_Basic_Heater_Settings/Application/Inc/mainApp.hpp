@@ -6,23 +6,14 @@
 #include <functional>
 #include "Display.h"
 #include "CDC_Serial.h"
+#include "TDS.hpp"
+//#include "eventHandle.hpp"
 
 /*--------------debug-------------------*/
-//#define _DEBUG_										//un-comment these three lines for receiving
-#include "usbd_cdc_if.h"								//debugging messages on USB serial port
-static Display* dispdebug = new CDC_Serial;				//Debugs will always be on USB_CDC
+//#define _DEBUG_										//un-comment these three lines for receiving DEBUG Messages
+#define USE_FULL_ASSERT 1
 
 /* Private defines -----------------------------------------------------------*/
-//#define LED_TOGGLE_Pin GPIO_PIN_8
-//#define LED_TOGGLE_GPIO_Port GPIOE
-//#define MEM_SAVER_Pin GPIO_PIN_10
-//#define MEM_SAVER_GPIO_Port GPIOE
-//#define BUZZER_Pin GPIO_PIN_8
-//#define BUZZER_GPIO_Port GPIOA
-//#define LEVEL_SENSOR_Pin GPIO_PIN_3
-//#define LEVEL_SENSOR_GPIO_Port GPIOD
-//#define W_LED_CTRL_Pin GPIO_PIN_4
-//#define W_LED_CTRL_GPIO_Port GPIOD
 
 #define UP_Button			SW4_Pin
 #define UP_Button_Port		SW4_GPIO_Port
@@ -37,9 +28,10 @@ static Display* dispdebug = new CDC_Serial;				//Debugs will always be on USB_CD
 #define BACK_Button_Port	SW5_GPIO_Port
 #define BACK_Flag			sw5Flag
 
-//#define PIR_OUT_Pin GPIO_PIN_9
-//#define PIR_OUT_GPIO_Port GPIOB
-//#define PIR_OUT_EXTI_IRQn EXTI4_15_IRQn
+
+
+
+
 //-----------------------------------------------------------------------------------------
 
 class MainApp {

@@ -15,7 +15,7 @@ public:
 	void disablePump2();
 	void enableDT1();
 	void disableDT1();
-	void pumpConnectivityCallback(TIM_HandleTypeDef* htim);
+//	void pumpConnectivityCallback(TIM_HandleTypeDef* htim);
 	float getCurrent();
 	void enable();
 	void setFlag(bool );

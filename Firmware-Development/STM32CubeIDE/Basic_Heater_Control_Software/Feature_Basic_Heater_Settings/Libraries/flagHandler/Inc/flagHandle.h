@@ -9,68 +9,16 @@
 #ifndef INC_FLAGHANDLE_H_
 #define INC_FLAGHANDLE_H_
 
-//#include "stm32f0xx_hal.h"
 #include "main.h"
 #include "mainApp.hpp"
 #include "flash.h"
-
-
-///----------------------un-comment this part--------------------------
-//typedef union
-//{
-//	uint32_t flags;
-//   struct {
-//   uint32_t Resin_Saver     :1;			//LSB
-//   uint32_t Prop_Mixing     :1;
-//   uint32_t Mem_Saver       :1;
-//   uint32_t Auto_Flush      :1;
-//   uint32_t Auto_Fill       :1;
-//   uint32_t Pump_1          :1;
-//   uint32_t Pump_2          :1;
-//   uint32_t Buzzer          :1;
-//   uint32_t Main_Heater     :1;
-//   uint32_t Aux_Heater      :1;
-//   uint32_t Pressure_Sensor :1;
-//   uint32_t Flow_Meter_1    :1;
-//   uint32_t Flow_Meter_2    :1;
-//   uint32_t Flow_Meter_3    :1;
-//   uint32_t Level_Sensor    :1;
-//   uint32_t _8              :1;
-//   } status;
-//   struct {
-//   uint32_t 		        :16;
-//   uint32_t Resin_Saver     :1;
-//   uint32_t Prop_Mixing     :1;
-//   uint32_t Mem_Saver       :1;
-//   uint32_t Auto_Flush      :1;
-//   uint32_t Auto_Fill       :1;
-//   uint32_t Pump_1          :1;
-//   uint32_t Pump_2          :1;
-//   uint32_t Buzzer          :1;
-//   uint32_t Main_Heater     :1;
-//   uint32_t Aux_Heater      :1;
-//   uint32_t WLED			:1;
-//   uint32_t Flow_Meter_1    :1;
-//   uint32_t Flow_Meter_2    :1;
-//   uint32_t Flow_Meter_3    :1;
-//   uint32_t RGB			    :1;
-//   uint32_t FillOnDemand    :1;			//MSB
-//   } settings;
-//} flagRegister;
-//
-//extern flagRegister flagsReg;
-///-----------------------------------------------------------------------------------------
-
-
-
-
 
 
 class flagHandle{
 public:
 //	flagHandle(){}
 	static flagHandle& getInstance() {
-		static flagHandle instance; // Guaranteed to be destroyed, instantiated on first use
+		static flagHandle instance; 			// Guaranteed to be destroyed, instantiated on first use
 		return instance;
 	}
 
@@ -83,8 +31,12 @@ public:
 	void flagsInit(void);
 
 private:
-	flagHandle(){}
-	~flagHandle(){}
+	flagHandle(){
+		DEBUG_W("flagHandler obj constructor called");
+	}
+	~flagHandle(){
+		DEBUG_W("flagHandler obj destructor called");
+	}
 
 protected:
 	typedef union
@@ -94,7 +46,6 @@ protected:
 	   uint64_t _8              :1;			//LSB
 	   uint64_t Prop_Mixing     :1;
 	   uint64_t Auto_Flush      :1;
-	   uint64_t Auto_Fill       :1;
 	   uint64_t Pump_1          :1;
 	   uint64_t Pump_2          :1;
 	   uint64_t Main_Heater     :1;
@@ -103,17 +54,19 @@ protected:
 	   uint64_t Flow_Meter_1    :1;
 	   uint64_t Flow_Meter_2    :1;
 	   uint64_t Flow_Meter_3    :1;
+	   uint64_t Pure_CYCLE      :1;
+	   uint64_t Auto_Fill       :1;
 	   uint64_t Resin_Saver     :1;
-	   uint64_t Mem_Saver       :1;			//will be used
-	   uint64_t Level_Sensor    :1;			//in use
+	   uint64_t Mem_Saver       :1;
+	   uint64_t Level_Sensor    :1;
 	   uint64_t Buzzer          :1;
+	   uint64_t WLED          	:1;
 	   } status;
 	   struct {
 	   uint64_t 		        :32;
 	   uint64_t Prop_Mixing     :1;
-	   uint64_t        			:1;			//will be used
+	   uint64_t        			:1;
 	   uint64_t Auto_Flush      :1;
-	   uint64_t Auto_Fill       :1;
 	   uint64_t Pump_1          :1;
 	   uint64_t Pump_2          :1;
 	   uint64_t Main_Heater     :1;
@@ -121,10 +74,11 @@ protected:
 	   uint64_t Flow_Meter_1    :1;
 	   uint64_t Flow_Meter_2    :1;
 	   uint64_t Flow_Meter_3    :1;
+	   uint64_t Auto_Fill       :1;
 	   uint64_t Resin_Saver     :1;
 	   uint64_t Mem_Saver_Pause :1;
 	   uint64_t Mem_Saver	    :1;
-	   uint64_t FillOnDemand    :1;							//in use
+	   uint64_t FillOnDemand    :1;
 	   uint64_t Buzzer          :1;
 	   uint64_t WLED			:1;
 	   uint64_t RGB			    :1;			//MSB

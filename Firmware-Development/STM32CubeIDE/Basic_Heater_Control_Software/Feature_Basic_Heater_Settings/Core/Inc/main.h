@@ -36,7 +36,13 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-static TIM_HandleTypeDef htim1;
+static ADC_HandleTypeDef hadc;
+extern TIM_HandleTypeDef htim1;
+extern TIM_HandleTypeDef htim6;
+//static TIM_HandleTypeDef htim2;
+//static TIM_HandleTypeDef htim17;
+
+
 
 /* USER CODE END ET */
 
@@ -60,10 +66,34 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define TDS3_T1_Pin GPIO_PIN_2
+#define TDS3_T1_GPIO_Port GPIOE
+#define TDS3_T2_Pin GPIO_PIN_3
+#define TDS3_T2_GPIO_Port GPIOE
 #define LED1_Pin GPIO_PIN_13
 #define LED1_GPIO_Port GPIOC
+#define TDS1_AN1_Pin GPIO_PIN_0
+#define TDS1_AN1_GPIO_Port GPIOC
+#define TDS1_AN2_Pin GPIO_PIN_1
+#define TDS1_AN2_GPIO_Port GPIOC
+#define TDS3_AN1_Pin GPIO_PIN_2
+#define TDS3_AN1_GPIO_Port GPIOC
+#define TDS3_AN2_Pin GPIO_PIN_3
+#define TDS3_AN2_GPIO_Port GPIOC
+#define TDS4_AN1_Pin GPIO_PIN_1
+#define TDS4_AN1_GPIO_Port GPIOA
+#define TDS4_AN2_Pin GPIO_PIN_2
+#define TDS4_AN2_GPIO_Port GPIOA
+#define TDS4_T1_Pin GPIO_PIN_4
+#define TDS4_T1_GPIO_Port GPIOA
+#define TDS4_T2_Pin GPIO_PIN_5
+#define TDS4_T2_GPIO_Port GPIOA
 #define LED2_Pin GPIO_PIN_6
 #define LED2_GPIO_Port GPIOA
+#define TDS2_AN1_Pin GPIO_PIN_4
+#define TDS2_AN1_GPIO_Port GPIOC
+#define TDS2_AN2_Pin GPIO_PIN_5
+#define TDS2_AN2_GPIO_Port GPIOC
 #define SW2_Pin GPIO_PIN_2
 #define SW2_GPIO_Port GPIOB
 #define SW2_EXTI_IRQn EXTI2_3_IRQn
@@ -78,6 +108,10 @@ void Error_Handler(void);
 #define SW7_EXTI_IRQn EXTI4_15_IRQn
 #define AuxHeater_Pin GPIO_PIN_9
 #define AuxHeater_GPIO_Port GPIOD
+#define TDS1_T1_Pin GPIO_PIN_14
+#define TDS1_T1_GPIO_Port GPIOD
+#define TDS1_T2_Pin GPIO_PIN_15
+#define TDS1_T2_GPIO_Port GPIOD
 #define SHDN_shutdown_Pin GPIO_PIN_6
 #define SHDN_shutdown_GPIO_Port GPIOC
 #define AUTO_FILL_Pin GPIO_PIN_7
@@ -112,6 +146,10 @@ void Error_Handler(void);
 #define _PUMP1_GPIO_Port GPIOB
 #define PIR_Pin GPIO_PIN_9
 #define PIR_GPIO_Port GPIOB
+#define TDS2_T1_Pin GPIO_PIN_0
+#define TDS2_T1_GPIO_Port GPIOE
+#define TDS2_T2_Pin GPIO_PIN_1
+#define TDS2_T2_GPIO_Port GPIOE
 
 /* USER CODE BEGIN Private defines */
 

@@ -1,0 +1,90 @@
+/*
+ * TDS.hpp
+ *
+ *  Created on: Jan 4, 2024
+ *      Author: Farhan Ahmed
+ */
+#pragma once
+
+#ifndef TDS_INC_TDS_HPP_
+#define TDS_INC_TDS_HPP_
+
+#include "_DEBUG_.h"
+#include "main.h"
+
+#define TDSDUMMYVALUE 18000
+
+
+/* The Physical header of TDS probes are mentioned below
+ *
+ * 		-	3.3				//3.3v power to daughter board
+ * 		-	AN1				//Main analog read pin, read this pin to find out the TDS value
+ * 		-	T2				//Calibration pin, give high on this pin to receive max value on AN1 pin
+ * 		-	T1				//TDS enable pin?,	connected directly to one of the probes, enable this pin to get reading on AN1
+ * 		-	AN2				//Analog read pin of the probe's second pin (or) maybe it can be used for calibration
+ * 		-	GND				//GND
+ */
+
+struct GPIOConfig {
+//	GPIO_TypeDef* AN1_port;
+	GPIO_TypeDef* T2_port;
+	GPIO_TypeDef* T1_port;
+//	GPIO_TypeDef* AN2_port;
+	uint16_t AN1_pin_Channel;
+	uint16_t T2_pin;
+	uint16_t T1_pin;
+	uint16_t AN2_pin_Channel;
+};
+
+
+
+class TDS{
+private:
+//	GPIO_TypeDef* AN1_port;
+//	GPIO_TypeDef* T2_port;
+//	GPIO_TypeDef* T1_port;
+//	GPIO_TypeDef* AN2_port;
+//	uint16_t AN1;
+//	uint16_t T2;
+//	uint16_t T1;
+//	uint16_t AN2;
+
+	GPIOConfig config;
+
+	float voltage;
+    float ecValue; //before temperature compensation
+    float ecValue25; //after temperature compensation
+    float temperature = 25.0;
+
+    float analogValueAN1;
+    float analogValueAN2;
+    float tdsValue = TDSDUMMYVALUE;
+//    float aref = 3.3;				//voltage reference, 3.3v
+//    float adcRange = 4096;			//12bit ADC
+//    float kValue;      // k value of the probe,you can calibrate in buffer solution ,such as 706.5ppm(1413us/cm)@25^C
+
+
+
+	void calculateTDS(void);
+	void ADC_Select_CH(uint32_t);
+	uint32_t getValue(void);
+public:
+	TDS(const GPIOConfig& config) : config(config) {
+	        // Constructor to initialize the GPIO port and pin
+	        // You may add more parameters as needed for your use case
+		DEBUG_W("TDS obj constructor called.");
+	}
+	~TDS(){
+		DEBUG_W("TDS obj destructor called.");
+	};
+
+
+	float readTDS(void);
+protected:
+
+
+};
+
+
+
+#endif /* TDS_INC_TDS_HPP_ */
