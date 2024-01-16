@@ -8,15 +8,15 @@
 //#include "mainApp.hpp"
 #include "controls.h"
 
-#define FoD_autoRun_delay_Period		60000				//60secs
-#define MEM_Saver_Pause_Timeout			900000				//15mins or 900secs
+#define FODAUTORUNDELAYPERIOD		60000				//60secs
+#define MEMSAVERPAUSETIMEOUT		900000				//15mins or 900secs
 
-short ro_saver_thresh_value = 0;
-short current_ro_value;
+short roSaverThreshValue = 0;
+//short currentRoValue;
 
 //***************************Buzzer*******************************
-eventHandle Buzzzer = eventHandle(BUZZER_GPIO_Port, BUZZER_Pin, true);
-eventHandle WLED1 = eventHandle(W_LED_CTRL_GPIO_Port, W_LED_CTRL_Pin, false);
+EventHandle Buzzzer = EventHandle(BUZZER_GPIO_Port, BUZZER_Pin, true);
+EventHandle WLED1 = EventHandle(W_LED_CTRL_GPIO_Port, W_LED_CTRL_Pin, false);
 
 //***************************TDS Sensor*******************************
 GPIOConfig TDS1 = {TDS1_T2_GPIO_Port, TDS1_T1_GPIO_Port, ADC_CHANNEL_10, TDS1_T2_Pin, TDS1_T1_Pin, ADC_CHANNEL_11};
@@ -28,7 +28,7 @@ TDS tds2 = TDS(TDS2);
 TDS tds3 = TDS(TDS3);
 TDS tds4 = TDS(TDS4);
 //*******************************************************************
-
+Menu menu;
 
 //--------------------------------Functions definitions-------------------------
 
@@ -39,173 +39,174 @@ float tds_Sensor(uint32_t channel){
 		return tds2.readTDS();
 	else if (channel == 1 || channel == 2)
 		return tds4.readTDS();
+	return 0;
 }
 //*******************************************************************
 
 
 //***********************Purefication Cycle**************************
 bool fodOFF(uint32_t){
-	if(flags.flagStatus(Settings, FoD)){
-		flags.setFlag(Settings, FoD, false);
+	if(Flags.flagStatus(Settings, FoD)){
+		Flags.setFlag(Settings, FoD, false);
 		DEBUG_W("Fill on Demand disabled");
 	}
-	if(buttonStateE.period > short_press && buttonStateE.period < long_long_press){
-		disp->displayString("System Purification stopped.");
-		flags.setFlag(Settings, MEM_Saver, false);
-		flags.setFlag(Settings, Mem_Saver_Pause, false);
-		invoke_ST3(false);
-		if(!RO_Saver_ST1())						//call RO_Saver function here
-			mainMenufunc();
+	if(ButtonE.period() > SHORTPRESS && ButtonE.period() < LONGLONGPRESS){
+		Disp->displayString("System Purification stopped.");
+		Flags.setFlag(Settings, MEM_Saver, false);
+		Flags.setFlag(Settings, Mem_Saver_Pause, false);
+		invokeST3(false);
+		if(!roSaverST1())						//call RO_Saver function here
+			mainMenuFunc();
 //		return true;
 	}
-	else if (buttonStateE.period < single_press){
-			flags.setFlag(Settings, Mem_Saver_Pause, false);
-			if(flags.flagStatus(Status, Level_Sensor) == true){
-				flags.setFlag(Settings, MEM_Saver, false);
+	else if (ButtonE.period() < SINGLEPRESS){
+			Flags.setFlag(Settings, Mem_Saver_Pause, false);
+			if(Flags.flagStatus(Status, Level_Sensor) == true){
+				Flags.setFlag(Settings, MEM_Saver, false);
 				fillOpen();
-				invoke_ST3(false);	}
-			else if(!flags.flagStatus(Settings, MEM_Saver)){
-				flags.setFlag(Settings, MEM_Saver, true);
-				disp->displayString("Starting Purification - System Filling.");
-				invoke_ST3(true);	}
+				invokeST3(false);	}
+			else if(!Flags.flagStatus(Settings, MEM_Saver)){
+//				Disp->displayString("Starting Purification - System Filling.");
+//				Flags.setFlag(Settings, MEM_Saver, true);
+//				Flags.setFlag(Status, Pure_CYCLE, true);
+				invokeST3(true);	}
 			else{
-				flags.setFlag(Settings, MEM_Saver, false);
-				flags.setFlag(Settings, Mem_Saver_Pause, true);
-				disp->displayString("System Purification paused.");
-				invoke_ST3(false);	}
+				Flags.setFlag(Settings, MEM_Saver, false);
+				Flags.setFlag(Settings, Mem_Saver_Pause, true);
+				Disp->displayString("System Purification paused.");
+				invokeST3(false);	}
 	}
 	return false;
 }
 
 bool fodON(uint32_t){
-	flags.setFlag(Settings, FoD, true);
-	flags.setFlag(Settings, MEM_Saver, true);
+	Flags.setFlag(Settings, FoD, true);
+	Flags.setFlag(Settings, MEM_Saver, true);
 	return true;
 }
 
-bool ro_saver_thresh_adj(uint32_t c){
-	ro_saver_thresh_value = c;
-	DEBUG_W("RO_Saver thresh value set to %d.", ro_saver_thresh_value);
+bool roSaverThreshAdj(uint32_t c){
+	roSaverThreshValue = c;
+	DEBUG_W("RO_Saver thresh value set to %d.", roSaverThreshValue);
 	return true;
 }
-bool ro_saver_thresh_default(uint32_t c){
-	ro_saver_thresh_value = 0;
-	DEBUG_W("RO_Saver thresh value set to %d.", ro_saver_thresh_value);
+bool roSaverThreshDefault(uint32_t c){
+	roSaverThreshValue = 0;
+	DEBUG_W("RO_Saver thresh value set to %d.", roSaverThreshValue);
 	return true;
 }
-bool ro_saver_On(uint32_t c){
-	flags.setFlag(Settings, RESIN_Saver, true);
+bool roSaverOn(uint32_t c){
+	Flags.setFlag(Settings, RESIN_Saver, true);
 	DEBUG_W("RO_Saver setting Turned on.");
 	return true;
 }
-bool ro_saver_Off(uint32_t c){
-	flags.setFlag(Settings, RESIN_Saver, false);
+bool roSaverOff(uint32_t c){
+	Flags.setFlag(Settings, RESIN_Saver, false);
 	DEBUG_W("RO_Saver setting Turned off.");
 	return true;
 }
 
-void mainMenufunc(){
+void mainMenuFunc(){
 	currentM = (int*)(mainMenu);
 	menu.displayMenu(mainMenu, mainMenu->num_items);
 }
 void fillOpen(){
-	disp->displayString("Tank Full - System not Filling");
-	invoke_ST3(false);
-	mainMenufunc();
+	Disp->displayString("Tank Full - System not Filling");
+	invokeST3(false);
+	DEBUG_W("SAVE LOG TO FILE HERE.");			//perform logging to file here
+	mainMenuFunc();
 	//add buzzer/LED warning handler here
 }
 
-void invoke_ST3(bool status){
-	if(flags.flagStatus(Status, MEM_Saver) != status){
-		flags.setFlag(Status, MEM_Saver, status);
+void invokeST3(bool status){
+	if(Flags.flagStatus(Status, MEM_Saver) != status){
+		Flags.setFlag(Status, MEM_Saver, status);
 	}
 	if(status)
 	{
+		Disp->displayString("Starting Purification - System Filling.");
+		Flags.setFlag(Settings, MEM_Saver, status);
+		Flags.setFlag(Status, Pure_CYCLE, status);
+		//perform logging function here
+		DEBUG_W("SAVE LOG TO FILE HERE.");			//perform logging to file here
+
 		Buzzzer.Init(2, 500, 1100, 500);
 		WLED1.Init(-1, 1000, 1000);				// -1 to run infinitely
 	}
 	else
-		WLED1.TurnOff();
-}
-
-void invoke_ST1(bool status){
-	if(flags.flagStatus(Status, RESIN_Saver) != status){
-		flags.setFlag(Status, RESIN_Saver, status);
+	{
+		Flags.setFlag(Settings, MEM_Saver, false);
+		WLED1.turnOff();
 	}
 }
 
-void invoke_ST5(bool status){
-	if(flags.flagStatus(Status, AUTO_Fill) != status){
-		flags.setFlag(Status, AUTO_Fill, status);
+void invokeST1(bool status){
+	if(Flags.flagStatus(Status, RESIN_Saver) != status){
+		Flags.setFlag(Status, RESIN_Saver, status);
 	}
 }
 
-bool RO_Saver_ST1(){
-	flags.update();
-//	DEBUG_W("RO_Saver_ST1() called.");
-//	DEBUG_W("flags.flagStatus(Settings, RESIN_Saver) %d", flags.flagStatus(Settings, RESIN_Saver));
-//	DEBUG_W("flags.flagStatus(Settings, MEM_Saver) %d", flags.flagStatus(Settings, MEM_Saver));
+void invokeST5(bool status){
+	if(Flags.flagStatus(Status, AUTO_Fill) != status){
+		Flags.setFlag(Status, AUTO_Fill, status);
+	}
+}
 
-	if(flags.flagStatus(Status, Pure_CYCLE) && flags.flagStatus(Settings, RESIN_Saver) && !flags.flagStatus(Status, MEM_Saver) && !flags.flagStatus(Status, AUTO_Fill)){
-		disp->displayString("Completing Purification Cycle - Dosing RO Membrane.");
-		invoke_ST1(true);
-		invoke_ST5(true);
-		flags.update();
+bool roSaverST1(){
+	Flags.update();
+	if(Flags.flagStatus(Status, Pure_CYCLE) && Flags.flagStatus(Settings, RESIN_Saver) && !Flags.flagStatus(Status, MEM_Saver) && !Flags.flagStatus(Status, AUTO_Fill)){
+		Disp->displayString("Completing Purification Cycle - Dosing RO Membrane.");
+		invokeST1(true);
+		invokeST5(true);
+		Flags.update();
 		return true;
 	}
-	else if(flags.flagStatus(Status, Pure_CYCLE) && flags.flagStatus(Status, AUTO_Fill)){
-		if(tds2.readTDS() < ro_saver_thresh_value){
-		disp->displayString("Purification Cycle Complete.");
-		invoke_ST1(false);
-		invoke_ST5(false);
-		flags.update();
-		flags.setFlag(Status, Pure_CYCLE, false);
-		mainMenufunc();
+	else if(Flags.flagStatus(Status, Pure_CYCLE) && Flags.flagStatus(Status, AUTO_Fill)){
+		if(tds2.readTDS() < roSaverThreshValue){
+		Disp->displayString("Purification Cycle Complete.");
+		invokeST1(false);
+		invokeST5(false);
+		Flags.update();
+		Flags.setFlag(Status, Pure_CYCLE, false);
+		mainMenuFunc();
 		return true;	}
 	}
-	else if(!flags.flagStatus(Settings, RESIN_Saver) && flags.flagStatus(Status, Pure_CYCLE) && flags.flagStatus(Status, Level_Sensor)){
-		flags.setFlag(Status, Pure_CYCLE, false);
-		disp->displayString("Tank Full, System Purification Stopped.");
-		mainMenufunc();
+	else if(!Flags.flagStatus(Settings, RESIN_Saver) && Flags.flagStatus(Status, Pure_CYCLE) && Flags.flagStatus(Status, Level_Sensor)){
+		Flags.setFlag(Status, Pure_CYCLE, false);
+		Disp->displayString("Tank Full, System Purification Stopped.");
+		mainMenuFunc();
 		return true;
 	}
-	else
+//	else
 		return false;
 }
 
-void Mem_Saver_ST3(){
-	flags.update();
-	if(flags.timeElapsed(MEM_Saver, MEM_Saver_Pause_Timeout) && flags.flagStatus(Settings, Mem_Saver_Pause)){
-		flags.setFlag(Settings, Mem_Saver_Pause, false);
-		DEBUG_W("***TIMEOUT OCCURRED***");
-		if(!RO_Saver_ST1())
-			mainMenufunc();
+void memSaverST3(){
+	Flags.update();
+	if(Flags.timeElapsed(MEM_Saver, MEMSAVERPAUSETIMEOUT) && Flags.flagStatus(Settings, Mem_Saver_Pause)){
+		Flags.setFlag(Settings, Mem_Saver_Pause, false);
+		DEBUG_W("***MEMSAVERPAUSETIMEOUT OCCURRED***");
+		if(!roSaverST1())
+			mainMenuFunc();
 	}
-	if(flags.flagStatus(Status, Level_Sensor) != false &&
-	   flags.flagStatus(Status, MEM_Saver) &&
-	   (flags.flagStatus(Settings, MEM_Saver) || flags.flagStatus(Settings, FoD) == true))
+	if(Flags.flagStatus(Status, Level_Sensor) != false &&
+	   Flags.flagStatus(Status, MEM_Saver) &&
+	   (Flags.flagStatus(Settings, MEM_Saver) || Flags.flagStatus(Settings, FoD) == true))
 	{
-			invoke_ST3(false);
-			RO_Saver_ST1();
+			invokeST3(false);
+//			Flags.setFlag(Settings, MEM_Saver, false);
+			roSaverST1();
 	}
-	else if(flags.timeElapsed(Level_Sensor, FoD_autoRun_delay_Period) &&
-			flags.flagStatus(Settings, FoD) == true &&
-			flags.flagStatus(Status, Level_Sensor) != true
-			&& flags.flagStatus(Status, MEM_Saver) != true)
+	else if(Flags.timeElapsed(Level_Sensor, FODAUTORUNDELAYPERIOD) &&
+			Flags.flagStatus(Settings, FoD) == true &&
+			Flags.flagStatus(Status, Level_Sensor) != true
+			&& Flags.flagStatus(Status, MEM_Saver) != true)
 	{
-				disp->displayString("Starting Purification - System Filling.");
-				flags.setFlag(Settings, MEM_Saver, true);
-				flags.setFlag(Status, Pure_CYCLE, true);
+//				Disp->displayString("Starting Purification - System Filling.");
+//				Flags.setFlag(Settings, MEM_Saver, true);
+//				Flags.setFlag(Status, Pure_CYCLE, true);
+//				DEBUG_W("SAVE LOG TO FILE HERE.");			//perform logging to file here
 
-				invoke_ST3(true);
+				invokeST3(true);
 	}
 }
-
-//void Buzzer_BUZZ(uint16_t x){
-////	TIM1->CCR1 = 50;
-//	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-//	HAL_Delay(x);
-//	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
-//}
-
-

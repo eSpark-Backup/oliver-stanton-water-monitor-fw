@@ -5,7 +5,7 @@
 #include "menu.h"
 #include "menuList.h"
 #include "motorDriver.h"
-#include "flash.h"
+//#include "flash.h"
 #include "Display.h"
 #include "CDC_Serial.h"
 #include "controls.h"
@@ -19,25 +19,25 @@
 
 
 
-Switches switche;
-BUTTON buttonStateE;			//Enter/OK button obj
-BUTTON buttonStateB;			//Back button obj
-BUTTON buttonStateU;			//UP button obj
-BUTTON buttonStateD;			//Down button obj
+//Switches switche;
+Switches ButtonE;			//Enter/OK Button obj
+Switches ButtonB;			//Back Button obj
+Switches ButtonU;			//UP Button obj
+Switches ButtonD;			//Down Button obj
 
 // generating struct for storing GPIO_Port and GPIO_Pins for TDS sensors
-static GPIOConfig TDS1;// = {TDS1_T2_GPIO_Port, TDS1_T1_GPIO_Port, ADC_CHANNEL_10, TDS1_T2_Pin, TDS1_T1_Pin, ADC_CHANNEL_11};
-static GPIOConfig TDS2;// = {TDS2_T2_GPIO_Port, TDS2_T1_GPIO_Port, ADC_CHANNEL_14, TDS2_T2_Pin, TDS2_T1_Pin, ADC_CHANNEL_15};
-static GPIOConfig TDS3;// = {TDS3_T2_GPIO_Port, TDS3_T1_GPIO_Port, ADC_CHANNEL_12, TDS3_T2_Pin, TDS3_T1_Pin, ADC_CHANNEL_13};
-static GPIOConfig TDS4;// = {TDS4_T2_GPIO_Port, TDS4_T1_GPIO_Port, ADC_CHANNEL_1, TDS4_T2_Pin, TDS4_T1_Pin, ADC_CHANNEL_2};
+//GPIOConfig TDS1;// = {TDS1_T2_GPIO_Port, TDS1_T1_GPIO_Port, ADC_CHANNEL_10, TDS1_T2_Pin, TDS1_T1_Pin, ADC_CHANNEL_11};
+//GPIOConfig TDS2;// = {TDS2_T2_GPIO_Port, TDS2_T1_GPIO_Port, ADC_CHANNEL_14, TDS2_T2_Pin, TDS2_T1_Pin, ADC_CHANNEL_15};
+//GPIOConfig TDS3;// = {TDS3_T2_GPIO_Port, TDS3_T1_GPIO_Port, ADC_CHANNEL_12, TDS3_T2_Pin, TDS3_T1_Pin, ADC_CHANNEL_13};
+//GPIOConfig TDS4;// = {TDS4_T2_GPIO_Port, TDS4_T1_GPIO_Port, ADC_CHANNEL_1, TDS4_T2_Pin, TDS4_T1_Pin, ADC_CHANNEL_2};
 //Now declare TDS class objects for TDS sensors
 extern TDS tds1; //= TDS(TDS1);
 extern TDS tds2; //= TDS(TDS2);
 extern TDS tds3; //= TDS(TDS3);
 extern TDS tds4; //= TDS(TDS4);
 
-extern eventHandle Buzzzer;
-extern eventHandle WLED1;
+extern EventHandle Buzzzer;
+extern EventHandle WLED1;
 
 
 //motionCallback motionPtr;
@@ -78,71 +78,52 @@ uint32_t buttonPressTime;
 
 void MainApp::setup()
 {
-//	HAL_GPIO_WritePin(GPIOE, PWM_CNTRL_Pin,GPIO_PIN_SET);
-//	HAL_GPIO_WritePin(GPIOE,PWM_CNTRL_Pin,GPIO_PIN_SET);
-//	HAL_TIM_Base_Start_IT(&htim2);
-//	HAL_TIM_Base_Stop_IT(&htim2);
-//	lcdObj.start();
-//	motor.enable();
-//	motor.enableDT1();
-//	motor.enablePump1();
-//	motor.enablePump2();
-//	motor.setZeroReference();
+	currentM = (int*)(intro);
+	HAL_Delay(2000);  		menu.displayMenu((MenuItem*)currentM, (sizeof(intro) / sizeof(intro[0])));
 
-
-
-	currentM = (int*)(Intro);
-	currentE = sizeof(Intro) / sizeof(Intro[0]);
-	HAL_Delay(2000);  		menu.displayMenu((MenuItem*)currentM, currentE);
-
-//	TIM17->CCR1 = 50;
-//	TIM1->SR &= ~TIM_SR_UIF;
-
-//	HAL_TIM_Base_Start_IT(&htim6);
-
-	flags.flagsInit();
+	Flags.flagsInit();				//initiate flags from flash
 	DEBUG_A("Heater Controller Initialization complete.");
 }
 
 void MainApp::loop()
 {
 
-	buttonStateE = switche.getState(EnterOK);
-	buttonStateB = switche.getState(Back);
-	buttonStateU = switche.getState(UP);
-	buttonStateD = switche.getState(DOWN);
-	if (buttonStateU.state){//sw4Flag==true){
-		DEBUG_I("*******up button pressed.*******");
-		DEBUG_("buttonStateU.state : %d\nbuttonStateU.period : %d", buttonStateU.state, buttonStateU.period);
-		if(buttonStateU.period < single_press)
+	ButtonE.getState(EnterOK);
+	ButtonB.getState(BACK);
+	ButtonU.getState(UP);
+	ButtonD.getState(DOWN);
+	if (ButtonU.state()){
+		DEBUG_I("*******up Button pressed.*******");
+		DEBUG_("ButtonU.state : %d\nButtonU.period : %d", ButtonU.state(), ButtonU.period());
+		if(ButtonU.period() < SINGLEPRESS)
 			menu.navigateMenu("up", (MenuItem*)currentM);
-		buttonStateU = {false, 0};
+		ButtonU.reset();
 	}
-	if (buttonStateD.state){
-		DEBUG_I("*******down button pressed.*******");
-		DEBUG_("buttonStateD.state : %d\nbuttonStateD.period : %d", buttonStateD.state, buttonStateD.period);
-		if(buttonStateD.period < single_press)
+	if (ButtonD.state()){
+		DEBUG_I("*******down Button pressed.*******");
+		DEBUG_("ButtonD.state : %d\nButtonD.period : %d", ButtonD.state(), ButtonD.period());
+		if(ButtonD.period() < SINGLEPRESS)
 			menu.navigateMenu("down", (MenuItem*)currentM);
-		buttonStateD = {false, 0};
+		ButtonD.reset();
 		}
-	if (buttonStateE.state){
-		DEBUG_I("*******enter button pressed.*******");
-		DEBUG_("buttonStateE.state : %d\nbuttonStateE.period : %d", buttonStateE.state, buttonStateE.period);
-//		if(buttonStateE.period < single_press)
+	if (ButtonE.state()){
+		DEBUG_I("*******enter Button pressed.*******");
+		DEBUG_("ButtonE.state : %d\nButtonE.period : %d", ButtonE.state(), ButtonE.period());
+//		if(ButtonE.period() < SINGLEPRESS)
 			menu.navigateMenu("enter", (MenuItem*)currentM);
-		buttonStateE = {false, 0};
+			ButtonE.reset();
 		}
-	if (buttonStateB.state){
-		DEBUG_I("*******back button pressed.*******");
-		DEBUG_("buttonStateB.state : %d\nbuttonStateB.period : %d", buttonStateB.state, buttonStateB.period);
-		if(buttonStateB.period < single_press)
+	if (ButtonB.state()){
+		DEBUG_I("*******back Button pressed.*******");
+		DEBUG_("ButtonB.state : %d\nButtonB.period : %d", ButtonB.state(), ButtonB.period());
+		if(ButtonB.period() < SINGLEPRESS)
 			menu.navigateMenu("back", (MenuItem*)currentM);
-		buttonStateB = {false, 0};
+		ButtonB.reset();
 		}
 
-	flags.update();
-	Mem_Saver_ST3();
-	RO_Saver_ST1();
+	Flags.update();
+	memSaverST3();
+	roSaverST1();
 	Buzzzer.Run();
 	WLED1.Run();
 
@@ -154,19 +135,19 @@ void MainApp::loop()
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if(!timeStamped)	{
-		switche.saveTime();
+		saveTime();
 	if(GPIO_Pin==SW3_Pin)
 	{	}
-	else if(GPIO_Pin==UP_Button)		{
+	else if(GPIO_Pin==UPBUTTON)		{
 			UP_Flag=true;
 		}
-	else if(GPIO_Pin==ENTER_Button)		{
+	else if(GPIO_Pin==ENTERBUTTON)		{
 			ENTER_Flag=true;
 		}
-	else if(GPIO_Pin==BACK_Button)		{
+	else if(GPIO_Pin==BACKBUTTON)		{
 			BACK_Flag=true;
 		}
-	else if(GPIO_Pin==DOWN_Button)		{
+	else if(GPIO_Pin==DOWNBUTTON)		{
 			DOWN_Flag=true;
 		}
 	}

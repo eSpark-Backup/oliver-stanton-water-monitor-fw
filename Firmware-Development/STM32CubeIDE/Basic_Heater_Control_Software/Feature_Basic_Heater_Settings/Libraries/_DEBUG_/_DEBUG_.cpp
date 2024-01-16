@@ -14,13 +14,12 @@
 
 int DEBUG_(const char *sFormat, ...) {
   int r;
-  va_list ParamList;
+  va_list paramList;
 
-  // Create a new formatted string with ANSI color codes
   char formattedString[512];  // Adjust the size as needed
-  va_start(ParamList, sFormat);
-  vsnprintf(formattedString, sizeof(formattedString), sFormat, ParamList);
-  va_end(ParamList);
+  va_start(paramList, sFormat);
+  vsnprintf(formattedString, sizeof(formattedString), sFormat, paramList);
+  va_end(paramList);
 
   // Concatenate ANSI color code with the formatted string
   char coloredString[700];  // Adjust the size as needed
@@ -34,13 +33,12 @@ int DEBUG_(const char *sFormat, ...) {
 
 int DEBUG_E(const char *sFormat, ...) {
   int r;
-  va_list ParamList;
+  va_list paramList;
 
-  // Create a new formatted string with ANSI color codes
   char formattedString[512];  // Adjust the size as needed
-  va_start(ParamList, sFormat);
-  vsnprintf(formattedString, sizeof(formattedString), sFormat, ParamList);
-  va_end(ParamList);
+  va_start(paramList, sFormat);
+  vsnprintf(formattedString, sizeof(formattedString), sFormat, paramList);
+  va_end(paramList);
 
   // Concatenate ANSI color code with the formatted string
   char coloredString[700];  // Adjust the size as needed
@@ -54,13 +52,12 @@ int DEBUG_E(const char *sFormat, ...) {
 
 int DEBUG_W(const char *sFormat, ...) {
   int r;
-  va_list ParamList;
+  va_list paramList;
 
-  // Create a new formatted string with ANSI color codes
   char formattedString[512];  // Adjust the size as needed
-  va_start(ParamList, sFormat);
-  vsnprintf(formattedString, sizeof(formattedString), sFormat, ParamList);
-  va_end(ParamList);
+  va_start(paramList, sFormat);
+  vsnprintf(formattedString, sizeof(formattedString), sFormat, paramList);
+  va_end(paramList);
 
   // Concatenate ANSI color code with the formatted string
   char coloredString[700];  // Adjust the size as needed
@@ -74,13 +71,12 @@ int DEBUG_W(const char *sFormat, ...) {
 
 int DEBUG_I(const char *sFormat, ...) {
   int r;
-  va_list ParamList;
+  va_list paramList;
 
-  // Create a new formatted string with ANSI color codes
   char formattedString[512];  // Adjust the size as needed
-  va_start(ParamList, sFormat);
-  vsnprintf(formattedString, sizeof(formattedString), sFormat, ParamList);
-  va_end(ParamList);
+  va_start(paramList, sFormat);
+  vsnprintf(formattedString, sizeof(formattedString), sFormat, paramList);
+  va_end(paramList);
 
   // Concatenate ANSI color code with the formatted string
   char coloredString[700];  // Adjust the size as needed
@@ -94,13 +90,12 @@ int DEBUG_I(const char *sFormat, ...) {
 
 int DEBUG_A(const char *sFormat, ...) {
   int r;
-  va_list ParamList;
+  va_list paramList;
 
-  // Create a new formatted string with ANSI color codes
   char formattedString[512];  // Adjust the size as needed
-  va_start(ParamList, sFormat);
-  vsnprintf(formattedString, sizeof(formattedString), sFormat, ParamList);
-  va_end(ParamList);
+  va_start(paramList, sFormat);
+  vsnprintf(formattedString, sizeof(formattedString), sFormat, paramList);
+  va_end(paramList);
 
   // Concatenate ANSI color code with the formatted string
   char coloredString[700];  // Adjust the size as needed

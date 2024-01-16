@@ -22,11 +22,18 @@ struct MenuItem {
 };
 
 //-----------declare MenuItem Structs defined in menuList.h down below ----------------
-extern struct MenuItem mainMenu[], fodMenu[], fodOptns[], ro_saver[], fodOptnsOff[], ro_saver_Optns[], ro_saver_thresh[], ro_saver_thresh_adjust[];
+extern struct MenuItem mainMenu[], fodMenu[], fodOptns[], roSaver[], fodOptnsOff[], roSaverOptns[], roSaverThresh[], roSaverThreshAdjust[];
 //-------------------------------------------------------------------------------------
 
 class Menu{
 public:
+	Menu(){
+		DEBUG_W("Menu obj constructor called");
+	}
+	~Menu(){
+		DEBUG_W("Menu obj destructor called");
+	}
+
 	void displayMenu(const MenuItem* menu, int elements);
 	void navigateMenu(const char* optn, MenuItem* currentMenu);
 

@@ -36,7 +36,7 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-static ADC_HandleTypeDef hadc;
+extern ADC_HandleTypeDef hadc;
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim6;
 //static TIM_HandleTypeDef htim2;

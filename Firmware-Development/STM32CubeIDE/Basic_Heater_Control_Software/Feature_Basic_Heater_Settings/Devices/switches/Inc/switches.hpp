@@ -11,21 +11,17 @@
 #include "mainApp.hpp"
 
 
-#define Debounce_Period 50
+#define DEBOUNCEPERIOD 70
 
 typedef enum{
 	EnterOK,
-	Back,
+	BACK,
 	UP,
 	DOWN
 //	RODI,
 //	DEL
 }SWITCHES;
 
-struct BUTTON{
-	uint16_t period;
-	bool state;
-};
 
 extern bool sw2Flag;
 extern bool sw3Flag;
@@ -40,10 +36,18 @@ extern uint32_t buttonPressTime;
 
 class Switches {
 public:
-	BUTTON getState(SWITCHES SW);
-	bool getState(SWITCHES SW, uint16_t period);
+	void getState(SWITCHES SW);
+	bool state(void);
+	uint16_t period(void);
 	bool isButtonPressed(SWITCHES SW);
 	bool isButtonStillPressed(SWITCHES SW);
-	bool resetButtonState(SWITCHES SW);
-	void saveTime(void);
+	void resetButtonState(SWITCHES SW);
+	void reset(void);
+private:
+	struct BUTTON{
+		uint16_t period;
+		bool state;
+	}button;
 };
+
+void saveTime(void);

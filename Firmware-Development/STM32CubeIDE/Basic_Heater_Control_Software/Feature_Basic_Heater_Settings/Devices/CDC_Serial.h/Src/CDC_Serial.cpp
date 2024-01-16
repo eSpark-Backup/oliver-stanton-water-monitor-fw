@@ -29,7 +29,7 @@ void CDC_Serial::displayChoice(short ch){
     HAL_Delay(1);    CDC_Transmit_FS((uint8_t *)buffer, len);
 }
 
-void CDC_Serial::displayVar(uint32_t var, char* n){
+void CDC_Serial::displayVar(int var, char* n){
 	char buffer[50];  // Adjust the buffer size accordingly
 	int len = sprintf(buffer, "%s", n);
 	HAL_Delay(1);    CDC_Transmit_FS((uint8_t *)buffer, len);

@@ -23,9 +23,9 @@ int *currentM;
 short choiceSelect = 0;
 
 void Menu::displayMenu(const MenuItem* menu, int elements) {
-	disp->itemsToDisplay(elements);
+	Disp->itemsToDisplay(elements);
     for(uint8_t count = 0; count < elements; count++){
-    	disp->displayString(menu[count].label);	}
+    	Disp->displayString(menu[count].label);	}
 }
 
 void Menu::navigateMenu(const char* optn, MenuItem* currentMenu){
@@ -40,7 +40,7 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu){
 			c=1;			}
 		else{
 			c += 1;		}
-		disp->displayChoice(c);
+		Disp->displayChoice(c);
 		choiceSelect = c;
 	}
 	//when DOWN button is pressed
@@ -49,7 +49,7 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu){
 			c=num_items;	}
 		else if (c>1){
 			c -= 1;		}
-		disp->displayChoice(c);
+		Disp->displayChoice(c);
 		choiceSelect = c;
 	}
 	//when BACK button is pressed
@@ -62,7 +62,7 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu){
 	//when ENTER button is pressed
 	if(strcmp(optn, "enter") == 0){
 			if(num_items>1 && c == 0){
-				disp->displayString("Choose one of the options.");
+				Disp->displayString("Choose one of the options.");
 			}
 			else if(num_items>1 && c != 0){
 //				displayMenu(currentMenu[c-1], num_items);

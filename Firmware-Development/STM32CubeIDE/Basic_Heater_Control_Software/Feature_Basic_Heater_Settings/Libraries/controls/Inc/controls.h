@@ -22,15 +22,15 @@
 #include "TDS.hpp"
 
 //-------button press durations
-#define single_press	800
-#define short_press		2000
-#define long_press		3000
-#define long_long_press	5000
+#define SINGLEPRESS	800
+#define SHORTPRESS		2000
+#define LONGPRESS		3000
+#define LONGLONGPRESS	5000
 
-extern BUTTON buttonStateE;			//Enter/OK button obj
-extern BUTTON buttonStateB;			//Back button obj
-extern BUTTON buttonStateU;			//UP button obj
-extern BUTTON buttonStateD;			//Down button obj
+extern Switches ButtonE;			//Enter/OK button obj
+extern Switches ButtonB;			//Back button obj
+extern Switches ButtonU;			//UP button obj
+extern Switches ButtonD;			//Down button obj
 
 typedef enum{
 	Level_Sensor,
@@ -48,7 +48,7 @@ typedef enum{
 	Buzzer,
 	FoD,
 	_sensors_						//placeholder for the max number of sensors declared
-}sensors;
+}Sensors;
 
 typedef enum{
 	Settings,
@@ -57,14 +57,14 @@ typedef enum{
 	indication
 }Task;
 
-static Display* disp = new CDC_Serial;
-static flagHandle& flags = flagHandle::getInstance();
-static Menu menu;
+static Display* Disp = new CDC_Serial;
+static FlagHandle& Flags = FlagHandle::getInstance();
+extern Menu menu;
 
-extern int *currentM;		//pointer to the menu item we are currently at
-static size_t currentE;
-extern short choiceSelect;				//next menu item choice item we want to jump to, we can also pass this variable to functions where we need to set a certain value(whole number) as setting
-extern short ro_saver_thresh_set_value;
+extern int *currentM;			//pointer to the menu item we are currently at
+//static size_t currentE;
+extern short choiceSelect;		//next menu item choice item we want to jump to, we can also pass this variable to functions where we need to set a certain value(whole number) as setting
+//extern short ro_saver_thresh_set_value;
 
 
 
@@ -76,21 +76,20 @@ extern short ro_saver_thresh_set_value;
  */
 bool fodOFF(uint32_t);
 bool fodON(uint32_t);
-bool ro_saver_thresh_adj(uint32_t);
-bool ro_saver_thresh_default(uint32_t);
-bool ro_saver_On(uint32_t);
-bool ro_saver_Off(uint32_t);
+bool roSaverThreshAdj(uint32_t);
+bool roSaverThreshDefault(uint32_t);
+bool roSaverOn(uint32_t);
+bool roSaverOff(uint32_t);
 
 
 /*	Support Functions	*/
-void mainMenufunc(void);
+void mainMenuFunc(void);
 void fillOpen(void);
-void invoke_ST3(bool);
+void invokeST3(bool);
 
 /*  Main Output functions  */
-void Mem_Saver_ST3(void);
-bool RO_Saver_ST1(void);
-void Buzzer_BUZZ(uint16_t);
+void memSaverST3(void);
+bool roSaverST1(void);
 bool buzzer(uint8_t, uint16_t timePeriod, ...);
 
 float tds_Sensor(uint32_t);

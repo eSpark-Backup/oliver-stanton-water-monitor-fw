@@ -14,11 +14,11 @@
 #include "flash.h"
 
 
-class flagHandle{
+class FlagHandle{
 public:
 //	flagHandle(){}
-	static flagHandle& getInstance() {
-		static flagHandle instance; 			// Guaranteed to be destroyed, instantiated on first use
+	static FlagHandle& getInstance() {
+		static FlagHandle instance; 			// Guaranteed to be destroyed, instantiated on first use
 		return instance;
 	}
 
@@ -31,10 +31,10 @@ public:
 	void flagsInit(void);
 
 private:
-	flagHandle(){
+	FlagHandle(){
 		DEBUG_W("flagHandler obj constructor called");
 	}
-	~flagHandle(){
+	~FlagHandle(){
 		DEBUG_W("flagHandler obj destructor called");
 	}
 
@@ -90,24 +90,24 @@ protected:
 //	     uint32_t 				:17;
 //	    } IO;
 
-	} flagRegister;
+	} FlagRegister;
 
 	typedef union
 	{
 		uint16_t indicationFlags;
 		struct {
-			uint16_t	flameIcon			:1;
-			uint16_t	TankFillIcon		:1;
+			uint16_t	flame_Icon			:1;
+			uint16_t	tank_Fill_Icon		:1;
 		} icons;
 		struct {
 			uint16_t						:8;
-			uint16_t	placeholder			:8;
+			uint16_t	place_Holder		:8;
 		} indication;			//these flags will be used to display items once, we will utilize this in main loop so as to not spam the serial port
-	} indicationRegister;
+	} IndicationRegister;
 
 
-	flagRegister flagsReg;
-	indicationRegister indicReg;
+	FlagRegister FlagsReg;
+	IndicationRegister IndicReg;
 
 };
 

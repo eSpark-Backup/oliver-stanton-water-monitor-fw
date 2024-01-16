@@ -15,15 +15,15 @@ uint32_t statusFlagTimeStamp[_sensors_];			//Time when status of output/sensor w
 
 
 
-void flagHandle::flashRetrieve(){
+void FlagHandle::flashRetrieve(){
 
 }
 
-void flagHandle::flashCommit(){
+void FlagHandle::flashCommit(){
 
 }
 
-void flagHandle::update(void){
+void FlagHandle::update(void){
 	//INPUTS
 	if(HAL_GPIO_ReadPin(LEVEL_SENSOR_GPIO_Port, LEVEL_SENSOR_Pin) != flagStatus(Status, Level_Sensor))	{
 		setFlag(Status, Level_Sensor, HAL_GPIO_ReadPin(LEVEL_SENSOR_GPIO_Port, LEVEL_SENSOR_Pin));		//inverse logic
@@ -87,14 +87,14 @@ void flagHandle::update(void){
 //		}
 //	}
 
-//	flagsReg.bits.Pressure_Sensor = HAL_GPIO_ReadPin();
-//	flagsReg.bits.Flow_Meter_1 = HAL_GPIO_ReadPin();
-//	flagsReg.bits.Flow_Meter_2 = HAL_GPIO_ReadPin();
-//	flagsReg.bits.Flow_Meter_3 = HAL_GPIO_ReadPin();
+//	FlagsReg.bits.Pressure_Sensor = HAL_GPIO_ReadPin();
+//	FlagsReg.bits.Flow_Meter_1 = HAL_GPIO_ReadPin();
+//	FlagsReg.bits.Flow_Meter_2 = HAL_GPIO_ReadPin();
+//	FlagsReg.bits.Flow_Meter_3 = HAL_GPIO_ReadPin();
 
 }
 
-bool flagHandle::timeElapsed(uint8_t sensor, uint32_t elapsedTime){
+bool FlagHandle::timeElapsed(uint8_t sensor, uint32_t elapsedTime){
 	if((sensor == Level_Sensor) && (flagStatus(Status, Level_Sensor) != true)){
 		uint32_t elapsed = HAL_GetTick()-statusFlagTimeStamp[sensor];
 		if(elapsed >= elapsedTime){
@@ -110,28 +110,28 @@ bool flagHandle::timeElapsed(uint8_t sensor, uint32_t elapsedTime){
 		else
 		{	return false;			}
 	}
-//	if(sensor == Pressure_Sensor && flagsReg.bits.Pressure_Sensor == false){
+//	if(sensor == Pressure_Sensor && FlagsReg.bits.Pressure_Sensor == false){
 //		uint32_t elapsed = HAL_GetTick()- <insert variable here> ;
 //		if(elapsed >= elapsedTime)
 //		{	return true;			}
 //		else
 //		{	return false;			}
 //	}
-//	if(sensor == Flow_Meter_1 && flagsReg.bits.Flow_Meter_1 == false){
+//	if(sensor == Flow_Meter_1 && FlagsReg.bits.Flow_Meter_1 == false){
 //		uint32_t elapsed = HAL_GetTick()- <insert variable here> ;
 //		if(elapsed >= elapsedTime)
 //		{	return true;			}
 //		else
 //		{	return false;			}
 //	}
-//	if(sensor == Flow_Meter_2 && flagsReg.bits.Flow_Meter_2 == false){
+//	if(sensor == Flow_Meter_2 && FlagsReg.bits.Flow_Meter_2 == false){
 //		uint32_t elapsed = HAL_GetTick()- <insert variable here> ;
 //		if(elapsed >= elapsedTime)
 //		{	return true;			}
 //		else
 //		{	return false;			}
 //	}
-//	if(sensor == Flow_Meter_3 && flagsReg.bits.Flow_Meter_3 == false){
+//	if(sensor == Flow_Meter_3 && FlagsReg.bits.Flow_Meter_3 == false){
 //		uint32_t elapsed = HAL_GetTick()- <insert variable here> ;
 //		if(elapsed >= elapsedTime)
 //		{	return true;			}
@@ -142,62 +142,64 @@ bool flagHandle::timeElapsed(uint8_t sensor, uint32_t elapsedTime){
 	return false;
 }
 
-bool flagHandle::flagStatus(uint8_t op, uint8_t sensor){
+bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor){
 	if(op == Settings)	{
-		if(sensor == FoD)					return flagsReg.settings.FillOnDemand;
-		else if(sensor == Buzzer)			return flagsReg.settings.Buzzer;
-		else if(sensor == RGB)				return flagsReg.settings.RGB;
-		else if(sensor == WLED)				return flagsReg.settings.WLED;
-		else if(sensor == MEM_Saver)		return flagsReg.settings.Mem_Saver;
-		else if(sensor == Mem_Saver_Pause)	return flagsReg.settings.Mem_Saver_Pause;
-		else if(sensor == RESIN_Saver)		return flagsReg.settings.Resin_Saver;
-		else if(sensor == AUTO_Fill)		return flagsReg.settings.Auto_Fill;
+		if(sensor == FoD)					return FlagsReg.settings.FillOnDemand;
+		else if(sensor == Buzzer)			return FlagsReg.settings.Buzzer;
+		else if(sensor == RGB)				return FlagsReg.settings.RGB;
+		else if(sensor == WLED)				return FlagsReg.settings.WLED;
+		else if(sensor == MEM_Saver)		return FlagsReg.settings.Mem_Saver;
+		else if(sensor == Mem_Saver_Pause)	return FlagsReg.settings.Mem_Saver_Pause;
+		else if(sensor == RESIN_Saver)		return FlagsReg.settings.Resin_Saver;
+		else if(sensor == AUTO_Fill)		return FlagsReg.settings.Auto_Fill;
 		}
 	else if (op == Status)	{
-		if(sensor == Level_Sensor)				return flagsReg.status.Level_Sensor;		//ST9 pin is inverse logic?
-		else if(sensor == WLED)					return flagsReg.status.WLED;
-		else if(sensor == Pressure_Sensor)		return flagsReg.status.Pressure_Sensor;
-		else if(sensor == Flow_Meter_1)			return flagsReg.status.Flow_Meter_1;
-		else if(sensor == Flow_Meter_2)			return flagsReg.status.Flow_Meter_2;
-		else if(sensor == Flow_Meter_3)			return flagsReg.status.Flow_Meter_3;
-		else if(sensor == RESIN_Saver)			return flagsReg.status.Resin_Saver;
-		else if(sensor == MEM_Saver)			return flagsReg.status.Mem_Saver;
-		else if(sensor == AUTO_Fill)			return flagsReg.status.Auto_Fill;
-		else if(sensor == Pure_CYCLE)			return flagsReg.status.Pure_CYCLE;
+		if(sensor == Level_Sensor)				return FlagsReg.status.Level_Sensor;		//ST9 pin is inverse logic?
+		else if(sensor == WLED)					return FlagsReg.status.WLED;
+		else if(sensor == Pressure_Sensor)		return FlagsReg.status.Pressure_Sensor;
+		else if(sensor == Flow_Meter_1)			return FlagsReg.status.Flow_Meter_1;
+		else if(sensor == Flow_Meter_2)			return FlagsReg.status.Flow_Meter_2;
+		else if(sensor == Flow_Meter_3)			return FlagsReg.status.Flow_Meter_3;
+		else if(sensor == RESIN_Saver)			return FlagsReg.status.Resin_Saver;
+		else if(sensor == MEM_Saver)			return FlagsReg.status.Mem_Saver;
+		else if(sensor == AUTO_Fill)			return FlagsReg.status.Auto_Fill;
+		else if(sensor == Pure_CYCLE)			return FlagsReg.status.Pure_CYCLE;
 		}
-	else
+//	else
 		return false;
 }
 
-bool flagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state){
+bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state){
 	DEBUG_I("Inside setFlag");
 	DEBUG_(" operation: %d, Sensor: %d, State: %d", op, sensor, state);
 	if(op == Settings)	{
-		if(sensor == FoD)					flagsReg.settings.FillOnDemand = state;
-		else if(sensor == Buzzer)			flagsReg.settings.Buzzer = state;
-		else if(sensor == RGB)				flagsReg.settings.RGB = state;
-		else if(sensor == WLED)				flagsReg.settings.WLED = state;
-		else if(sensor == RESIN_Saver)		flagsReg.settings.Resin_Saver = state;			//used for ro_saver_thresh
-		else if(sensor == MEM_Saver)		flagsReg.settings.Mem_Saver = state;
-		else if(sensor == Mem_Saver_Pause)	flagsReg.settings.Mem_Saver_Pause = state;
-		else if(sensor == AUTO_Fill)		flagsReg.settings.Auto_Fill = state;
+		if(sensor == FoD)					FlagsReg.settings.FillOnDemand = state;
+		else if(sensor == Buzzer)			FlagsReg.settings.Buzzer = state;
+		else if(sensor == RGB)				FlagsReg.settings.RGB = state;
+		else if(sensor == WLED)				FlagsReg.settings.WLED = state;
+		else if(sensor == RESIN_Saver)		FlagsReg.settings.Resin_Saver = state;			//used for ro_saver_thresh
+		else if(sensor == MEM_Saver)		FlagsReg.settings.Mem_Saver = state;
+		else if(sensor == Mem_Saver_Pause)	FlagsReg.settings.Mem_Saver_Pause = state;
+		else if(sensor == AUTO_Fill)		FlagsReg.settings.Auto_Fill = state;
 		}
 	else if (op == Status)	{
-		if(sensor == Level_Sensor)			flagsReg.status.Level_Sensor = state;
-		else if(sensor == WLED)				flagsReg.status.WLED = state;
-		else if(sensor == Pressure_Sensor)	flagsReg.status.Pressure_Sensor = state;
-		else if(sensor == Flow_Meter_1)		flagsReg.status.Flow_Meter_1 = state;
-		else if(sensor == Flow_Meter_2)		flagsReg.status.Flow_Meter_2 = state;
-		else if(sensor == Flow_Meter_3)		flagsReg.status.Flow_Meter_3 = state;
-		else if(sensor == RESIN_Saver)		flagsReg.status.Resin_Saver = state;			//used for ro_saver_thresh
-		else if(sensor == MEM_Saver)		flagsReg.status.Mem_Saver = state;
-		else if(sensor == AUTO_Fill)		flagsReg.status.Auto_Fill = state;
-		else if(sensor == Pure_CYCLE)		flagsReg.status.Pure_CYCLE = state;
+		if(sensor == Level_Sensor)			FlagsReg.status.Level_Sensor = state;
+		else if(sensor == WLED)				FlagsReg.status.WLED = state;
+		else if(sensor == Pressure_Sensor)	FlagsReg.status.Pressure_Sensor = state;
+		else if(sensor == Flow_Meter_1)		FlagsReg.status.Flow_Meter_1 = state;
+		else if(sensor == Flow_Meter_2)		FlagsReg.status.Flow_Meter_2 = state;
+		else if(sensor == Flow_Meter_3)		FlagsReg.status.Flow_Meter_3 = state;
+		else if(sensor == RESIN_Saver)		FlagsReg.status.Resin_Saver = state;			//used for ro_saver_thresh
+		else if(sensor == MEM_Saver)		FlagsReg.status.Mem_Saver = state;
+		else if(sensor == AUTO_Fill)		FlagsReg.status.Auto_Fill = state;
+		else if(sensor == Pure_CYCLE)		FlagsReg.status.Pure_CYCLE = state;
 		}
 	DEBUG_I("Exiting setFlag.");
+	return false;
 }
 
-void flagHandle::flagsInit(){								//Implement flashRetrieve() here
+void FlagHandle::flagsInit(){								//Implement flashRetrieve() here
+//	flashRetrieve();
 	setFlag(Settings, WLED, true);
 	setFlag(Settings, Buzzer, true);
 }

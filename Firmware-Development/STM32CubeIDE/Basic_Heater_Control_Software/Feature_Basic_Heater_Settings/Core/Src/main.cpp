@@ -47,6 +47,7 @@
 /* Private variables ---------------------------------------------------------*/
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim6;
+ADC_HandleTypeDef hadc;
 
 /* USER CODE BEGIN PV */
 MainApp app;
@@ -105,9 +106,6 @@ int main(void)
   MX_TIM6_Init();
 //  MX_TIM17_Init();
 
-//  HAL_TIM_PWM_Init(&htim1);
-//  HAL_TIM_Base_Start_IT(&htim1);
-//  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 
   app.setup();
   /* USER CODE END 2 */

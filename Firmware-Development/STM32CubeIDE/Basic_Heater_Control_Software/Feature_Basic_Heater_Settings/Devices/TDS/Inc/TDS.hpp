@@ -66,7 +66,7 @@ private:
 
 
 	void calculateTDS(void);
-	void ADC_Select_CH(uint32_t);
+	void ADCSelectCH(uint32_t);
 	uint32_t getValue(void);
 public:
 	TDS(const GPIOConfig& config) : config(config) {

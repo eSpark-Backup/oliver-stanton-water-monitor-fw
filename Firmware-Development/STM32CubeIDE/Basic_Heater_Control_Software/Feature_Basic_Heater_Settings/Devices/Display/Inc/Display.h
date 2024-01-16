@@ -20,7 +20,7 @@ public:
 	virtual void itemsToDisplay(int ) = 0;					//No. of items to be displayed in a menu, for OLED/LCD implementation
 	virtual void displayString(const char*) = 0;
 	virtual void displayChoice(short) = 0;
-	virtual void displayVar(uint32_t, char*) = 0;
+	virtual void displayVar(int, char*) = 0;
 
 	virtual ~Display() = default;							//virtual destructor
 };

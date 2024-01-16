@@ -6,64 +6,45 @@
  */
 #include "switches.hpp"
 
-//BUTTON button;
 
-
-BUTTON Switches::getState(SWITCHES SW)
+void Switches::getState(SWITCHES SW)
 {
-	BUTTON button;
-	uint16_t period = Debounce_Period;
-	 if(isButtonPressed(SW)){
-		 if(isButtonStillPressed(SW)){
+	 if(isButtonPressed(SW))
+	 {
+		 if(isButtonStillPressed(SW))
+		 {
 			 resetButtonState(SW);
 			 timeStamped = false;
 			 button.period = HAL_GetTick()-buttonPressTime;
-			 if(button.period > period){
+			 if(button.period > DEBOUNCEPERIOD)
+			 {
 				 button.state = true;
-//				 resetButtonState(SW);
-//				 timeStamped = false;
-				 return button;		}
-			 else	{
+			 }
+			 else
+			 {
 				 button.state = false;
-
-				 		}
+			 }
 		 }
 	 }
 }
 
-bool Switches::getState(SWITCHES SW, uint16_t period)
+bool Switches::state()
 {
-	BUTTON button;
-	if(period <  Debounce_Period)
-		period = Debounce_Period;
-	if(isButtonPressed(SW)){
-	 if(isButtonStillPressed(SW)){
-		 button.period = HAL_GetTick()-buttonPressTime;
-		 if(button.period > period)
-			 button.state = true;
-		 else
-			 button.state = false;
-		 resetButtonState(SW);
-		 timeStamped = false;
-		 return button.state;		}
-//			 timeStamped = false;
-	 	 }
-//	 else {
-//		 button.state = false;
-//		 button.period = 0;
-//	 }
-//	 while(!resetButtonState(SW)){
-//	 }
-//	if(button.period >= period)
-//			 return button;
+	return button.state;
 }
 
-bool Switches::isButtonPressed(SWITCHES SW){
+uint16_t Switches::period()
+{
+	return button.period;
+}
+
+bool Switches::isButtonPressed(SWITCHES SW)
+{
 	switch(SW)	{
 		case EnterOK:
 			return ENTER_Flag;
 			break;
-		case Back:
+		case BACK:
 			return BACK_Flag;
 			break;
 		case UP:
@@ -79,69 +60,70 @@ bool Switches::isButtonPressed(SWITCHES SW){
 //			return DEL_Flag;
 //			break;
 		default:
+			return false;
 			break;
 	}
 }
 
-bool Switches::isButtonStillPressed(SWITCHES SW){
+bool Switches::isButtonStillPressed(SWITCHES SW)
+{
 	switch(SW)	{
 		case EnterOK:
-			return HAL_GPIO_ReadPin(ENTER_Button_Port, ENTER_Button);
+			return HAL_GPIO_ReadPin(ENTERBUTTONPORT, ENTERBUTTON);
 			break;
-		case Back:
-			return HAL_GPIO_ReadPin(BACK_Button_Port, BACK_Button);
+		case BACK:
+			return HAL_GPIO_ReadPin(BACKBUTTONPORT, BACKBUTTON);
 			break;
 		case UP:
-			return HAL_GPIO_ReadPin(UP_Button_Port, UP_Button);
+			return HAL_GPIO_ReadPin(UPBUTTONPORT, UPBUTTON);
 			break;
 		case DOWN:
-			return HAL_GPIO_ReadPin(DOWN_Button_Port, DOWN_Button);
+			return HAL_GPIO_ReadPin(DOWNBUTTONPORT, DOWNBUTTON);
 			break;
 //		case RODI:
-//				return HAL_GPIO_ReadPin(RODI_Button_Port, RODI_Button);
+//				return HAL_GPIO_ReadPin(RODIBUTTONPORT, RODIBUTTON);
 //				break;
 //		case DEL:
-//				return HAL_GPIO_ReadPin(DEL_Button_Port, DEL_Button);
+//				return HAL_GPIO_ReadPin(DELBUTTONPORT, DELBUTTON);
 //				break;
 		default:
+			return false;
 			break;
 	}
-//	return false;
 }
 
-bool Switches::resetButtonState(SWITCHES SW){
+void Switches::resetButtonState(SWITCHES SW)
+{
 	switch(SW)	{
 			case EnterOK:
 				ENTER_Flag = false;
-				return 1;
 				break;
-			case Back:
+			case BACK:
 				BACK_Flag = false;
-				return 1;
 				break;
 			case UP:
 				UP_Flag = false;
-				return 1;
 				break;
 			case DOWN:
 				DOWN_Flag = false;
-				return 1;
 				break;
 //			case RODI:
 //				RODI_Flag = false;
-//				return 1;
 //				break;
 //			case DEL:
 //				DEL_Flag = false;
-//				return 1;
 //				break;
 			default:
-				return 0;
 				break;
 		}
 }
 
-void Switches::saveTime(){
+void Switches::reset()
+{
+	button = {false, 0};
+}
+
+void saveTime(){
 	buttonPressTime = HAL_GetTick();
 	timeStamped = true;
 }

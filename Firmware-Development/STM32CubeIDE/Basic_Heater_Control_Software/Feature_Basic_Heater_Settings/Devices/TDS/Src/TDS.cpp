@@ -24,11 +24,10 @@ void TDS::calculateTDS(void){
 //	this->ecValue25  =  this->ecValue / (1.0+0.02*(this->temperature-25.0));  //temperature compensation
 //	this->tdsValue = ecValue25 * 1.0;  //TdsFactor;
 
-	//--this is just simulation for decreasing TDS value
-	this->tdsValue -= rand()%4;
+	this->tdsValue -= rand()%4;			//--this is just simulation for decreasing TDS value
 }
 
-void TDS::ADC_Select_CH(uint32_t CH){
+void TDS::ADCSelectCH(uint32_t CH){
 	ADC_ChannelConfTypeDef sConfig = {0};
 //	DEBUG_W("selected channel is %d", CH);
 
@@ -66,13 +65,13 @@ void TDS::ADC_Select_CH(uint32_t CH){
 uint32_t TDS::getValue(){
 
 	HAL_GPIO_WritePin(this->config.T1_port, this->config.T1_pin, GPIO_PIN_SET);
-	ADC_Select_CH(this->config.AN1_pin_Channel);
+	ADCSelectCH(this->config.AN1_pin_Channel);
 	HAL_ADC_Start(&hadc);
 	HAL_ADC_PollForConversion(&hadc, 100);
 	this->analogValueAN1 = HAL_ADC_GetValue(&hadc);
 	HAL_ADC_Stop(&hadc);
 
-	ADC_Select_CH(this->config.AN2_pin_Channel);
+	ADCSelectCH(this->config.AN2_pin_Channel);
 	HAL_ADC_Start(&hadc);
 	HAL_ADC_PollForConversion(&hadc, 100);
 	this->analogValueAN2 = HAL_ADC_GetValue(&hadc);
