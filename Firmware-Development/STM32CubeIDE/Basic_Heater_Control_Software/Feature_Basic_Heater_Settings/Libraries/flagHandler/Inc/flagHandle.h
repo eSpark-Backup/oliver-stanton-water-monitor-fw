@@ -12,6 +12,8 @@
 #include "main.h"
 #include "mainApp.hpp"
 #include "flash.h"
+#include "_DEBUG_.h"
+
 
 
 class FlagHandle{
@@ -32,14 +34,14 @@ public:
 
 private:
 	FlagHandle(){
-		DEBUG_W("flagHandler obj constructor called");
+		DEBUG_RTT(LOG_WARNING, "flagHandler obj constructor called");
 	}
 	~FlagHandle(){
-		DEBUG_W("flagHandler obj destructor called");
+		DEBUG_RTT(LOG_WARNING, "flagHandler obj destructor called");
 	}
 
 protected:
-	typedef union
+	typedef union							//register BitField
 	{
 		uint64_t controlFlags;
 	   struct {

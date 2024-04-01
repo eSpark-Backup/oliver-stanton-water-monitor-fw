@@ -15,74 +15,93 @@ uint32_t statusFlagTimeStamp[_sensors_];			//Time when status of output/sensor w
 
 
 
-void FlagHandle::flashRetrieve(){
+void FlagHandle::flashRetrieve()
+{
 
 }
 
-void FlagHandle::flashCommit(){
+void FlagHandle::flashCommit()
+{
 
 }
 
-void FlagHandle::update(void){
+void FlagHandle::update(void)
+{
 	//INPUTS
-	if(HAL_GPIO_ReadPin(LEVEL_SENSOR_GPIO_Port, LEVEL_SENSOR_Pin) != flagStatus(Status, Level_Sensor))	{
-		setFlag(Status, Level_Sensor, HAL_GPIO_ReadPin(LEVEL_SENSOR_GPIO_Port, LEVEL_SENSOR_Pin));		//inverse logic
-		if(flagStatus(Status, Level_Sensor) == false)	{
-			statusFlagTimeStamp[Level_Sensor] = HAL_GetTick();
-			DEBUG_W("Level Sensor Closed.");
+	if(HAL_GPIO_ReadPin(LEVEL_SENSOR_GPIO_Port, LEVEL_SENSOR_Pin) != flagStatus(Status, LEVEL_SENSOR))
+	{
+		setFlag(Status, LEVEL_SENSOR, HAL_GPIO_ReadPin(LEVEL_SENSOR_GPIO_Port, LEVEL_SENSOR_Pin));		//inverse logic
+		if(flagStatus(Status, LEVEL_SENSOR) == false)
+		{
+			statusFlagTimeStamp[LEVEL_SENSOR] = HAL_GetTick();
+			DEBUG_RTT(LOG_WARNING, "Level Sensor Closed.");
 		}
 		else
-			DEBUG_W("Level Sensor Open.");
+		{
+			DEBUG_RTT(LOG_WARNING, "Level Sensor Open.");
+		}
 	}
 	//OUTPUTS
-	if(HAL_GPIO_ReadPin(MEM_SAVER_GPIO_Port, MEM_SAVER_Pin) != flagStatus(Status, MEM_Saver))	{
-//		setFlag(Status, MEM_Saver, HAL_GPIO_ReadPin(MEM_SAVER_GPIO_Port, MEM_SAVER_Pin));		//inverse logic
-		if(flagStatus(Status, MEM_Saver))	{
+	if(HAL_GPIO_ReadPin(MEM_SAVER_GPIO_Port, MEM_SAVER_Pin) != flagStatus(Status, MEM_SAVER))
+	{
+//		setFlag(Status, MEM_SAVER, HAL_GPIO_ReadPin(MEM_SAVER_GPIO_Port, MEM_SAVER_Pin));		//inverse logic
+		if(flagStatus(Status, MEM_SAVER))
+		{
 			HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(MEM_SAVER_GPIO_Port, MEM_SAVER_Pin, GPIO_PIN_SET);
-			DEBUG_W("Mem_Saver_ST3 turned on.");	}
-		else	{
+			DEBUG_RTT(LOG_WARNING, "Mem_Saver_ST3 turned on.");
+		}
+		else
+		{
 			HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
 			HAL_GPIO_WritePin(MEM_SAVER_GPIO_Port, MEM_SAVER_Pin, GPIO_PIN_RESET);
-			DEBUG_W("Mem_Saver_ST3 turned off.");	//}
-//		if(flagStatus(Status, MEM_Saver) == false)	{
-			statusFlagTimeStamp[MEM_Saver] = HAL_GetTick();
+			DEBUG_RTT(LOG_WARNING, "Mem_Saver_ST3 turned off.");	//}
+//		if(flagStatus(Status, MEM_SAVER) == false)	{
+			statusFlagTimeStamp[MEM_SAVER] = HAL_GetTick();
 		}
 	}
-	if(HAL_GPIO_ReadPin(RO_SAVER_GPIO_Port, RO_SAVER_Pin) != flagStatus(Status, RESIN_Saver))	{
-		if(flagStatus(Status, RESIN_Saver))	{
+	if(HAL_GPIO_ReadPin(RO_SAVER_GPIO_Port, RO_SAVER_Pin) != flagStatus(Status, RESIN_SAVER))
+	{
+		if(flagStatus(Status, RESIN_SAVER))
+		{
 			HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(RO_SAVER_GPIO_Port, RO_SAVER_Pin, GPIO_PIN_SET);
-			DEBUG_W("RO_Saver_ST1 turned on.");	}
-		else	{
+			DEBUG_RTT(LOG_WARNING, "RO_Saver_ST1 turned on.");
+		}
+		else
+		{
 			HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET);
 			HAL_GPIO_WritePin(RO_SAVER_GPIO_Port, RO_SAVER_Pin, GPIO_PIN_RESET);
-			DEBUG_W("RO_Saver_ST1 turned off.");	//}
-//		if(flagStatus(Status, MEM_Saver) == false)	{
-			statusFlagTimeStamp[RESIN_Saver] = HAL_GetTick();
+			DEBUG_RTT(LOG_WARNING, "RO_Saver_ST1 turned off.");	//}
+//		if(flagStatus(Status, MEM_SAVER) == false)	{
+			statusFlagTimeStamp[RESIN_SAVER] = HAL_GetTick();
 		}
 	}
-	if(HAL_GPIO_ReadPin(AUTO_FILL_GPIO_Port, AUTO_FILL_Pin) != flagStatus(Status, AUTO_Fill))	{
-		if(flagStatus(Status, AUTO_Fill))	{
+	if(HAL_GPIO_ReadPin(AUTO_FILL_GPIO_Port, AUTO_FILL_Pin) != flagStatus(Status, AUTO_FILL))
+	{
+		if(flagStatus(Status, AUTO_FILL))
+		{
 			HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(AUTO_FILL_GPIO_Port, AUTO_FILL_Pin, GPIO_PIN_SET);
-			DEBUG_W("Auto_Fill_ST5 turned on.");	}
-		else	{
+			DEBUG_RTT(LOG_WARNING, "Auto_Fill_ST5 turned on.");
+		}
+		else
+		{
 			HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
 			HAL_GPIO_WritePin(AUTO_FILL_GPIO_Port, AUTO_FILL_Pin, GPIO_PIN_RESET);
-			DEBUG_W("Auto_Fill_ST5 turned off.");	//}
-//		if(flagStatus(Status, MEM_Saver) == false)	{
-			statusFlagTimeStamp[AUTO_Fill] = HAL_GetTick();
+			DEBUG_RTT(LOG_WARNING, "Auto_Fill_ST5 turned off.");	//}
+//		if(flagStatus(Status, MEM_SAVER) == false)	{
+			statusFlagTimeStamp[AUTO_FILL] = HAL_GetTick();
 		}
 	}
-//	if(HAL_GPIO_ReadPin(W_LED_CTRL_GPIO_Port, W_LED_CTRL_Pin) != flagStatus(Status, AUTO_Fill))	{
-//		if(flagStatus(Status, AUTO_Fill))	{
+//	if(HAL_GPIO_ReadPin(W_LED_CTRL_GPIO_Port, W_LED_CTRL_Pin) != flagStatus(Status, AUTO_FILL))	{
+//		if(flagStatus(Status, AUTO_FILL))	{
 //			HAL_GPIO_WritePin(W_LED_CTRL_GPIO_Port, W_LED_CTRL_Pin, GPIO_PIN_SET);
-//			DEBUG_W("W_LED turned on.");	}
+//			DEBUG_RTT("W", "W_LED turned on.");	}
 //		else	{
 //			HAL_GPIO_WritePin(W_LED_CTRL_GPIO_Port, W_LED_CTRL_Pin, GPIO_PIN_RESET);
-//			DEBUG_W("W_LED turned off.");	//}
-////		if(flagStatus(Status, MEM_Saver) == false)	{
+//			DEBUG_RTT("W", "W_LED turned off.");	//}
+////		if(flagStatus(Status, MEM_SAVER) == false)	{
 //			statusFlagTimeStamp[WLED] = HAL_GetTick();
 //		}
 //	}
@@ -94,44 +113,53 @@ void FlagHandle::update(void){
 
 }
 
-bool FlagHandle::timeElapsed(uint8_t sensor, uint32_t elapsedTime){
-	if((sensor == Level_Sensor) && (flagStatus(Status, Level_Sensor) != true)){
+bool FlagHandle::timeElapsed(uint8_t sensor, uint32_t elapsedTime)
+{
+	if((sensor == LEVEL_SENSOR) && (flagStatus(Status, LEVEL_SENSOR) != true))
+	{
 		uint32_t elapsed = HAL_GetTick()-statusFlagTimeStamp[sensor];
-		if(elapsed >= elapsedTime){
-			return true;	}
+		if(elapsed >= elapsedTime)
+		{
+			return true;
+		}
 	}
-	if(sensor == MEM_Saver){// && flagStatus(Settings, MEM_Saver) != true){
+	if(sensor == MEM_SAVER)// && flagStatus(Settings, MEM_SAVER) != true)
+	{
 		uint32_t elapsed = HAL_GetTick() - statusFlagTimeStamp[sensor];
 //		dispdebug->displayVar(statusFlagTimeStamp[sensor], "statusFlagTimeStamp[sensor]: ");
 //		dispdebug->displayVar(HAL_GetTick(), "HAL_GetTick(): ");
 //		dispdebug->displayVar(elapsed, "mem_Saver elapsed: ");
 		if(elapsed >= elapsedTime)
-		{	return true;			}
+		{
+			return true;
+		}
 		else
-		{	return false;			}
+		{
+			return false;
+		}
 	}
-//	if(sensor == Pressure_Sensor && FlagsReg.bits.Pressure_Sensor == false){
+//	if(sensor == PRESSURE_SENSOR && FlagsReg.bits.Pressure_Sensor == false){
 //		uint32_t elapsed = HAL_GetTick()- <insert variable here> ;
 //		if(elapsed >= elapsedTime)
 //		{	return true;			}
 //		else
 //		{	return false;			}
 //	}
-//	if(sensor == Flow_Meter_1 && FlagsReg.bits.Flow_Meter_1 == false){
+//	if(sensor == FLOW_METER_1 && FlagsReg.bits.Flow_Meter_1 == false){
 //		uint32_t elapsed = HAL_GetTick()- <insert variable here> ;
 //		if(elapsed >= elapsedTime)
 //		{	return true;			}
 //		else
 //		{	return false;			}
 //	}
-//	if(sensor == Flow_Meter_2 && FlagsReg.bits.Flow_Meter_2 == false){
+//	if(sensor == FLOW_METER_2 && FlagsReg.bits.Flow_Meter_2 == false){
 //		uint32_t elapsed = HAL_GetTick()- <insert variable here> ;
 //		if(elapsed >= elapsedTime)
 //		{	return true;			}
 //		else
 //		{	return false;			}
 //	}
-//	if(sensor == Flow_Meter_3 && FlagsReg.bits.Flow_Meter_3 == false){
+//	if(sensor == FLOW_METER_3 && FlagsReg.bits.Flow_Meter_3 == false){
 //		uint32_t elapsed = HAL_GetTick()- <insert variable here> ;
 //		if(elapsed >= elapsedTime)
 //		{	return true;			}
@@ -142,66 +170,73 @@ bool FlagHandle::timeElapsed(uint8_t sensor, uint32_t elapsedTime){
 	return false;
 }
 
-bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor){
-	if(op == Settings)	{
+bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor)
+{
+	if(op == Settings)
+	{
 		if(sensor == FoD)					return FlagsReg.settings.FillOnDemand;
-		else if(sensor == Buzzer)			return FlagsReg.settings.Buzzer;
+		else if(sensor == BUZZER)			return FlagsReg.settings.Buzzer;
 		else if(sensor == RGB)				return FlagsReg.settings.RGB;
 		else if(sensor == WLED)				return FlagsReg.settings.WLED;
-		else if(sensor == MEM_Saver)		return FlagsReg.settings.Mem_Saver;
-		else if(sensor == Mem_Saver_Pause)	return FlagsReg.settings.Mem_Saver_Pause;
-		else if(sensor == RESIN_Saver)		return FlagsReg.settings.Resin_Saver;
-		else if(sensor == AUTO_Fill)		return FlagsReg.settings.Auto_Fill;
-		}
-	else if (op == Status)	{
-		if(sensor == Level_Sensor)				return FlagsReg.status.Level_Sensor;		//ST9 pin is inverse logic?
+		else if(sensor == MEM_SAVER)		return FlagsReg.settings.Mem_Saver;
+		else if(sensor == MEM_SAVER_PAUSE)	return FlagsReg.settings.Mem_Saver_Pause;
+		else if(sensor == RESIN_SAVER)		return FlagsReg.settings.Resin_Saver;
+		else if(sensor == AUTO_FILL)		return FlagsReg.settings.Auto_Fill;
+	}
+	else if (op == Status)
+	{
+		if(sensor == LEVEL_SENSOR)				return FlagsReg.status.Level_Sensor;		//ST9 pin is inverse logic?
 		else if(sensor == WLED)					return FlagsReg.status.WLED;
-		else if(sensor == Pressure_Sensor)		return FlagsReg.status.Pressure_Sensor;
-		else if(sensor == Flow_Meter_1)			return FlagsReg.status.Flow_Meter_1;
-		else if(sensor == Flow_Meter_2)			return FlagsReg.status.Flow_Meter_2;
-		else if(sensor == Flow_Meter_3)			return FlagsReg.status.Flow_Meter_3;
-		else if(sensor == RESIN_Saver)			return FlagsReg.status.Resin_Saver;
-		else if(sensor == MEM_Saver)			return FlagsReg.status.Mem_Saver;
-		else if(sensor == AUTO_Fill)			return FlagsReg.status.Auto_Fill;
-		else if(sensor == Pure_CYCLE)			return FlagsReg.status.Pure_CYCLE;
-		}
+		else if(sensor == PRESSURE_SENSOR)		return FlagsReg.status.Pressure_Sensor;
+		else if(sensor == FLOW_METER_1)			return FlagsReg.status.Flow_Meter_1;
+		else if(sensor == FLOW_METER_2)			return FlagsReg.status.Flow_Meter_2;
+		else if(sensor == FLOW_METER_3)			return FlagsReg.status.Flow_Meter_3;
+		else if(sensor == RESIN_SAVER)			return FlagsReg.status.Resin_Saver;
+		else if(sensor == MEM_SAVER)			return FlagsReg.status.Mem_Saver;
+		else if(sensor == AUTO_FILL)			return FlagsReg.status.Auto_Fill;
+		else if(sensor == PURE_CYCLE)			return FlagsReg.status.Pure_CYCLE;
+	}
 //	else
 		return false;
 }
 
-bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state){
-	DEBUG_I("Inside setFlag");
-	DEBUG_(" operation: %d, Sensor: %d, State: %d", op, sensor, state);
-	if(op == Settings)	{
+bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state)
+{
+	DEBUG_RTT(LOG_INFO, "Inside setFlag");
+	DEBUG_RTT('0', " operation: %d, Sensor: %d, State: %d", op, sensor, state);
+	if(op == Settings)
+	{
 		if(sensor == FoD)					FlagsReg.settings.FillOnDemand = state;
-		else if(sensor == Buzzer)			FlagsReg.settings.Buzzer = state;
+		else if(sensor == BUZZER)			FlagsReg.settings.Buzzer = state;
 		else if(sensor == RGB)				FlagsReg.settings.RGB = state;
 		else if(sensor == WLED)				FlagsReg.settings.WLED = state;
-		else if(sensor == RESIN_Saver)		FlagsReg.settings.Resin_Saver = state;			//used for ro_saver_thresh
-		else if(sensor == MEM_Saver)		FlagsReg.settings.Mem_Saver = state;
-		else if(sensor == Mem_Saver_Pause)	FlagsReg.settings.Mem_Saver_Pause = state;
-		else if(sensor == AUTO_Fill)		FlagsReg.settings.Auto_Fill = state;
-		}
-	else if (op == Status)	{
-		if(sensor == Level_Sensor)			FlagsReg.status.Level_Sensor = state;
+		else if(sensor == RESIN_SAVER)		FlagsReg.settings.Resin_Saver = state;			//used for ro_saver_thresh
+		else if(sensor == MEM_SAVER)		FlagsReg.settings.Mem_Saver = state;
+		else if(sensor == MEM_SAVER_PAUSE)	FlagsReg.settings.Mem_Saver_Pause = state;
+		else if(sensor == AUTO_FILL)		FlagsReg.settings.Auto_Fill = state;
+	}
+	else if (op == Status)
+	{
+		if(sensor == LEVEL_SENSOR)			FlagsReg.status.Level_Sensor = state;
 		else if(sensor == WLED)				FlagsReg.status.WLED = state;
-		else if(sensor == Pressure_Sensor)	FlagsReg.status.Pressure_Sensor = state;
-		else if(sensor == Flow_Meter_1)		FlagsReg.status.Flow_Meter_1 = state;
-		else if(sensor == Flow_Meter_2)		FlagsReg.status.Flow_Meter_2 = state;
-		else if(sensor == Flow_Meter_3)		FlagsReg.status.Flow_Meter_3 = state;
-		else if(sensor == RESIN_Saver)		FlagsReg.status.Resin_Saver = state;			//used for ro_saver_thresh
-		else if(sensor == MEM_Saver)		FlagsReg.status.Mem_Saver = state;
-		else if(sensor == AUTO_Fill)		FlagsReg.status.Auto_Fill = state;
-		else if(sensor == Pure_CYCLE)		FlagsReg.status.Pure_CYCLE = state;
-		}
-	DEBUG_I("Exiting setFlag.");
+		else if(sensor == PRESSURE_SENSOR)	FlagsReg.status.Pressure_Sensor = state;
+		else if(sensor == FLOW_METER_1)		FlagsReg.status.Flow_Meter_1 = state;
+		else if(sensor == FLOW_METER_2)		FlagsReg.status.Flow_Meter_2 = state;
+		else if(sensor == FLOW_METER_3)		FlagsReg.status.Flow_Meter_3 = state;
+		else if(sensor == RESIN_SAVER)		FlagsReg.status.Resin_Saver = state;			//used for ro_saver_thresh
+		else if(sensor == MEM_SAVER)		FlagsReg.status.Mem_Saver = state;
+		else if(sensor == AUTO_FILL)		FlagsReg.status.Auto_Fill = state;
+		else if(sensor == PURE_CYCLE)		FlagsReg.status.Pure_CYCLE = state;
+	}
+	DEBUG_RTT(LOG_INFO, "Exiting setFlag.");
 	return false;
 }
 
-void FlagHandle::flagsInit(){								//Implement flashRetrieve() here
+void FlagHandle::flagsInit()								//Implement flashRetrieve() here
+{
 //	flashRetrieve();
 	setFlag(Settings, WLED, true);
-	setFlag(Settings, Buzzer, true);
+	setFlag(Settings, BUZZER, true);
 }
 
 //void flagHandle::(){

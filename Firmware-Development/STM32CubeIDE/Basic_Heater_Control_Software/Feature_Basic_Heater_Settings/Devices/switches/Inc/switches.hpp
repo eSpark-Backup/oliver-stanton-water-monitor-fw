@@ -11,10 +11,10 @@
 #include "mainApp.hpp"
 
 
-#define DEBOUNCEPERIOD 70
+#define DEBOUNCE_PERIOD 70
 
 typedef enum{
-	EnterOK,
+	ENTER_OK,
 	BACK,
 	UP,
 	DOWN
@@ -46,8 +46,8 @@ public:
 private:
 	struct BUTTON{
 		uint16_t period;
-		bool state;
-	}button;
+		bool 	 state;
+	}Button;
 };
 
 void saveTime(void);

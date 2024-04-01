@@ -1,3 +1,7 @@
+
+
+//------------------Will be implemented once LCD is finalized-----------------------
+
 //#pragma once
 //
 //#ifndef LCD_H_

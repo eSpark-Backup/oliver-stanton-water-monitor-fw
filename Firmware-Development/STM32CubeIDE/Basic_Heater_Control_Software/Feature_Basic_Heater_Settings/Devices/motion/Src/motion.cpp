@@ -4,23 +4,28 @@
 #include <functional>
 #include "callbacks.h"
 
-void MotionSensor::motionDetected(){
+void MotionSensor::motionDetected()
+{
 	this->setMotionFlag(1);
 }
 
-bool MotionSensor::getMotionWU(){
+bool MotionSensor::getMotionWU()
+{
 	return this->motionWakeUp;
 }
 
-bool MotionSensor::getMotionWelcome(){
+bool MotionSensor::getMotionWelcome()
+{
 	return this->motionWelcome;
 }
 
-bool MotionSensor::getMotionFlag(){
+bool MotionSensor::getMotionFlag()
+{
 	return this->motionFlag;
 }
 
-void MotionSensor::setMotionFlag(bool state){
+void MotionSensor::setMotionFlag(bool state)
+{
 		this->motionFlag=state;
 }
 void MotionSensor::setup()

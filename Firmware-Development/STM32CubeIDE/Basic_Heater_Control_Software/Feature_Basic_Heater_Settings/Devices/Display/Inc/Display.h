@@ -18,9 +18,9 @@ class Display{
 public:
 //	virtual void displayInit(void) = 0;						//will use later for initializing LCD/CDC
 	virtual void itemsToDisplay(int ) = 0;					//No. of items to be displayed in a menu, for OLED/LCD implementation
-	virtual void displayString(const char*) = 0;
-	virtual void displayChoice(short) = 0;
-	virtual void displayVar(int, char*) = 0;
+	virtual void display(const char*) = 0;
+	virtual void display(short) = 0;
+	virtual void display(int, char*) = 0;
 
 	virtual ~Display() = default;							//virtual destructor
 };

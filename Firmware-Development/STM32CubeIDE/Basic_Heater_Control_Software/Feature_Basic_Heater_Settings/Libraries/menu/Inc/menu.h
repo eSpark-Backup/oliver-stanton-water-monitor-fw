@@ -9,16 +9,18 @@
 
 #include "string.h"
 #include "mainApp.hpp"
+#include "_DEBUG_.h"
+
 
 
 struct MenuItem {
-    const char* label;          	//Name of the menu Element
+    const char* label;          		//Name of the menu Element
     bool (*DoWork)(uint32_t);     		//Function invoked when element is selected
-    const MenuItem* next;       	//SubMenu which it points to
-    const MenuItem* prev;       	//Parent Menu
+    const MenuItem* next;       		//SubMenu which it points to
+    const MenuItem* prev;       		//Parent Menu
     uint8_t num_childmenus;         	//No. of child menus
 //    uint8_t num_parentmenuItems;		//No. of items in parent menu
-    uint8_t num_items;				//No. of items in current menu
+    uint8_t num_items;					//No. of items in current menu
 };
 
 //-----------declare MenuItem Structs defined in menuList.h down below ----------------
@@ -28,10 +30,10 @@ extern struct MenuItem mainMenu[], fodMenu[], fodOptns[], roSaver[], fodOptnsOff
 class Menu{
 public:
 	Menu(){
-		DEBUG_W("Menu obj constructor called");
+		DEBUG_RTT(LOG_WARNING, "Menu obj constructor called");
 	}
 	~Menu(){
-		DEBUG_W("Menu obj destructor called");
+		DEBUG_RTT(LOG_WARNING, "Menu obj destructor called");
 	}
 
 	void displayMenu(const MenuItem* menu, int elements);

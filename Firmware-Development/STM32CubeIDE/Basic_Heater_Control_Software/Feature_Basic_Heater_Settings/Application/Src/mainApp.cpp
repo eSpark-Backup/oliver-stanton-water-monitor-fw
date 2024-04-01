@@ -82,41 +82,41 @@ void MainApp::setup()
 	HAL_Delay(2000);  		menu.displayMenu((MenuItem*)currentM, (sizeof(intro) / sizeof(intro[0])));
 
 	Flags.flagsInit();				//initiate flags from flash
-	DEBUG_A("Heater Controller Initialization complete.");
+	DEBUG_RTT(LOG_HEADING, "Heater Controller Initialization complete.");
 }
 
 void MainApp::loop()
 {
 
-	ButtonE.getState(EnterOK);
+	ButtonE.getState(ENTER_OK);
 	ButtonB.getState(BACK);
 	ButtonU.getState(UP);
 	ButtonD.getState(DOWN);
 	if (ButtonU.state()){
-		DEBUG_I("*******up Button pressed.*******");
-		DEBUG_("ButtonU.state : %d\nButtonU.period : %d", ButtonU.state(), ButtonU.period());
-		if(ButtonU.period() < SINGLEPRESS)
+		DEBUG_RTT(LOG_INFO, "*******up Button pressed.*******");
+		DEBUG_RTT('0', "ButtonU.state : %d\nButtonU.period : %d", ButtonU.state(), ButtonU.period());
+		if(ButtonU.period() < SINGLE_PRESS)
 			menu.navigateMenu("up", (MenuItem*)currentM);
 		ButtonU.reset();
 	}
 	if (ButtonD.state()){
-		DEBUG_I("*******down Button pressed.*******");
-		DEBUG_("ButtonD.state : %d\nButtonD.period : %d", ButtonD.state(), ButtonD.period());
-		if(ButtonD.period() < SINGLEPRESS)
+		DEBUG_RTT(LOG_INFO, "*******down Button pressed.*******");
+		DEBUG_RTT('0', "ButtonD.state : %d\nButtonD.period : %d", ButtonD.state(), ButtonD.period());
+		if(ButtonD.period() < SINGLE_PRESS)
 			menu.navigateMenu("down", (MenuItem*)currentM);
 		ButtonD.reset();
 		}
 	if (ButtonE.state()){
-		DEBUG_I("*******enter Button pressed.*******");
-		DEBUG_("ButtonE.state : %d\nButtonE.period : %d", ButtonE.state(), ButtonE.period());
-//		if(ButtonE.period() < SINGLEPRESS)
+		DEBUG_RTT(LOG_INFO, "*******enter Button pressed.*******");
+		DEBUG_RTT('0', "ButtonE.state : %d\nButtonE.period : %d", ButtonE.state(), ButtonE.period());
+//		if(ButtonE.period() < SINGLE_PRESS)
 			menu.navigateMenu("enter", (MenuItem*)currentM);
 			ButtonE.reset();
 		}
 	if (ButtonB.state()){
-		DEBUG_I("*******back Button pressed.*******");
-		DEBUG_("ButtonB.state : %d\nButtonB.period : %d", ButtonB.state(), ButtonB.period());
-		if(ButtonB.period() < SINGLEPRESS)
+		DEBUG_RTT(LOG_INFO, "*******back Button pressed.*******");
+		DEBUG_RTT('0', "ButtonB.state : %d\nButtonB.period : %d", ButtonB.state(), ButtonB.period());
+		if(ButtonB.period() < SINGLE_PRESS)
 			menu.navigateMenu("back", (MenuItem*)currentM);
 		ButtonB.reset();
 		}
@@ -138,17 +138,17 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		saveTime();
 	if(GPIO_Pin==SW3_Pin)
 	{	}
-	else if(GPIO_Pin==UPBUTTON)		{
-			UP_Flag=true;
+	else if(GPIO_Pin==UP_BUTTON)		{
+			UP_BUTTON_FLAG=true;
 		}
-	else if(GPIO_Pin==ENTERBUTTON)		{
-			ENTER_Flag=true;
+	else if(GPIO_Pin==ENTER_BUTTON)		{
+			ENTER_BUTTON_FLAG=true;
 		}
-	else if(GPIO_Pin==BACKBUTTON)		{
-			BACK_Flag=true;
+	else if(GPIO_Pin==BACK_BUTTON)		{
+			BACK_BUTTON_FLAG=true;
 		}
-	else if(GPIO_Pin==DOWNBUTTON)		{
-			DOWN_Flag=true;
+	else if(GPIO_Pin==DOWN_BUTTON)		{
+			DOWN_BUTTON_FLAG=true;
 		}
 	}
 }
@@ -157,7 +157,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 {
 	if(htim->Instance == TIM6)
 	{
-		DEBUG_E("%d", HAL_GetTick());
+		DEBUG_RTT(LOG_ERROR, "%d", HAL_GetTick());
 	}
 }
 
@@ -174,7 +174,7 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-	DEBUG_E("Error@%s on line %d", file, line);
+	DEBUG_RTT(LOG_ERROR, "Error@%s on line %d", file, line);
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

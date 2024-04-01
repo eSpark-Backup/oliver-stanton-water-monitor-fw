@@ -21,11 +21,11 @@
 #include "switches.hpp"
 #include "TDS.hpp"
 
-//-------button press durations
-#define SINGLEPRESS	800
-#define SHORTPRESS		2000
-#define LONGPRESS		3000
-#define LONGLONGPRESS	5000
+//-------button press durations, in milliseconds
+#define SINGLE_PRESS		800
+#define SHORT_PRESS			2000
+#define LONG_PRESS			3000
+#define LONG_LONG_PRESS		5000
 
 extern Switches ButtonE;			//Enter/OK button obj
 extern Switches ButtonB;			//Back button obj
@@ -33,19 +33,19 @@ extern Switches ButtonU;			//UP button obj
 extern Switches ButtonD;			//Down button obj
 
 typedef enum{
-	Level_Sensor,
-	Pressure_Sensor,
-	Flow_Meter_1,
-	Flow_Meter_2,
-	Flow_Meter_3,
-	MEM_Saver,
-	Mem_Saver_Pause,
-	RESIN_Saver,
-	Pure_CYCLE,
-	AUTO_Fill,
+	LEVEL_SENSOR,
+	PRESSURE_SENSOR,
+	FLOW_METER_1,
+	FLOW_METER_2,
+	FLOW_METER_3,
+	MEM_SAVER,
+	MEM_SAVER_PAUSE,
+	RESIN_SAVER,
+	PURE_CYCLE,
+	AUTO_FILL,
 	WLED,
 	RGB,
-	Buzzer,
+	BUZZER,
 	FoD,
 	_sensors_						//placeholder for the max number of sensors declared
 }Sensors;
@@ -87,11 +87,11 @@ void mainMenuFunc(void);
 void fillOpen(void);
 void invokeST3(bool);
 
-/*  Main Output functions  */
+/*  Main Output Control functions  */
 void memSaverST3(void);
 bool roSaverST1(void);
 bool buzzer(uint8_t, uint16_t timePeriod, ...);
 
-float tds_Sensor(uint32_t);
+float tdsSensor(uint32_t);
 
 #endif /* INC_CONTROLS_H_ */

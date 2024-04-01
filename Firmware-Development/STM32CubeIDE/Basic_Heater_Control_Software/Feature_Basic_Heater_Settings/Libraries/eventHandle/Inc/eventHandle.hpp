@@ -19,7 +19,7 @@
 /*
  *  			Class for handling outputs for time based events
  *  define objects which will enable/disable outputs for a certain period of time
- *         define objects for toggling output for a ceratin period of time
+ *         define objects for toggling output for a certain period of time
  */
 
 class EventHandle{
@@ -43,11 +43,11 @@ public:
         // Set up the timer interrupt
 //        HAL_NVIC_SetPriority(TIM2_IRQn, 0, 0);
 //        HAL_NVIC_EnableIRQ(TIM2_IRQn);
-        DEBUG_W("EventHandle obj constructor called");
+        DEBUG_RTT(LOG_WARNING, "EventHandle obj constructor called");
     }
 	~EventHandle(){
 		delete[] onPeriodms_;
-        DEBUG_W("EventHandle obj destructor called");
+		DEBUG_RTT(LOG_WARNING, "EventHandle obj destructor called");
 	}
 
 	bool setTimer(void);

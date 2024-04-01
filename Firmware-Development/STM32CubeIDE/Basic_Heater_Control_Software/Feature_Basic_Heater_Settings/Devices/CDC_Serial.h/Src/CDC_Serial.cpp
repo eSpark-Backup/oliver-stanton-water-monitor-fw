@@ -17,19 +17,22 @@ void CDC_Serial::itemsToDisplay(int elements){
 
 }
 
-void CDC_Serial::displayString(const char* strng){
+void CDC_Serial::display(const char* strng)
+{
 	char buffer[100];
 	int len = sprintf(buffer, "%s\r\n", strng);					//------  %s\r\n  -----
     HAL_Delay(1);    CDC_Transmit_FS((uint8_t *)buffer, len);
 }
 
-void CDC_Serial::displayChoice(short ch){
+void CDC_Serial::display(short ch)
+{
 	char buffer[20];  // Adjust the buffer size accordingly
 	int len = sprintf(buffer, "Your Choice: %d\r\n", ch);
     HAL_Delay(1);    CDC_Transmit_FS((uint8_t *)buffer, len);
 }
 
-void CDC_Serial::displayVar(int var, char* n){
+void CDC_Serial::display(int var, char* n)
+{
 	char buffer[50];  // Adjust the buffer size accordingly
 	int len = sprintf(buffer, "%s", n);
 	HAL_Delay(1);    CDC_Transmit_FS((uint8_t *)buffer, len);

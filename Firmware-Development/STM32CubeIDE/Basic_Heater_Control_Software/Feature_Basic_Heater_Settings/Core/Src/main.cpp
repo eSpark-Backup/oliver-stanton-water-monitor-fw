@@ -514,7 +514,7 @@ void Error_Handler(void)
   while (1)
   {
 	 while(flag){
-		 DEBUG_E("Error occurred\nMCU HALTING");
+		 DEBUG_RTT(LOG_ERROR, "Error occurred\nMCU HALTING");
 		 flag = false;
 	 }
   }

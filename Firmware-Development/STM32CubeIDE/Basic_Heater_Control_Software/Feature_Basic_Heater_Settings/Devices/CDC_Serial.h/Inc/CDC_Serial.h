@@ -14,10 +14,10 @@
 
 class CDC_Serial: public Display{
 public:
-	void itemsToDisplay(int elements) override;
-	void displayString(const char* strng) override;
-	void displayChoice(short var) override;
-	void displayVar(int var, char* n) override;
+	void itemsToDisplay(int elements) override;					//not implemented yet
+	void display(const char* strng) override;
+	void display(short var) override;
+	void display(int var, char* n) override;
 
 	~CDC_Serial() override {}
 };

@@ -21,7 +21,7 @@
 ///----------------------------------------------------------------------------------
 
 /* by default use address of <prev_node> as <Next_node> if there is no next node to the current item
- * If you want to be able to select a range of values in item set <NextItems> to 0 and set the <Items> from 0-items range
+ * If you want to be able to select a range of values in item, set <NextItems> to 0 and set the <Items> from 0-items range
  */
 
 MenuItem intro[] = {
@@ -43,7 +43,7 @@ MenuItem fodMenu[] = {
 		};
 		//MenuItem fodOptnsOn[] = {
 		//    {"Off", 								nullptr, 		fodOptnsOff, 		fodMenu, 1, 2},
-		//    {"On", 									fodON, 			nullptr, 			fodMenu, 2, 2},
+		//    {"On", 								fodON, 			nullptr, 			fodMenu, 2, 2},
 		//};
 	MenuItem roSaver[] = {
 		{"roSaver on/off",						nullptr, 		roSaverOptns, 	fodMenu, 2, 2},
@@ -67,5 +67,5 @@ MenuItem fodMenu[] = {
 
 
 //-------------------------------P. S.----------------------------------
-//---------These menu structs need to be declared in menu.h file-------------
+//---------These menu structs need to be declared in menu.h file--------
 //----------------------------------------------------------------------

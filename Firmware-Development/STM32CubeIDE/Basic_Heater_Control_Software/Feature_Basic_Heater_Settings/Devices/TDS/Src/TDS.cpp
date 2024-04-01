@@ -9,14 +9,16 @@
 
 #include "TDS.hpp"
 
-float TDS::readTDS(){
+float TDS::readTDS()
+{
 	getValue();
 	calculateTDS();
-	DEBUG_("TDS Value %f",this->tdsValue);
+	DEBUG_RTT('0', "TDS Value %f",this->tdsValue);
 	return this->tdsValue;
 }
 
-void TDS::calculateTDS(void){
+void TDS::calculateTDS(void)
+{
 	//--have to use calculation methods here depending on our TDS sensor/probe--
 
 //	this->voltage = this->analogValueAN1/4096*3.3;//this->adcRange*this->aref;
@@ -27,14 +29,15 @@ void TDS::calculateTDS(void){
 	this->tdsValue -= rand()%4;			//--this is just simulation for decreasing TDS value
 }
 
-void TDS::ADCSelectCH(uint32_t CH){
+void TDS::ADCSelectCH(uint32_t CH)
+{
 	ADC_ChannelConfTypeDef sConfig = {0};
-//	DEBUG_W("selected channel is %d", CH);
+//	DEBUG_RTT("W", "selected channel is %d", CH);
 
 	  hadc.Instance = ADC1;
 	  if (HAL_ADC_Init(&hadc) != HAL_OK)
 	  {
-		DEBUG_E("ADC ERROR");
+		DEBUG_RTT(LOG_ERROR, "ADC ERROR");
 		Error_Handler();
 	  }
 
@@ -45,7 +48,7 @@ void TDS::ADCSelectCH(uint32_t CH){
 	    sConfig.Rank = ADC_RANK_NONE;
 	    if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
 	    {
-	      DEBUG_E("ADC CH %d de-initialization failed", i);
+	      DEBUG_RTT(LOG_ERROR, "ADC CH %d de-initialization failed", i);
 	      Error_Handler();
 	    }
 	  }
@@ -57,13 +60,13 @@ void TDS::ADCSelectCH(uint32_t CH){
 
 	  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
 	  {
-	      DEBUG_E("ADC CH %d initialization failed", CH);
+		  DEBUG_RTT(LOG_ERROR, "ADC CH %d initialization failed", CH);
 	      Error_Handler();
 	  }
 }
 
-uint32_t TDS::getValue(){
-
+void TDS::getValue()
+{
 	HAL_GPIO_WritePin(this->config.T1_port, this->config.T1_pin, GPIO_PIN_SET);
 	ADCSelectCH(this->config.AN1_pin_Channel);
 	HAL_ADC_Start(&hadc);
@@ -77,5 +80,6 @@ uint32_t TDS::getValue(){
 	this->analogValueAN2 = HAL_ADC_GetValue(&hadc);
 	HAL_ADC_Stop(&hadc);
 	HAL_GPIO_WritePin(this->config.T1_port, this->config.T1_pin, GPIO_PIN_RESET);
+
 }
 

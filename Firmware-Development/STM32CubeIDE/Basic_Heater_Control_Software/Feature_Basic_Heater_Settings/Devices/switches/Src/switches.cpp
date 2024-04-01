@@ -15,14 +15,14 @@ void Switches::getState(SWITCHES SW)
 		 {
 			 resetButtonState(SW);
 			 timeStamped = false;
-			 button.period = HAL_GetTick()-buttonPressTime;
-			 if(button.period > DEBOUNCEPERIOD)
+			 Button.period = HAL_GetTick()-buttonPressTime;
+			 if(Button.period > DEBOUNCE_PERIOD)
 			 {
-				 button.state = true;
+				 Button.state = true;
 			 }
 			 else
 			 {
-				 button.state = false;
+				 Button.state = false;
 			 }
 		 }
 	 }
@@ -30,28 +30,28 @@ void Switches::getState(SWITCHES SW)
 
 bool Switches::state()
 {
-	return button.state;
+	return Button.state;
 }
 
 uint16_t Switches::period()
 {
-	return button.period;
+	return Button.period;
 }
 
 bool Switches::isButtonPressed(SWITCHES SW)
 {
 	switch(SW)	{
-		case EnterOK:
-			return ENTER_Flag;
+		case ENTER_OK:
+			return ENTER_BUTTON_FLAG;
 			break;
 		case BACK:
-			return BACK_Flag;
+			return BACK_BUTTON_FLAG;
 			break;
 		case UP:
-			return UP_Flag;
+			return UP_BUTTON_FLAG;
 			break;
 		case DOWN:
-			return DOWN_Flag;
+			return DOWN_BUTTON_FLAG;
 			break;
 //		case RODI:
 //			return RODI_Flag;
@@ -68,17 +68,17 @@ bool Switches::isButtonPressed(SWITCHES SW)
 bool Switches::isButtonStillPressed(SWITCHES SW)
 {
 	switch(SW)	{
-		case EnterOK:
-			return HAL_GPIO_ReadPin(ENTERBUTTONPORT, ENTERBUTTON);
+		case ENTER_OK:
+			return HAL_GPIO_ReadPin(ENTER_BUTTON_PORT, ENTER_BUTTON);
 			break;
 		case BACK:
-			return HAL_GPIO_ReadPin(BACKBUTTONPORT, BACKBUTTON);
+			return HAL_GPIO_ReadPin(BACK_BUTTON_PORT, BACK_BUTTON);
 			break;
 		case UP:
-			return HAL_GPIO_ReadPin(UPBUTTONPORT, UPBUTTON);
+			return HAL_GPIO_ReadPin(UP_BUTTON_PORT, UP_BUTTON);
 			break;
 		case DOWN:
-			return HAL_GPIO_ReadPin(DOWNBUTTONPORT, DOWNBUTTON);
+			return HAL_GPIO_ReadPin(DOWN_BUTTON_PORT, DOWN_BUTTON);
 			break;
 //		case RODI:
 //				return HAL_GPIO_ReadPin(RODIBUTTONPORT, RODIBUTTON);
@@ -95,17 +95,17 @@ bool Switches::isButtonStillPressed(SWITCHES SW)
 void Switches::resetButtonState(SWITCHES SW)
 {
 	switch(SW)	{
-			case EnterOK:
-				ENTER_Flag = false;
+			case ENTER_OK:
+				ENTER_BUTTON_FLAG = false;
 				break;
 			case BACK:
-				BACK_Flag = false;
+				BACK_BUTTON_FLAG = false;
 				break;
 			case UP:
-				UP_Flag = false;
+				UP_BUTTON_FLAG = false;
 				break;
 			case DOWN:
-				DOWN_Flag = false;
+				DOWN_BUTTON_FLAG = false;
 				break;
 //			case RODI:
 //				RODI_Flag = false;
@@ -120,10 +120,11 @@ void Switches::resetButtonState(SWITCHES SW)
 
 void Switches::reset()
 {
-	button = {false, 0};
+	Button = {false, 0};
 }
 
-void saveTime(){
+void saveTime()
+{
 	buttonPressTime = HAL_GetTick();
 	timeStamped = true;
 }

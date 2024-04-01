@@ -10,10 +10,9 @@
 #define TDS_INC_TDS_HPP_
 
 #include "_DEBUG_.h"
-#include "main.h"
+#include "mainApp.hpp"
 
-#define TDSDUMMYVALUE 18000
-
+#define TDS_DUMMY_VALUE 18000
 
 /* The Physical header of TDS probes are mentioned below
  *
@@ -35,6 +34,11 @@ struct GPIOConfig {
 	uint16_t T1_pin;
 	uint16_t AN2_pin_Channel;
 };
+
+//GPIOConfig tds1PinConfig;
+//GPIOConfig tds2PinConfig;
+//GPIOConfig tds3PinConfig;
+//GPIOConfig tds4PinConfig;
 
 
 
@@ -58,7 +62,7 @@ private:
 
     float analogValueAN1;
     float analogValueAN2;
-    float tdsValue = TDSDUMMYVALUE;
+    float tdsValue = TDS_DUMMY_VALUE;
 //    float aref = 3.3;				//voltage reference, 3.3v
 //    float adcRange = 4096;			//12bit ADC
 //    float kValue;      // k value of the probe,you can calibrate in buffer solution ,such as 706.5ppm(1413us/cm)@25^C
@@ -67,15 +71,15 @@ private:
 
 	void calculateTDS(void);
 	void ADCSelectCH(uint32_t);
-	uint32_t getValue(void);
+	void getValue(void);
 public:
 	TDS(const GPIOConfig& config) : config(config) {
 	        // Constructor to initialize the GPIO port and pin
 	        // You may add more parameters as needed for your use case
-		DEBUG_W("TDS obj constructor called.");
+		DEBUG_RTT(LOG_WARNING, "TDS obj constructor called.");
 	}
 	~TDS(){
-		DEBUG_W("TDS obj destructor called.");
+		DEBUG_RTT(LOG_WARNING, "TDS obj destructor called.");
 	};
 
 
