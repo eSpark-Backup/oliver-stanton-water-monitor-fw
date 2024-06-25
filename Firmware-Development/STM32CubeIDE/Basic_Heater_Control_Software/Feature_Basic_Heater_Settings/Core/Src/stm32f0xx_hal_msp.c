@@ -20,7 +20,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
@@ -65,6 +64,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
   */
 void HAL_MspInit(void)
 {
+
   /* USER CODE BEGIN MspInit 0 */
 
   /* USER CODE END MspInit 0 */
@@ -105,6 +105,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
     PC3     ------> ADC_IN13
     PA1     ------> ADC_IN1
     PA2     ------> ADC_IN2
+    PA7     ------> ADC_IN7
     PC4     ------> ADC_IN14
     PC5     ------> ADC_IN15
     */
@@ -114,7 +115,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = TDS4_AN1_Pin|TDS4_AN2_Pin;
+    GPIO_InitStruct.Pin = TDS4_AN1_Pin|TDS4_AN2_Pin|BAT_ADC_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
@@ -149,13 +150,14 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
     PC3     ------> ADC_IN13
     PA1     ------> ADC_IN1
     PA2     ------> ADC_IN2
+    PA7     ------> ADC_IN7
     PC4     ------> ADC_IN14
     PC5     ------> ADC_IN15
     */
     HAL_GPIO_DeInit(GPIOC, TDS1_AN1_Pin|TDS1_AN2_Pin|TDS3_AN1_Pin|TDS3_AN2_Pin
                           |TDS2_AN1_Pin|TDS2_AN2_Pin);
 
-    HAL_GPIO_DeInit(GPIOA, TDS4_AN1_Pin|TDS4_AN2_Pin);
+    HAL_GPIO_DeInit(GPIOA, TDS4_AN1_Pin|TDS4_AN2_Pin|BAT_ADC_Pin);
 
   /* USER CODE BEGIN ADC1_MspDeInit 1 */
 

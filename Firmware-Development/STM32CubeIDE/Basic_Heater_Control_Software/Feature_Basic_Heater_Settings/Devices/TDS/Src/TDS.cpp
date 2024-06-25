@@ -29,7 +29,7 @@ void TDS::calculateTDS(void)
 	this->tdsValue -= rand()%4;			//--this is just simulation for decreasing TDS value
 }
 
-void TDS::ADCSelectCH(uint32_t CH)
+void ADCSelectCH(uint32_t CH)
 {
 	ADC_ChannelConfTypeDef sConfig = {0};
 //	DEBUG_RTT("W", "selected channel is %d", CH);

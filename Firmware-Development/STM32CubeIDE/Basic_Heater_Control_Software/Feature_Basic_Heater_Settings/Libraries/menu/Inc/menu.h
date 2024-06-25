@@ -24,7 +24,9 @@ struct MenuItem {
 };
 
 //-----------declare MenuItem Structs defined in menuList.h down below ----------------
-extern struct MenuItem mainMenu[], fodMenu[], fodOptns[], roSaver[], fodOptnsOff[], roSaverOptns[], roSaverThresh[], roSaverThreshAdjust[];
+extern struct MenuItem mainMenu[], fodMenu[], fodOptns[], roSaver[], fodOptnsOff[], roSaverOptns[], roSaverThresh[], roSaverThreshAdjust[]\
+,Battery_Index[], BatMonitorMenu[], BatLowMenuOptns[],BatLowMenuOFF[],BatPowerConsumptionOptns[],BatPowerConsumptionOptnsON[],BatPowerConsumptionOptnsOFF[]\
+,DeviceStandByScreen[],DeviceShutDown[];
 //-------------------------------------------------------------------------------------
 
 class Menu{
@@ -35,7 +37,7 @@ public:
 	~Menu(){
 		DEBUG_RTT(LOG_WARNING, "Menu obj destructor called");
 	}
-
+	void Display_Log(const char* log);
 	void displayMenu(const MenuItem* menu, int elements);
 	void navigateMenu(const char* optn, MenuItem* currentMenu);
 

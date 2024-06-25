@@ -101,6 +101,36 @@ bool fodOFF(uint32_t)
 	return false;
 }
 
+bool BatLowShutdownOn(uint32_t)
+{
+	Disp->display("Battery LOW power shutdown Enabled.");
+	Flags.setFlag(Settings, BATTERY_LOW_SHUTDON, true);
+	return true;
+}
+
+bool BatLowShutdownOff(uint32_t)
+{
+	Disp->display("Battery LOW power shutdown Disabled.");
+
+	Flags.setFlag(Settings, LOG_TO_MASTER, true);
+	Flags.setFlag(Settings, BATTERY_LOW_SHUTDON, false);
+	return true;
+}
+
+bool BatPowerMonitorOn(uint32_t)
+{
+	Disp->display("Battery Power Monitoring Enabled.");
+	Flags.setFlag(Settings, BATTERY_POWER_MONITOR, true);
+	return true;
+}
+
+bool BatPowerMonitorOff(uint32_t)
+{
+	Disp->display("Battery Power Monitoring Disabled.");
+	Flags.setFlag(Settings, BATTERY_POWER_MONITOR, false);
+	return true;
+}
+
 bool fodON(uint32_t)
 {
 	Flags.setFlag(Settings, FoD, true);

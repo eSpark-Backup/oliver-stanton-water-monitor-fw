@@ -90,6 +90,8 @@ void Error_Handler(void);
 #define TDS4_T2_GPIO_Port GPIOA
 #define LED2_Pin GPIO_PIN_6
 #define LED2_GPIO_Port GPIOA
+#define BAT_ADC_Pin GPIO_PIN_7
+#define BAT_ADC_GPIO_Port GPIOA
 #define TDS2_AN1_Pin GPIO_PIN_4
 #define TDS2_AN1_GPIO_Port GPIOC
 #define TDS2_AN2_Pin GPIO_PIN_5

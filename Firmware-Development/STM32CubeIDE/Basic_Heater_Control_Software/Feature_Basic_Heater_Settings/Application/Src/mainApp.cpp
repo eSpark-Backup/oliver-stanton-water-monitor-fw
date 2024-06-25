@@ -5,6 +5,7 @@
 #include "menu.h"
 #include "menuList.h"
 #include "motorDriver.h"
+#include "Battery.hpp"
 //#include "flash.h"
 #include "Display.h"
 #include "CDC_Serial.h"
@@ -82,7 +83,7 @@ void MainApp::setup()
 	HAL_Delay(2000);  		menu.displayMenu((MenuItem*)currentM, (sizeof(intro) / sizeof(intro[0])));
 
 	Flags.flagsInit();				//initiate flags from flash
-	DEBUG_RTT(LOG_HEADING, "Heater Controller Initialization complete.");
+	DEBUG_LOG(menu, "Heater Controller Initialization complete.");
 }
 
 void MainApp::loop()
@@ -93,29 +94,29 @@ void MainApp::loop()
 	ButtonU.getState(UP);
 	ButtonD.getState(DOWN);
 	if (ButtonU.state()){
-		DEBUG_RTT(LOG_INFO, "*******up Button pressed.*******");
-		DEBUG_RTT('0', "ButtonU.state : %d\nButtonU.period : %d", ButtonU.state(), ButtonU.period());
+		DEBUG_LOG(menu, "*******up Button pressed.*******");
+		DEBUG_LOG(menu, "ButtonU.state : %d\nButtonU.period : %d", ButtonU.state(), ButtonU.period());
 		if(ButtonU.period() < SINGLE_PRESS)
 			menu.navigateMenu("up", (MenuItem*)currentM);
 		ButtonU.reset();
 	}
 	if (ButtonD.state()){
-		DEBUG_RTT(LOG_INFO, "*******down Button pressed.*******");
-		DEBUG_RTT('0', "ButtonD.state : %d\nButtonD.period : %d", ButtonD.state(), ButtonD.period());
+		DEBUG_LOG(menu, "*******down Button pressed.*******");
+		DEBUG_LOG(menu, "ButtonD.state : %d\nButtonD.period : %d", ButtonD.state(), ButtonD.period());
 		if(ButtonD.period() < SINGLE_PRESS)
 			menu.navigateMenu("down", (MenuItem*)currentM);
 		ButtonD.reset();
 		}
 	if (ButtonE.state()){
-		DEBUG_RTT(LOG_INFO, "*******enter Button pressed.*******");
-		DEBUG_RTT('0', "ButtonE.state : %d\nButtonE.period : %d", ButtonE.state(), ButtonE.period());
+		DEBUG_LOG(menu, "*******enter Button pressed.*******");
+		DEBUG_LOG(menu, "ButtonE.state : %d\nButtonE.period : %d", ButtonE.state(), ButtonE.period());
 //		if(ButtonE.period() < SINGLE_PRESS)
 			menu.navigateMenu("enter", (MenuItem*)currentM);
 			ButtonE.reset();
 		}
 	if (ButtonB.state()){
-		DEBUG_RTT(LOG_INFO, "*******back Button pressed.*******");
-		DEBUG_RTT('0', "ButtonB.state : %d\nButtonB.period : %d", ButtonB.state(), ButtonB.period());
+		DEBUG_LOG(menu, "*******back Button pressed.*******");
+		DEBUG_LOG(menu, "ButtonB.state : %d\nButtonB.period : %d", ButtonB.state(), ButtonB.period());
 		if(ButtonB.period() < SINGLE_PRESS)
 			menu.navigateMenu("back", (MenuItem*)currentM);
 		ButtonB.reset();
@@ -126,7 +127,7 @@ void MainApp::loop()
 	roSaverST1();
 	Buzzzer.Run();
 	WLED1.Run();
-
+	Battery.powerManager();
 
 //	HAL_Delay(1000);
 }

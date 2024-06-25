@@ -29,7 +29,30 @@
 #define	LOG_INFO	'I'
 #define	LOG_HEADING	'H'
 
+// Define the buffer size
+#define LOG_BUFFER_SIZE 256
+
+#define DEBUG_AHTASHAM 1
+
+
 int DEBUG_RTT(char level, const char *sFormat, ...);
+
+#if DEBUG_AHTASHAM == 1
+// Define the macro to use its own implementation
+    #define DEBUG_LOG(menu, format, ...) \
+        do { \
+            char logBuffer[LOG_BUFFER_SIZE]; \
+            snprintf(logBuffer, LOG_BUFFER_SIZE, format, ##__VA_ARGS__); \
+            menu.Display_Log(logBuffer); \
+        } while (0)
+
+#else
+// Define the macro to use DEBUG_RTT
+    #define DEBUG_LOG(menu, format, ...) \
+        do { \
+            DEBUG_RTT('I', format, ##__VA_ARGS__); \
+        } while (0)
+#endif
 //int DEBUG_(const char * sFormat, ...);
 //int DEBUG_E(const char * sFormat, ...);
 //int DEBUG_W(const char * sFormat, ...);

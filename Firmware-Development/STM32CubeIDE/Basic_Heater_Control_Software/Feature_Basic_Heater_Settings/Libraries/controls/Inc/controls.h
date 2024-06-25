@@ -47,6 +47,16 @@ typedef enum{
 	RGB,
 	BUZZER,
 	FoD,
+	BATTERY_CRITICAL,
+	BATTERY_LOW,
+	BATTERY_HIGH,
+	BATTERY_LOW_SHUTDON,
+	BATTERY_VOLTAGE_LOW,
+	BATTERY_FLAT_SHUTDOWN,
+	BATTERY_WARNING_SPIKES,
+	BATTERY_POWER_MONITOR,
+	BATTERY_PUMP_IGNORE_WARNING,
+	LOG_TO_MASTER,
 	_sensors_						//placeholder for the max number of sensors declared
 }Sensors;
 
@@ -80,6 +90,10 @@ bool roSaverThreshAdj(uint32_t);
 bool roSaverThreshDefault(uint32_t);
 bool roSaverOn(uint32_t);
 bool roSaverOff(uint32_t);
+bool BatLowShutdownOn(uint32_t);
+bool BatLowShutdownOff(uint32_t);
+bool BatPowerMonitorOn(uint32_t);
+bool BatPowerMonitorOff(uint32_t);
 
 
 /*	Support Functions	*/

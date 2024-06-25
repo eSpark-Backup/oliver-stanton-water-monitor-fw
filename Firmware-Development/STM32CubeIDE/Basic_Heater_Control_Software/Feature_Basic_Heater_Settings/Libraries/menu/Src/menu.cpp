@@ -22,6 +22,11 @@
 int *currentM;
 short choiceSelect = 0;
 
+void Menu::Display_Log(const char* log)
+{
+	Disp->display(log);
+}
+
 void Menu::displayMenu(const MenuItem* menu, int elements)
 {
 	Disp->itemsToDisplay(elements);
@@ -39,8 +44,18 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
 	uint8_t c = choiceSelect ;				//when referencing value of "c" in currentMenu we will use "c-1" since arrays start from 0
 //	DEBUG_I("Inside navigateMenu()");
 	//when UP button is pressed
-	if(strcmp(optn, "up") == 0 && num_items > 1)
+	char buffer[100];
+	sprintf(buffer,"num_items : %d\nc : %d", num_items, c);
+	Disp->display(buffer);
+	if(strcmp(optn, "up") == 0 )
 	{
+		if(num_items==1 && ((c == 0) || (strcmp(currentMenu->label,mainMenu[0].label)==0)))
+					{
+			currentMenu = (MenuItem*)Battery_Index;
+						num_items = currentMenu->num_items;
+						displayMenu(currentMenu,  num_items);
+						currentM = (int*)currentMenu;
+					}
 		if(c==num_items)
 		{
 			c=1;
@@ -48,28 +63,32 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
 		else
 		{
 			c += 1;
+
 		}
-		Disp->display(c);
+		if(c>=1){
+			Disp->display(c);
+		}
+
 		choiceSelect = c;
 	}
-	//when DOWN button is pressed
-	if(strcmp(optn, "down") == 0 && num_items > 1)
-	{
-		if(c<=1)
+		//when DOWN button is pressed
+		if(strcmp(optn, "down") == 0 && num_items > 1)
 		{
-			c=num_items;
+			if(c<=1)
+			{
+				c=num_items;
+			}
+			else if (c>1)
+			{
+				c -= 1;
+			}
+			Disp->display(c);
+			choiceSelect = c;
 		}
-		else if (c>1)
-		{
-			c -= 1;
-		}
-		Disp->display(c);
-		choiceSelect = c;
-	}
 	//when BACK button is pressed
 	if(strcmp(optn, "back") == 0 && currentMenu->prev != nullptr)
 	{
-		choiceSelect = 0;
+		choiceSelect = 1;
 		currentMenu = (MenuItem*)currentMenu->prev;
 		displayMenu(currentMenu, currentMenu->num_items);
 		currentM = (int*)currentMenu;	//}
@@ -115,19 +134,34 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
 					}
 					if(currentMenu[c-1].next != nullptr)
 					{
+
+						Disp->display("It should come here");
+						Disp->display(currentMenu[c-1].label);
+
+						if(strcmp(currentMenu[c-1].label,"On")==0) choiceSelect = 1;
 						num_childs = currentMenu[c-1].num_childmenus;
+
 						currentMenu = (MenuItem*)currentMenu[c-1].next;
+						sprintf(buffer,"num_childmenus : %d\r\n", num_childs);
+													Disp->display(buffer);
 						displayMenu(currentMenu, num_childs);
 						currentM = (int*)currentMenu;
+						if(num_childs >2)choiceSelect++;
+						//return;
 					}
 					else
 					{
+						Disp->display("It shouldn't come here");
 						currentMenu = (MenuItem*)currentMenu->prev;
 						displayMenu(currentMenu, currentMenu->num_items);
 						currentM = (int*)currentMenu;
 					}
 				}
-				choiceSelect = 0;
+				if(currentMenu[c-1].next == nullptr)
+					{
+						Disp->display(currentMenu[c-1].label);
+						choiceSelect = 0;
+					}
 			}
 			else if (num_items==1 && currentMenu[0].DoWork!= nullptr)				//we need to enable this for conditions when a person doesnt have to make a choice in menu, i.e. c = undefined and above if condition is never satisfied
 			{
@@ -135,8 +169,11 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
 //					return;							}
 				else if(currentMenu[c-1].next != nullptr)
 				{
+					Disp->display("It should come here");
 					num_childs = currentMenu[c-1].num_childmenus;
 					currentMenu = (MenuItem*)currentMenu[c-1].next;
+					sprintf(buffer,"num_childmenus : %d\r\n", num_childs);
+																		Disp->display(buffer);
 					displayMenu(currentMenu, num_childs);
 					currentM = (int*)currentMenu;
 				}
@@ -149,11 +186,14 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
 			}
 			else
 			{
+				Disp->display("It should come here first");
 //				displayMenu(currentMenu, num_items);
 				currentMenu = (MenuItem*)currentMenu->next;
 				num_items = currentMenu->num_items;
 				displayMenu(currentMenu, num_items);
 				currentM = (int*)currentMenu;
+
 			}
+			Disp->display(1);
 	}
 }

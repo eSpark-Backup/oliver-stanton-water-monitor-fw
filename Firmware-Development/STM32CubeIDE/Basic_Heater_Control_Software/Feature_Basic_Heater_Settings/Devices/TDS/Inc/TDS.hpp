@@ -10,6 +10,7 @@
 #define TDS_INC_TDS_HPP_
 
 #include "_DEBUG_.h"
+#include "Adc_select.h"
 #include "mainApp.hpp"
 
 #define TDS_DUMMY_VALUE 18000
@@ -70,7 +71,7 @@ private:
 
 
 	void calculateTDS(void);
-	void ADCSelectCH(uint32_t);
+	friend void ADCSelectCH(uint32_t);
 	void getValue(void);
 public:
 	TDS(const GPIOConfig& config) : config(config) {
