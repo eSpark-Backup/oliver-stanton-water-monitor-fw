@@ -117,6 +117,7 @@ void MainApp::loop()
 	if (ButtonB.state()){
 		DEBUG_LOG(menu, "*******back Button pressed.*******");
 		DEBUG_LOG(menu, "ButtonB.state : %d\nButtonB.period : %d", ButtonB.state(), ButtonB.period());
+		Battery.getMonitor().isBackButtonPressed = true;
 		if(ButtonB.period() < SINGLE_PRESS)
 			menu.navigateMenu("back", (MenuItem*)currentM);
 		ButtonB.reset();

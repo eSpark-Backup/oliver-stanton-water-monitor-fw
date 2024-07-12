@@ -32,7 +32,7 @@
 // Define the buffer size
 #define LOG_BUFFER_SIZE 256
 
-#define DEBUG_AHTASHAM 1
+#define DEBUG_AHTASHAM 0
 
 
 int DEBUG_RTT(char level, const char *sFormat, ...);

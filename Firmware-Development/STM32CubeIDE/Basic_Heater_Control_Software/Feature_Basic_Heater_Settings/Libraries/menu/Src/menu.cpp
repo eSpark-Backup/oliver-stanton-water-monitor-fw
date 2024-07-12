@@ -7,6 +7,7 @@
 
 #include "menu.h"
 #include "controls.h"
+#include "Battery.hpp"
 
 
 
@@ -39,14 +40,18 @@ void Menu::displayMenu(const MenuItem* menu, int elements)
 void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
 {
 //	uint8_t num_parent = currentMenu->num_parentmenuItems;
+	if(Battery.getMonitor().isKeepDeviceInShutdown == true)
+	{
+		return;
+	}
 	uint8_t num_childs = currentMenu->num_childmenus;
 	uint8_t num_items = currentMenu->num_items;
 	uint8_t c = choiceSelect ;				//when referencing value of "c" in currentMenu we will use "c-1" since arrays start from 0
 //	DEBUG_I("Inside navigateMenu()");
 	//when UP button is pressed
-	char buffer[100];
-	sprintf(buffer,"num_items : %d\nc : %d", num_items, c);
-	Disp->display(buffer);
+	char buffer[256];
+//	sprintf(buffer,"num_items : %d\n\rc : %d \r\n Menu name %s", num_items, c,currentMenu->label);
+//	Disp->display(buffer);
 	if(strcmp(optn, "up") == 0 )
 	{
 		if(num_items==1 && ((c == 0) || (strcmp(currentMenu->label,mainMenu[0].label)==0)))
@@ -135,23 +140,30 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
 					if(currentMenu[c-1].next != nullptr)
 					{
 
-						Disp->display("It should come here");
-						Disp->display(currentMenu[c-1].label);
+//						Disp->display("It should come here");
+//						Disp->display(currentMenu[c-1].label);
 
 						if(strcmp(currentMenu[c-1].label,"On")==0) choiceSelect = 1;
 						num_childs = currentMenu[c-1].num_childmenus;
-
+//						Disp->display(num_childs);
 						currentMenu = (MenuItem*)currentMenu[c-1].next;
-						sprintf(buffer,"num_childmenus : %d\r\n", num_childs);
-													Disp->display(buffer);
+//						Disp->display("It should come here too");
+//						Disp->display(currentMenu->label);
+						if(strcmp(currentMenu->label,BatLowMenuOFF[0].label)==0)
+						{
+							Disp->display("Switching this off will invalidate the warranty on your battery.");
+						}
+//						sprintf(buffer,"num_childmenus : %d\r\n Next Menu label %s", num_childs, currentMenu->label);
+//						Disp->display(buffer);
 						displayMenu(currentMenu, num_childs);
 						currentM = (int*)currentMenu;
+						if(num_childs==1)choiceSelect=1;
 						if(num_childs >2)choiceSelect++;
 						//return;
 					}
 					else
 					{
-						Disp->display("It shouldn't come here");
+//						Disp->display("It shouldn't come here");
 						currentMenu = (MenuItem*)currentMenu->prev;
 						displayMenu(currentMenu, currentMenu->num_items);
 						currentM = (int*)currentMenu;
@@ -169,11 +181,11 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
 //					return;							}
 				else if(currentMenu[c-1].next != nullptr)
 				{
-					Disp->display("It should come here");
+//					Disp->display("It should come here");
 					num_childs = currentMenu[c-1].num_childmenus;
 					currentMenu = (MenuItem*)currentMenu[c-1].next;
-					sprintf(buffer,"num_childmenus : %d\r\n", num_childs);
-																		Disp->display(buffer);
+//					sprintf(buffer,"num_childmenus : %d\r\n Next Menu label %s", num_childs, currentMenu->label);
+//																		Disp->display(buffer);
 					displayMenu(currentMenu, num_childs);
 					currentM = (int*)currentMenu;
 				}
@@ -186,7 +198,7 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
 			}
 			else
 			{
-				Disp->display("It should come here first");
+//				Disp->display("It should come here first");
 //				displayMenu(currentMenu, num_items);
 				currentMenu = (MenuItem*)currentMenu->next;
 				num_items = currentMenu->num_items;

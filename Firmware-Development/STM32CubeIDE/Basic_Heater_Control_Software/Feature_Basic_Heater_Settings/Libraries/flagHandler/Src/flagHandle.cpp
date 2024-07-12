@@ -182,6 +182,8 @@ bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor)
 		else if(sensor == MEM_SAVER_PAUSE)	return FlagsReg.settings.Mem_Saver_Pause;
 		else if(sensor == RESIN_SAVER)		return FlagsReg.settings.Resin_Saver;
 		else if(sensor == AUTO_FILL)		return FlagsReg.settings.Auto_Fill;
+		else if(sensor == BATTERY_LOW_SHUTDON)	return FlagsReg.settings.Battery_low_shutdown;
+		else if(sensor == BATTERY_POWER_MONITOR)	return FlagsReg.settings.Battery_power_monitor;
 	}
 	else if (op == Status)
 	{
@@ -195,6 +197,15 @@ bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor)
 		else if(sensor == MEM_SAVER)			return FlagsReg.status.Mem_Saver;
 		else if(sensor == AUTO_FILL)			return FlagsReg.status.Auto_Fill;
 		else if(sensor == PURE_CYCLE)			return FlagsReg.status.Pure_CYCLE;
+		else if(sensor == BATTERY_CHARGING_DETECTED) return FlagsReg.status.Battery_charging_detected;
+		else if(sensor == BATTERY_CRITICAL)		return FlagsReg.status.Battery_critical;
+		else if(sensor == BATTERY_LOW)		return FlagsReg.status.Battery_low;
+		else if(sensor == BATTERY_HIGH)		return FlagsReg.status.Battery_high;
+		else if(sensor == BATTERY_VOLTAGE_LOW)		return FlagsReg.status.Battery_voltage_low;
+		else if(sensor == BATTERY_FLAT_SHUTDOWN)		return FlagsReg.status.Battery_flat_shutdown;
+		else if(sensor == BATTERY_WARNING_SPIKES)		return FlagsReg.status.Battery_warning_spikes;
+		else if(sensor == BATTERY_PUMP_IGNORE_WARNING)		return FlagsReg.status.Battery_Pump_Ignore;
+		else if(sensor == TRIGGER_WARNING) return FlagsReg.status.Battery_warning;
 	}
 //	else
 		return false;
@@ -214,6 +225,8 @@ bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state)
 		else if(sensor == MEM_SAVER)		FlagsReg.settings.Mem_Saver = state;
 		else if(sensor == MEM_SAVER_PAUSE)	FlagsReg.settings.Mem_Saver_Pause = state;
 		else if(sensor == AUTO_FILL)		FlagsReg.settings.Auto_Fill = state;
+		else if(sensor == BATTERY_LOW_SHUTDON)	FlagsReg.settings.Battery_low_shutdown = state;
+		else if(sensor == BATTERY_POWER_MONITOR)	FlagsReg.settings.Battery_power_monitor = state;
 	}
 	else if (op == Status)
 	{
@@ -227,6 +240,15 @@ bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state)
 		else if(sensor == MEM_SAVER)		FlagsReg.status.Mem_Saver = state;
 		else if(sensor == AUTO_FILL)		FlagsReg.status.Auto_Fill = state;
 		else if(sensor == PURE_CYCLE)		FlagsReg.status.Pure_CYCLE = state;
+		else if(sensor == BATTERY_CHARGING_DETECTED) FlagsReg.status.Battery_charging_detected = state;
+		else if(sensor == BATTERY_CRITICAL)		FlagsReg.status.Battery_critical= state;
+		else if(sensor == BATTERY_LOW)		FlagsReg.status.Battery_low = state;
+		else if(sensor == BATTERY_HIGH)		FlagsReg.status.Battery_high = state;
+		else if(sensor == BATTERY_VOLTAGE_LOW)		FlagsReg.status.Battery_voltage_low = state;
+		else if(sensor == BATTERY_FLAT_SHUTDOWN)		FlagsReg.status.Battery_flat_shutdown = state;
+		else if(sensor == BATTERY_WARNING_SPIKES)		FlagsReg.status.Battery_warning_spikes = state;
+		else if(sensor == BATTERY_PUMP_IGNORE_WARNING)		FlagsReg.status.Battery_Pump_Ignore = state;
+		else if(sensor == TRIGGER_WARNING) FlagsReg.status.Battery_warning = state;
 	}
 	DEBUG_RTT(LOG_INFO, "Exiting setFlag.");
 	return false;
@@ -237,6 +259,8 @@ void FlagHandle::flagsInit()								//Implement flashRetrieve() here
 //	flashRetrieve();
 	setFlag(Settings, WLED, true);
 	setFlag(Settings, BUZZER, true);
+	setFlag(Settings,BATTERY_LOW_SHUTDON,true);
+	setFlag(Settings,BATTERY_POWER_MONITOR,true);
 }
 
 //void flagHandle::(){

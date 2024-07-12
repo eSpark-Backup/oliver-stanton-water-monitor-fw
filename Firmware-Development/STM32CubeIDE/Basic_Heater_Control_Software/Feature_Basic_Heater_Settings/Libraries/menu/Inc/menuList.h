@@ -64,33 +64,41 @@ MenuItem fodMenu[] = {
 MenuItem Battery_Index[]={{"Default LLDCMPS Home Page", 			nullptr, 		BatMonitorMenu, 			nullptr, 2, 1}};
 MenuItem BatMonitorMenu[] = {
     {"Battery Low Power Shutdown", 				nullptr, 		BatLowMenuOptns, 			mainMenu, 2, 2},
-    {"Power Consumption Monitor",							nullptr, 		BatPowerConsumptionOptns, 			mainMenu, 2, 2},
+    {"Power Consumption Monitor",							nullptr, 		BatPowerConsumptiontable, 			mainMenu, 1, 1},
 };
 	MenuItem BatLowMenuOptns[] = {
 		{"Off", 								nullptr, 		BatLowMenuOFF, 		BatMonitorMenu, 3, 2},
 		{"On", 									BatLowShutdownOn, 			BatMonitorMenu, 			BatMonitorMenu, 2, 2},
 	};
 		MenuItem BatLowMenuOFF[] = {
-				{"Are you sure you want to switch this system critical setting off? Switching this off will invalidate the warranty on your battery.", 	nullptr, BatLowMenuOptns, BatLowMenuOptns, 2, 2},
+				{"Are you sure you want to switch this system critical setting off? ", 	nullptr, BatLowMenuOptns, BatLowMenuOptns, 2, 2},
 				{"Yes", 								BatLowShutdownOff, 		BatLowMenuOptns, 		BatLowMenuOptns, 2, 1},
 				{"No", 								BatLowShutdownOn, 			BatLowMenuOptns, 			BatLowMenuOptns, 1, 1},
 			};
+	MenuItem BatPowerConsumptiontable[] = {
+			   {"Component Power Consumption Table", 								nullptr, 		BatPowerConsumptionOptns, 		BatMonitorMenu, 2, 2},
+			};
 	MenuItem BatPowerConsumptionOptns[] = {
-		{"Off", 								BatPowerMonitorOff, 		BatPowerConsumptionOptnsOFF, 		nullptr, 1, 2}, //BatPowerConsumptionOptnsON
-		{"On", 									BatPowerMonitorOn, 			nullptr, 			nullptr, 2, 2},
+		{"Off", 								BatPowerMonitorOff, 		BatPowerConsumptiontable, 		BatPowerConsumptiontable,2, 2}, //BatPowerConsumptionOptnsON
+		{"On", 									BatPowerMonitorOn, 			nullptr, 			BatPowerConsumptiontable,
+				2, 2},
 		};
 //	MenuItem BatPowerConsumptionOptnsON[] = {
 //		{"Pump One (LL.PDS.01) is drawing 13.2 amps, higher than specification, service required", 	nullptr, 		nullptr, 		BatMonitorMenu, 1, 2},
 //	};
-	MenuItem BatPowerConsumptionOptnsOFF[] = {
-	   {"Component Power Consumption Table", 								nullptr, 		nullptr, 		BatMonitorMenu, 1, 2},
-	};
+
 
 	MenuItem DeviceStandByScreen[] = {
-		   {"Device In StandBy", 								nullptr, 		mainMenu, 		mainMenu, 1, 2},
+		   {"Device In StandBy", 								nullptr, 		mainMenu, 		mainMenu, 1, 1},
 		};
 	MenuItem DeviceShutDown[] = {
-			   {"Device Shutdown Screen", 								nullptr, 		mainMenu, 		mainMenu, 1, 2},
+			   {"Device Shutdown Screen", 								nullptr, 		mainMenu, 		mainMenu, 1, 1},
+			};
+	MenuItem BatteryChargingDetected[] = {
+			   {"System Battery Charging (%.2f v)", 								nullptr, 		mainMenu, 		mainMenu, 1, 1},
+			};
+	MenuItem BatteryChargingDisconnected[] = {
+			   {"Charger Disconnected", 								nullptr, 		mainMenu, 		mainMenu, 1, 1},
 			};
 #endif /* INC_MENULIST_H_ */
 

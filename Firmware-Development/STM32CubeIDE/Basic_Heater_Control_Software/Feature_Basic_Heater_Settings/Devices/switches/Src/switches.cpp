@@ -5,6 +5,7 @@
  *      Author: Farhan Ahmed
  */
 #include "switches.hpp"
+#include "Battery.hpp"
 
 
 void Switches::getState(SWITCHES SW)
@@ -120,6 +121,7 @@ void Switches::resetButtonState(SWITCHES SW)
 
 void Switches::reset()
 {
+	Battery.getMonitor().isActivityDetected = true;
 	Button = {false, 0};
 }
 

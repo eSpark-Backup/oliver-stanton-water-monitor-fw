@@ -101,6 +101,7 @@ bool fodOFF(uint32_t)
 	return false;
 }
 
+
 bool BatLowShutdownOn(uint32_t)
 {
 	Disp->display("Battery LOW power shutdown Enabled.");

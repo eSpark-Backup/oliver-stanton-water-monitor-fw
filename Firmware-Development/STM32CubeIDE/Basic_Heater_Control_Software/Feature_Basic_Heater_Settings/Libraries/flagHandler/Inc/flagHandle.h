@@ -63,6 +63,15 @@ protected:
 	   uint64_t Level_Sensor    :1;
 	   uint64_t Buzzer          :1;
 	   uint64_t WLED          	:1;
+	   uint64_t Battery_charging_detected       :1;
+	   uint64_t Battery_critical       :1;
+	   uint64_t Battery_low            :1;
+	   uint64_t Battery_high       	   :1;
+	   uint64_t Battery_voltage_low    :1;
+	   uint64_t Battery_flat_shutdown  :1;
+	   uint64_t Battery_warning_spikes  :1;
+	   uint64_t Battery_Pump_Ignore    :1;
+	   uint64_t Battery_warning    :1;
 	   } status;
 	   struct {
 	   uint64_t 		        :32;
@@ -84,6 +93,8 @@ protected:
 	   uint64_t Buzzer          :1;
 	   uint64_t WLED			:1;
 	   uint64_t RGB			    :1;			//MSB
+	   uint64_t Battery_low_shutdown			    :1;			//MSB
+	   uint64_t Battery_power_monitor			    :1;			//MSB
 	   } settings;
 //	  struct
 //	    {
