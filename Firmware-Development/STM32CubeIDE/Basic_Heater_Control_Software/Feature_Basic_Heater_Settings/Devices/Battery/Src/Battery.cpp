@@ -45,7 +45,7 @@ float BatteryMonitor::readBattery()
 	char MessageBuffer[256];
 	this->ADC_Battery_Analog = getValue(this->ADC_Channel_battery);
 	calculateBattery();
-	DEBUG_RTT('0', "Battery Value %f",this->voltage);
+	// DEBUG_RTT('0', "Battery Value %f",this->voltage);
 //	memset(MessageBuffer,0,sizeof(MessageBuffer));
 //	sprintf(MessageBuffer,"Battery Value %f | count %d",this->voltage,this->ADC_Battery_Analog);
 //	menu.Display_Log(MessageBuffer);

@@ -35,6 +35,7 @@ void ADCSelectCH(uint32_t CH)
 //	DEBUG_RTT("W", "selected channel is %d", CH);
 
 	  hadc.Instance = ADC1;
+	  hadc.Init.SamplingTimeCommon = ADC_SAMPLETIME_1CYCLE_5;
 	  if (HAL_ADC_Init(&hadc) != HAL_OK)
 	  {
 		DEBUG_RTT(LOG_ERROR, "ADC ERROR");
