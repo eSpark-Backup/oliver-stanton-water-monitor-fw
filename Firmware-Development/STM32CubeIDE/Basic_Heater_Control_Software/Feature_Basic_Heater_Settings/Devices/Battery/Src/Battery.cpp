@@ -81,6 +81,7 @@ void BatteryMonitor::powerManager(void)
 	MenuItem* Menu = (MenuItem*)currentM;
 	char MessageBuffer[256]={0};
 	float BatteryVoltage = readBattery();
+	static float LastBatteryVoltage = BatteryVoltage;
 
 #if DEBUG_BATTERY_NORMAL == 1
 	BatteryVoltage = 12.2;
@@ -139,6 +140,14 @@ else
 	if((strcmp(Menu->label,Battery_Index->label)==0) || (strcmp(Menu->label,DeviceStandByScreen->label)==0))
 	{
 
+		if (BatteryVoltage - LastBatteryVoltage > 0.05 || LastBatteryVoltage - BatteryVoltage > 0.05)
+		{
+			memset(MessageBuffer,0,sizeof(MessageBuffer));
+			sprintf(MessageBuffer,"Current Battery Voltage %.2f v\r\n",BatteryVoltage);
+			menu.Display_Log(MessageBuffer);
+			lastMessageDisplayed = HAL_GetTick();
+			LastBatteryVoltage = BatteryVoltage;
+		}
 		if(BatteryVoltage < BATTERY_LOW_VOLTAGE && BatteryVoltage > BATTERY_CRITICAL_VOLTAGE)
 		{
 //			BATTERY_LOW
