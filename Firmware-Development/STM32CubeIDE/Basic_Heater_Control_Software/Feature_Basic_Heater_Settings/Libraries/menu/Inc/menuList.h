@@ -61,7 +61,7 @@ MenuItem fodMenu[] = {
 				{"Select ppm value from 1-20",			roSaverThreshAdj, 		nullptr, 		roSaver, 0, 20},
 			};
 
-MenuItem Battery_Index[]={{"Default LLDCMPS Home Page", 			nullptr, 		BatMonitorMenu, 			nullptr, 2, 1}};
+MenuItem Battery_Index[]={{"Default LL-DCPMS Home Page", 			nullptr, 		BatMonitorMenu, 			nullptr, 2, 1}};
 MenuItem BatMonitorMenu[] = {
     {"Battery Low Power Shutdown", 				nullptr, 		BatLowMenuOptns, 			mainMenu, 2, 2},
     {"Power Consumption Monitor",							nullptr, 		BatPowerConsumptiontable, 			mainMenu, 1, 1},
