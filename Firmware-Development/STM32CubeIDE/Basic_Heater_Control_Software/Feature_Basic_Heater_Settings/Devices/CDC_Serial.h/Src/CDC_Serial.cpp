@@ -19,7 +19,7 @@ void CDC_Serial::itemsToDisplay(int elements){
 
 void CDC_Serial::display(const char* strng)
 {
-	char buffer[100];
+	char buffer[256];
 	int len = sprintf(buffer, "%s\r\n", strng);					//------  %s\r\n  -----
     HAL_Delay(1);    CDC_Transmit_FS((uint8_t *)buffer, len);
 }
