@@ -140,7 +140,7 @@ else
 	if((strcmp(Menu->label,Battery_Index->label)==0) || (strcmp(Menu->label,DeviceStandByScreen->label)==0))
 	{
 
-		if (BatteryVoltage - LastBatteryVoltage > 0.05 || LastBatteryVoltage - BatteryVoltage > 0.05)
+		if ((BatteryVoltage - LastBatteryVoltage) > CHANGE_IN_BATTERY_VOLTAGE || (LastBatteryVoltage - BatteryVoltage) > CHANGE_IN_BATTERY_VOLTAGE)
 		{
 			memset(MessageBuffer,0,sizeof(MessageBuffer));
 			sprintf(MessageBuffer,"Current Battery Voltage %.2f v\r\n",BatteryVoltage);
