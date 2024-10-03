@@ -10,3 +10,10 @@ public:
 	void set();
 	void reset();
 };
+
+class RGB{
+public:
+	RGB(GPIO_TypeDef* port, uint16_t redPin, uint16_t greenPin, uint16_t bluePin){
+		
+	}
+};
