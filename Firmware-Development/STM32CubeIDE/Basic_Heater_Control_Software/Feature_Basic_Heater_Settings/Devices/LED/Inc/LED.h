@@ -11,16 +11,16 @@ typedef enum{
 	STOP
 }PWMSTATE;
 typedef enum{
- 	RED     = 0xFF0000,  // Red color in hex
-    GREEN   = 0x00FF00,  // Green color in hex
-    BLUE    = 0x0000FF,  // Blue color in hex
-    YELLOW  = 0xFFFF00,  // Yellow color (Red + Green)
+ 	RED     = 0xFF0000,  // 0xRRGGBB
+    GREEN   = 0x00FF00,
+    BLUE    = 0x0000FF,
+    YELLOW  = 0xFFFF00,
 	ORANGE  = 0xFFA500,
-    CYAN    = 0x00FFFF,  // Cyan color (Green + Blue)
-    MAGENTA = 0xFF00FF,  // Magenta color (Red + Blue)
+    CYAN    = 0x00FFFF,
+    MAGENTA = 0xFF00FF,
 	PURPLE  = 0x800080,
-    WHITE   = 0xFFFFFF,  // White color (Red + Green + Blue)
-    BLACK   = 0x000000   // Black color (All off)
+    WHITE   = 0xFFFFFF,
+    BLACK   = 0x000000
 }RGBCOLOR;
 
 class RGB{

@@ -30,19 +30,14 @@ public:
         // Initialize GPIO pin
         if(!isPWM_)
         {
-			GPIO_InitTypeDef GPIO_InitStruct = {0};
-			GPIO_InitStruct.Pin = pin_;
-			GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-			GPIO_InitStruct.Pull = GPIO_NOPULL;
-			GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-			HAL_GPIO_Init(port_, &GPIO_InitStruct);
+                GPIO_InitTypeDef GPIO_InitStruct = {0};
+                GPIO_InitStruct.Pin = pin_;
+                GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+                GPIO_InitStruct.Pull = GPIO_NOPULL;
+                GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+                HAL_GPIO_Init(port_, &GPIO_InitStruct);
         }
-        // Start the timer
-//        HAL_TIM_Base_Start_IT(&htim6); // Assuming you're using TIM6
 
-        // Set up the timer interrupt
-//        HAL_NVIC_SetPriority(TIM2_IRQn, 0, 0);
-//        HAL_NVIC_EnableIRQ(TIM2_IRQn);
         DEBUG_RTT(LOG_WARNING, "EventHandle obj constructor called");
     }
 	~EventHandle(){
