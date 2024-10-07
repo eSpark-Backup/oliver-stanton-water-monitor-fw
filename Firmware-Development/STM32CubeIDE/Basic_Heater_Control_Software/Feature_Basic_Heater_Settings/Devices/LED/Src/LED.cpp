@@ -1,86 +1,89 @@
 #include "LED.h"
 
-void WLED::set()
-{
-	HAL_GPIO_WritePin(W_LED_CTRL_GPIO_Port,W_LED_CTRL_Pin,GPIO_PIN_SET);
-}
-void WLED::reset()
-{
-	HAL_GPIO_WritePin(W_LED_CTRL_GPIO_Port,W_LED_CTRL_Pin,GPIO_PIN_RESET);
-}
 
-
-void RGB::setRgbColor(uint8_t r,uint8_t g,uint8_t b)
+void RGB::setRgbColor(RGBCOLOR color)
 {
+    // Extract Red, Green, and Blue values from the color enum (hex value)
+    int16_t r = (color >> 16) & 0xFF;  // Extract Red (8 bits)
+    int16_t g = (color >> 8) & 0xFF;   // Extract Green (8 bits)
+    int16_t b = color & 0xFF;          // Extract Blue (8 bits)
+
+    // Ensure brightness values are within the correct range (0 to 255)
+    if (r < 0) r = 0;
+    if (g < 0) g = 0;
+    if (b < 0) b = 0;
+    if (r > 255) r = 255;
+    if (g > 255) g = 255;
+    if (b > 255) b = 255;
+
 	rgbColor[0] = r; rgbColor[1] = g; rgbColor[2] = b;
 
 }
 
-void RGB::setPwmColor()
+
+void RGB::turnOn(void)
 {
-	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, rgbColor[0]);
-	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, rgbColor[1]);
-	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, rgbColor[2]);
+
 }
 
-void RGB::Run()
+void RGB::turnOff(void)
 {
-	if(isFading_)
+
+}
+
+void RGB::pwmOeration(PWMSTATE pwm)
+{
+	if(pwm == START)
 	{
-        if (fadeStartTime_ < fadeDuration_ + 1)
-        {
-        	updateFade();
-        }
-        else
-		{
-        	turnOff();
-		}
+		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+
 	}
-	else if (setColorHigh_)
+	if(pwm == STOP)
+	{	
+		HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
+	}
+}
+
+void RGB::toggle(void)
+{
+	uint32_t currentTime = HAL_GetTick();
+	if(durationTime[0] == 0 && durationTime[1] == 0 && durationTime[2] == 0)
+	{	
+		curState = !curState;
+	}
+	else if (onTimeCount_ < durationTime[2] + 1)
 	{
-		
+
 	}
 	else
 	{
-		// All blinks completed, stop the timer or handle as needed
-		 stopTimer();
+		turnOff();
 	}
+
+		pwmOeration(curState ? START : STOP);
+
 }
 
-void updateFade()
+
+void RGB::Run(void)
 {
-	uint32_t currentTime = HAL_GetTick();
-	if (currentTime - lastUpdateTime_ >= fadeStepTime_)
+	if(isOn_)
 	{
-		// Update current color
-		for (int i = 0; i < 3; i++) {
-			if (currentColor_[i] != targetColor_[i]) {
-				currentColor_[i] += step_[i];
-				if ((step_[i] > 0 && currentColor_[i] >= targetColor_[i]) || (step_[i] < 0 && currentColor_[i] <= targetColor_[i])) {
-					currentColor_[i] = targetColor_[i]; // Clamp value
-				}
-				setPWMColor(); // Update PWM for the current color
-			}
-		}
-
-		// Check if fading is complete
-		if (currentColor_[0] == targetColor_[0] && currentColor_[1] == targetColor_[1] && currentColor_[2] == targetColor_[2]) {
-			isFading_ = false; // Fading is complete
-		}
-
-		lastUpdateTime_ = currentTime; // Reset last update time
+        toggle();
 	}
-
+	else
+	{
+		DEBUG_RTT(LOG_ERROR, "RGB Led operation is OFF");
+	}
 }
 
-void RGB::fadeTo(uint8_t r, uint8_t g, uint8_t b, uint32_t duration)
+
+void RGB::rgbLed(RGBCOLOR color, bool fadeOn, uint16_t durOff, uint16_t durOn, uint16_t onTime)
 {
-    fadeDuration_ = duration;
-    fadeStartTime_ = HAL_GetTick();
-    isFading_ = true;
+	setRgbColor(color);
+	durationTime[0] = durOff; durationTime[1] = durOn; durationTime[2] = onTime;
 
-    for (int i = 0; i < 3; i++) {
-        step_[i] = (targetColor_[i] - currentColor_[i]) * fadeStepTime_ / duration; // Step calculation
-    }
+	
+	onTimeCount_ = 0;
+	isOn_ = true;
 }
-    
