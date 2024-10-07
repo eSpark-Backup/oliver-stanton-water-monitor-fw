@@ -213,8 +213,8 @@ bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor)
 
 bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state)
 {
-	DEBUG_RTT(LOG_INFO, "Inside setFlag");
-	DEBUG_RTT('0', " operation: %d, Sensor: %d, State: %d", op, sensor, state);
+	// DEBUG_RTT(LOG_INFO, "Inside setFlag");
+	// DEBUG_RTT('0', " operation: %d, Sensor: %d, State: %d", op, sensor, state);
 	if(op == Settings)
 	{
 		if(sensor == FoD)					FlagsReg.settings.FillOnDemand = state;
@@ -250,7 +250,7 @@ bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state)
 		else if(sensor == BATTERY_PUMP_IGNORE_WARNING)		FlagsReg.status.Battery_Pump_Ignore = state;
 		else if(sensor == TRIGGER_WARNING) FlagsReg.status.Battery_warning = state;
 	}
-	DEBUG_RTT(LOG_INFO, "Exiting setFlag.");
+	// DEBUG_RTT(LOG_INFO, "Exiting setFlag.");
 	return false;
 }
 
