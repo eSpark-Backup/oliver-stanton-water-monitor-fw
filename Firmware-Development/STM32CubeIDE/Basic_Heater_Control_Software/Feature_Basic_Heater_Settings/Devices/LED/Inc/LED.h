@@ -6,11 +6,14 @@
 #include "main.h"
 #include "_DEBUG_.h"
 
-typedef enum{
-	START,
-	STOP
-}PWMSTATE;
-typedef enum{
+typedef enum
+{
+	PwmSTART,
+	PwmSTOP
+}	PwmState;
+
+typedef enum
+{
  	RED     = 0xFF0000,  // 0xRRGGBB
     GREEN   = 0x00FF00,
     BLUE    = 0x0000FF,
@@ -21,21 +24,13 @@ typedef enum{
 	PURPLE  = 0x800080,
     WHITE   = 0xFFFFFF,
     BLACK   = 0x000000
-}RGBCOLOR;
+}	HexColor;
 
 class RGB{
 public:
 	RGB(GPIO_TypeDef* port, uint16_t redPin, uint16_t greenPin, uint16_t bluePin)
 	: pwmPort_(port), redPin_(redPin), greenPin_(greenPin), bluePin_(bluePin)
 	{
-		//RGB pins PWM GPIO initialization
-		GPIO_InitTypeDef GPIO_InitStruct = {0};
-		GPIO_InitStruct.Pin = redPin_ | greenPin_ | bluePin_ ;
-		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-		GPIO_InitStruct.Pull = GPIO_NOPULL;
-		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-		HAL_GPIO_Init(pwmPort_, &GPIO_InitStruct);
-
 		DEBUG_RTT(LOG_WARNING, "RGB class obj constructor called");
 	}
 
@@ -45,12 +40,12 @@ public:
 	}
 
 	void Run(void);
-	void setRgbColor(RGBCOLOR);
-	void rgbLed(RGBCOLOR, bool fadeOn, uint16_t durOff, uint16_t durOn, uint16_t OnTime);
+	void setRgbColor(HexColor);
+	void setOutputPattern(HexColor, bool fadeOn, uint16_t durOff, uint16_t durOn, uint16_t OnTime);
 	void turnOn(void);
 	void turnOff(void);
 	void toggle(void);
-	void pwmOeration(PWMSTATE);
+	void pwmOeration(PwmState);
 
 private:
 	GPIO_TypeDef* pwmPort_;

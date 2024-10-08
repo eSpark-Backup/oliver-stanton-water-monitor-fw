@@ -1,7 +1,7 @@
 #include "LED.h"
 
 
-void RGB::setRgbColor(RGBCOLOR color)
+void RGB::setRgbColor(HexColor color)
 {
     // Extract Red, Green, and Blue values from the color enum (hex value)
     int16_t r = (color >> 16) & 0xFF;  // Extract Red (8 bits)
@@ -31,14 +31,14 @@ void RGB::turnOff(void)
 
 }
 
-void RGB::pwmOeration(PWMSTATE pwm)
+void RGB::pwmOeration(PwmState Action)
 {
-	if(pwm == START)
+	if(Action == PwmSTART)
 	{
 		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 
 	}
-	if(pwm == STOP)
+	if(Action == PwmSTOP)
 	{	
 		HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
 	}
@@ -60,7 +60,7 @@ void RGB::toggle(void)
 		turnOff();
 	}
 
-		pwmOeration(curState ? START : STOP);
+		pwmOeration(curState ? PwmSTART : PwmSTOP);
 
 }
 
@@ -78,7 +78,7 @@ void RGB::Run(void)
 }
 
 
-void RGB::rgbLed(RGBCOLOR color, bool fadeOn, uint16_t durOff, uint16_t durOn, uint16_t onTime)
+void RGB::setOutputPattern(HexColor color, bool fadeOn, uint16_t durOff, uint16_t durOn, uint16_t onTime)
 {
 	setRgbColor(color);
 	durationTime[0] = durOff; durationTime[1] = durOn; durationTime[2] = onTime;
