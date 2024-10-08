@@ -1,13 +1,13 @@
-#include "Buzzer.h"
+#include "Buzzer.hpp"
 
-void BUZZER::setupInit(void)
+void BuzzerDriver::setupInit(void)
 {
 	// Initialize GPIO pin
 
 }
 
 
-void BUZZER::setTimer(void)
+void BuzzerDriver::startPWM(void)
 {
 	if(isPWM_)
 	{
@@ -17,25 +17,23 @@ void BUZZER::setTimer(void)
 	{
 		HAL_GPIO_WritePin(port_, pin_, GPIO_PIN_SET);
 	}
-	return false;
 }
 
 
-void BUZZER::stopTimer(void)
+void BuzzerDriver::stopPWM(void)
 {
 	if(isPWM_)
 	{
-		return HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
+		HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
 	}
 	else
 	{
 		HAL_GPIO_WritePin(port_, pin_, GPIO_PIN_RESET);
 	}
-	return 1;
 }
 
 
-void BUZZER::turnOff(void)
+void BuzzerDriver::turnOff(void)
 {
 	numBlinks_ = 0;
 //	blinkCount_ = 0;
@@ -45,7 +43,48 @@ void BUZZER::turnOff(void)
 }
 
 
-void BUZZER::Run()
+void BuzzerDriver::toggleInfinite()
+{
+//	DEBUG_RTT("E", "toggleInfinite Called");
+    uint32_t currentTime = HAL_GetTick();
+    if (state_ && (currentTime - lastToggleTime_) >= onPeriodms_[0] )  	//This will turn off the state of object
+    {
+    	DEBUG_RTT(LOG_ERROR, "toggleInfinite: OFF STATE -> on_period_ms_[%d] is %d", 0, onPeriodms_[0]);//i, params[i]);
+		stopPWM();
+		state_ = false;
+		lastToggleTime_ = currentTime;
+	}
+    else if (!state_ && (((currentTime - lastToggleTime_) >= offPeriodms_) || blinkCount_ == 0))
+    {
+    	DEBUG_RTT(LOG_ERROR, "toggleInfinite: ON STATE -> off_period_ms_ is %d", offPeriodms_);//i, params[i]);
+		startPWM();
+		state_ = true;
+		lastToggleTime_ = currentTime;
+//				++blink_count_;
+	}
+}
+
+void BuzzerDriver::toggle()
+{
+	uint32_t currentTime = HAL_GetTick();
+	if (state_ && (currentTime - lastToggleTime_) >= onPeriodms_[(blinkCount_)-1] )		//This will turn off the state of object
+	{
+		DEBUG_RTT(LOG_ERROR, "OFF STATE -> on_period_ms_[%d] is %d", blinkCount_-1, onPeriodms_[(blinkCount_)-1]);//i, params[i]);
+		stopPWM();
+		state_ = false;
+		lastToggleTime_ = currentTime;
+	}
+	else if (!state_ && (((currentTime - lastToggleTime_) >= offPeriodms_) || blinkCount_ == 0))
+	{
+		startPWM();
+		state_ = true;
+		++blinkCount_;
+		lastToggleTime_ = currentTime;
+	}
+}
+
+
+void BuzzerDriver::Run()
 {
 	if(isOn_)
 	{
@@ -64,12 +103,12 @@ void BUZZER::Run()
 	else
 	{
 		// All blinks completed, stop the timer or handle as needed
-		 stopTimer();
+		stopPWM();
 	}
 }
 
 
-void BUZZER::SetOutputPattern(int8_t numBlinks, uint16_t timePeriod, ...)
+void BuzzerDriver::setOutputPattern(int8_t numBlinks, uint16_t timePeriod, ...)
 {
 	va_list paramList;
 //	first elements is the number of times you want it to run, second is the inactive time time period, rest are the time periods of on state

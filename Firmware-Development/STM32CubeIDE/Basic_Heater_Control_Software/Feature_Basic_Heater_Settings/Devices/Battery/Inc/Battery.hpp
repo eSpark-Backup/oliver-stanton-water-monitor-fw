@@ -16,7 +16,7 @@
 #include "switches.hpp"
 
 extern BatteryMonitor Battery;
-extern EventHandle Buzzzer;
+extern EventHandle* Buzzzer;
 
 #define TDS_DUMMY_VALUE 18000
 

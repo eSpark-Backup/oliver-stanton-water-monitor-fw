@@ -18,6 +18,7 @@
 #include "Display.h"
 #include "CDC_Serial.h"
 #include "eventHandle.hpp"
+#include "Buzzer.hpp"
 #include "switches.hpp"
 #include "TDS.hpp"
 
@@ -69,6 +70,7 @@ typedef enum{
 	indication
 }Task;
 
+
 static Display* Disp = new CDC_Serial;
 static FlagHandle& Flags = FlagHandle::getInstance();
 extern Menu menu;
@@ -106,7 +108,6 @@ void invokeST3(bool);
 /*  Main Output Control functions  */
 void memSaverST3(void);
 bool roSaverST1(void);
-bool buzzer(uint8_t, uint16_t timePeriod, ...);
 
 float tdsSensor(uint32_t);
 

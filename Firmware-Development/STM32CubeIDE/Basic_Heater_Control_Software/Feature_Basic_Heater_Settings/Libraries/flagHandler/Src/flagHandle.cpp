@@ -9,6 +9,7 @@
 #include "flagHandle.h"
 #include "controls.h"
 #include "eventHandle.hpp"
+#include "Buzzer.hpp"
 
 
 uint32_t statusFlagTimeStamp[_sensors_];			//Time when status of output/sensor was changed

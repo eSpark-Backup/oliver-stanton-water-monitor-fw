@@ -12,6 +12,7 @@
 #include "controls.h"
 #include "flagHandle.h"
 #include "eventHandle.hpp"
+#include "Buzzer.hpp"
 //#include "TDS.hpp"
 
 #include "_DEBUG_.h"
@@ -37,8 +38,8 @@ extern TDS tds2; //= TDS(TDS2);
 extern TDS tds3; //= TDS(TDS3);
 extern TDS tds4; //= TDS(TDS4);
 
-extern EventHandle Buzzzer;
-extern EventHandle WLED1;
+extern EventHandle* Buzzzer;
+extern EventHandle* WLED1;
 
 
 //motionCallback motionPtr;
@@ -126,8 +127,8 @@ void MainApp::loop()
 	Flags.update();
 	memSaverST3();
 	roSaverST1();
-	Buzzzer.Run();
-	WLED1.Run();
+	Buzzzer->Run();
+	WLED1->Run();
 	Battery.powerManager();
 
 //	HAL_Delay(1000);

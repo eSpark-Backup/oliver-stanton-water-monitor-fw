@@ -329,7 +329,7 @@ else
 		switch(triggers %2)
 		{
 		case 0:
-			Buzzzer.Init(1, 500, 500);
+			Buzzzer->setOutputPattern(1, 500, 500);
 			menu.Display_Log("Turn On Buzzer\r\n");
 			menu.Display_Log("Turn On LED\r\n");
 			break;

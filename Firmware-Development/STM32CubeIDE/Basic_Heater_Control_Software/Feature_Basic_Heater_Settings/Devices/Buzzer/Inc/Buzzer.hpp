@@ -6,24 +6,25 @@
  */
 #pragma once
 
-#ifndef BUZZER_HPP_
-#define BUZZER_HPP_
+#ifndef _BUZZER_HPP_
+#define _BUZZER_HPP_
 
 #include <stdarg.h>
 #include "main.h"
 #include "mainApp.hpp"
 #include "controls.h"
+#include "eventHandle.hpp"
 
 
 
-class BUZZER{
+class BuzzerDriver: public EventHandle{
 public:
-	BUZZER(GPIO_TypeDef* port, uint16_t pin, bool isPWM)
+	BuzzerDriver(GPIO_TypeDef* port, uint16_t pin, bool isPWM)
         : port_(port), pin_(pin), isPWM_(isPWM), onPeriodms_(0), offPeriodms_(0), numBlinks_(0), blinkCount_(0), isOn_(false), state_(false) {
 
         DEBUG_RTT(LOG_WARNING, "EventHandle obj constructor called");
     }
-	~EventHandle(){
+	~BuzzerDriver(){
 		delete[] onPeriodms_;
 		DEBUG_RTT(LOG_WARNING, "EventHandle obj destructor called");
 	}
@@ -54,5 +55,5 @@ private:
 
 
 
-#endif /* BUZZER_HPP_ */
+#endif /* BUZZER_H_ */
 

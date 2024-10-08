@@ -9,11 +9,6 @@
 #ifndef INC_EVENTHANDLE_HPP_
 #define INC_EVENTHANDLE_HPP_
 
-#include <stdarg.h>
-#include "main.h"
-#include "mainApp.hpp"
-#include "controls.h"
-
 
 
 /*
@@ -25,24 +20,24 @@
 class EventHandle{
 public:
 	EventHandle()
-        {
-                DEBUG_RTT(LOG_WARNING, "EventHandle obj constructor called");
-        }
+	{
+		DEBUG_RTT(LOG_WARNING, "EventHandle obj constructor called");
+	}
 	~EventHandle()
-        {
+	{
 		DEBUG_RTT(LOG_WARNING, "EventHandle obj destructor called");
 	}
 
-	virtual void setOutputPattern(void);
-	void Run(void);
-	void turnOff(void);
+	virtual void setOutputPattern(int8_t numBlinks, uint16_t timePeriod, ...) = 0;
+	virtual void Run(void) = 0;
+	virtual void turnOff(void) = 0;
 
 private:
-	virtual void setupInit(void);
-        virtual void startPWM(void);
-	virtual void stopPWM(void);
-        virtual void toggle(void);
-	virtual void toggleInfinite(void);
+	virtual void setupInit(void) = 0;
+	virtual void startPWM(void) = 0;
+	virtual void stopPWM(void) = 0;
+	virtual void toggle(void) = 0;
+	virtual void toggleInfinite(void) = 0;
 };
 
 
