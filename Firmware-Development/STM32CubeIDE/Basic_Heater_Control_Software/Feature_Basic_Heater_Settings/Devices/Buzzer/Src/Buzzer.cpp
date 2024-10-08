@@ -39,7 +39,11 @@ void BuzzerDriver::turnOff(void)
 //	blinkCount_ = 0;
 	offPeriodms_ = 0;
 	isOn_ = false;
-	delete[] onPeriodms_;
+	if (onPeriodms_ != nullptr)
+	{
+        delete[] onPeriodms_;
+        onPeriodms_ = nullptr;  // Reset to prevent future issues
+    }
 }
 
 
@@ -63,6 +67,7 @@ void BuzzerDriver::toggleInfinite()
 //				++blink_count_;
 	}
 }
+
 
 void BuzzerDriver::toggle()
 {
