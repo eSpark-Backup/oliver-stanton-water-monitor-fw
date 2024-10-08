@@ -6,9 +6,12 @@
  */
 #pragma once
 
-#ifndef INC_EVENTHANDLE_HPP_
-#define INC_EVENTHANDLE_HPP_
+#ifndef _EVENTHANDLE_HPP_
+#define _EVENTHANDLE_HPP_
 
+
+#include "stm32f0xx_hal.h"
+#include "_DEBUG_.h"
 
 
 /*
@@ -16,28 +19,47 @@
  *  define objects which will enable/disable outputs for a certain period of time
  *         define objects for toggling output for a certain period of time
  */
+typedef enum
+{
+	IndWLED,
+	IndRGB,
+	IndBUZZER,
+}	IndicatorType;
 
 class EventHandle{
 public:
-	EventHandle()
+	EventHandle(IndicatorType actuatorType) : ActuatorType(actuatorType)
 	{
 		DEBUG_RTT(LOG_WARNING, "EventHandle obj constructor called");
 	}
-	~EventHandle()
+	virtual ~EventHandle()
 	{
 		DEBUG_RTT(LOG_WARNING, "EventHandle obj destructor called");
 	}
 
-	virtual void setOutputPattern(int8_t numBlinks, uint16_t timePeriod, ...) = 0;
+	virtual void setOutputPattern(int8_t numBlinks, uint16_t timePeriod, ...);
 	virtual void Run(void) = 0;
 	virtual void turnOff(void) = 0;
 
 private:
 	virtual void setupInit(void) = 0;
-	virtual void startPWM(void) = 0;
-	virtual void stopPWM(void) = 0;
-	virtual void toggle(void) = 0;
-	virtual void toggleInfinite(void) = 0;
+	virtual void setOutput(void) = 0;
+	virtual void stopOutput(void) = 0;
+
+protected:
+	virtual void toggle(void);
+	virtual void toggleInfinite(void);
+
+protected:
+	IndicatorType ActuatorType;								//is output controlled by PWM
+    uint16_t *onPeriodms_ = nullptr;						//output turn on duration
+    uint16_t offPeriodms_ = 0;						//output turn off duration
+    int8_t numBlinks_ = 0;							//How many times you want output to turn on
+    uint16_t blinkCount_ = 0;						//current number of blink
+    bool isOn_ = false;									//is object activated or not
+    bool state_ = false;								//obj is currently in runnign or off state
+    uint32_t lastToggleTime_ = false;					//Tick() when output was toggled
+
 };
 
 
