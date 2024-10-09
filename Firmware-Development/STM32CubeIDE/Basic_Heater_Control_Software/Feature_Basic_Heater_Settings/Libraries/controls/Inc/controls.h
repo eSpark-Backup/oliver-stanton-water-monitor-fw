@@ -19,6 +19,7 @@
 #include "CDC_Serial.h"
 #include "eventHandle.hpp"
 #include "Buzzer.hpp"
+#include "LED.h"
 #include "switches.hpp"
 #include "TDS.hpp"
 

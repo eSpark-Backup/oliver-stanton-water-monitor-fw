@@ -13,6 +13,7 @@
 #include "flagHandle.h"
 #include "eventHandle.hpp"
 #include "Buzzer.hpp"
+#include "LED.h"
 //#include "TDS.hpp"
 
 #include "_DEBUG_.h"
@@ -39,7 +40,7 @@ extern TDS tds3; //= TDS(TDS3);
 extern TDS tds4; //= TDS(TDS4);
 
 extern EventHandle* Buzzzer;
-// extern EventHandle* WLED1;
+extern EventHandle* WLED1;
 
 
 //motionCallback motionPtr;
@@ -128,7 +129,7 @@ void MainApp::loop()
 	memSaverST3();
 	roSaverST1();
 	Buzzzer->Run();
-	// WLED1->Run();
+	WLED1->Run();
 	Battery.powerManager();
 
 //	HAL_Delay(1000);
@@ -156,13 +157,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	}
 }
 
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
-{
-	if(htim->Instance == TIM6)
-	{
-		DEBUG_RTT(LOG_ERROR, "%d", HAL_GetTick());
-	}
-}
 
 #ifdef  USE_FULL_ASSERT
 /**

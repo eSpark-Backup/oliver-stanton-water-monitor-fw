@@ -129,43 +129,43 @@ int main(void)
   */
 extern "C" void SystemClock_Config(void)
 {
-	  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-	  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-	  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
-	  /** Initializes the RCC Oscillators according to the specified parameters
-	  * in the RCC_OscInitTypeDef structure.
-	  */
-	  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI14|RCC_OSCILLATORTYPE_HSI48;
-	  RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
-	  RCC_OscInitStruct.HSI14State = RCC_HSI14_ON;
-	  RCC_OscInitStruct.HSI14CalibrationValue = 16;
-	  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
-	  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-	  {
-	    Error_Handler();
-	  }
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
+  */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI14|RCC_OSCILLATORTYPE_HSI48;
+  RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
+  RCC_OscInitStruct.HSI14State = RCC_HSI14_ON;
+  RCC_OscInitStruct.HSI14CalibrationValue = 16;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
-	  /** Initializes the CPU, AHB and APB buses clocks
-	  */
-	  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-	                              |RCC_CLOCKTYPE_PCLK1;
-	  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI48;
-	  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-	  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+  /** Initializes the CPU, AHB and APB buses clocks
+  */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI48;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
 
-	  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
-	  {
-	    Error_Handler();
-	  }
-	  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB;
-	  PeriphClkInit.UsbClockSelection = RCC_USBCLKSOURCE_HSI48;
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB;
+  PeriphClkInit.UsbClockSelection = RCC_USBCLKSOURCE_HSI48;
 
-	  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
-	  {
-	    Error_Handler();
-	  }
-	}
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
 
 /**
   * @brief ADC Initialization Function
@@ -226,6 +226,30 @@ static void MX_ADC_Init(void)
 
   /** Configure for the selected ADC regular channel to be converted.
   */
+  sConfig.Channel = ADC_CHANNEL_7;
+  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel to be converted.
+  */
+  sConfig.Channel = ADC_CHANNEL_8;
+  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel to be converted.
+  */
+  sConfig.Channel = ADC_CHANNEL_9;
+  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel to be converted.
+  */
   sConfig.Channel = ADC_CHANNEL_10;
   if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
   {
@@ -263,22 +287,6 @@ static void MX_ADC_Init(void)
   {
     Error_Handler();
   }
-
-  /** Configure for the selected ADC regular channel to be converted.
-    */
-    sConfig.Channel = ADC_CHANNEL_8;
-    if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
-    {
-      Error_Handler();
-    }
-
-    /** Configure for the selected ADC regular channel to be converted.
-      */
-      sConfig.Channel = ADC_CHANNEL_9;
-      if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
-      {
-        Error_Handler();
-      }
   /* USER CODE BEGIN ADC_Init 2 */
 
   /* USER CODE END ADC_Init 2 */
@@ -339,6 +347,19 @@ static void MX_TIM1_Init(void)
   sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
   sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
   if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigOC.Pulse = 0;
+  if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_4) != HAL_OK)
   {
     Error_Handler();
   }
@@ -417,6 +438,17 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
+  // /*Configure GPIO pin Output Level */
+  // HAL_GPIO_WritePin(GPIOE, TDS3_T1_Pin|TDS3_T2_Pin|LED3_Pin|MEM_SAVER_Pin
+  //                         |PWM_CNTRL_Pin|TDS2_T1_Pin|TDS2_T2_Pin, GPIO_PIN_RESET);
+
+  // /*Configure GPIO pin Output Level */
+  // HAL_GPIO_WritePin(GPIOC, LED1_Pin|SHDN_shutdown_Pin|AUTO_FILL_Pin|MainHeater_Pin
+  //                         |PUMPS_Control_Pin, GPIO_PIN_RESET);
+
+  // /*Configure GPIO pin Output Level */
+  // HAL_GPIO_WritePin(GPIOA, TDS4_T1_Pin|TDS4_T2_Pin|LED2_Pin, GPIO_PIN_RESET);
+
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, SHDN_shutdown_Pin|AUTO_FILL_Pin|MainHeater_Pin|PUMPS_Control_Pin, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(GPIOC, LED1_Pin, GPIO_PIN_SET);
@@ -429,77 +461,78 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOE, LED3_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, AuxHeater_Pin|RO_SAVER_Pin|W_LED_CTRL_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOD, AuxHeater_Pin|RO_SAVER_Pin
+                          |W_LED_CTRL_Pin|R_CNTRL_Pin|G_CNTRL_Pin|B_CNTRL_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, _PUMP2_Pin|_PUMP1_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : TDS3_T1_Pin TDS3_T2_Pin LED3_Pin MEM_SAVER_Pin
-                             PWM_CNTRL_Pin TDS2_T1_Pin TDS2_T2_Pin */
-    GPIO_InitStruct.Pin = TDS3_T1_Pin|TDS3_T2_Pin|LED3_Pin|MEM_SAVER_Pin
-                            |PWM_CNTRL_Pin|TDS2_T1_Pin|TDS2_T2_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+                           PWM_CNTRL_Pin TDS2_T1_Pin TDS2_T2_Pin */
+  GPIO_InitStruct.Pin = TDS3_T1_Pin|TDS3_T2_Pin|LED3_Pin|MEM_SAVER_Pin
+                          |PWM_CNTRL_Pin|TDS2_T1_Pin|TDS2_T2_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-    /*Configure GPIO pins : LED1_Pin SHDN_shutdown_Pin AUTO_FILL_Pin MainHeater_Pin
-                             PUMPS_Control_Pin */
-    GPIO_InitStruct.Pin = LED1_Pin|SHDN_shutdown_Pin|AUTO_FILL_Pin|MainHeater_Pin
-                            |PUMPS_Control_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  /*Configure GPIO pins : LED1_Pin SHDN_shutdown_Pin AUTO_FILL_Pin MainHeater_Pin
+                           PUMPS_Control_Pin */
+  GPIO_InitStruct.Pin = LED1_Pin|SHDN_shutdown_Pin|AUTO_FILL_Pin|MainHeater_Pin
+                          |PUMPS_Control_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-    /*Configure GPIO pins : TDS4_T1_Pin TDS4_T2_Pin LED2_Pin */
-    GPIO_InitStruct.Pin = TDS4_T1_Pin|TDS4_T2_Pin|LED2_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  /*Configure GPIO pins : TDS4_T1_Pin TDS4_T2_Pin LED2_Pin */
+  GPIO_InitStruct.Pin = TDS4_T1_Pin|TDS4_T2_Pin|LED2_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-    /*Configure GPIO pins : SW2_Pin SW3_Pin SW4_Pin SW5_Pin
-                             SW6_Pin */
-    GPIO_InitStruct.Pin = SW2_Pin|SW3_Pin|SW4_Pin|SW5_Pin
-                            |SW6_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  /*Configure GPIO pins : SW2_Pin SW3_Pin SW4_Pin SW5_Pin
+                           SW6_Pin */
+  GPIO_InitStruct.Pin = SW2_Pin|SW3_Pin|SW4_Pin|SW5_Pin
+                          |SW6_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-    /*Configure GPIO pin : SW7_Pin */
-    GPIO_InitStruct.Pin = SW7_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(SW7_GPIO_Port, &GPIO_InitStruct);
+  /*Configure GPIO pin : SW7_Pin */
+  GPIO_InitStruct.Pin = SW7_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(SW7_GPIO_Port, &GPIO_InitStruct);
 
-    /*Configure GPIO pins : AuxHeater_Pin TDS1_T1_Pin TDS1_T2_Pin RO_SAVER_Pin
-                             W_LED_CTRL_Pin */
-    GPIO_InitStruct.Pin = AuxHeater_Pin|TDS1_T1_Pin|TDS1_T2_Pin|RO_SAVER_Pin
-                            |W_LED_CTRL_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+  /*Configure GPIO pins : AuxHeater_Pin TDS1_T1_Pin TDS1_T2_Pin RO_SAVER_Pin
+                           W_LED_CTRL_Pin R_CNTRL_Pin G_CNTRL_Pin B_CNTRL_Pin */
+  GPIO_InitStruct.Pin = AuxHeater_Pin|TDS1_T1_Pin|TDS1_T2_Pin|RO_SAVER_Pin
+                          |W_LED_CTRL_Pin|R_CNTRL_Pin|G_CNTRL_Pin|B_CNTRL_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-    /*Configure GPIO pin : LEVEL_SENSOR_Pin */
-    GPIO_InitStruct.Pin = LEVEL_SENSOR_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-    GPIO_InitStruct.Pull = GPIO_PULLUP;
-    HAL_GPIO_Init(LEVEL_SENSOR_GPIO_Port, &GPIO_InitStruct);
+  /*Configure GPIO pin : LEVEL_SENSOR_Pin */
+  GPIO_InitStruct.Pin = LEVEL_SENSOR_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(LEVEL_SENSOR_GPIO_Port, &GPIO_InitStruct);
 
-    /*Configure GPIO pins : _PUMP2_Pin _PUMP1_Pin */
-    GPIO_InitStruct.Pin = _PUMP2_Pin|_PUMP1_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  /*Configure GPIO pins : _PUMP2_Pin _PUMP1_Pin */
+  GPIO_InitStruct.Pin = _PUMP2_Pin|_PUMP1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-    /*Configure GPIO pin : PIR_Pin */
-    GPIO_InitStruct.Pin = PIR_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(PIR_GPIO_Port, &GPIO_InitStruct);
+  /*Configure GPIO pin : PIR_Pin */
+  GPIO_InitStruct.Pin = PIR_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(PIR_GPIO_Port, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI2_3_IRQn, 0, 0);

@@ -21,7 +21,7 @@ short roSaverThreshValue = 0;
 
 //***************************Buzzer*******************************
 EventHandle* Buzzzer = new BuzzerDriver(BUZZER_GPIO_Port, BUZZER_Pin, IndBUZZER);
-// EventHandle* WLED1 = new BuzzerDriver(W_LED_CTRL_GPIO_Port, W_LED_CTRL_Pin, IndWLED);
+EventHandle* WLED1 = new RgbDriver(R_CNTRL_GPIO_Port, R_CNTRL_Pin, G_CNTRL_Pin, B_CNTRL_Pin, IndRGB);
 
 //***************************TDS Sensor*******************************
 GPIOConfig tds1PinConfig  = {TDS1_T2_GPIO_Port, TDS1_T1_GPIO_Port, ADC_CHANNEL_10, TDS1_T2_Pin, TDS1_T1_Pin, ADC_CHANNEL_11};

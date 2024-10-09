@@ -1,5 +1,3 @@
-//---------------------------wrong implementation, have to use addressable LED for this------------------
-//-------------------------------------------also make RGB class here?-----------------------------
 #pragma once
 
 
@@ -25,17 +23,17 @@ typedef enum
     BLACK   = 0x000000
 }	HexColor;
 
-class RGB : public EventHandle{
+class RgbDriver : public EventHandle{
 public:
-	RGB(GPIO_TypeDef* port, uint16_t redPin, uint16_t greenPin, uint16_t bluePin, IndicatorType indicatorType)
+	RgbDriver(GPIO_TypeDef* port, uint16_t redPin, uint16_t greenPin, uint16_t bluePin, IndicatorType indicatorType)
 	: EventHandle(indicatorType), pwmPort_(port), redPin_(redPin), greenPin_(greenPin), bluePin_(bluePin)
 	{
-		DEBUG_RTT(LOG_WARNING, "RGB class obj constructor called");
+		DEBUG_RTT(LOG_WARNING, "RgbDriver class obj constructor called");
 	}
 
-	~RGB()
+	~RgbDriver()
 	{
-		DEBUG_RTT(LOG_WARNING, "~RGB class obj destructor called");
+		DEBUG_RTT(LOG_WARNING, "~RgbDriver class obj destructor called");
 	}
 
 	void setRgbColor(HexColor);
@@ -50,12 +48,8 @@ private:
 	uint16_t redPin_;
 	uint16_t greenPin_;
 	uint16_t bluePin_;
-	uint8_t rgbColor[3] = {0};
+	uint16_t rgbColor[3] = {0};
 
-	bool isOn_ = false;
-	bool curState = false;
-	uint16_t onTimeCount_ = 0;
-	uint16_t durationTime[3] = {0};
 
 
 };

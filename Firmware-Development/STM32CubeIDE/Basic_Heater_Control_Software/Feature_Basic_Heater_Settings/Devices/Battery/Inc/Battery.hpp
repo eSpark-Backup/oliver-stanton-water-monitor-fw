@@ -17,6 +17,7 @@
 
 extern BatteryMonitor Battery;
 extern EventHandle* Buzzzer;
+extern EventHandle* WLED1;
 
 #define TDS_DUMMY_VALUE 18000
 

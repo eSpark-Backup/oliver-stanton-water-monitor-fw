@@ -96,6 +96,10 @@ void Error_Handler(void);
 #define TDS2_AN1_GPIO_Port GPIOC
 #define TDS2_AN2_Pin GPIO_PIN_5
 #define TDS2_AN2_GPIO_Port GPIOC
+#define VIOUT1_Pin GPIO_PIN_0
+#define VIOUT1_GPIO_Port GPIOB
+#define VIOUT2_Pin GPIO_PIN_1
+#define VIOUT2_GPIO_Port GPIOB
 #define SW2_Pin GPIO_PIN_2
 #define SW2_GPIO_Port GPIOB
 #define SW2_EXTI_IRQn EXTI2_3_IRQn
@@ -130,6 +134,12 @@ void Error_Handler(void);
 #define LEVEL_SENSOR_GPIO_Port GPIOD
 #define W_LED_CTRL_Pin GPIO_PIN_4
 #define W_LED_CTRL_GPIO_Port GPIOD
+#define R_CNTRL_Pin GPIO_PIN_5
+#define R_CNTRL_GPIO_Port GPIOD
+#define G_CNTRL_Pin GPIO_PIN_6
+#define G_CNTRL_GPIO_Port GPIOD
+#define B_CNTRL_Pin GPIO_PIN_7
+#define B_CNTRL_GPIO_Port GPIOD
 #define SW3_Pin GPIO_PIN_3
 #define SW3_GPIO_Port GPIOB
 #define SW3_EXTI_IRQn EXTI2_3_IRQn
