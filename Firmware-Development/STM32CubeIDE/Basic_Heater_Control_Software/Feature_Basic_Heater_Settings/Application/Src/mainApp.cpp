@@ -39,7 +39,7 @@ extern TDS tds3; //= TDS(TDS3);
 extern TDS tds4; //= TDS(TDS4);
 
 extern EventHandle* Buzzzer;
-extern EventHandle* WLED1;
+// extern EventHandle* WLED1;
 
 
 //motionCallback motionPtr;
@@ -128,7 +128,7 @@ void MainApp::loop()
 	memSaverST3();
 	roSaverST1();
 	Buzzzer->Run();
-	WLED1->Run();
+	// WLED1->Run();
 	Battery.powerManager();
 
 //	HAL_Delay(1000);

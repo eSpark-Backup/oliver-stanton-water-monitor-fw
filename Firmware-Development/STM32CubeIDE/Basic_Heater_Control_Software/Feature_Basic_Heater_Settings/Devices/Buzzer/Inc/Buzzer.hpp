@@ -22,17 +22,10 @@ public:
     {
         DEBUG_RTT(LOG_WARNING, "BuzzerDriver obj constructor called");
     }
-	~BuzzerDriver(){
-        if (onPeriodms_ != nullptr)
-        {
-            delete[] onPeriodms_;
-            onPeriodms_ = nullptr;  // Reset to prevent future issues
-        }
+	~BuzzerDriver()
+    {
 		DEBUG_RTT(LOG_WARNING, "BuzzerDriver obj destructor called");
 	}
-
-	void Run(void) override;
-	void turnOff(void) override;
 
 private:
 	void setupInit(void) override;

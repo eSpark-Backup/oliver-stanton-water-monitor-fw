@@ -18,72 +18,31 @@ void RGB::setRgbColor(HexColor color)
 
 	rgbColor[0] = r; rgbColor[1] = g; rgbColor[2] = b;
 
-}
-
-
-void RGB::turnOn(void)
-{
-
-}
-
-void RGB::turnOff(void)
-{
-
-}
-
-void RGB::pwmOeration(PwmState Action)
-{
-	if(Action == PwmSTART)
-	{
-		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-
-	}
-	if(Action == PwmSTOP)
-	{	
-		HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
-	}
-}
-
-void RGB::toggle(void)
-{
-	uint32_t currentTime = HAL_GetTick();
-	if(durationTime[0] == 0 && durationTime[1] == 0 && durationTime[2] == 0)
-	{	
-		curState = !curState;
-	}
-	else if (onTimeCount_ < durationTime[2] + 1)
-	{
-
-	}
-	else
-	{
-		turnOff();
-	}
-
-		pwmOeration(curState ? PwmSTART : PwmSTOP);
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, rgbColor[0]);
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, rgbColor[1]);
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_4, rgbColor[2]);
 
 }
 
 
-void RGB::Run(void)
+void RGB::setupInit(void)
 {
-	if(isOn_)
-	{
-        toggle();
-	}
-	else
-	{
-		DEBUG_RTT(LOG_ERROR, "RGB Led operation is OFF");
-	}
+	// Initialize GPIO pin
+
 }
 
 
-void RGB::setOutputPattern(HexColor color, bool fadeOn, uint16_t durOff, uint16_t durOn, uint16_t onTime)
+void RGB::setOutput(void)
 {
-	setRgbColor(color);
-	durationTime[0] = durOff; durationTime[1] = durOn; durationTime[2] = onTime;
+	HAL_TIM_PWM_Start_IT(&htim1, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Start_IT(&htim1, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Start_IT(&htim1, TIM_CHANNEL_4);
+}
 
-	
-	onTimeCount_ = 0;
-	isOn_ = true;
+
+void RGB::stopOutput(void)
+{
+	HAL_TIM_PWM_Stop_IT(&htim1, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Stop_IT(&htim1, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Stop_IT(&htim1, TIM_CHANNEL_4);
 }

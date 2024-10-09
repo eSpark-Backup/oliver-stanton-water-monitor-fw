@@ -38,6 +38,25 @@ void EventHandle::toggle()
 		++blinkCount_;
 		lastToggleTime_ = currentTime;
 	}
+
+	if((currentTime - lastToggleTime_) == 0 || (currentTime - lastToggleTime_)%100 == 0)
+		DEBUG_RTT(LOG_WARNING, "EventHandle::toggle time: %d, state %d", currentTime - lastToggleTime_, state_);
+
+}
+
+
+void EventHandle::turnOff(void)
+{
+	numBlinks_ = 0;
+//	blinkCount_ = 0;
+	offPeriodms_ = 0;
+	state_ = false;
+	isOn_ = false;
+	if (onPeriodms_ != nullptr)
+	{
+        delete[] onPeriodms_;
+        onPeriodms_ = nullptr;  // Reset to prevent future issues
+    }
 }
 
 
@@ -47,13 +66,14 @@ void EventHandle::Run()
 	{
         if ((blinkCount_ < numBlinks_ + 1))
         {
-        	toggle();
+			toggle();
         }
         else if(numBlinks_ < 0 )
         {
         	toggleInfinite();
         }
-        else {
+        else
+		{
         	turnOff();
 		}
 	}
@@ -83,13 +103,13 @@ void EventHandle::setOutputPattern(int8_t numBlinks, uint16_t timePeriod, ...)
 		for(uint16_t i = 0; i < numBlinks_; i++)
 		{
 			onPeriodms_[i] = va_arg(paramList, uint32_t);
-			DEBUG_RTT(LOG_ERROR, "on_period_ms_[%d] is %d", i, onPeriodms_[i]);//i, params[i]);
+			DEBUG_RTT(LOG_ERROR, "IF::on_period_ms_[%d] is %d", i, onPeriodms_[i]);//i, params[i]);
 		}
 	}
 	else
 	{
 		onPeriodms_[0] = va_arg(paramList, uint32_t);
-		DEBUG_RTT(LOG_ERROR, "on_period_ms_[%d] is %d", 0, onPeriodms_[0]);//i, params[i]);
+		DEBUG_RTT(LOG_ERROR, "ELSE::on_period_ms_[%d] is %d", 0, onPeriodms_[0]);//i, params[i]);
 		blinkCount_ = 1;
 	}
 

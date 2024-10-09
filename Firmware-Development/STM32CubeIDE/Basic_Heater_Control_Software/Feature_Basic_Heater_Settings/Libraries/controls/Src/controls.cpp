@@ -21,7 +21,7 @@ short roSaverThreshValue = 0;
 
 //***************************Buzzer*******************************
 EventHandle* Buzzzer = new BuzzerDriver(BUZZER_GPIO_Port, BUZZER_Pin, IndBUZZER);
-EventHandle* WLED1 = new BuzzerDriver(W_LED_CTRL_GPIO_Port, W_LED_CTRL_Pin, IndWLED);
+// EventHandle* WLED1 = new BuzzerDriver(W_LED_CTRL_GPIO_Port, W_LED_CTRL_Pin, IndWLED);
 
 //***************************TDS Sensor*******************************
 GPIOConfig tds1PinConfig  = {TDS1_T2_GPIO_Port, TDS1_T1_GPIO_Port, ADC_CHANNEL_10, TDS1_T2_Pin, TDS1_T1_Pin, ADC_CHANNEL_11};
@@ -195,12 +195,12 @@ void invokeST3(bool status)
 		DEBUG_RTT(LOG_WARNING, "SAVE LOG TO FILE HERE.");			//perform logging to file here
 
 		Buzzzer->setOutputPattern(2, 500, 1100, 500);
-		WLED1->setOutputPattern(-1, 1000, 1000);					// -1 to run infinitely
+		// WLED1->setOutputPattern(-1, 1000, 1000);					// -1 to run infinitely
 	}
 	else
 	{
 		Flags.setFlag(Settings, MEM_SAVER, false);
-		WLED1->turnOff();
+		// WLED1->turnOff();
 	}
 }
 

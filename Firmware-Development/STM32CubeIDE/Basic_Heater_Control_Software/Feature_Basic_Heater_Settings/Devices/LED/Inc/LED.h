@@ -2,15 +2,14 @@
 //-------------------------------------------also make RGB class here?-----------------------------
 #pragma once
 
+
+#ifndef _LED_H_
+#define _LED_H_
+
 #include "stm32f0xx_hal.h"
 #include "main.h"
-#include "_DEBUG_.h"
+#include "eventHandle.hpp"
 
-typedef enum
-{
-	PwmSTART,
-	PwmSTOP
-}	PwmState;
 
 typedef enum
 {
@@ -26,10 +25,10 @@ typedef enum
     BLACK   = 0x000000
 }	HexColor;
 
-class RGB{
+class RGB : public EventHandle{
 public:
-	RGB(GPIO_TypeDef* port, uint16_t redPin, uint16_t greenPin, uint16_t bluePin)
-	: pwmPort_(port), redPin_(redPin), greenPin_(greenPin), bluePin_(bluePin)
+	RGB(GPIO_TypeDef* port, uint16_t redPin, uint16_t greenPin, uint16_t bluePin, IndicatorType indicatorType)
+	: EventHandle(indicatorType), pwmPort_(port), redPin_(redPin), greenPin_(greenPin), bluePin_(bluePin)
 	{
 		DEBUG_RTT(LOG_WARNING, "RGB class obj constructor called");
 	}
@@ -39,13 +38,12 @@ public:
 		DEBUG_RTT(LOG_WARNING, "~RGB class obj destructor called");
 	}
 
-	void Run(void);
 	void setRgbColor(HexColor);
-	void setOutputPattern(HexColor, bool fadeOn, uint16_t durOff, uint16_t durOn, uint16_t OnTime);
-	void turnOn(void);
-	void turnOff(void);
-	void toggle(void);
-	void pwmOeration(PwmState);
+
+private:
+	void setupInit(void) override;
+	void setOutput(void) override;
+	void stopOutput(void) override;
 
 private:
 	GPIO_TypeDef* pwmPort_;
@@ -59,21 +57,8 @@ private:
 	uint16_t onTimeCount_ = 0;
 	uint16_t durationTime[3] = {0};
 
-private:
 
 };
 
-/* class methods
-color set (r, g, b, fade, duration off (0 means infinite), duration ON, ON times)
 
-turnOn -> start pwm
-turnOff / reset parameters and stop pwm
-
-normal toggle
-infinite toggle
-
-run (call in while loop)
-
-enum for default colors with default mode to set specific rgb values
-default fade vs customize one fast/slow (will depend on duration ON/OFF time)
-*/
+#endif /* _LED_H_ */

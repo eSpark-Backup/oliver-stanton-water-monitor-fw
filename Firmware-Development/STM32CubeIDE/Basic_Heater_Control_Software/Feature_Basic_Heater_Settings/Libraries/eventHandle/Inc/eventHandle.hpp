@@ -32,14 +32,14 @@ public:
 	{
 		DEBUG_RTT(LOG_WARNING, "EventHandle obj constructor called");
 	}
-	virtual ~EventHandle()
+	~EventHandle()
 	{
 		DEBUG_RTT(LOG_WARNING, "EventHandle obj destructor called");
 	}
 
 	virtual void setOutputPattern(int8_t numBlinks, uint16_t timePeriod, ...);
-	virtual void Run(void) = 0;
-	virtual void turnOff(void) = 0;
+	virtual void Run(void);
+	virtual void turnOff(void);
 
 private:
 	virtual void setupInit(void) = 0;
@@ -64,4 +64,4 @@ protected:
 
 
 
-#endif /* INC_EVENTHANDLE_HPP_ */
+#endif /* _EVENTHANDLE_HPP_ */
