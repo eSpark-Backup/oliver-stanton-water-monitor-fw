@@ -31,7 +31,7 @@ void EventHandle::toggle()
 		state_ = false;
 		lastToggleTime_ = currentTime;
 	}
-	else if (!state_ && (((currentTime - lastToggleTime_) >= offPeriodms_) || blinkCount_ == 0))
+	else if (!state_ && (((currentTime - lastToggleTime_) >= offPeriodms_) && numBlinks_ != 1 || blinkCount_ == 0))
 	{
 		setOutput();
 		state_ = true;
