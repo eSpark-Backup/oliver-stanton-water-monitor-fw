@@ -166,10 +166,16 @@ else
 //			status = Status;
 //			flag = BATTERY_HIGH;
 		}
+		else if ((BatteryVoltage > BATTERY_HIGH_VOLTAGE))
+		{
+			Flags.setFlag(Status, BATTERY_LOW, false);
+			Flags.setFlag(Status, BATTERY_CHARGING_DETECTED, true);
+		}
 		else
 		{
 			Flags.setFlag(Status, BATTERY_LOW, false);
 			Flags.setFlag(Status, BATTERY_HIGH, false);
+			Flags.setFlag(Status, BATTERY_CHARGING_DETECTED, false);
 		}
 //		if(charging != Monitor.isPreviouslyCharging)
 //		{
@@ -253,46 +259,58 @@ else
 //		Flags.setFlag(Status, BATTERY_HIGH, false);
 //	}
 
-	if(Flags.flagStatus(Status, BATTERY_LOW) && (HAL_GetTick()-lastMessageDisplayed)>1000 )
+	if ((HAL_GetTick()-lastMessageDisplayed)>1000 )
 	{
-		memset(MessageBuffer,0,sizeof(MessageBuffer));
-		sprintf(MessageBuffer,"Warning - Battery Voltage Low (%.2f v) -  System Requires a Charge\r\n",BatteryVoltage);
-		menu.Display_Log(MessageBuffer);
-		lastMessageDisplayed = HAL_GetTick();
-	}
-	else if ((((Flags.flagStatus(Status, BATTERY_CRITICAL)) && (Flags.flagStatus(Settings, BATTERY_LOW_SHUTDON))) && Monitor.isShutDownInitiated == false) && ((HAL_GetTick()-lastMessageDisplayed)>1000) )
-	{
-		menu.Display_Log("Battery Flat - Voltage 10.5v - Shutting System Down in (countdown 10 to 0)\r\n");
-		Flags.setFlag(Status, BATTERY_FLAT_SHUTDOWN, true);
-		Flags.setFlag(Settings, LOG_TO_MASTER, true);
-		Monitor.isShutDownInitiated = true;
-		Monitor.ShutDownCounter = 10;
-		lastMessageDisplayed = HAL_GetTick();
-		Flags.setFlag(Status, TRIGGER_WARNING,true);
-	}
-	else if((((Flags.flagStatus(Status, BATTERY_CRITICAL)) && (!Flags.flagStatus(Settings, BATTERY_LOW_SHUTDON)))) && ((HAL_GetTick()-lastMessageDisplayed)>1000))
-	{
-		Flags.setFlag(Status, TRIGGER_WARNING,true);
+		if(Flags.flagStatus(Status, BATTERY_LOW))
+		{
+			memset(MessageBuffer,0,sizeof(MessageBuffer));
+			sprintf(MessageBuffer,"Warning - Battery Voltage Low (%.2f v) -  System Requires a Charge\r\n",BatteryVoltage);
+			menu.Display_Log(MessageBuffer);
+			lastMessageDisplayed = HAL_GetTick();
+		}
+		else if ((((Flags.flagStatus(Status, BATTERY_CRITICAL)) && (Flags.flagStatus(Settings, BATTERY_LOW_SHUTDON))) && Monitor.isShutDownInitiated == false) )
+		{
+			menu.Display_Log("Battery Flat - Voltage 10.5v - Shutting System Down in (countdown 10 to 0)\r\n");
+			Flags.setFlag(Status, BATTERY_FLAT_SHUTDOWN, true);
+			Flags.setFlag(Settings, LOG_TO_MASTER, true);
+			Monitor.isShutDownInitiated = true;
+			Monitor.ShutDownCounter = 10;
+			lastMessageDisplayed = HAL_GetTick();
+			Flags.setFlag(Status, TRIGGER_WARNING,true);
+		}
+		else if((((Flags.flagStatus(Status, BATTERY_CRITICAL)) && (!Flags.flagStatus(Settings, BATTERY_LOW_SHUTDON)))))
+		{
+			Flags.setFlag(Status, TRIGGER_WARNING,true);
+		}
+		else if (Flags.flagStatus(Status, BATTERY_CHARGING_DETECTED))
+		{
+			Flags.setFlag(Settings, LOG_TO_MASTER, true);
+			menu.Display_Log("System Battery Charging (%.2fv)", BatteryVoltage);
+			((RgbDriver*)WLED1)->setRgbColor(GREEN);
+			WLED1->setOutputPattern(1, 500, 500);
+			lastMessageDisplayed = HAL_GetTick();
+		}
 	}
 
-	if((Monitor.isShutDownInitiated == true && (HAL_GetTick()-lastShutDownTime)>1000))
-	{
-		memset(MessageBuffer,0,sizeof(MessageBuffer));
-		sprintf(MessageBuffer,"Shutting Down in %d Seconds\r\n",Monitor.ShutDownCounter);
-		menu.Display_Log(MessageBuffer);
-		lastShutDownTime = HAL_GetTick();
-		if(Monitor.ShutDownCounter == 0)
+		if((Monitor.isShutDownInitiated == true && (HAL_GetTick()-lastShutDownTime)>1000))
 		{
-			Menu = DeviceShutDown;
-			menu.displayMenu(Menu,  Menu->num_items);
-			currentM = (int*)Menu;
-			Monitor.isActivityDetected = true;
-			return;
+			memset(MessageBuffer,0,sizeof(MessageBuffer));
+			sprintf(MessageBuffer,"Shutting Down in %d Seconds\r\n",Monitor.ShutDownCounter);
+			menu.Display_Log(MessageBuffer);
+			lastShutDownTime = HAL_GetTick();
+			if(Monitor.ShutDownCounter == 0)
+			{
+				Menu = DeviceShutDown;
+				menu.displayMenu(Menu,  Menu->num_items);
+				currentM = (int*)Menu;
+				Monitor.isActivityDetected = true;
+				return;
+			}
+
+			Monitor.ShutDownCounter--;
+
 		}
 
-		Monitor.ShutDownCounter--;
-
-	}
 
 
 	if(Flags.flagStatus(Status, BATTERY_WARNING_SPIKES) && (Flags.flagStatus(Settings, BATTERY_POWER_MONITOR)))
