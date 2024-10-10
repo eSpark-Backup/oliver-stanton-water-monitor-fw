@@ -37,12 +37,12 @@ public:
 		DEBUG_RTT(LOG_WARNING, "EventHandle obj destructor called");
 	}
 
+	virtual void setupInit(void) = 0;
 	virtual void setOutputPattern(int8_t numBlinks, uint16_t timePeriod, ...);
 	virtual void Run(void);
 	virtual void turnOff(void);
 
 private:
-	virtual void setupInit(void) = 0;
 	virtual void setOutput(void) = 0;
 	virtual void stopOutput(void) = 0;
 

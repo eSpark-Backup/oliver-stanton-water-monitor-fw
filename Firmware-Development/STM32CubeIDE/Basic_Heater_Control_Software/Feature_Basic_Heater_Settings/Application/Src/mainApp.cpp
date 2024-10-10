@@ -86,6 +86,8 @@ void MainApp::setup()
 
 	Flags.flagsInit();				//initiate flags from flash
 	DEBUG_LOG(menu, "Heater Controller Initialization complete.");
+
+	WLED1->setupInit();
 }
 
 void MainApp::loop()

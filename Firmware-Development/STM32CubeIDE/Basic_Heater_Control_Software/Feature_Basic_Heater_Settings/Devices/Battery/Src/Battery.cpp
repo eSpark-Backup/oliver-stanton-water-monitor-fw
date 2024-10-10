@@ -330,7 +330,7 @@ else
 		{
 		case 0:
 			Buzzzer->setOutputPattern(1, 500, 500);
-			((RgbDriver*)WLED1)->setRgbColor(PURPLE);
+			((RgbDriver*)WLED1)->setRgbColor(RED);
 			WLED1->setOutputPattern(1, 500, 500);
 			menu.Display_Log("Turn On Buzzer\r\n");
 			menu.Display_Log("Turn On LED\r\n");

@@ -27,8 +27,9 @@ public:
 		DEBUG_RTT(LOG_WARNING, "BuzzerDriver obj destructor called");
 	}
 
-private:
 	void setupInit(void) override;
+
+private:
 	void setOutput(void) override;
 	void stopOutput(void) override;
 

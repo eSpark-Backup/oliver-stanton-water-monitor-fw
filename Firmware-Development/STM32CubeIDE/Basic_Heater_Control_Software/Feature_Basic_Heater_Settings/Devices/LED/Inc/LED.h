@@ -36,10 +36,12 @@ public:
 		DEBUG_RTT(LOG_WARNING, "~RgbDriver class obj destructor called");
 	}
 
+	void setupInit(void) override;
 	void setRgbColor(HexColor);
 
 private:
-	void setupInit(void) override;
+	static void setRgbLedGpio(TIM_HandleTypeDef *htim);
+	static void resetRgbLedGpio(TIM_HandleTypeDef *htim);
 	void setOutput(void) override;
 	void stopOutput(void) override;
 
@@ -49,9 +51,6 @@ private:
 	uint16_t greenPin_;
 	uint16_t bluePin_;
 	uint16_t rgbColor[3] = {0};
-
-
-
 };
 
 

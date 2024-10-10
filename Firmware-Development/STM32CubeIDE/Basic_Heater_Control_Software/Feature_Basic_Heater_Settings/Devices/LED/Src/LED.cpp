@@ -1,45 +1,27 @@
 #include "LED.h"
 
 
-void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim)
+void RgbDriver::setRgbLedGpio(TIM_HandleTypeDef *htim)
 {
-    if (htim->Instance == TIM1)
-    {
-        // Set GPIOs at the start of the period (turn ON the LEDs)
-        HAL_GPIO_WritePin(R_CNTRL_GPIO_Port, R_CNTRL_Pin, GPIO_PIN_SET); // Red ON
-        HAL_GPIO_WritePin(G_CNTRL_GPIO_Port, G_CNTRL_Pin, GPIO_PIN_SET); // Green ON
-        HAL_GPIO_WritePin(B_CNTRL_GPIO_Port, B_CNTRL_Pin, GPIO_PIN_SET); // Blue ON
-    }
+    // Set GPIOs at the start of the period (turn ON the LEDs)
+    HAL_GPIO_WritePin(R_CNTRL_GPIO_Port, R_CNTRL_Pin, GPIO_PIN_SET); // Red ON
+    HAL_GPIO_WritePin(G_CNTRL_GPIO_Port, G_CNTRL_Pin, GPIO_PIN_SET); // Green ON
+    HAL_GPIO_WritePin(B_CNTRL_GPIO_Port, B_CNTRL_Pin, GPIO_PIN_SET); // Blue ON
 }
 
 
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+void RgbDriver::resetRgbLedGpio(TIM_HandleTypeDef *htim)
 {
-	if (htim->Instance == TIM1)
-	    {
-	        uint32_t current_timer_value = __HAL_TIM_GET_COUNTER(htim);
+    uint32_t current_timer_value = __HAL_TIM_GET_COUNTER(htim);
 
-	        // Turn off the Red LED when the timer reaches the red duty cycle
-	        if (current_timer_value >= __HAL_TIM_GET_COMPARE(&htim1, TIM_CHANNEL_2))
-	        {
-                // DEBUG_RTT(LOG_INFO, " TIM_CHANNEL_2");
-	            HAL_GPIO_WritePin(R_CNTRL_GPIO_Port, R_CNTRL_Pin, GPIO_PIN_RESET); // Red OFF
-	        }
+    if (current_timer_value >= __HAL_TIM_GET_COMPARE(&htim1, TIM_CHANNEL_2))
+        HAL_GPIO_WritePin(R_CNTRL_GPIO_Port, R_CNTRL_Pin, GPIO_PIN_RESET); // Red OFF
 
-	        // Turn off the Green LED when the timer reaches the green duty cycle
-	        if (current_timer_value >= __HAL_TIM_GET_COMPARE(&htim1, TIM_CHANNEL_3))
-	        {
-	            // DEBUG_RTT(LOG_INFO, " TIM_CHANNEL_3");
-                HAL_GPIO_WritePin(G_CNTRL_GPIO_Port, G_CNTRL_Pin, GPIO_PIN_RESET); // Green OFF
-	        }
+    if (current_timer_value >= __HAL_TIM_GET_COMPARE(&htim1, TIM_CHANNEL_3))
+        HAL_GPIO_WritePin(G_CNTRL_GPIO_Port, G_CNTRL_Pin, GPIO_PIN_RESET); // Green OFF
 
-	        // Turn off the Blue LED when the timer reaches the blue duty cycle
-	        if (current_timer_value >= __HAL_TIM_GET_COMPARE(&htim1, TIM_CHANNEL_4))
-	        {
-	            // DEBUG_RTT(LOG_INFO, " TIM_CHANNEL_4");
-                HAL_GPIO_WritePin(B_CNTRL_GPIO_Port, B_CNTRL_Pin, GPIO_PIN_RESET); // Blue OFF
-	        }
-	    }
+    if (current_timer_value >= __HAL_TIM_GET_COMPARE(&htim1, TIM_CHANNEL_4))
+        HAL_GPIO_WritePin(B_CNTRL_GPIO_Port, B_CNTRL_Pin, GPIO_PIN_RESET); // Blue OFF
 }
 
 
@@ -63,12 +45,10 @@ void RgbDriver::setRgbColor(HexColor color)
     uint16_t scaled_g = (g * 1000) / 255;
     uint16_t scaled_b = (b * 1000) / 255;
 
-    // Make sure that scaled values are clamped to 1000 maximum
     if (scaled_r > 1000) scaled_r = 1000;
     if (scaled_g > 1000) scaled_g = 1000;
     if (scaled_b > 1000) scaled_b = 1000;
 
-    // Store scaled values in the rgbColor array
     rgbColor[0] = scaled_r; 
     rgbColor[1] = scaled_g; 
     rgbColor[2] = scaled_b;
@@ -76,14 +56,16 @@ void RgbDriver::setRgbColor(HexColor color)
     __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, rgbColor[0]);
     __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, rgbColor[1]);
     __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_4, rgbColor[2]);
-
 }
 
 
-void  RgbDriver::setupInit(void)
+void RgbDriver::setupInit(void)
 {
-	// Initialize GPIO pin
-
+    if(HAL_TIM_RegisterCallback(&htim1, HAL_TIM_PWM_PULSE_FINISHED_CB_ID, RgbDriver::setRgbLedGpio) != HAL_OK)
+        DEBUG_RTT(LOG_ERROR, "RgbDriver class setRgbLedGpio not registered");
+    
+    if(HAL_TIM_RegisterCallback(&htim1, HAL_TIM_PERIOD_ELAPSED_CB_ID, RgbDriver::resetRgbLedGpio) != HAL_OK)
+        DEBUG_RTT(LOG_ERROR, "Period Elapsed Callback not registered");
 }
 
 
@@ -107,6 +89,4 @@ void RgbDriver::stopOutput(void)
     HAL_TIM_PWM_Stop_IT(&htim1, TIM_CHANNEL_2);
 	HAL_TIM_PWM_Stop_IT(&htim1, TIM_CHANNEL_3);
 	HAL_TIM_PWM_Stop_IT(&htim1, TIM_CHANNEL_4);
-
-
 }
