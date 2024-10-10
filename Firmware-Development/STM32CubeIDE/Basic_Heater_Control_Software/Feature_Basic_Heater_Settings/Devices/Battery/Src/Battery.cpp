@@ -142,12 +142,10 @@ else
 
 		if ((BatteryVoltage - LastBatteryVoltage) > CHANGE_IN_BATTERY_VOLTAGE || (LastBatteryVoltage - BatteryVoltage) > CHANGE_IN_BATTERY_VOLTAGE)
 		{
-			memset(MessageBuffer,0,sizeof(MessageBuffer));
-			sprintf(MessageBuffer,"Updated Battery Voltage: %.2f v\r\n"
-								  "Controller Current: Not Available\r\n"
-								  "Sonar current: Not Available\r\n",
-								   BatteryVoltage);
-			menu.Display_Log(MessageBuffer);
+			menu.Display_Log("Updated Battery Voltage: %.2f v\r\n"
+							"Controller Current: Not Available\r\n"
+							"Sonar current: Not Available\r\n",
+							BatteryVoltage);
 			lastMessageDisplayed = HAL_GetTick();
 			LastBatteryVoltage = BatteryVoltage;
 		}

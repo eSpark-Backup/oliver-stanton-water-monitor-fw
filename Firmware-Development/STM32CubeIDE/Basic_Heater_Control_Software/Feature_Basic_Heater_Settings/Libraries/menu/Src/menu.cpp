@@ -23,9 +23,16 @@
 int *currentM;
 short choiceSelect = 0;
 
-void Menu::Display_Log(const char* log)
+void Menu::Display_Log(const char* log, ...)
 {
-	Disp->display(log);
+    const int buffer_size = 1024;
+    char buffer[buffer_size];
+
+    va_list args;
+    va_start(args, log);
+    vsnprintf(buffer, buffer_size, log, args);
+    va_end(args);
+    Disp->display(buffer);
 }
 
 void Menu::displayMenu(const MenuItem* menu, int elements)

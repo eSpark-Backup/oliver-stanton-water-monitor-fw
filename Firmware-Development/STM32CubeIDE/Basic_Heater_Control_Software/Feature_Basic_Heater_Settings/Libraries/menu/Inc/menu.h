@@ -37,7 +37,7 @@ public:
 	~Menu(){
 		DEBUG_RTT(LOG_WARNING, "Menu obj destructor called");
 	}
-	void Display_Log(const char* log);
+	void Display_Log(const char* log, ...);
 	void displayMenu(const MenuItem* menu, int elements);
 	void navigateMenu(const char* optn, MenuItem* currentMenu);
 
