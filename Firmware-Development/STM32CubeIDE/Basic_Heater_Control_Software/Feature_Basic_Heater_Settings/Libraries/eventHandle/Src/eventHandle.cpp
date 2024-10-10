@@ -8,6 +8,7 @@ void EventHandle::toggleInfinite()
     {
     	DEBUG_RTT(LOG_ERROR, "toggleInfinite: OFF STATE -> on_period_ms_[%d] is %d", 0, onPeriodms_[0]);//i, params[i]);
 		stopOutput();
+		state_ = false;
 		lastToggleTime_ = currentTime;
 	}
     else if (!state_ && (((currentTime - lastToggleTime_) >= offPeriodms_) || blinkCount_ == 0))
@@ -18,6 +19,9 @@ void EventHandle::toggleInfinite()
 		lastToggleTime_ = currentTime;
 //				++blink_count_;
 	}
+
+		if((currentTime - lastToggleTime_) == 0 || (currentTime - lastToggleTime_)%100 == 0)
+		DEBUG_RTT(LOG_WARNING, "EventHandle::intoggle time: %d, state %d", currentTime - lastToggleTime_, state_);
 }
 
 
@@ -74,6 +78,7 @@ void EventHandle::Run()
         }
         else
 		{
+			DEBUG_RTT(LOG_WARNING, "turnOFF");
 			turnOff();
 		}
 	}

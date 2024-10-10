@@ -73,18 +73,9 @@ void RgbDriver::setRgbColor(HexColor color)
     rgbColor[1] = scaled_g; 
     rgbColor[2] = scaled_b;
 
-    rgbColor[0] = 500; 
-    rgbColor[1] = scaled_g; 
-    rgbColor[2] = 500;
-
     __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, rgbColor[0]);
     __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, rgbColor[1]);
     __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_4, rgbColor[2]);
-
-    // DEBUG_RTT(LOG_INFO, "setRgbColor(HexColor %x) r %d g %d b %d", color, r, g, b);
-    // DEBUG_RTT(LOG_INFO, "setRgbColor scaled_ %d g %d b %d", scaled_r, scaled_g, scaled_b);
-    // DEBUG_RTT(LOG_INFO, "rgbColor[0] %d rgbColor[1] %d rgbColor[2] %d", rgbColor[0], rgbColor[1], rgbColor[2]);
-
 
 }
 
@@ -108,9 +99,9 @@ void RgbDriver::setOutput(void)
 void RgbDriver::stopOutput(void)
 {
 	    // Manually reset only the relevant GPIOs for the stopped channels
+    HAL_GPIO_WritePin(R_CNTRL_GPIO_Port, R_CNTRL_Pin, GPIO_PIN_RESET); // Red OFF
     HAL_GPIO_WritePin(G_CNTRL_GPIO_Port, G_CNTRL_Pin, GPIO_PIN_RESET); // Green OFF
     HAL_GPIO_WritePin(B_CNTRL_GPIO_Port, B_CNTRL_Pin, GPIO_PIN_RESET); // Blue OFF
-    HAL_GPIO_WritePin(R_CNTRL_GPIO_Port, R_CNTRL_Pin, GPIO_PIN_RESET); // Red OFF
 
     HAL_TIM_Base_Stop_IT(&htim1);
     HAL_TIM_PWM_Stop_IT(&htim1, TIM_CHANNEL_2);
