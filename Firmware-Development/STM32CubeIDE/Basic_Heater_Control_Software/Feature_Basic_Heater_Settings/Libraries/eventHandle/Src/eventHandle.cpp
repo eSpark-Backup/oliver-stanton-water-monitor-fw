@@ -20,8 +20,8 @@ void EventHandle::toggleInfinite()
 //				++blink_count_;
 	}
 
-		if((currentTime - lastToggleTime_) == 0 || (currentTime - lastToggleTime_)%100 == 0)
-		DEBUG_RTT(LOG_WARNING, "EventHandle::intoggle time: %d, state %d", currentTime - lastToggleTime_, state_);
+		// if((currentTime - lastToggleTime_) == 0 || (currentTime - lastToggleTime_)%100 == 0)
+		// DEBUG_RTT(LOG_WARNING, "EventHandle::intoggle time: %d, state %d", currentTime - lastToggleTime_, state_);
 }
 
 
@@ -43,8 +43,8 @@ void EventHandle::toggle()
 		lastToggleTime_ = currentTime;
 	}
 
-	if((currentTime - lastToggleTime_) == 0 || (currentTime - lastToggleTime_)%100 == 0)
-		DEBUG_RTT(LOG_WARNING, "EventHandle::toggle time: %d, state %d", currentTime - lastToggleTime_, state_);
+	// if((currentTime - lastToggleTime_) == 0 || (currentTime - lastToggleTime_)%100 == 0)
+	// 	DEBUG_RTT(LOG_WARNING, "EventHandle::toggle time: %d, state %d", currentTime - lastToggleTime_, state_);
 
 }
 
@@ -78,7 +78,7 @@ void EventHandle::Run()
         }
         else
 		{
-			DEBUG_RTT(LOG_WARNING, "turnOFF");
+			// DEBUG_RTT(LOG_WARNING, "turnOFF");
 			turnOff();
 		}
 	}
