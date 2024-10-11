@@ -83,20 +83,22 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
 
 		choiceSelect = c;
 	}
-		//when DOWN button is pressed
-		if(strcmp(optn, "down") == 0 && num_items > 1)
+
+	//when DOWN button is pressed
+	if(strcmp(optn, "down") == 0 && num_items > 1)
+	{
+		if(c<=1)
 		{
-			if(c<=1)
-			{
-				c=num_items;
-			}
-			else if (c>1)
-			{
-				c -= 1;
-			}
-			Disp->display(c);
-			choiceSelect = c;
+			c=num_items;
 		}
+		else if (c>1)
+		{
+			c -= 1;
+		}
+		Disp->display(c);
+		choiceSelect = c;
+	}
+
 	//when BACK button is pressed
 	if(strcmp(optn, "back") == 0 && currentMenu->prev != nullptr)
 	{
@@ -105,8 +107,21 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
 		displayMenu(currentMenu, currentMenu->num_items);
 		currentM = (int*)currentMenu;	//}
 	}
+	
+	//when RODI button is pressed
+	if(strcmp(optn, "rodi") == 0 && currentMenu->prev == nullptr)
+	{
+		if(strcmp(currentMenu->label,intro->label)==0)
+		{
+			currentMenu = (MenuItem*)currentMenu->next;
+			num_items = currentMenu->num_items;
+			displayMenu(currentMenu, num_items);
+			currentM = (int*)currentMenu;
+		}
+	}
+
 	//when ENTER button is pressed
-	if(strcmp(optn, "enter") == 0)
+	if((strcmp(optn, "enter") == 0) && (strcmp(currentMenu->label,intro->label)!=0))
 	{
 			if(num_items>1 && c == 0)
 			{

@@ -24,7 +24,7 @@ struct MenuItem {
 };
 
 //-----------declare MenuItem Structs defined in menuList.h down below ----------------
-extern struct MenuItem mainMenu[], fodMenu[], fodOptns[], roSaver[], fodOptnsOff[], roSaverOptns[], roSaverThresh[], roSaverThreshAdjust[]\
+extern struct MenuItem intro[], mainMenu[], fodMenu[], fodOptns[], roSaver[], fodOptnsOff[], roSaverOptns[], roSaverThresh[], roSaverThreshAdjust[]\
 ,Battery_Index[], BatMonitorMenu[], BatLowMenuOptns[],BatLowMenuOFF[],BatPowerConsumptionOptns[],BatPowerConsumptiontable[],BatPowerConsumptionOptnsON[]\
 ,DeviceStandByScreen[],DeviceShutDown[],BatteryChargingDetected[],BatteryChargingDisconnected[];
 //-------------------------------------------------------------------------------------
