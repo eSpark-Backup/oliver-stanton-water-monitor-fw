@@ -28,7 +28,7 @@ uint8_t triggers = 6;
 #define DEBUG_FLAT_SHUTDOWN 0
 #define DEBUG_WARNING_SPIKES 0
 #define DEBUG_STANDBY_SCREEN 0
-#define DEBUG_CHARGING_DETECTED 1
+#define DEBUG_CHARGING_DETECTED 0
 
 BatteryMonitor Battery;
 
@@ -140,7 +140,8 @@ else
 	if((strcmp(Menu->label,Battery_Index->label)==0) || (strcmp(Menu->label,DeviceStandByScreen->label)==0))
 	{
 
-		if ((BatteryVoltage - LastBatteryVoltage) > CHANGE_IN_BATTERY_VOLTAGE || (LastBatteryVoltage - BatteryVoltage) > CHANGE_IN_BATTERY_VOLTAGE)
+		if (BatteryVoltage > BATTERY_CRITICAL_VOLTAGE 
+			&& ((BatteryVoltage - LastBatteryVoltage) > CHANGE_IN_BATTERY_VOLTAGE || (LastBatteryVoltage - BatteryVoltage) > CHANGE_IN_BATTERY_VOLTAGE))
 		{
 			menu.Display_Log("Updated Battery Voltage: %.2f v\r\n"
 							"Controller Current: Not Available\r\n"
@@ -267,6 +268,7 @@ else
 			sprintf(MessageBuffer,"Warning - Battery Voltage Low (%.2f v) -  System Requires a Charge\r\n",BatteryVoltage);
 			menu.Display_Log(MessageBuffer);
 			lastMessageDisplayed = HAL_GetTick();
+			Monitor.isShutDownInitiated = false;
 		}
 		else if ((((Flags.flagStatus(Status, BATTERY_CRITICAL)) && (Flags.flagStatus(Settings, BATTERY_LOW_SHUTDON))) && Monitor.isShutDownInitiated == false) )
 		{
@@ -281,6 +283,7 @@ else
 		else if((((Flags.flagStatus(Status, BATTERY_CRITICAL)) && (!Flags.flagStatus(Settings, BATTERY_LOW_SHUTDON)))))
 		{
 			Flags.setFlag(Status, TRIGGER_WARNING,true);
+			Monitor.isShutDownInitiated = false;
 		}
 		else if (Flags.flagStatus(Status, BATTERY_CHARGING_DETECTED))
 		{
@@ -288,7 +291,9 @@ else
 			menu.Display_Log("System Battery Charging (%.2fv)", BatteryVoltage);
 			((RgbDriver*)WLED1)->setRgbColor(GREEN);
 			WLED1->setOutputPattern(1, 500, 500);
+			Flags.setFlag(Settings, LOG_TO_MASTER, true);
 			lastMessageDisplayed = HAL_GetTick();
+			Monitor.isShutDownInitiated = false;
 		}
 	}
 
@@ -306,6 +311,15 @@ else
 				Monitor.isActivityDetected = true;
 				return;
 			}
+			else if (BatteryVoltage > BATTERY_CRITICAL_VOLTAGE)
+			{
+				Flags.setFlag(Status, TRIGGER_WARNING,false);
+				Flags.setFlag(Status, BATTERY_CRITICAL, false);
+				menu.Display_Log("Battery Voltage Restored - Returning to Normal\r\n");
+				Monitor.isShutDownInitiated = false;
+				triggers = 6;
+			}
+			
 
 			Monitor.ShutDownCounter--;
 
