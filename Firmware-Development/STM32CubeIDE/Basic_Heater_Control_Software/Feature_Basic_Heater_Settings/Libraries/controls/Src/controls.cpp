@@ -81,7 +81,7 @@ bool fodOFF(uint32_t)
 			{
 				Flags.setFlag(Settings, MEM_SAVER, false);
 				fillOpen();
-				invokeST3(false);
+				// invokeST3(false); /// called twice
 			}
 			else if(!Flags.flagStatus(Settings, MEM_SAVER))
 			{
@@ -174,6 +174,11 @@ void mainMenuFunc()
 void fillOpen()
 {
 	Disp->display("Tank Full - System not Filling");
+
+	Buzzzer->setOutputPattern(1, 500, 1000);
+	((RgbDriver*)WLED1)->setRgbColor(BLUE);
+	WLED1->setOutputPattern(1, 1000, 1000);
+
 	invokeST3(false);
 	DEBUG_RTT(LOG_WARNING, "SAVE LOG TO FILE HERE.");			//perform logging to file here
 	mainMenuFunc();
