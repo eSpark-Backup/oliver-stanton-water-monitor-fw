@@ -25,7 +25,7 @@
  */
 
 MenuItem intro[] = {
-	{"Heater Control Software", 			nullptr, 		mainMenu, 			nullptr, 1, 1}
+	{"Water Monitor Control Software", 			nullptr, 		mainMenu, 			nullptr, 1, 1}
 };
 MenuItem mainMenu[] = {
     {"Default LLROFS Home Page", 			nullptr, 		fodMenu, 			nullptr, 2, 1},
