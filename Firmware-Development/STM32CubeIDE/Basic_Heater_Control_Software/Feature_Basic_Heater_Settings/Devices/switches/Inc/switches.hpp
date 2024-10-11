@@ -17,8 +17,8 @@ typedef enum{
 	ENTER_OK,
 	BACK,
 	UP,
-	DOWN
-//	RODI,
+	DOWN,
+	RODI
 //	DEL
 }SWITCHES;
 

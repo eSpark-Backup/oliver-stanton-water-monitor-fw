@@ -13,18 +13,22 @@
 
 /* Private defines -----------------------------------------------------------*/
 
+#define RODI_BUTTON			SW3_Pin
+#define RODI_BUTTON_PORT	SW3_GPIO_Port
+#define RODI_BUTTON_FLAG	sw3Flag
 #define UP_BUTTON			SW4_Pin
 #define UP_BUTTON_PORT		SW4_GPIO_Port
 #define UP_BUTTON_FLAG		sw4Flag
+#define BACK_BUTTON			SW5_Pin
+#define BACK_BUTTON_PORT	SW5_GPIO_Port
+#define BACK_BUTTON_FLAG	sw5Flag
 #define DOWN_BUTTON			SW6_Pin
 #define DOWN_BUTTON_PORT	SW6_GPIO_Port
 #define DOWN_BUTTON_FLAG	sw6Flag
 #define ENTER_BUTTON		SW7_Pin
 #define ENTER_BUTTON_PORT	SW7_GPIO_Port
 #define ENTER_BUTTON_FLAG	sw7Flag
-#define BACK_BUTTON			SW5_Pin
-#define BACK_BUTTON_PORT	SW5_GPIO_Port
-#define BACK_BUTTON_FLAG	sw5Flag
+
 
 //-----------------------------------------------------------------------------------------
 

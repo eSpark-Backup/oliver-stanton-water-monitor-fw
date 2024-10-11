@@ -27,6 +27,7 @@ Switches ButtonE;			//Enter/OK Button obj
 Switches ButtonB;			//Back Button obj
 Switches ButtonU;			//UP Button obj
 Switches ButtonD;			//Down Button obj
+Switches ButtonR;			//RODI Button obj
 
 // generating struct for storing GPIO_Port and GPIO_Pins for TDS sensors
 //GPIOConfig TDS1;// = {TDS1_T2_GPIO_Port, TDS1_T1_GPIO_Port, ADC_CHANNEL_10, TDS1_T2_Pin, TDS1_T1_Pin, ADC_CHANNEL_11};
@@ -85,7 +86,7 @@ void MainApp::setup()
 	HAL_Delay(2000);  		menu.displayMenu((MenuItem*)currentM, (sizeof(intro) / sizeof(intro[0])));
 
 	Flags.flagsInit();				//initiate flags from flash
-	DEBUG_LOG(menu, "Heater Controller Initialization complete.");
+	DEBUG_LOG(menu, "Water Monitor Controller Initialization complete.");
 
 	WLED1->setupInit();
 }
@@ -97,6 +98,14 @@ void MainApp::loop()
 	ButtonB.getState(BACK);
 	ButtonU.getState(UP);
 	ButtonD.getState(DOWN);
+	ButtonR.getState(RODI);
+	if (ButtonR.state()){
+		DEBUG_LOG(menu, "*******rodi Button pressed.*******");
+		DEBUG_LOG(menu, "ButtonR.state : %d\nButtonR.period : %d", ButtonR.state(), ButtonR.period());
+		// if(ButtonR.period() < SINGLE_PRESS)
+		menu.navigateMenu("rodi", (MenuItem*)currentM);
+		ButtonR.reset();
+	}
 	if (ButtonU.state()){
 		DEBUG_LOG(menu, "*******up Button pressed.*******");
 		DEBUG_LOG(menu, "ButtonU.state : %d\nButtonU.period : %d", ButtonU.state(), ButtonU.period());
@@ -142,8 +151,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if(!timeStamped)	{
 		saveTime();
-	if(GPIO_Pin==SW3_Pin)
-	{	}
+
+	if(GPIO_Pin==RODI_BUTTON)			{
+			RODI_BUTTON_FLAG=true;
+		}
 	else if(GPIO_Pin==UP_BUTTON)		{
 			UP_BUTTON_FLAG=true;
 		}
