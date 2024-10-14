@@ -110,6 +110,14 @@ void MainApp::loop()
 		DEBUG_LOG(menu, "ButtonU.state : %d\nButtonU.period : %d", ButtonU.state(), ButtonU.period());
 		if(ButtonU.period() < SINGLE_PRESS)
 			menu.navigateMenu("up", (MenuItem*)currentM);
+			MenuItem* currentMenuItem = (MenuItem*)currentM;  // Cast current menu to MenuItem
+			if (currentMenuItem->DoWork != nullptr) {
+				currentMenuItem->DoWork(choiceSelect, (MenuItem*)currentM);
+			}
+			else
+			{
+				DEBUG_LOG(menu, "*******DoWork == nullptr.*******");
+			}
 		ButtonU.reset();
 	}
 	if (ButtonD.state()){

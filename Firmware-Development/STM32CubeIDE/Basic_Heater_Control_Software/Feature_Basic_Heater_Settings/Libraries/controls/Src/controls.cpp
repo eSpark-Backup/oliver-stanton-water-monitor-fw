@@ -55,7 +55,7 @@ float tdsSensor(uint32_t channel)
 
 
 //***********************Purefication Cycle**************************
-bool fodOFF(uint32_t)
+bool fodOFF(uint32_t argChoice, MenuItem* argMenu)
 {
 	if(Flags.flagStatus(Settings, FoD))
 	{
@@ -102,14 +102,14 @@ bool fodOFF(uint32_t)
 }
 
 
-bool BatLowShutdownOn(uint32_t)
+bool BatLowShutdownOn(uint32_t argChoice, MenuItem* argMenu)
 {
 	Disp->display("Battery LOW power shutdown Enabled.");
 	Flags.setFlag(Settings, BATTERY_LOW_SHUTDON, true);
 	return true;
 }
 
-bool BatLowShutdownOff(uint32_t)
+bool BatLowShutdownOff(uint32_t argChoice, MenuItem* argMenu)
 {
 	Disp->display("Battery LOW power shutdown Disabled.");
 
@@ -118,46 +118,46 @@ bool BatLowShutdownOff(uint32_t)
 	return true;
 }
 
-bool BatPowerMonitorOn(uint32_t)
+bool BatPowerMonitorOn(uint32_t argChoice, MenuItem* argMenu)
 {
 	Disp->display("Battery Power Monitoring Enabled.");
 	Flags.setFlag(Settings, BATTERY_POWER_MONITOR, true);
 	return true;
 }
 
-bool BatPowerMonitorOff(uint32_t)
+bool BatPowerMonitorOff(uint32_t argChoice, MenuItem* argMenu)
 {
 	Disp->display("Battery Power Monitoring Disabled.");
 	Flags.setFlag(Settings, BATTERY_POWER_MONITOR, false);
 	return true;
 }
 
-bool fodON(uint32_t)
+bool fodON(uint32_t argChoice, MenuItem* argMenu)
 {
 	Flags.setFlag(Settings, FoD, true);
 	Flags.setFlag(Settings, MEM_SAVER, true);
 	return true;
 }
 
-bool roSaverThreshAdj(uint32_t c)
+bool roSaverThreshAdj(uint32_t argChoice, MenuItem* argMenu)
 {
-	roSaverThreshValue = c;
+	roSaverThreshValue = argChoice;
 	DEBUG_RTT(LOG_WARNING, "RO_Saver threshold value set to %d.", roSaverThreshValue);
 	return true;
 }
-bool roSaverThreshDefault(uint32_t c)
+bool roSaverThreshDefault(uint32_t argChoice, MenuItem* argMenu)
 {
 	roSaverThreshValue = 0;
 	DEBUG_RTT(LOG_WARNING, "RO_Saver threshold value set to %d.", roSaverThreshValue);
 	return true;
 }
-bool roSaverOn(uint32_t c)
+bool roSaverOn(uint32_t argChoice, MenuItem* argMenu)
 {
 	Flags.setFlag(Settings, RESIN_SAVER, true);
 	DEBUG_RTT(LOG_WARNING, "RO_Saver setting Turned on.");
 	return true;
 }
-bool roSaverOff(uint32_t c)
+bool roSaverOff(uint32_t argChoice, MenuItem* argMenu)
 {
 	Flags.setFlag(Settings, RESIN_SAVER, false);
 	DEBUG_RTT(LOG_WARNING, "RO_Saver setting Turned off.");

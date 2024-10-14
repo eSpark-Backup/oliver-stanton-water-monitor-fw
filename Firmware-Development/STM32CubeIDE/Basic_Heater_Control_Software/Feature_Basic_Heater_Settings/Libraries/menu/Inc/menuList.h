@@ -12,7 +12,7 @@
 //#include "menu.h"
 #include "mainApp.hpp"
 #include "controls.h"
-
+#include "menu.h"
 
 
 ///-----------------------------Creating Menu Items List-----------------------------
@@ -25,7 +25,7 @@
  */
 
 MenuItem intro[] = {
-	{"Water Monitor Control Software", 			nullptr, 		mainMenu, 			nullptr, 1, 1}
+	{"Water Monitor Control Software", 			introPageSelection, 		mainMenu, 			nullptr, 1, 1}
 };
 MenuItem mainMenu[] = {
     {"Default LLROFS Home Page", 			nullptr, 		fodMenu, 			nullptr, 2, 1},

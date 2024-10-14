@@ -15,7 +15,7 @@
 
 struct MenuItem {
     const char* label;          		//Name of the menu Element
-    bool (*DoWork)(uint32_t);     		//Function invoked when element is selected
+    bool (*DoWork)(uint32_t, MenuItem*);//Function invoked when element is selected
     const MenuItem* next;       		//SubMenu which it points to
     const MenuItem* prev;       		//Parent Menu
     uint8_t num_childmenus;         	//No. of child menus
@@ -42,7 +42,10 @@ public:
 	void navigateMenu(const char* optn, MenuItem* currentMenu);
 
 private:
-	bool jumpToNextItem = false;
+	bool jumpToNextItem_ = false;
+	uint8_t numChild_;
+	uint8_t numItems_;
+	uint8_t choice_;	
 
 //	void createMenu(const char** menu);
 //	void arrowDown();
@@ -54,6 +57,8 @@ private:
 //	void pumpConnection();
 //	void flameIconCallback(TIM_HandleTypeDef* htim);
 };
+
+bool introPageSelection(uint32_t argChoice, MenuItem* argMenu);
 
 extern Switches ButtonE;			//Enter/OK button obj
 extern Switches ButtonB;			//Back button obj

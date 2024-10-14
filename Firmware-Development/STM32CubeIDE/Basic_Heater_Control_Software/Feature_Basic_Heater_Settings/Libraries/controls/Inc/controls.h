@@ -89,16 +89,16 @@ extern short choiceSelect;		//next menu item choice item we want to jump to, we 
  *
  * return condition is if we want the function to jump back to previous menuItem or not
  */
-bool fodOFF(uint32_t);
-bool fodON(uint32_t);
-bool roSaverThreshAdj(uint32_t);
-bool roSaverThreshDefault(uint32_t);
-bool roSaverOn(uint32_t);
-bool roSaverOff(uint32_t);
-bool BatLowShutdownOn(uint32_t);
-bool BatLowShutdownOff(uint32_t);
-bool BatPowerMonitorOn(uint32_t);
-bool BatPowerMonitorOff(uint32_t);
+bool fodOFF(uint32_t argChoice, MenuItem* argMenu);
+bool fodON(uint32_t argChoice, MenuItem* argMenu);
+bool roSaverThreshAdj(uint32_t argChoice, MenuItem* argMenu);
+bool roSaverThreshDefault(uint32_t argChoice, MenuItem* argMenu);
+bool roSaverOn(uint32_t argChoice, MenuItem* argMenu);
+bool roSaverOff(uint32_t argChoice, MenuItem* argMenu);
+bool BatLowShutdownOn(uint32_t argChoice, MenuItem* argMenu);
+bool BatLowShutdownOff(uint32_t argChoice, MenuItem* argMenu);
+bool BatPowerMonitorOn(uint32_t argChoice, MenuItem* argMenu);
+bool BatPowerMonitorOff(uint32_t argChoice, MenuItem* argMenu);
 
 
 /*	Support Functions	*/
