@@ -102,7 +102,6 @@ void MainApp::loop()
 	if (ButtonR.state()){
 		DEBUG_LOG(menu, "*******rodi Button pressed.*******");
 		DEBUG_LOG(menu, "ButtonR.state : %d\nButtonR.period : %d", ButtonR.state(), ButtonR.period());
-		// if(ButtonR.period() < SINGLE_PRESS)
 		menu.navigateMenu("rodi", (MenuItem*)currentM);
 		ButtonR.reset();
 	}
@@ -116,16 +115,14 @@ void MainApp::loop()
 	if (ButtonD.state()){
 		DEBUG_LOG(menu, "*******down Button pressed.*******");
 		DEBUG_LOG(menu, "ButtonD.state : %d\nButtonD.period : %d", ButtonD.state(), ButtonD.period());
-		if(ButtonD.period() < SINGLE_PRESS)
-			menu.navigateMenu("down", (MenuItem*)currentM);
+		menu.navigateMenu("down", (MenuItem*)currentM);
 		ButtonD.reset();
 		}
 	if (ButtonE.state()){
 		DEBUG_LOG(menu, "*******enter Button pressed.*******");
 		DEBUG_LOG(menu, "ButtonE.state : %d\nButtonE.period : %d", ButtonE.state(), ButtonE.period());
-//		if(ButtonE.period() < SINGLE_PRESS)
-			menu.navigateMenu("enter", (MenuItem*)currentM);
-			ButtonE.reset();
+		menu.navigateMenu("enter", (MenuItem*)currentM);
+		ButtonE.reset();
 		}
 	if (ButtonB.state()){
 		DEBUG_LOG(menu, "*******back Button pressed.*******");

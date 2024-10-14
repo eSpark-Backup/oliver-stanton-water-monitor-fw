@@ -85,18 +85,27 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
 	}
 
 	//when DOWN button is pressed
-	if(strcmp(optn, "down") == 0 && num_items > 1)
+	if(strcmp(optn, "down") == 0)
 	{
-		if(c<=1)
+		if (num_items > 1)
 		{
-			c=num_items;
+			if(c<=1)
+			{
+				c=num_items;
+			}
+			else if (c>1)
+			{
+				c -= 1;
+			}
+			Disp->display(c);
+			choiceSelect = c;
 		}
-		else if (c>1)
+		if(ButtonD.period() >LONG_PRESS && ButtonD.period() <LONG_LONG_PRESS && (strcmp(currentMenu->label,mainMenu->label)==0))
 		{
-			c -= 1;
+			jumpToNextItem = true;
 		}
-		Disp->display(c);
-		choiceSelect = c;
+		
+
 	}
 
 	//when BACK button is pressed
@@ -113,15 +122,12 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
 	{
 		if(strcmp(currentMenu->label,intro->label)==0)
 		{
-			currentMenu = (MenuItem*)currentMenu->next;
-			num_items = currentMenu->num_items;
-			displayMenu(currentMenu, num_items);
-			currentM = (int*)currentMenu;
+			jumpToNextItem = true;
 		}
 	}
 
 	//when ENTER button is pressed
-	if((strcmp(optn, "enter") == 0) && (strcmp(currentMenu->label,intro->label)!=0))
+	if((strcmp(optn, "enter") == 0))
 	{
 			if(num_items>1 && c == 0)
 			{
@@ -218,16 +224,26 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
 					currentM = (int*)currentMenu;
 				}
 			}
-			else
+			else if((ButtonE.period() >LONG_PRESS && ButtonE.period() <LONG_LONG_PRESS 
+					&& (strcmp(currentMenu->label,mainMenu->label)==0)) || (strcmp(currentMenu->label,Battery_Index->label)==0))
 			{
-//				Disp->display("It should come here first");
-//				displayMenu(currentMenu, num_items);
-				currentMenu = (MenuItem*)currentMenu->next;
-				num_items = currentMenu->num_items;
-				displayMenu(currentMenu, num_items);
-				currentM = (int*)currentMenu;
+				
+				jumpToNextItem = true;
 
 			}
-			Disp->display(1);
+			else
+			{
+				// Disp->display(1);
+			}
+	}
+
+	if(jumpToNextItem == true)
+	{
+		currentMenu = (MenuItem*)currentMenu->next;
+		num_items = currentMenu->num_items;
+		displayMenu(currentMenu, num_items);
+		currentM = (int*)currentMenu;
+
+		jumpToNextItem = false;
 	}
 }

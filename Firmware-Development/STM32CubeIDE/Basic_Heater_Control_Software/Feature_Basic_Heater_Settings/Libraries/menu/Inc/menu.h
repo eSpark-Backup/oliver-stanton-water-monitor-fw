@@ -10,7 +10,7 @@
 #include "string.h"
 #include "mainApp.hpp"
 #include "_DEBUG_.h"
-
+#include "switches.hpp"
 
 
 struct MenuItem {
@@ -41,6 +41,9 @@ public:
 	void displayMenu(const MenuItem* menu, int elements);
 	void navigateMenu(const char* optn, MenuItem* currentMenu);
 
+private:
+	bool jumpToNextItem = false;
+
 //	void createMenu(const char** menu);
 //	void arrowDown();
 //	void arrowUp();
@@ -51,3 +54,9 @@ public:
 //	void pumpConnection();
 //	void flameIconCallback(TIM_HandleTypeDef* htim);
 };
+
+extern Switches ButtonE;			//Enter/OK button obj
+extern Switches ButtonB;			//Back button obj
+extern Switches ButtonU;			//UP button obj
+extern Switches ButtonD;			//Down button obj
+extern Switches ButtonR;			//RODI button obj
