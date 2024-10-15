@@ -48,7 +48,7 @@ public:
 	void loop();
 
 private:
-	void invokeMenu();
+	bool invokeMenu();
 };
 
 

@@ -50,7 +50,7 @@ void Menu::displayMenu(const MenuItem* menu, int elements)
     }
 }
 
-void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
+void Menu::navigateMenu(const char* optn, MenuItem* currentMenu, bool checkReturn)
 {
 //	uint8_t num_parent = currentMenu->num_parentmenuItems;
 	if(Battery.getMonitor().isKeepDeviceInShutdown == true)
@@ -106,6 +106,7 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
 		currentMenu = (MenuItem*)currentMenu->prev;
 		displayMenu(currentMenu, currentMenu->num_items);
 		currentM = (int*)currentMenu;	//}
+		currentMenu->setup();
 	}
 	
 	//when RODI button is pressed
@@ -297,7 +298,6 @@ bool introPageSelection(uint32_t argChoice, MenuItem* argMenu)
 
 	if(ButtonU.state() && (numItems==1 && ((choice == 0) || (strcmp(argMenu->label,intro->label)==0))))
 	{
-		DEBUG_LOG(LOG_ERROR, "batIndexSetup here");
 		argMenu = (MenuItem *)Battery_Index;
 		numItems = argMenu->num_items;
 		menu.displayMenu(argMenu,  numItems);
@@ -310,7 +310,7 @@ bool introPageSelection(uint32_t argChoice, MenuItem* argMenu)
 
 void mainMenuSetup(void)
 {
-	setButtonStates({ENTER_OK, DOWN, BACK}, true);
+	setButtonStates({RODI}, false);
 }
 
 bool mainMenuSelection(uint32_t argChoice, MenuItem *argMenu)

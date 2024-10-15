@@ -69,7 +69,7 @@ bool sw7Flag = false;
 bool timeStamped = false;
 uint32_t buttonPressTime;
 MenuItem *previousMenuItem = nullptr;
-
+bool didWork = false;
 
 
 
@@ -103,37 +103,37 @@ void MainApp::loop()
 	if (ButtonR.state()){
 		DEBUG_LOG(LOG_INFO, "*******rodi Button pressed.*******");
 		DEBUG_LOG(LOG_INFO, "ButtonR.state : %d\nButtonR.period : %d", ButtonR.state(), ButtonR.period());
-		menu.navigateMenu("rodi", (MenuItem*)currentM);
-		invokeMenu();
+		didWork = invokeMenu();
+		menu.navigateMenu("rodi", (MenuItem *)currentM, didWork);
 		ButtonR.reset();
 	}
 	if (ButtonU.state()){
 		DEBUG_LOG(LOG_INFO, "*******up Button pressed.*******");
 		DEBUG_LOG(LOG_INFO, "ButtonU.state : %d\nButtonU.period : %d", ButtonU.state(), ButtonU.period());
-		menu.navigateMenu("up", (MenuItem *)currentM);
-		invokeMenu();	
+		didWork = invokeMenu();
+		menu.navigateMenu("up", (MenuItem *)currentM, didWork);
 		ButtonU.reset();
 	}
 	if (ButtonD.state()){
 		DEBUG_LOG(LOG_INFO, "*******down Button pressed.*******");
 		DEBUG_LOG(LOG_INFO, "ButtonD.state : %d\nButtonD.period : %d", ButtonD.state(), ButtonD.period());
-		menu.navigateMenu("down", (MenuItem*)currentM);
-		invokeMenu();
+		didWork = invokeMenu();
+		menu.navigateMenu("down", (MenuItem *)currentM, didWork);
 		ButtonD.reset();
 		}
 	if (ButtonE.state()){
 		DEBUG_LOG(LOG_INFO, "*******enter Button pressed.*******");
 		DEBUG_LOG(LOG_INFO, "ButtonE.state : %d\nButtonE.period : %d", ButtonE.state(), ButtonE.period());
-		menu.navigateMenu("enter", (MenuItem*)currentM);
-		invokeMenu();
+		didWork = invokeMenu();
+		menu.navigateMenu("enter", (MenuItem *)currentM, didWork);
 		ButtonE.reset();
 		}
 	if (ButtonB.state()){
 		DEBUG_LOG(LOG_INFO, "*******back Button pressed.*******");
 		DEBUG_LOG(LOG_INFO, "ButtonB.state : %d\nButtonB.period : %d", ButtonB.state(), ButtonB.period());
 		Battery.getMonitor().isBackButtonPressed = true;
-		menu.navigateMenu("back", (MenuItem*)currentM);
-		invokeMenu();
+		didWork = invokeMenu();
+		menu.navigateMenu("back", (MenuItem *)currentM, didWork);
 		ButtonB.reset();
 		}
 
@@ -146,7 +146,7 @@ void MainApp::loop()
 
 }
 
-void MainApp::invokeMenu()
+bool MainApp::invokeMenu()
 {
 	MenuItem *currentMenuItem = (MenuItem *)currentM;
 
@@ -157,7 +157,9 @@ void MainApp::invokeMenu()
 	}
 
 	if (currentMenuItem->DoWork != nullptr)
-		currentMenuItem->DoWork(choiceSelect, (MenuItem *)currentM);
+		return currentMenuItem->DoWork(choiceSelect, (MenuItem *)currentM);
+	else
+		return false;
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)

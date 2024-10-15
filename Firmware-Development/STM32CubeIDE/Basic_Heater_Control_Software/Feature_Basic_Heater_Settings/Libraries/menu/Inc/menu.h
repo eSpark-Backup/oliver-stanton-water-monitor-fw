@@ -42,7 +42,7 @@ public:
 	void menuSetup();
 	void Display_Log(const char* log, ...);
 	void displayMenu(const MenuItem* menu, int elements);
-	void navigateMenu(const char* optn, MenuItem* currentMenu);
+	void navigateMenu(const char *optn, MenuItem *currentMenu, bool checkReturn);
 
 private:
 	bool jumpToNextItem_ = false;
