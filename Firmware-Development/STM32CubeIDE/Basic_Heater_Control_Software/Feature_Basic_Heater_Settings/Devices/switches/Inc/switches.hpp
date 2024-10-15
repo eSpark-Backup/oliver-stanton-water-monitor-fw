@@ -49,7 +49,7 @@ private:
 	struct BUTTON{
 		uint16_t period;
 		bool 	 state;
-		bool	 enabled;
+		bool	 enabled = true;
 	}Button;
 };
 

@@ -15,7 +15,8 @@
 
 struct MenuItem {
     const char* label;          		//Name of the menu Element
-    bool (*DoWork)(uint32_t, MenuItem*);//Function invoked when element is selected
+    void (*setup)(void);                //Function invoked once to init
+	bool (*DoWork)(uint32_t, MenuItem*);//Function invoked when element is selected
     const MenuItem* next;       		//SubMenu which it points to
     const MenuItem* prev;       		//Parent Menu
     uint8_t num_childmenus;         	//No. of child menus
@@ -37,6 +38,7 @@ public:
 	~Menu(){
 		DEBUG_RTT(LOG_WARNING, "Menu obj destructor called");
 	}
+	void menuSetup();
 	void Display_Log(const char* log, ...);
 	void displayMenu(const MenuItem* menu, int elements);
 	void navigateMenu(const char* optn, MenuItem* currentMenu);
@@ -58,6 +60,7 @@ private:
 //	void flameIconCallback(TIM_HandleTypeDef* htim);
 };
 
+void introSetup(void);
 bool introPageSelection(uint32_t argChoice, MenuItem* argMenu);
 
 extern Switches ButtonE;			//Enter/OK button obj

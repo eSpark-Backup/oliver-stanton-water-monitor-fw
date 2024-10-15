@@ -23,6 +23,16 @@
 int *currentM;
 short choiceSelect = 0;
 
+
+void Menu::menuSetup()
+{
+	ButtonE.enableButton(false);
+	ButtonD.enableButton(false);
+	ButtonB.enableButton(false);
+	ButtonR.enableButton(true);
+	ButtonU.enableButton(true);
+}
+
 void Menu::Display_Log(const char* log, ...)
 {
     const int buffer_size = 1024;
@@ -237,12 +247,22 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
 	}
 }
 
+
+void introSetup(void)
+{
+	DEBUG_LOG(menu, "introSetup Init");
+	ButtonE.enableButton(true);
+	ButtonD.enableButton(true);
+	ButtonB.enableButton(true);
+	ButtonR.enableButton(false);
+	ButtonU.enableButton(true);
+}
+
 bool introPageSelection(uint32_t argChoice, MenuItem* argMenu)
 {
 	uint8_t numChild = argMenu->num_childmenus;
 	uint8_t numItems = argMenu->num_items;
 	uint8_t choice = choiceSelect;
-			DEBUG_LOG(menu, "*******DoWork == argMenu.*******");
 
 	if(ButtonU.state() && (numItems==1 && ((choice == 0) || (strcmp(argMenu->label,intro->label)==0))))
 	{
@@ -251,8 +271,6 @@ bool introPageSelection(uint32_t argChoice, MenuItem* argMenu)
 		menu.displayMenu(argMenu,  numItems);
 		currentM = (int*)argMenu;
 		return true;
-			DEBUG_LOG(menu, "*******DoWork == argMenu true*******");
-
 	}
 	return false;
 }

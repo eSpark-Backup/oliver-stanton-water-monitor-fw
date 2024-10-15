@@ -89,6 +89,7 @@ void MainApp::setup()
 	DEBUG_LOG(menu, "Water Monitor Controller Initialization complete.");
 
 	WLED1->setupInit();
+	menu.menuSetup();
 }
 
 void MainApp::loop()
@@ -109,15 +110,10 @@ void MainApp::loop()
 		DEBUG_LOG(menu, "*******up Button pressed.*******");
 		DEBUG_LOG(menu, "ButtonU.state : %d\nButtonU.period : %d", ButtonU.state(), ButtonU.period());
 		if(ButtonU.period() < SINGLE_PRESS)
-			menu.navigateMenu("up", (MenuItem*)currentM);
-			MenuItem* currentMenuItem = (MenuItem*)currentM;  // Cast current menu to MenuItem
-			if (currentMenuItem->DoWork != nullptr) {
-				currentMenuItem->DoWork(choiceSelect, (MenuItem*)currentM);
-			}
-			else
-			{
-				DEBUG_LOG(menu, "*******DoWork == nullptr.*******");
-			}
+		{
+			menu.navigateMenu("up", (MenuItem *)currentM);
+			invokeMenu();
+		}	
 		ButtonU.reset();
 	}
 	if (ButtonD.state()){
@@ -148,7 +144,20 @@ void MainApp::loop()
 	WLED1->Run();
 	Battery.powerManager();
 
-//	HAL_Delay(1000);
+}
+
+void MainApp::invokeMenu()
+{
+	MenuItem *currentMenuItem = (MenuItem *)currentM;
+
+	if (currentMenuItem->setup != nullptr)
+	{
+		currentMenuItem->setup();
+		currentMenuItem->setup = nullptr;
+	}
+
+	if (currentMenuItem->DoWork != nullptr)
+		currentMenuItem->DoWork(choiceSelect, (MenuItem *)currentM);
 }
 
 

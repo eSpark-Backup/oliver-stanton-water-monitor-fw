@@ -46,6 +46,9 @@ class MainApp {
 public:
 	void setup();
 	void loop();
+
+private:
+	void invokeMenu();
 };
 
 
