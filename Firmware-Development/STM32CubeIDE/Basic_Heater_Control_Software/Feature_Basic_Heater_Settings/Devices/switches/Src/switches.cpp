@@ -39,9 +39,27 @@ uint16_t Switches::period()
 	return Button.period;
 }
 
+void Switches::enableButton(bool enable)
+{
+	Button.enabled = enable;
+}
+
+bool Switches::isButtonEnabled()
+{
+	return Button.enabled;
+}
+
 bool Switches::isButtonPressed(SWITCHES SW)
 {
-	switch(SW)	{
+	if (!isButtonEnabled())
+	{
+		resetButtonState(SW);
+		reset();
+		timeStamped = false;
+		return false;
+	}
+		switch (SW)
+		{
 		case ENTER_OK:
 			return ENTER_BUTTON_FLAG;
 			break;
@@ -68,6 +86,14 @@ bool Switches::isButtonPressed(SWITCHES SW)
 
 bool Switches::isButtonStillPressed(SWITCHES SW)
 {
+	if (!isButtonEnabled())
+	{
+		resetButtonState(SW);
+		reset();
+		timeStamped = false;
+		return false;
+	}
+
 	switch(SW)	{
 		case ENTER_OK:
 			return HAL_GPIO_ReadPin(ENTER_BUTTON_PORT, ENTER_BUTTON);
@@ -122,7 +148,7 @@ void Switches::resetButtonState(SWITCHES SW)
 void Switches::reset()
 {
 	Battery.getMonitor().isActivityDetected = true;
-	Button = {false, 0};
+	Button = {0, false, Button.enabled};
 }
 
 void saveTime()

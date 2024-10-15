@@ -39,6 +39,8 @@ public:
 	void getState(SWITCHES SW);
 	bool state(void);
 	uint16_t period(void);
+	void enableButton(bool enable);
+	bool isButtonEnabled();
 	bool isButtonPressed(SWITCHES SW);
 	bool isButtonStillPressed(SWITCHES SW);
 	void resetButtonState(SWITCHES SW);
@@ -47,6 +49,7 @@ private:
 	struct BUTTON{
 		uint16_t period;
 		bool 	 state;
+		bool	 enabled;
 	}Button;
 };
 
