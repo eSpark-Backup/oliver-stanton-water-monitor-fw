@@ -68,6 +68,7 @@ bool sw6Flag = false;
 bool sw7Flag = false;
 bool timeStamped = false;
 uint32_t buttonPressTime;
+MenuItem *previousMenuItem = nullptr;
 
 
 
@@ -86,10 +87,9 @@ void MainApp::setup()
 	HAL_Delay(2000);  		menu.displayMenu((MenuItem*)currentM, (sizeof(intro) / sizeof(intro[0])));
 
 	Flags.flagsInit();				//initiate flags from flash
-	DEBUG_LOG(menu, "Water Monitor Controller Initialization complete.");
+	DEBUG_LOG(LOG_INFO, "Water Monitor Controller Initialization complete.");
 
 	WLED1->setupInit();
-	menu.menuSetup();
 }
 
 void MainApp::loop()
@@ -101,39 +101,39 @@ void MainApp::loop()
 	ButtonD.getState(DOWN);
 	ButtonR.getState(RODI);
 	if (ButtonR.state()){
-		DEBUG_LOG(menu, "*******rodi Button pressed.*******");
-		DEBUG_LOG(menu, "ButtonR.state : %d\nButtonR.period : %d", ButtonR.state(), ButtonR.period());
+		DEBUG_LOG(LOG_INFO, "*******rodi Button pressed.*******");
+		DEBUG_LOG(LOG_INFO, "ButtonR.state : %d\nButtonR.period : %d", ButtonR.state(), ButtonR.period());
 		menu.navigateMenu("rodi", (MenuItem*)currentM);
+		invokeMenu();
 		ButtonR.reset();
 	}
 	if (ButtonU.state()){
-		DEBUG_LOG(menu, "*******up Button pressed.*******");
-		DEBUG_LOG(menu, "ButtonU.state : %d\nButtonU.period : %d", ButtonU.state(), ButtonU.period());
-		if(ButtonU.period() < SINGLE_PRESS)
-		{
-			menu.navigateMenu("up", (MenuItem *)currentM);
-			invokeMenu();
-		}	
+		DEBUG_LOG(LOG_INFO, "*******up Button pressed.*******");
+		DEBUG_LOG(LOG_INFO, "ButtonU.state : %d\nButtonU.period : %d", ButtonU.state(), ButtonU.period());
+		menu.navigateMenu("up", (MenuItem *)currentM);
+		invokeMenu();	
 		ButtonU.reset();
 	}
 	if (ButtonD.state()){
-		DEBUG_LOG(menu, "*******down Button pressed.*******");
-		DEBUG_LOG(menu, "ButtonD.state : %d\nButtonD.period : %d", ButtonD.state(), ButtonD.period());
+		DEBUG_LOG(LOG_INFO, "*******down Button pressed.*******");
+		DEBUG_LOG(LOG_INFO, "ButtonD.state : %d\nButtonD.period : %d", ButtonD.state(), ButtonD.period());
 		menu.navigateMenu("down", (MenuItem*)currentM);
+		invokeMenu();
 		ButtonD.reset();
 		}
 	if (ButtonE.state()){
-		DEBUG_LOG(menu, "*******enter Button pressed.*******");
-		DEBUG_LOG(menu, "ButtonE.state : %d\nButtonE.period : %d", ButtonE.state(), ButtonE.period());
+		DEBUG_LOG(LOG_INFO, "*******enter Button pressed.*******");
+		DEBUG_LOG(LOG_INFO, "ButtonE.state : %d\nButtonE.period : %d", ButtonE.state(), ButtonE.period());
 		menu.navigateMenu("enter", (MenuItem*)currentM);
+		invokeMenu();
 		ButtonE.reset();
 		}
 	if (ButtonB.state()){
-		DEBUG_LOG(menu, "*******back Button pressed.*******");
-		DEBUG_LOG(menu, "ButtonB.state : %d\nButtonB.period : %d", ButtonB.state(), ButtonB.period());
+		DEBUG_LOG(LOG_INFO, "*******back Button pressed.*******");
+		DEBUG_LOG(LOG_INFO, "ButtonB.state : %d\nButtonB.period : %d", ButtonB.state(), ButtonB.period());
 		Battery.getMonitor().isBackButtonPressed = true;
-		if(ButtonB.period() < SINGLE_PRESS)
-			menu.navigateMenu("back", (MenuItem*)currentM);
+		menu.navigateMenu("back", (MenuItem*)currentM);
+		invokeMenu();
 		ButtonB.reset();
 		}
 
@@ -150,16 +150,15 @@ void MainApp::invokeMenu()
 {
 	MenuItem *currentMenuItem = (MenuItem *)currentM;
 
-	if (currentMenuItem->setup != nullptr)
+	if (currentMenuItem->setup != nullptr && currentMenuItem != previousMenuItem)
 	{
 		currentMenuItem->setup();
-		currentMenuItem->setup = nullptr;
+		previousMenuItem = currentMenuItem;
 	}
 
 	if (currentMenuItem->DoWork != nullptr)
 		currentMenuItem->DoWork(choiceSelect, (MenuItem *)currentM);
 }
-
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {

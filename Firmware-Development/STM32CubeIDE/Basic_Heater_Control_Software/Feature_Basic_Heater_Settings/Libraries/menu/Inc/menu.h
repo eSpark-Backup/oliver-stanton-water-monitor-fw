@@ -65,6 +65,10 @@ private:
 void setButtonStates(std::initializer_list<SWITCHES> buttons, bool enableSelected);
 void introSetup(void);
 bool introPageSelection(uint32_t argChoice, MenuItem* argMenu);
+void mainMenuSetup(void);
+bool mainMenuSelection(uint32_t argChoice, MenuItem *argMenu);
+void batIndexSetup(void);
+bool batIndexSelection(uint32_t argChoice, MenuItem *argMenu);
 
 extern Switches ButtonE;			//Enter/OK button obj
 extern Switches ButtonB;			//Back button obj

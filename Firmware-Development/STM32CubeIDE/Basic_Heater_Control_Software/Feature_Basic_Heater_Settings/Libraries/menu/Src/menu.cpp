@@ -61,7 +61,7 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
 	numItems_ = currentMenu->num_items;
 	choice_ = choiceSelect ;				//when referencing value of "choice_" in currentMenu we will use "choice_-1" since arrays start from 0
 
-	if(strcmp(optn, "up") == 0 )
+	if ((strcmp(optn, "up") == 0) && (strcmp(currentMenu->label, intro->label) != 0))
 	{
 		if(choice_==numItems_)
 		{
@@ -94,10 +94,6 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
 			}
 			Disp->display(choice_);
 			choiceSelect = choice_;
-		}
-		if(ButtonD.period() >LONG_PRESS && ButtonD.period() <LONG_LONG_PRESS && (strcmp(currentMenu->label,mainMenu->label)==0))
-		{
-			jumpToNextItem_ = true;
 		}
 		
 
@@ -184,7 +180,7 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
 						if(numChild_ >2)choiceSelect++;
 						//return;
 					}
-					else
+					else if ((strcmp(currentMenu->label, mainMenu->label) != 0))
 					{
 //						Disp->display("It shouldn't come here");
 						currentMenu = (MenuItem*)currentMenu->prev;
@@ -198,7 +194,8 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
 						choiceSelect = 0;
 					}
 			}
-			else if (numItems_==1 && currentMenu[0].DoWork!= nullptr)				//we need to enable this for conditions when a person doesnt have to make a choice in menu, i.e. choice_ = undefined and above if condition is never satisfied
+			else if (numItems_ == 1 && currentMenu[0].DoWork != nullptr 
+			&& (strcmp(currentMenu->label, Battery_Index->label) != 0) || (strcmp(currentMenu->label, mainMenu->label) != 0)) // we need to enable this for conditions when a person doesnt have to make a choice in menu, i.e. choice_ = undefined and above if condition is never satisfied
 			{
 				if(currentMenu[0].DoWork(0, currentMenu) != true){}
 //					return;							}
@@ -219,13 +216,7 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
 					currentM = (int*)currentMenu;
 				}
 			}
-			else if((ButtonE.period() >LONG_PRESS && ButtonE.period() <LONG_LONG_PRESS 
-					&& (strcmp(currentMenu->label,mainMenu->label)==0)) || (strcmp(currentMenu->label,Battery_Index->label)==0))
-			{
-				
-				jumpToNextItem_ = true;
 
-			}
 			else
 			{
 				// Disp->display(1);
@@ -295,8 +286,7 @@ void setButtonStates(std::initializer_list<SWITCHES> buttons, bool enableSelecte
 
 void introSetup(void)
 {
-	DEBUG_LOG(menu, "introSetup Init");
-	setButtonStates({RODI}, false);
+	setButtonStates({NONE}, false);
 }
 
 bool introPageSelection(uint32_t argChoice, MenuItem* argMenu)
@@ -307,7 +297,8 @@ bool introPageSelection(uint32_t argChoice, MenuItem* argMenu)
 
 	if(ButtonU.state() && (numItems==1 && ((choice == 0) || (strcmp(argMenu->label,intro->label)==0))))
 	{
-		argMenu = (MenuItem*)Battery_Index;
+		DEBUG_LOG(LOG_ERROR, "batIndexSetup here");
+		argMenu = (MenuItem *)Battery_Index;
 		numItems = argMenu->num_items;
 		menu.displayMenu(argMenu,  numItems);
 		currentM = (int*)argMenu;
@@ -316,3 +307,48 @@ bool introPageSelection(uint32_t argChoice, MenuItem* argMenu)
 	return false;
 }
 
+
+void mainMenuSetup(void)
+{
+	setButtonStates({ENTER_OK, DOWN, BACK}, true);
+}
+
+bool mainMenuSelection(uint32_t argChoice, MenuItem *argMenu)
+{
+	uint8_t numItems = argMenu->num_items;
+
+	if ((ButtonE.period() > LONG_PRESS || ButtonD.period() > LONG_PRESS) 
+		&& (ButtonE.period() < LONG_LONG_PRESS || ButtonD.period() < LONG_LONG_PRESS))
+	{
+		argMenu = (MenuItem *)argMenu->next;
+		numItems = argMenu->num_items;
+		menu.displayMenu(argMenu, numItems);
+		currentM = (int *)argMenu;
+		return true;
+	}
+	return false;
+}
+
+
+void batIndexSetup(void)
+{
+	DEBUG_LOG(LOG_ERROR, "batIndexSetup");
+	setButtonStates({RODI}, false);
+}
+
+bool batIndexSelection(uint32_t argChoice, MenuItem *argMenu)
+{
+	uint8_t numChild = argMenu->num_childmenus;
+	uint8_t numItems = argMenu->num_items;
+	uint8_t choice = choiceSelect;
+
+	if (ButtonE.state())
+	{
+		argMenu = (MenuItem *)argMenu->next;
+		numItems = argMenu->num_items;
+		menu.displayMenu(argMenu, numItems);
+		currentM = (int *)argMenu;
+		return true;
+	}
+	return false;
+}
