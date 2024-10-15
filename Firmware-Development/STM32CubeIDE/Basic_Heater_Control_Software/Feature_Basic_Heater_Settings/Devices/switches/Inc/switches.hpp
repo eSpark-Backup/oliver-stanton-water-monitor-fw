@@ -18,8 +18,9 @@ typedef enum{
 	BACK,
 	UP,
 	DOWN,
-	RODI
+	RODI,
 //	DEL
+	NONE
 }SWITCHES;
 
 

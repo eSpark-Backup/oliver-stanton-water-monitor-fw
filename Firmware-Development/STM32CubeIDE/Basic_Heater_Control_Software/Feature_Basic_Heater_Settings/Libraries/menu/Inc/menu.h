@@ -11,6 +11,7 @@
 #include "mainApp.hpp"
 #include "_DEBUG_.h"
 #include "switches.hpp"
+#include <initializer_list>
 
 
 struct MenuItem {
@@ -60,6 +61,8 @@ private:
 //	void flameIconCallback(TIM_HandleTypeDef* htim);
 };
 
+
+void setButtonStates(std::initializer_list<SWITCHES> buttons, bool enableSelected);
 void introSetup(void);
 bool introPageSelection(uint32_t argChoice, MenuItem* argMenu);
 

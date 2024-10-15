@@ -26,11 +26,7 @@ short choiceSelect = 0;
 
 void Menu::menuSetup()
 {
-	ButtonE.enableButton(false);
-	ButtonD.enableButton(false);
-	ButtonB.enableButton(false);
-	ButtonR.enableButton(true);
-	ButtonU.enableButton(true);
+	setButtonStates({RODI, UP}, true);
 }
 
 void Menu::Display_Log(const char* log, ...)
@@ -248,14 +244,59 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu)
 }
 
 
+void setButtonStates(std::initializer_list<SWITCHES> buttons, bool enableSelected)
+{
+	ButtonE.enableButton(!enableSelected);
+	ButtonB.enableButton(!enableSelected);
+	ButtonU.enableButton(!enableSelected);
+	ButtonD.enableButton(!enableSelected);
+	ButtonR.enableButton(!enableSelected);
+
+	bool hasValidButton = false;
+
+	for (SWITCHES button : buttons)
+	{
+		switch (button)
+		{
+		case ENTER_OK:
+			ButtonE.enableButton(enableSelected);
+			hasValidButton = true;
+			break;
+		case BACK:
+			ButtonB.enableButton(enableSelected);
+			hasValidButton = true;
+			break;
+		case UP:
+			ButtonU.enableButton(enableSelected);
+			hasValidButton = true;
+			break;
+		case DOWN:
+			ButtonD.enableButton(enableSelected);
+			hasValidButton = true;
+			break;
+		case RODI:
+			ButtonR.enableButton(enableSelected);
+			hasValidButton = true;
+			break;
+		default:
+			break; // Ignore any invalid or unknown enums
+		}
+	}
+
+	if (!hasValidButton)
+	{
+		ButtonE.enableButton(true);
+		ButtonB.enableButton(true);
+		ButtonU.enableButton(true);
+		ButtonD.enableButton(true);
+		ButtonR.enableButton(true);
+	}
+}
+
 void introSetup(void)
 {
 	DEBUG_LOG(menu, "introSetup Init");
-	ButtonE.enableButton(true);
-	ButtonD.enableButton(true);
-	ButtonB.enableButton(true);
-	ButtonR.enableButton(false);
-	ButtonU.enableButton(true);
+	setButtonStates({RODI}, false);
 }
 
 bool introPageSelection(uint32_t argChoice, MenuItem* argMenu)
