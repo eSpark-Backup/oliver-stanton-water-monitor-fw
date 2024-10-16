@@ -61,7 +61,7 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu, bool checkRetur
 	numItems_ = currentMenu->num_items;
 	choice_ = choiceSelect ;				//when referencing value of "choice_" in currentMenu we will use "choice_-1" since arrays start from 0
 
-	if ((strcmp(optn, "up") == 0) && (strcmp(currentMenu->label, intro->label) != 0))
+	if ((strcmp(optn, "up") == 0) && !checkReturn)
 	{
 		if(choice_==numItems_)
 		{
@@ -80,7 +80,7 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu, bool checkRetur
 	}
 
 	//when DOWN button is pressed
-	if(strcmp(optn, "down") == 0)
+	if (strcmp(optn, "down") == 0 && !checkReturn)
 	{
 		if (numItems_ > 1)
 		{
@@ -100,7 +100,7 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu, bool checkRetur
 	}
 
 	//when BACK button is pressed
-	if(strcmp(optn, "back") == 0 && currentMenu->prev != nullptr)
+	if(strcmp(optn, "back") == 0 && currentMenu->prev != nullptr && !checkReturn)
 	{
 		choiceSelect = 1;
 		currentMenu = (MenuItem*)currentMenu->prev;
@@ -119,114 +119,33 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu, bool checkRetur
 	}
 
 	//when ENTER button is pressed
-	if((strcmp(optn, "enter") == 0))
+	if((strcmp(optn, "enter") == 0) && !checkReturn)
 	{
-			if(numItems_>1 && choice_ == 0)
-			{
-				Disp->display("Choose one of the options.");
+		if (numItems_ > 1 && choice_ == 0)
+		{
+			Disp->display("Choose one of the options.");
 			}
 			else if(numItems_>1 && choice_ != 0)
 			{
-//				displayMenu(currentMenu[choice_-1], numItems_);
-//				if(currentMenu[choice_-1].next == nullptr && currentMenu->DoWork!= nullptr){
-//					currentMenu[choice_-1].DoWork();
-//				}
-//				numChild_ = currentMenu[choice_-1].num_childmenus;
-				if(numChild_ == 0)
-				{
-					//Do nothing for this condition, program will crash if we dont do this
-					//used for condition when you need to make a choice out of a range but number of items are 0
-					if (currentMenu[0].DoWork!= nullptr)
-					{
-						if(currentMenu[0].DoWork(choice_, currentMenu) != true){}
-						else
-						{
-							currentMenu = (MenuItem*)currentMenu->prev;
-							displayMenu(currentMenu, currentMenu->num_items);
-							currentM = (int*)currentMenu;
-						}
-					}
-				}
-				else
-				{
-					if (currentMenu[choice_-1].DoWork!= nullptr)
-					{
-						currentMenu[choice_-1].DoWork(choice_, currentMenu);			//function returning a false means that we dont need to return back to previous menu
-//						else{
-//							currentMenu = (MenuItem*)currentMenu->prev;
-//							displayMenu(currentMenu, currentMenu->num_items);
-//							currentM = (int*)currentMenu;		}
-					}
-					if(currentMenu[choice_-1].next != nullptr)
-					{
 
-//						Disp->display("It should come here");
-//						Disp->display(currentMenu[choice_-1].label);
-
-						if(strcmp(currentMenu[choice_-1].label,"On")==0) choiceSelect = 1;
-						numChild_ = currentMenu[choice_-1].num_childmenus;
-//						Disp->display(numChild_);
-						currentMenu = (MenuItem*)currentMenu[choice_-1].next;
-//						Disp->display("It should come here too");
-//						Disp->display(currentMenu->label);
-						if(strcmp(currentMenu->label,BatLowMenuOFF[0].label)==0)
-						{
-							Disp->display("Switching this off will invalidate the warranty on your battery.");
-						}
-//						sprintf(buffer,"num_childmenus : %d\r\n Next Menu label %s", numChild_, currentMenu->label);
-//						Disp->display(buffer);
-						displayMenu(currentMenu, numChild_);
-						currentM = (int*)currentMenu;
-						if(numChild_==1)choiceSelect=1;
-						if(numChild_ >2)choiceSelect++;
-						//return;
-					}
-					else if ((strcmp(currentMenu->label, mainMenu->label) != 0))
-					{
-//						Disp->display("It shouldn't come here");
-						currentMenu = (MenuItem*)currentMenu->prev;
-						displayMenu(currentMenu, currentMenu->num_items);
-						currentM = (int*)currentMenu;
-					}
-				}
-				if(currentMenu[choice_-1].next == nullptr)
-					{
-						Disp->display(currentMenu[choice_-1].label);
-						choiceSelect = 0;
-					}
-			}
-			else if (numItems_ == 1 && currentMenu[0].DoWork != nullptr 
-			&& (strcmp(currentMenu->label, Battery_Index->label) != 0) || (strcmp(currentMenu->label, mainMenu->label) != 0)) // we need to enable this for conditions when a person doesnt have to make a choice in menu, i.e. choice_ = undefined and above if condition is never satisfied
-			{
-				if(currentMenu[0].DoWork(0, currentMenu) != true){}
-//					return;							}
-				else if(currentMenu[choice_-1].next != nullptr)
-				{
-//					Disp->display("It should come here");
-					numChild_ = currentMenu[choice_-1].num_childmenus;
-					currentMenu = (MenuItem*)currentMenu[choice_-1].next;
-//					sprintf(buffer,"num_childmenus : %d\r\n Next Menu label %s", numChild_, currentMenu->label);
-//																		Disp->display(buffer);
-					displayMenu(currentMenu, numChild_);
-					currentM = (int*)currentMenu;
-				}
-				else
+				if (currentMenu->next == nullptr || (currentMenu[choice_-1].next == nullptr))
 				{
 					currentMenu = (MenuItem*)currentMenu->prev;
 					displayMenu(currentMenu, currentMenu->num_items);
 					currentM = (int*)currentMenu;
 				}
+				else
+				{
+					jumpToNextItem_ = true;
+					choiceSelect = 0;
+				}
 			}
-
-			else
-			{
-				// Disp->display(1);
-			}
+			else{}
 	}
 
 	if(jumpToNextItem_ == true)
 	{
-		currentMenu = (MenuItem*)currentMenu->next;
+		currentMenu = (MenuItem *)currentMenu[choice_ == 0 ? 0 : choice_ - 1].next;
 		numItems_ = currentMenu->num_items;
 		displayMenu(currentMenu, numItems_ );
 		currentM = (int*)currentMenu;
