@@ -94,49 +94,8 @@ void MainApp::setup()
 
 void MainApp::loop()
 {
-
-	ButtonE.getState(ENTER_OK);
-	ButtonB.getState(BACK);
-	ButtonU.getState(UP);
-	ButtonD.getState(DOWN);
-	ButtonR.getState(RODI);
-	if (ButtonR.state()){
-		DEBUG_LOG(LOG_INFO, "*******rodi Button pressed.*******");
-		DEBUG_LOG(LOG_INFO, "ButtonR.state : %d\nButtonR.period : %d", ButtonR.state(), ButtonR.period());
-		didWork = invokeMenu();
-		menu.navigateMenu("rodi", (MenuItem *)currentM, didWork);
-		ButtonR.reset();
-	}
-	if (ButtonU.state()){
-		DEBUG_LOG(LOG_INFO, "*******up Button pressed.*******");
-		DEBUG_LOG(LOG_INFO, "ButtonU.state : %d\nButtonU.period : %d", ButtonU.state(), ButtonU.period());
-		didWork = invokeMenu();
-		menu.navigateMenu("up", (MenuItem *)currentM, didWork);
-		ButtonU.reset();
-	}
-	if (ButtonD.state()){
-		DEBUG_LOG(LOG_INFO, "*******down Button pressed.*******");
-		DEBUG_LOG(LOG_INFO, "ButtonD.state : %d\nButtonD.period : %d", ButtonD.state(), ButtonD.period());
-		didWork = invokeMenu();
-		menu.navigateMenu("down", (MenuItem *)currentM, didWork);
-		ButtonD.reset();
-		}
-	if (ButtonE.state()){
-		DEBUG_LOG(LOG_INFO, "*******enter Button pressed.*******");
-		DEBUG_LOG(LOG_INFO, "ButtonE.state : %d\nButtonE.period : %d", ButtonE.state(), ButtonE.period());
-		didWork = invokeMenu();
-		menu.navigateMenu("enter", (MenuItem *)currentM, didWork);
-		ButtonE.reset();
-		}
-	if (ButtonB.state()){
-		DEBUG_LOG(LOG_INFO, "*******back Button pressed.*******");
-		DEBUG_LOG(LOG_INFO, "ButtonB.state : %d\nButtonB.period : %d", ButtonB.state(), ButtonB.period());
-		Battery.getMonitor().isBackButtonPressed = true;
-		didWork = invokeMenu();
-		menu.navigateMenu("back", (MenuItem *)currentM, didWork);
-		ButtonB.reset();
-		}
-
+	didWork = invokeMenu();
+	menu.navigateMenu((MenuItem *)currentM, didWork);	
 	Flags.update();
 	memSaverST3();
 	roSaverST1();
@@ -148,16 +107,18 @@ void MainApp::loop()
 
 bool MainApp::invokeMenu()
 {
+	getButtonStates();
+
 	MenuItem *currentMenuItem = (MenuItem *)currentM;
 
-	if (currentMenuItem->setup != nullptr && currentMenuItem != previousMenuItem)
+	if (currentMenuItem[choiceSelect == 0 ? 0 : choiceSelect - 1].setup != nullptr && currentMenuItem != previousMenuItem)
 	{
-		currentMenuItem->setup();
+		currentMenuItem[choiceSelect == 0 ? 0 : choiceSelect - 1].setup();
 		previousMenuItem = currentMenuItem;
 	}
 
-	if (currentMenuItem->DoWork != nullptr)
-		return currentMenuItem->DoWork(choiceSelect, (MenuItem *)currentM);
+	if (currentMenuItem[choiceSelect == 0 ? 0 : choiceSelect - 1].DoWork != nullptr)
+		return currentMenuItem[choiceSelect == 0 ? 0 : choiceSelect - 1].DoWork(choiceSelect, (MenuItem *)currentM);
 	else
 		return false;
 }

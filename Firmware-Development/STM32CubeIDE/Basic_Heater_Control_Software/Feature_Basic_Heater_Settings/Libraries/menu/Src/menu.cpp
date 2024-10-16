@@ -50,19 +50,19 @@ void Menu::displayMenu(const MenuItem* menu, int elements)
     }
 }
 
-void Menu::navigateMenu(const char* optn, MenuItem* currentMenu, bool checkReturn)
+void Menu::navigateMenu(MenuItem* currentMenu, bool checkReturn)
 {
-//	uint8_t num_parent = currentMenu->num_parentmenuItems;
-	if(Battery.getMonitor().isKeepDeviceInShutdown == true)
-	{
-		return;
-	}
+	
+	if (Battery.getMonitor().isKeepDeviceInShutdown) return;
+
 	numChild_ = currentMenu->num_childmenus;
 	numItems_ = currentMenu->num_items;
-	choice_ = choiceSelect ;				//when referencing value of "choice_" in currentMenu we will use "choice_-1" since arrays start from 0
+	choice_ = choiceSelect;
 
-	if ((strcmp(optn, "up") == 0) && !checkReturn)
+	if (ButtonU.state() && !checkReturn)
 	{
+		DEBUG_LOG(LOG_INFO, "******* UP Button *******\n ButtonU.period : %d\n", ButtonU.period());
+
 		if(choice_==numItems_)
 		{
 			choice_=1;
@@ -77,11 +77,14 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu, bool checkRetur
 		}
 
 		choiceSelect = choice_;
+		ButtonU.reset();
 	}
 
 	//when DOWN button is pressed
-	if (strcmp(optn, "down") == 0 && !checkReturn)
+	if (ButtonD.state() && !checkReturn)
 	{
+		DEBUG_LOG(LOG_INFO, "******* DOWN Button *******\n ButtonD.period : %d\n", ButtonD.period());
+		
 		if (numItems_ > 1)
 		{
 			if(choice_<=1)
@@ -95,52 +98,72 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu, bool checkRetur
 			Disp->display(choice_);
 			choiceSelect = choice_;
 		}
-		
-
+		ButtonD.reset();
 	}
 
 	//when BACK button is pressed
-	if(strcmp(optn, "back") == 0 && currentMenu->prev != nullptr && !checkReturn)
+	if (ButtonB.state() && currentMenu->prev != nullptr && !checkReturn)
 	{
+		DEBUG_LOG(LOG_INFO, "******* BACK Button *******\n ButtonB.period : %d\n", ButtonB.period());
+		Battery.getMonitor().isBackButtonPressed = true;
+
+
 		choiceSelect = 1;
 		currentMenu = (MenuItem*)currentMenu->prev;
 		displayMenu(currentMenu, currentMenu->num_items);
 		currentM = (int*)currentMenu;	//}
 		currentMenu->setup();
+
+		ButtonB.reset();
 	}
 	
 	//when RODI button is pressed
-	if(strcmp(optn, "rodi") == 0 && currentMenu->prev == nullptr)
+	if (ButtonR.state() && currentMenu->prev == nullptr)
 	{
+		DEBUG_LOG(LOG_INFO, "******* RODI Button *******\n ButtonR.period : %d\n", ButtonR.period());
+
 		if(strcmp(currentMenu->label,intro->label)==0)
 		{
 			jumpToNextItem_ = true;
 		}
+
+		ButtonR.reset();
 	}
 
 	//when ENTER button is pressed
-	if((strcmp(optn, "enter") == 0) && !checkReturn)
+	if (ButtonE.state())
 	{
+		DEBUG_LOG(LOG_INFO, "******* ENTER Button *******\n ButtonE.period : %d\n", ButtonE.period());
+
+		// Display_Log("++++++++++++++++++++++++++++++++++++ \r\n num_items %d and choice_ %d and choiceSelect %d\r\n", numItems_, choice_, choiceSelect);
+
 		if (numItems_ > 1 && choice_ == 0)
 		{
 			Disp->display("Choose one of the options.");
-			}
-			else if(numItems_>1 && choice_ != 0)
-			{
+		}
+		else if(numItems_>1 && choice_ != 0)
+		{
 
-				if (currentMenu->next == nullptr || (currentMenu[choice_-1].next == nullptr))
-				{
-					currentMenu = (MenuItem*)currentMenu->prev;
-					displayMenu(currentMenu, currentMenu->num_items);
-					currentM = (int*)currentMenu;
-				}
-				else
-				{
-					jumpToNextItem_ = true;
-					choiceSelect = 0;
-				}
+			if (currentMenu[choice_ == 0 ? 0 : choice_ - 1].next == nullptr)
+			{
+				Display_Log("nullptr ================");
+
+				currentMenu = (MenuItem*)currentMenu->prev;
+				displayMenu(currentMenu, currentMenu->num_items);
+				currentM = (int*)currentMenu;
+				choiceSelect = 0;
 			}
-			else{}
+			else if (!checkReturn)
+			{
+				Display_Log("jump ================");
+
+				jumpToNextItem_ = true;
+				choiceSelect = 0;
+			}
+		}
+		else{
+			Display_Log(" ********************* enter else *********************");
+		}
 	}
 
 	if(jumpToNextItem_ == true)
@@ -152,6 +175,7 @@ void Menu::navigateMenu(const char* optn, MenuItem* currentMenu, bool checkRetur
 
 		jumpToNextItem_ = false;
 	}
+	resetButtonStates();
 }
 
 
@@ -204,6 +228,24 @@ void setButtonStates(std::initializer_list<SWITCHES> buttons, bool enableSelecte
 	}
 }
 
+void getButtonStates()
+{
+	ButtonE.getState(ENTER_OK);
+	ButtonB.getState(BACK);
+	ButtonU.getState(UP);
+	ButtonD.getState(DOWN);
+	ButtonR.getState(RODI);
+}
+
+void resetButtonStates()
+{
+	ButtonE.reset();
+	ButtonB.reset();
+	ButtonU.reset();
+	ButtonD.reset();
+	ButtonR.reset();
+}
+
 void introSetup(void)
 {
 	setButtonStates({NONE}, false);
@@ -236,13 +278,15 @@ bool mainMenuSelection(uint32_t argChoice, MenuItem *argMenu)
 {
 	uint8_t numItems = argMenu->num_items;
 
-	if ((ButtonE.period() > LONG_PRESS || ButtonD.period() > LONG_PRESS) 
-		&& (ButtonE.period() < LONG_LONG_PRESS || ButtonD.period() < LONG_LONG_PRESS))
+	if ((ButtonE.period() > LONG_PRESS || ButtonD.period() > LONG_PRESS) && (ButtonE.period() < LONG_LONG_PRESS || ButtonD.period() < LONG_LONG_PRESS))
 	{
 		argMenu = (MenuItem *)argMenu->next;
 		numItems = argMenu->num_items;
 		menu.displayMenu(argMenu, numItems);
 		currentM = (int *)argMenu;
+
+		ButtonE.reset();
+		ButtonD.reset();
 		return true;
 	}
 	return false;
@@ -263,6 +307,7 @@ bool batIndexSelection(uint32_t argChoice, MenuItem *argMenu)
 
 	if (ButtonE.state())
 	{
+		DEBUG_LOG(LOG_ERROR, "batIndexSelection");
 		argMenu = (MenuItem *)argMenu->next;
 		numItems = argMenu->num_items;
 		menu.displayMenu(argMenu, numItems);

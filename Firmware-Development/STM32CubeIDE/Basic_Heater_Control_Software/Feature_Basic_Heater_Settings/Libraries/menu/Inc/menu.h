@@ -42,7 +42,7 @@ public:
 	void menuSetup();
 	void Display_Log(const char* log, ...);
 	void displayMenu(const MenuItem* menu, int elements);
-	void navigateMenu(const char *optn, MenuItem *currentMenu, bool checkReturn);
+	void navigateMenu(MenuItem *currentMenu, bool checkReturn);
 
 private:
 	bool jumpToNextItem_ = false;
@@ -61,7 +61,8 @@ private:
 //	void flameIconCallback(TIM_HandleTypeDef* htim);
 };
 
-
+void getButtonStates();
+void resetButtonStates();
 void setButtonStates(std::initializer_list<SWITCHES> buttons, bool enableSelected);
 void introSetup(void);
 bool introPageSelection(uint32_t argChoice, MenuItem* argMenu);
