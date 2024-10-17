@@ -50,7 +50,7 @@ MenuItem roSaverOptns[] = {
 	{"Off", nullptr, roSaverOff, nullptr, roSaver, 2, 2},
 };
 MenuItem roSaverThresh[] = {
-	{"Select default 0ppm", nullptr, roSaverThreshDefault, roSaver, roSaver, 2, 2},
+	{"Select default 0ppm", nullptr, roSaverThreshDefault, nullptr, roSaver, 2, 2},
 	{"Adjustable 1-20 ppm", nullptr, nullptr, roSaverThreshAdjust, roSaver, 1, 2},
 };
 MenuItem roSaverThreshAdjust[] = {
