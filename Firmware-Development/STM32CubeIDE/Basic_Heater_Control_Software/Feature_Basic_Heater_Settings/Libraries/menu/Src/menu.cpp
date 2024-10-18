@@ -63,7 +63,7 @@ void Menu::navigateMenu(MenuItem* currentMenu, bool checkReturn)
 		numItems_ = currentMenu->num_items;
 		choice_ = choiceSelect;
 
-		if (ButtonU.state())
+		if (ButtonU.isButtonEnabled() && ButtonU.state())
 		{
 			DEBUG_LOG(LOG_INFO, "******* UP Button *******\n ButtonU.period : %d\n", ButtonU.period());
 
@@ -85,7 +85,7 @@ void Menu::navigateMenu(MenuItem* currentMenu, bool checkReturn)
 		}
 
 		// when DOWN button is pressed
-		if (ButtonD.state())
+		if (ButtonD.isButtonEnabled() && ButtonD.state())
 		{
 			DEBUG_LOG(LOG_INFO, "******* DOWN Button *******\n ButtonD.period : %d\n", ButtonD.period());
 
@@ -106,7 +106,7 @@ void Menu::navigateMenu(MenuItem* currentMenu, bool checkReturn)
 		}
 
 		// when BACK button is pressed
-		if (ButtonB.state() && currentMenu->prev != nullptr)
+		if (ButtonB.isButtonEnabled() && ButtonB.state() && currentMenu->prev != nullptr)
 		{
 			DEBUG_LOG(LOG_INFO, "******* BACK Button *******\n ButtonB.period : %d\n", ButtonB.period());
 			Battery.getMonitor().isBackButtonPressed = true;
@@ -121,7 +121,7 @@ void Menu::navigateMenu(MenuItem* currentMenu, bool checkReturn)
 		}
 
 		// when RODI button is pressed
-		if (ButtonR.state() && currentMenu->prev == nullptr)
+		if (ButtonR.isButtonEnabled() && ButtonR.state() && currentMenu->prev == nullptr)
 		{
 			DEBUG_LOG(LOG_INFO, "******* RODI Button *******\n ButtonR.period : %d\n", ButtonR.period());
 
@@ -134,7 +134,7 @@ void Menu::navigateMenu(MenuItem* currentMenu, bool checkReturn)
 		}
 
 		// when ENTER button is pressed
-		if (ButtonE.state())
+		if (ButtonE.isButtonEnabled() && ButtonE.state())
 		{
 			DEBUG_LOG(LOG_INFO, "******* ENTER Button *******\n ButtonE.period : %d\n", ButtonE.period());
 

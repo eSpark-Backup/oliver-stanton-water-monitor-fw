@@ -10,22 +10,22 @@
 
 void Switches::getState(SWITCHES SW)
 {
-	 if(isButtonPressed(SW))
-	 {
-		 if(isButtonStillPressed(SW))
-		 {
-			 resetButtonState(SW);
-			 timeStamped = false;
-			 Button.period = HAL_GetTick()-buttonPressTime;
-			 if(Button.period > DEBOUNCE_PERIOD)
-			 {
-				 Button.state = true;
-			 }
-			 else
-			 {
-				 Button.state = false;
-			 }
-		 }
+	if(isButtonPressed(SW))
+	{
+		if(isButtonStillPressed(SW))
+		{
+			resetButtonState(SW);
+			timeStamped = false;
+			Button.period = HAL_GetTick()-buttonPressTime;
+			if(Button.period > DEBOUNCE_PERIOD)
+			{
+				Button.state = true;
+			}
+			else
+			{
+				Button.state = false;
+			}
+		}
 	 }
 }
 
@@ -79,14 +79,6 @@ bool Switches::isButtonPressed(SWITCHES SW)
 
 bool Switches::isButtonStillPressed(SWITCHES SW)
 {
-	if (!isButtonEnabled())
-	{
-		resetButtonState(SW);
-		reset();
-		timeStamped = false;
-		return false;
-	}
-
 	switch(SW)	{
 		case ENTER_OK:
 			return HAL_GPIO_ReadPin(ENTER_BUTTON_PORT, ENTER_BUTTON);
