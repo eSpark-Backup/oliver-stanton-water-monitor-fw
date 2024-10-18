@@ -57,25 +57,28 @@ float tdsSensor(uint32_t channel)
 //***********************Purefication Cycle**************************
 bool fodOFF(uint32_t argChoice, MenuItem* argMenu)
 {
-	if(Flags.flagStatus(Settings, FoD))
+	if (argChoice == 2 && ButtonE.state())
 	{
-		Flags.setFlag(Settings, FoD, false);
-		DEBUG_RTT(LOG_WARNING, "Fill on Demand disabled");
-	}
-	if(ButtonE.period() > SHORT_PRESS && ButtonE.period() < LONG_LONG_PRESS)
-	{
-		Disp->display("System Purification stopped.");
-		Flags.setFlag(Settings, MEM_SAVER, false);
-		Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
-		invokeST3(false);
-		if(!roSaverST1())						//call RO_Saver function here
+	
+		if (Flags.flagStatus(Settings, FoD))
 		{
-			mainMenuFunc();
+			Flags.setFlag(Settings, FoD, false);
+			DEBUG_RTT(LOG_WARNING, "Fill on Demand disabled");
 		}
-//		return true;
-	}
-	else if (ButtonE.period() < SINGLE_PRESS)
-	{
+		if(ButtonE.period() > SHORT_PRESS && ButtonE.period() < LONG_LONG_PRESS)
+		{
+			Disp->display("System Purification stopped.");
+			Flags.setFlag(Settings, MEM_SAVER, false);
+			Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
+			invokeST3(false);
+			if(!roSaverST1())						//call RO_Saver function here
+			{
+				mainMenuFunc();
+			}
+	//		return true;
+		}
+		else if (ButtonE.period() < SINGLE_PRESS)
+		{
 			Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
 			if(Flags.flagStatus(Status, LEVEL_SENSOR) == true)
 			{
@@ -97,12 +100,39 @@ bool fodOFF(uint32_t argChoice, MenuItem* argMenu)
 				Disp->display("System Purification paused.");
 				invokeST3(false);
 			}
+		}
+		menu.changeMenu(&fodMenu);
+		return true;
 	}
 	return false;
 }
 
 
-bool BatLowShutdownOn(uint32_t argChoice, MenuItem* argMenu)
+bool BatLowMenuOption(uint32_t argChoice, MenuItem *argMenu)
+{
+	if (argChoice == 2 && ButtonE.state())
+	{
+		return BatLowShutdownOn(argChoice, argMenu);
+	}
+	else
+		return false;
+}
+
+bool BatLowShutdown(uint32_t argChoice, MenuItem *argMenu)
+{
+	if (argChoice == 2 && ButtonE.state())
+	{
+		return BatLowShutdownOff(argChoice, argMenu);
+	}
+	else if (argChoice == 3 && ButtonE.state())
+	{
+		return BatLowShutdownOn(argChoice, argMenu);
+	}
+	else
+		return false;
+}
+
+bool BatLowShutdownOn(uint32_t argChoice, MenuItem *argMenu)
 {
 	Disp->display("Battery LOW power shutdown Enabled.");
 	Flags.setFlag(Settings, BATTERY_LOW_SHUTDON, true);
@@ -118,7 +148,21 @@ bool BatLowShutdownOff(uint32_t argChoice, MenuItem* argMenu)
 	return true;
 }
 
-bool BatPowerMonitorOn(uint32_t argChoice, MenuItem* argMenu)
+bool BatPowerMonitor(uint32_t argChoice, MenuItem *argMenu)
+{
+	if (argChoice == 1 && ButtonE.state())
+	{
+		return BatPowerMonitorOff(argChoice, argMenu);
+	}
+	else if (argChoice == 2 && ButtonE.state())
+	{
+		return BatPowerMonitorOn(argChoice, argMenu);
+	}
+	else
+		return false;
+}
+
+bool BatPowerMonitorOn(uint32_t argChoice, MenuItem *argMenu)
 {
 	Disp->display("Battery Power Monitoring Enabled.");
 	Flags.setFlag(Settings, BATTERY_POWER_MONITOR, true);
@@ -134,69 +178,99 @@ bool BatPowerMonitorOff(uint32_t argChoice, MenuItem* argMenu)
 
 bool fodON(uint32_t argChoice, MenuItem* argMenu)
 {
-	Flags.setFlag(Settings, FoD, true);
-	Flags.setFlag(Settings, MEM_SAVER, true);
+	if (argChoice == 2 && ButtonE.state())
+	{
+		DEBUG_RTT(LOG_ERROR, "fodON");
+
+		Flags.setFlag(Settings, FoD, true);
+		Flags.setFlag(Settings, MEM_SAVER, true);
+		currentM = &fodMenu;
+		menu.displayMenu(&fodMenu, fodMenu.Items[0].num_items);
+		return true;
+	}
+	return false;
+}
+bool roSaverThreshAdj(uint32_t argChoice, MenuItem* argMenu)
+{
+	static uint8_t threshVal = 0;
+
+	if (ButtonD.state())
+	{
+		if(threshVal > 0)	threshVal--;
+		Disp->display(threshVal);
+	}
+	else if (ButtonD.state())
+	{
+		if(threshVal < 20)	threshVal++;
+		Disp->display(threshVal);
+	}
+	else if (ButtonE.state())
+	{
+		roSaverThreshValue = threshVal;
+		DEBUG_RTT(LOG_WARNING, "RO_Saver threshold value set to %d.", roSaverThreshValue);
+		currentM = &roSaver;
+		menu.displayMenu(&roSaver, roSaver.Items[0].num_items);
+		return true;
+	}
+	else
+		return false;
+}
+
+bool setRoSaverThresh(uint32_t argChoice, MenuItem *argMenu)
+{
+	if (argChoice == 1 && ButtonE.state())
+	{
+		roSaverThreshDefault(argChoice, argMenu);
+	}
+	else
+		return false;
+}
+
+bool roSaverThreshDefault(uint32_t argChoice, MenuItem *argMenu)
+{
+	roSaverThreshValue = 0;
+	DEBUG_RTT(LOG_WARNING, "RO_Saver default threshold value set to %d.", roSaverThreshValue);
+	currentM = &roSaver;
+	menu.displayMenu(&roSaver, roSaver.Items[0].num_items);
 	return true;
 }
 
-bool roSaverThreshAdj(uint32_t argChoice, MenuItem* argMenu)
+bool roSaverOptions(uint32_t argChoice, MenuItem *argMenu)
 {
-	if (ButtonE.state())
+	if (argChoice == 1 && ButtonE.state())
 	{
-		roSaverThreshValue = argChoice;
-		DEBUG_RTT(LOG_WARNING, "RO_Saver threshold value set to %d.", roSaverThreshValue);
-		currentM = (int *)(roSaver);
-		menu.displayMenu(roSaver, roSaver->num_childmenus);
-		return true;
+		roSaverOn(argChoice, argMenu);
+	}
+	else if (argChoice == 2 && ButtonE.state())
+	{
+		roSaverOff(argChoice, argMenu);
 	}
 	else
 		return false;
 }
 
-bool roSaverThreshDefault(uint32_t argChoice, MenuItem * argMenu)
+bool roSaverOn(uint32_t argChoice, MenuItem *argMenu)
 {
-	if (argChoice == 1 && ButtonE.state())
-	{
-		roSaverThreshValue = 0;
-		DEBUG_RTT(LOG_WARNING, "RO_Saver default threshold value set to %d.", roSaverThreshValue);
-		currentM = (int *)(roSaver);
-		menu.displayMenu(roSaver, roSaver->num_items);
-		return true;
-	}
-	else
-		return false;
+	Flags.setFlag(Settings, RESIN_SAVER, true);
+	DEBUG_RTT(LOG_WARNING, "RO_Saver setting Turned on.");
+	currentM = &roSaver;
+	menu.displayMenu(&roSaver, roSaver.Items[0].num_items);
+	return true;
 }
-bool roSaverOn(uint32_t argChoice, MenuItem* argMenu)
+
+bool roSaverOff(uint32_t argChoice, MenuItem * argMenu)
 {
-	if (argChoice == 1 && ButtonE.state())
-	{
-		Flags.setFlag(Settings, RESIN_SAVER, true);
-		DEBUG_RTT(LOG_WARNING, "RO_Saver setting Turned on. %d", argChoice);
-		currentM = (int *)(roSaver);
-		menu.displayMenu(roSaver, roSaver->num_items);
-		return true;
-	}
-	else
-		return false;
-}
-bool roSaverOff(uint32_t argChoice, MenuItem* argMenu)
-{
-	if (argChoice == 2 && ButtonE.state())
-	{
-		Flags.setFlag(Settings, RESIN_SAVER, false);
-		DEBUG_RTT(LOG_WARNING, "RO_Saver setting Turned off.");
-		currentM = (int *)(roSaver);
-		menu.displayMenu(roSaver, roSaver->num_items);
-		return true;
-	}
-	else
-		return false;
+	Flags.setFlag(Settings, RESIN_SAVER, false);
+	DEBUG_RTT(LOG_WARNING, "RO_Saver setting Turned off.");
+	currentM = &roSaver;
+	menu.displayMenu(&roSaver, roSaver.Items[0].num_items);
+	return true;
 }
 
 void mainMenuFunc()
 {
-	currentM = (int*)(mainMenu);
-	menu.displayMenu(mainMenu, mainMenu->num_items);
+	currentM = &mainMenu;
+	menu.displayMenu(&mainMenu, mainMenu.Items[0].num_items);
 }
 
 

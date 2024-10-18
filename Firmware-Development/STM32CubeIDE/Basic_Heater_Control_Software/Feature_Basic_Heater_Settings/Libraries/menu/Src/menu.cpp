@@ -20,9 +20,8 @@
 
 //-------------------------------Function Definitions---------------------
 
-int *currentM;
+MenuItem *currentM;
 short choiceSelect = 0;
-
 
 void Menu::menuSetup()
 {
@@ -41,26 +40,31 @@ void Menu::Display_Log(const char* log, ...)
     Disp->display(buffer);
 }
 
-void Menu::displayMenu(const MenuItem* menu, int elements)
+void Menu::changeMenu(MenuItem* menu)
+{
+	currentM = menu;
+	displayMenu(currentM, currentM->Items[0].num_items);
+}
+
+void Menu::displayMenu(const MenuItem *menu, int elements)
 {
 	Disp->itemsToDisplay(elements);
-    for(uint8_t count = 0; count < elements; count++)
-    {
-    	Disp->display(menu[count].label);
-    }
+	for (uint8_t count = 0; count < elements; count++)
+	{
+		Disp->display(menu->Items[count].label);
+	}
 }
 
 void Menu::navigateMenu(MenuItem* currentMenu, bool checkReturn)
 {
 
-	if (checkReturn || Battery.getMonitor().isKeepDeviceInShutdown)
+	if (Battery.getMonitor().isKeepDeviceInShutdown)
 	{
-		resetButtonStates();
 		return;
 	}
 
-		numChild_ = currentMenu->num_childmenus;
-		numItems_ = currentMenu->num_items;
+		numChild_ = currentMenu->Items[choiceSelect].num_childmenus;
+		numItems_ = currentMenu->Items[choiceSelect].num_items;
 		choice_ = choiceSelect;
 
 		if (ButtonU.isButtonEnabled() && ButtonU.state())
@@ -106,26 +110,26 @@ void Menu::navigateMenu(MenuItem* currentMenu, bool checkReturn)
 		}
 
 		// when BACK button is pressed
-		if (ButtonB.isButtonEnabled() && ButtonB.state() && currentMenu->prev != nullptr)
+		if (ButtonB.isButtonEnabled() && ButtonB.state() && currentMenu->Items[choiceSelect].prev != nullptr)
 		{
 			DEBUG_LOG(LOG_INFO, "******* BACK Button *******\n ButtonB.period : %d\n", ButtonB.period());
 			Battery.getMonitor().isBackButtonPressed = true;
 
 			choiceSelect = 1;
-			currentMenu = (MenuItem *)currentMenu->prev;
-			displayMenu(currentMenu, currentMenu->num_items);
-			currentM = (int *)currentMenu; //}
-			currentMenu->setup();
+			currentMenu = (MenuItem *)currentMenu->Items[choiceSelect].prev;
+			displayMenu(currentMenu, currentMenu->Items[choiceSelect].num_items);
+			currentM = currentMenu; //}
+			currentMenu->oneTimeSetup();
 
 			ButtonB.reset();
 		}
 
 		// when RODI button is pressed
-		if (ButtonR.isButtonEnabled() && ButtonR.state() && currentMenu->prev == nullptr)
+		if (ButtonR.isButtonEnabled() && ButtonR.state() && currentMenu->Items[choiceSelect].prev == nullptr)
 		{
 			DEBUG_LOG(LOG_INFO, "******* RODI Button *******\n ButtonR.period : %d\n", ButtonR.period());
 
-			if (strcmp(currentMenu->label, intro->label) == 0)
+			if (strcmp(currentMenu->Items[choiceSelect].label, intro.Items[choiceSelect].label) == 0)
 			{
 				jumpToNextItem_ = true;
 			}
@@ -147,13 +151,13 @@ void Menu::navigateMenu(MenuItem* currentMenu, bool checkReturn)
 			else if (numItems_ > 1 && choice_ != 0)
 			{
 
-				if (currentMenu[choice_ == 0 ? 0 : choice_ - 1].next == nullptr)
+				if (currentMenu->Items[choice_ == 0 ? 0 : choice_ - 1].next == nullptr)
 				{
 					Display_Log("nullptr ================");
 
-					currentMenu = (MenuItem *)currentMenu->prev;
-					displayMenu(currentMenu, currentMenu->num_items);
-					currentM = (int *)currentMenu;
+					currentMenu = (MenuItem *)currentMenu->Items[choiceSelect].prev;
+					displayMenu(currentMenu, currentMenu->Items[choiceSelect].num_items);
+					currentM = currentMenu;
 					choiceSelect = 0;
 				}
 				else
@@ -171,11 +175,11 @@ void Menu::navigateMenu(MenuItem* currentMenu, bool checkReturn)
 
 	if(jumpToNextItem_ == true)
 	{
-		currentMenu = (MenuItem *)currentMenu[choice_ == 0 ? 0 : choice_ - 1].next;
-		numItems_ = currentMenu[choice_ == 0 ? 0 : choice_ - 1].num_items;
-		numChild_ = currentMenu[choice_ == 0 ? 0 : choice_ - 1].num_childmenus;
+		currentMenu = (MenuItem *)currentMenu->Items[choice_ == 0 ? 0 : choice_ - 1].next;
+		numItems_ = currentMenu->Items[choice_ == 0 ? 0 : choice_ - 1].num_items;
+		numChild_ = currentMenu->Items[choice_ == 0 ? 0 : choice_ - 1].num_childmenus;
 		displayMenu(currentMenu, numChild_ ? numItems_ : numChild_);
-		currentM = (int*)currentMenu;
+		currentM = currentMenu;
 
 		jumpToNextItem_ = false;
 	}
@@ -257,21 +261,18 @@ void introSetup(void)
 
 bool introPageSelection(uint32_t argChoice, MenuItem* argMenu)
 {
-	uint8_t numChild = argMenu->num_childmenus;
-	uint8_t numItems = argMenu->num_items;
+	uint8_t numChild = argMenu->Items[choiceSelect].num_childmenus;
+	uint8_t numItems = argMenu->Items[choiceSelect].num_items;
 	uint8_t choice = choiceSelect;
 
-	if(ButtonU.state() && (numItems==1 && ((choice == 0) || (strcmp(argMenu->label,intro->label)==0))))
+	if(ButtonU.state() && (numItems==1 && ((choice == 0) || (strcmp(argMenu->Items[argChoice].label,intro.Items[0].label)==0))))
 	{
-		argMenu = (MenuItem *)Battery_Index;
-		numItems = argMenu->num_items;
-		menu.displayMenu(argMenu,  numItems);
-		currentM = (int*)argMenu;
+		currentM = &Battery_Index;
+		menu.displayMenu(&Battery_Index, Battery_Index.Items[0].num_items);
 		return true;
 	}
 	return false;
 }
-
 
 void mainMenuSetup(void)
 {
@@ -280,14 +281,14 @@ void mainMenuSetup(void)
 
 bool mainMenuSelection(uint32_t argChoice, MenuItem *argMenu)
 {
-	uint8_t numItems = argMenu->num_items;
+	uint8_t numItems = argMenu->Items[choiceSelect].num_items;
 
 	if ((ButtonE.period() > LONG_PRESS || ButtonD.period() > LONG_PRESS) && (ButtonE.period() < LONG_LONG_PRESS || ButtonD.period() < LONG_LONG_PRESS))
 	{
-		argMenu = (MenuItem *)argMenu->next;
-		numItems = argMenu->num_items;
+		argMenu = (MenuItem *)argMenu->Items[choiceSelect].next;
+		numItems = argMenu->Items[choiceSelect].num_items;
 		menu.displayMenu(argMenu, numItems);
-		currentM = (int *)argMenu;
+		currentM = argMenu;
 
 		ButtonE.reset();
 		ButtonD.reset();
@@ -296,6 +297,10 @@ bool mainMenuSelection(uint32_t argChoice, MenuItem *argMenu)
 	return false;
 }
 
+void roSaverSetup()
+{
+	setButtonStates({BACK}, true);
+}
 
 void batIndexSetup(void)
 {
@@ -305,16 +310,16 @@ void batIndexSetup(void)
 
 bool batIndexSelection(uint32_t argChoice, MenuItem *argMenu)
 {
-	uint8_t numChild = argMenu->num_childmenus;
-	uint8_t numItems = argMenu->num_items;
+	uint8_t numChild = argMenu->Items[choiceSelect].num_childmenus;
+	uint8_t numItems = argMenu->Items[choiceSelect].num_items;
 	uint8_t choice = choiceSelect;
 
 	if (ButtonE.state())
 	{
-		argMenu = (MenuItem *)argMenu->next;
-		numItems = argMenu->num_items;
+		argMenu = (MenuItem *)argMenu->Items[choiceSelect].next;
+		numItems = argMenu->Items[choiceSelect].num_items;
 		menu.displayMenu(argMenu, numItems);
-		currentM = (int *)argMenu;
+		currentM = argMenu;
 		return true;
 	}
 	return false;

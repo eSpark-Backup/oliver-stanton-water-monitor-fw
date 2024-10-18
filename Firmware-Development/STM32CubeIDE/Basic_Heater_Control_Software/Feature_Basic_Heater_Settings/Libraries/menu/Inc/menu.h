@@ -13,22 +13,30 @@
 #include "switches.hpp"
 #include <initializer_list>
 
-
-struct MenuItem {
-    const char* label;          		//Name of the menu Element
+struct MenuItem;
+struct subMenu
+{
+	const char* label;          		//Name of the menu Element
     void (*setup)(void);                //Function invoked once to init
-	bool (*DoWork)(uint32_t, MenuItem*);//Function invoked when element is selected
-    const MenuItem* next;       		//SubMenu which it points to
+	bool (*DoWork)(uint32_t, MenuItem*); // Function invoked when element is selected
+	const MenuItem* next;       		//SubMenu which it points to
     const MenuItem* prev;       		//Parent Menu
     uint8_t num_childmenus;         	//No. of child menus
 //    uint8_t num_parentmenuItems;		//No. of items in parent menu
     uint8_t num_items;					//No. of items in current menu
 };
 
+struct MenuItem
+{
+	void (*oneTimeSetup)(void);
+	bool (*loopDoWork)(uint32_t, MenuItem *);
+	subMenu Items[];
+};
+
 //-----------declare MenuItem Structs defined in menuList.h down below ----------------
-extern struct MenuItem intro[], mainMenu[], fodMenu[], fodOptns[], roSaver[], fodOptnsOff[], roSaverOptns[], roSaverThresh[], roSaverThreshAdjust[]\
-,Battery_Index[], BatMonitorMenu[], BatLowMenuOptns[],BatLowMenuOFF[],BatPowerConsumptionOptns[],BatPowerConsumptiontable[],BatPowerConsumptionOptnsON[]\
-,DeviceStandByScreen[],DeviceShutDown[],BatteryChargingDetected[],BatteryChargingDisconnected[];
+extern struct MenuItem intro, mainMenu, fodMenu, fodOptns, roSaver, fodOptnsOff, roSaverOptns, roSaverThresh, roSaverThreshAdjust\
+,Battery_Index, BatMonitorMenu, BatLowMenuOptns,BatLowMenuOFF,BatPowerConsumptionOptns,BatPowerConsumptiontable,BatPowerConsumptionOptnsON\
+,DeviceStandByScreen,DeviceShutDown,BatteryChargingDetected,BatteryChargingDisconnected;
 //-------------------------------------------------------------------------------------
 
 class Menu{
@@ -41,7 +49,8 @@ public:
 	}
 	void menuSetup();
 	void Display_Log(const char* log, ...);
-	void displayMenu(const MenuItem* menu, int elements);
+	void changeMenu(MenuItem *menu);
+	void displayMenu(const MenuItem *menu, int elements);
 	void navigateMenu(MenuItem *currentMenu, bool checkReturn);
 
 private:

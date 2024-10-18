@@ -78,7 +78,7 @@ void BatteryMonitor::powerManager(void)
 //	Switches Button5;
 //	uint8_t status,flag;
 	bool charging = false;
-	MenuItem* Menu = (MenuItem*)currentM;
+	MenuItem* Menu = currentM;
 	char MessageBuffer[256]={0};
 	float BatteryVoltage = readBattery();
 	static float LastBatteryVoltage = BatteryVoltage;
@@ -97,11 +97,8 @@ void BatteryMonitor::powerManager(void)
 	BatteryVoltage = 13.2;
 #endif
 
-
-
-
-if((Monitor.isActivityDetected == false && (HAL_GetTick()-lastStandByMessageDisplayed)>1000) && (strcmp(Menu->label,DeviceStandByScreen->label)!=0 && (strcmp(Menu->label,DeviceShutDown->label)!=0)))
-{
+	if ((Monitor.isActivityDetected == false && (HAL_GetTick() - lastStandByMessageDisplayed) > 1000) && (strcmp(Menu->Items[choiceSelect].label, DeviceStandByScreen.Items[0].label) != 0 && (strcmp(Menu->Items[choiceSelect].label, DeviceShutDown.Items[0].label) != 0)))
+	{
 
 #if DEBUG_STANDBY_SCREEN == 1
 	memset(MessageBuffer,0,sizeof(MessageBuffer));
@@ -112,9 +109,9 @@ if((Monitor.isActivityDetected == false && (HAL_GetTick()-lastStandByMessageDisp
 	getPumpAveragePowerConsumption(PUMP2);
 	if(Monitor.StandByCounter == 0)
 	{
-		Menu = DeviceStandByScreen;
-		menu.displayMenu(Menu,  Menu->num_items);
-		currentM = (int*)Menu;
+		Menu = &DeviceStandByScreen;
+		menu.displayMenu(Menu,  Menu->Items[0].num_items);
+		currentM = Menu;
 		return;
 	}
 	lastStandByMessageDisplayed = HAL_GetTick();
@@ -137,7 +134,7 @@ else
 #endif
 
 
-	if((strcmp(Menu->label,Battery_Index->label)==0) || (strcmp(Menu->label,DeviceStandByScreen->label)==0))
+	if((strcmp(Menu->Items[choiceSelect].label,Battery_Index.Items[choiceSelect].label)==0) || (strcmp(Menu->Items[choiceSelect].label,DeviceStandByScreen.Items[0].label)==0))
 	{
 
 		if (BatteryVoltage > BATTERY_CRITICAL_VOLTAGE 
@@ -191,7 +188,7 @@ else
 //		}
 
 	}
-	else if (strcmp(Menu->label,BatPowerConsumptiontable->label)==0)
+	else if (strcmp(Menu->Items[choiceSelect].label, BatPowerConsumptiontable.Items[0].label) == 0)
 	{
 		if(HAL_GetTick()-lastMeasurementTaken>1000)
 			{
@@ -206,7 +203,7 @@ else
 
 
 	}
-	else if(strcmp(Menu->label,DeviceShutDown->label)==0)
+	else if (strcmp(Menu->Items[choiceSelect].label, DeviceShutDown.Items[0].label) == 0)
 	{
 		if(BatteryVoltage < BATTERY_CRITICAL_VOLTAGE)
 		{
@@ -305,9 +302,9 @@ else
 			lastShutDownTime = HAL_GetTick();
 			if(Monitor.ShutDownCounter == 0)
 			{
-				Menu = DeviceShutDown;
-				menu.displayMenu(Menu,  Menu->num_items);
-				currentM = (int*)Menu;
+				Menu = &DeviceShutDown;
+				menu.displayMenu(Menu,  Menu->Items[0].num_items);
+				currentM = Menu;
 				Monitor.isActivityDetected = true;
 				return;
 			}

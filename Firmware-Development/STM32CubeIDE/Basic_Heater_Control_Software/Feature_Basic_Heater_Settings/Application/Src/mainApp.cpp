@@ -83,8 +83,8 @@ bool didWork = false;
 
 void MainApp::setup()
 {
-	currentM = (int*)(intro);
-	HAL_Delay(2000);  		menu.displayMenu((MenuItem*)currentM, (sizeof(intro) / sizeof(intro[0])));
+	currentM = &intro;
+	HAL_Delay(2000);  		menu.displayMenu(currentM, intro.Items[0].num_items);
 
 	Flags.flagsInit();				//initiate flags from flash
 	DEBUG_LOG(LOG_INFO, "Water Monitor Controller Initialization complete.");
@@ -95,7 +95,7 @@ void MainApp::setup()
 void MainApp::loop()
 {
 	didWork = invokeMenu();
-	menu.navigateMenu((MenuItem *)currentM, didWork);	
+	menu.navigateMenu(currentM, didWork);	
 	Flags.update();
 	memSaverST3();
 	roSaverST1();
@@ -109,16 +109,16 @@ bool MainApp::invokeMenu()
 {
 	getButtonStates();
 
-	MenuItem *currentMenuItem = (MenuItem *)currentM;
+	MenuItem *currentMenuItem = currentM;
 
-	if (currentMenuItem[choiceSelect == 0 ? 0 : choiceSelect - 1].setup != nullptr && currentMenuItem != previousMenuItem)
+	if (currentMenuItem->oneTimeSetup != nullptr && currentMenuItem != previousMenuItem)
 	{
-		currentMenuItem[choiceSelect == 0 ? 0 : choiceSelect - 1].setup();
+		currentMenuItem->oneTimeSetup();
 		previousMenuItem = currentMenuItem;
 	}
 
-	if (currentMenuItem[choiceSelect == 0 ? 0 : choiceSelect - 1].DoWork != nullptr)
-		return currentMenuItem[choiceSelect == 0 ? 0 : choiceSelect - 1].DoWork(choiceSelect, (MenuItem *)currentM);
+	if (currentMenuItem->loopDoWork != nullptr)
+		return currentMenuItem->loopDoWork(choiceSelect, currentM);
 	else
 		return false;
 }

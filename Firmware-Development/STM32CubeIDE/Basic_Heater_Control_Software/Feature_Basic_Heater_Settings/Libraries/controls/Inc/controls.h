@@ -76,28 +76,32 @@ static Display* Disp = new CDC_Serial;
 static FlagHandle& Flags = FlagHandle::getInstance();
 extern Menu menu;
 
-extern int *currentM;			//pointer to the menu item we are currently at
+extern MenuItem *currentM;			//pointer to the menu item we are currently at
 //static size_t currentE;
 extern short choiceSelect;		//next menu item choice item we want to jump to, we can also pass this variable to functions where we need to set a certain value(whole number) as setting
 //extern short ro_saver_thresh_set_value;
 
+	/**
+	 * Functions that are directly called from MenuList
+	 * <condition> <Function name>(<choiceselect variable>)
+	 *
+	 * return condition is if we want the function to jump back to previous menuItem or not
+	 */
 
-
-/**
- * Functions that are directly called from MenuList
- * <condition> <Function name>(<choiceselect variable>)
- *
- * return condition is if we want the function to jump back to previous menuItem or not
- */
-bool fodOFF(uint32_t argChoice, MenuItem* argMenu);
+bool fodOFF(uint32_t argChoice, MenuItem *argMenu);
 bool fodON(uint32_t argChoice, MenuItem* argMenu);
+bool setRoSaverThresh(uint32_t argChoice, MenuItem *argMenu);
 bool roSaverThreshAdj(uint32_t argChoice, MenuItem* argMenu);
 bool roSaverThreshDefault(uint32_t argChoice, MenuItem* argMenu);
+bool roSaverOptions(uint32_t argChoice, MenuItem* argMenu);
 bool roSaverOn(uint32_t argChoice, MenuItem* argMenu);
 bool roSaverOff(uint32_t argChoice, MenuItem* argMenu);
+bool BatLowMenuOption(uint32_t argChoice, MenuItem* argMenu);
+bool BatLowShutdown(uint32_t argChoice, MenuItem* argMenu);
 bool BatLowShutdownOn(uint32_t argChoice, MenuItem* argMenu);
 bool BatLowShutdownOff(uint32_t argChoice, MenuItem* argMenu);
-bool BatPowerMonitorOn(uint32_t argChoice, MenuItem* argMenu);
+bool BatPowerMonitor(uint32_t argChoice, MenuItem *argMenu);
+bool BatPowerMonitorOn(uint32_t argChoice, MenuItem *argMenu);
 bool BatPowerMonitorOff(uint32_t argChoice, MenuItem* argMenu);
 
 
