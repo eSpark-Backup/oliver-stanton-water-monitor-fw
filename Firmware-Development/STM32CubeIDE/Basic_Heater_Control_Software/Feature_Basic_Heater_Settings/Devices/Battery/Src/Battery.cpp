@@ -97,7 +97,8 @@ void BatteryMonitor::powerManager(void)
 	BatteryVoltage = 13.2;
 #endif
 
-	if ((Monitor.isActivityDetected == false && (HAL_GetTick() - lastStandByMessageDisplayed) > 1000) && (strcmp(Menu->Items[choiceSelect].label, DeviceStandByScreen.Items[0].label) != 0 && (strcmp(Menu->Items[choiceSelect].label, DeviceShutDown.Items[0].label) != 0)))
+	if ((Monitor.isActivityDetected == false && (HAL_GetTick() - lastStandByMessageDisplayed) > 1000) 
+	&& (strcmp(Menu->Items[g_csIndex].label, DeviceStandByScreen.Items[0].label) != 0 && (strcmp(Menu->Items[g_csIndex].label, DeviceShutDown.Items[0].label) != 0)))
 	{
 
 #if DEBUG_STANDBY_SCREEN == 1
@@ -134,7 +135,7 @@ else
 #endif
 
 
-	if((strcmp(Menu->Items[choiceSelect].label,Battery_Index.Items[choiceSelect].label)==0) || (strcmp(Menu->Items[choiceSelect].label,DeviceStandByScreen.Items[0].label)==0))
+	if((strcmp(Menu->Items[g_csIndex].label,Battery_Index.Items[g_csIndex].label)==0) || (strcmp(Menu->Items[g_csIndex].label,DeviceStandByScreen.Items[0].label)==0))
 	{
 
 		if (BatteryVoltage > BATTERY_CRITICAL_VOLTAGE 
@@ -188,22 +189,23 @@ else
 //		}
 
 	}
-	else if (strcmp(Menu->Items[choiceSelect].label, BatPowerConsumptiontable.Items[0].label) == 0)
-	{
-		if(HAL_GetTick()-lastMeasurementTaken>1000)
-			{
-				getPumpAveragePowerConsumption(PUMP1);
-				getPumpAveragePowerConsumption(PUMP2);
-				getTotalPowerConsumed();
-				memset(MessageBuffer,0,sizeof(MessageBuffer));
-				sprintf(MessageBuffer,"Pump1 Avg Power: %.2f W\n\rPump2 Avg Power: %.2f W\n\rTotal Power Consumed: %.2f kWh\n\r",Monitor.pump1_avg_power,Monitor.pump2_avg_power,Monitor.Total_Power_Consumption);
-				menu.Display_Log(MessageBuffer);
-				lastMeasurementTaken = HAL_GetTick();
-			}
+	/// will be added to loop Battery monitor ON condition
+	// else if (strcmp(Menu->Items[g_csIndex].label, BatPowerConsumptiontable.Items[0].label) == 0)
+	// { 
+	// 	if(HAL_GetTick()-lastMeasurementTaken>1000)
+	// 		{
+	// 			getPumpAveragePowerConsumption(PUMP1);
+	// 			getPumpAveragePowerConsumption(PUMP2);
+	// 			getTotalPowerConsumed();
+	// 			memset(MessageBuffer,0,sizeof(MessageBuffer));
+	// 			sprintf(MessageBuffer,"Pump1 Avg Power: %.2f W\n\rPump2 Avg Power: %.2f W\n\rTotal Power Consumed: %.2f kWh\n\r",Monitor.pump1_avg_power,Monitor.pump2_avg_power,Monitor.Total_Power_Consumption);
+	// 			menu.Display_Log(MessageBuffer);
+	// 			lastMeasurementTaken = HAL_GetTick();
+	// 		}
 
 
-	}
-	else if (strcmp(Menu->Items[choiceSelect].label, DeviceShutDown.Items[0].label) == 0)
+	// }
+	else if (strcmp(Menu->Items[g_csIndex].label, DeviceShutDown.Items[0].label) == 0)
 	{
 		if(BatteryVoltage < BATTERY_CRITICAL_VOLTAGE)
 		{
@@ -222,77 +224,77 @@ else
 
 	if (BatteryVoltage < BATTERY_CRITICAL_VOLTAGE)
 	{
-//		menu.Display_Log( "Setting Status for critical");
+		//		menu.Display_Log( "Setting Status for critical");
 		Flags.setFlag(Status, BATTERY_CRITICAL, true);
-//		status = Status;
-//		flag = BATTERY_CRITICAL;
-	}
-	else if ((Monitor.pump1_current >= CURRENT_SPIKES || Monitor.pump2_current >= CURRENT_SPIKES) && !(Flags.flagStatus(Status, BATTERY_WARNING_SPIKES)))
-	{
-		Flags.setFlag(Status, BATTERY_WARNING_SPIKES, true);
-		Flags.setFlag(Status, BATTERY_PUMP_IGNORE_WARNING, false);
-		if(Monitor.pump1_current >= CURRENT_SPIKES)
-		{
-			memset(MessageBuffer,0,sizeof(MessageBuffer));
-			sprintf(MessageBuffer, "Pump %s (LL.PDS.01) is drawing %.2f amps, higher than specification, service required\r\n","One",Monitor.pump1_current);
-			menu.Display_Log(MessageBuffer);
+		//		status = Status;
+		//		flag = BATTERY_CRITICAL;
 		}
-		else if(Monitor.pump2_current >= CURRENT_SPIKES)
+		else if ((Monitor.pump1_current >= CURRENT_SPIKES || Monitor.pump2_current >= CURRENT_SPIKES) && !(Flags.flagStatus(Status, BATTERY_WARNING_SPIKES)))
 		{
-			memset(MessageBuffer,0,sizeof(MessageBuffer));
-			sprintf(MessageBuffer, "Pump %s (LL.PDS.01) is drawing %.2f amps, higher than specification, service required\r\n","Two",Monitor.pump2_current);
-			menu.Display_Log(MessageBuffer);
-		}
+			Flags.setFlag(Status, BATTERY_WARNING_SPIKES, true);
+			Flags.setFlag(Status, BATTERY_PUMP_IGNORE_WARNING, false);
+			if(Monitor.pump1_current >= CURRENT_SPIKES)
+			{
+				memset(MessageBuffer,0,sizeof(MessageBuffer));
+				sprintf(MessageBuffer, "Pump %s (LL.PDS.01) is drawing %.2f amps, higher than specification, service required\r\n","One",Monitor.pump1_current);
+				menu.Display_Log(MessageBuffer);
+			}
+			else if(Monitor.pump2_current >= CURRENT_SPIKES)
+			{
+				memset(MessageBuffer,0,sizeof(MessageBuffer));
+				sprintf(MessageBuffer, "Pump %s (LL.PDS.01) is drawing %.2f amps, higher than specification, service required\r\n","Two",Monitor.pump2_current);
+				menu.Display_Log(MessageBuffer);
+			}
 
-	}
-//	else if (Flags.flagStatus(Status, BATTERY_CHARGING_DETECTED))
-//	{
-//		menu.Display_Log("Battery Charging");
-//		Flags.setFlag(Status, BATTERY_LOW, false);
-//	}
-//
-//	else if(Flags.flagStatus(Status, BATTERY_HIGH))
-//	{
-//		menu.Display_Log("Battery Charged");
-//		Flags.setFlag(Status, BATTERY_HIGH, false);
-//	}
+		}
+		//	else if (Flags.flagStatus(Status, BATTERY_CHARGING_DETECTED))
+		//	{
+		//		menu.Display_Log("Battery Charging");
+		//		Flags.setFlag(Status, BATTERY_LOW, false);
+		//	}
+		//
+		//	else if(Flags.flagStatus(Status, BATTERY_HIGH))
+		//	{
+		//		menu.Display_Log("Battery Charged");
+		//		Flags.setFlag(Status, BATTERY_HIGH, false);
+		//	}
 
-	if ((HAL_GetTick()-lastMessageDisplayed)>1000 )
-	{
-		if(Flags.flagStatus(Status, BATTERY_LOW))
+		if ((HAL_GetTick()-lastMessageDisplayed)>1000 )
 		{
-			memset(MessageBuffer,0,sizeof(MessageBuffer));
-			sprintf(MessageBuffer,"Warning - Battery Voltage Low (%.2f v) -  System Requires a Charge\r\n",BatteryVoltage);
-			menu.Display_Log(MessageBuffer);
-			lastMessageDisplayed = HAL_GetTick();
-			Monitor.isShutDownInitiated = false;
+			if(Flags.flagStatus(Status, BATTERY_LOW))
+			{
+				memset(MessageBuffer,0,sizeof(MessageBuffer));
+				sprintf(MessageBuffer,"Warning - Battery Voltage Low (%.2f v) -  System Requires a Charge\r\n",BatteryVoltage);
+				menu.Display_Log(MessageBuffer);
+				lastMessageDisplayed = HAL_GetTick();
+				Monitor.isShutDownInitiated = false;
+			}
+			else if ((((Flags.flagStatus(Status, BATTERY_CRITICAL)) && (Flags.flagStatus(Settings, BATTERY_LOW_SHUTDON))) && Monitor.isShutDownInitiated == false) )
+			{
+				menu.Display_Log("Battery Flat - Voltage 10.5v - Shutting System Down in (countdown 10 to 0)\r\n");
+				Flags.setFlag(Status, BATTERY_FLAT_SHUTDOWN, true);
+				Flags.setFlag(Settings, LOG_TO_MASTER, true);
+				Monitor.isShutDownInitiated = true;
+				Monitor.ShutDownCounter = 10;
+				lastMessageDisplayed = HAL_GetTick();
+				Flags.setFlag(Status, TRIGGER_WARNING,true);
+			}
+			else if((((Flags.flagStatus(Status, BATTERY_CRITICAL)) && (!Flags.flagStatus(Settings, BATTERY_LOW_SHUTDON)))))
+			{
+				Flags.setFlag(Status, TRIGGER_WARNING,true);
+				Monitor.isShutDownInitiated = false;
+			}
+			else if (Flags.flagStatus(Status, BATTERY_CHARGING_DETECTED))
+			{
+				Flags.setFlag(Settings, LOG_TO_MASTER, true);
+				menu.Display_Log("System Battery Charging (%.2fv)", BatteryVoltage);
+				((RgbDriver*)WLED1)->setRgbColor(GREEN);
+				WLED1->setOutputPattern(1, 500, 500);
+				Flags.setFlag(Settings, LOG_TO_MASTER, true);
+				lastMessageDisplayed = HAL_GetTick();
+				Monitor.isShutDownInitiated = false;
+			}
 		}
-		else if ((((Flags.flagStatus(Status, BATTERY_CRITICAL)) && (Flags.flagStatus(Settings, BATTERY_LOW_SHUTDON))) && Monitor.isShutDownInitiated == false) )
-		{
-			menu.Display_Log("Battery Flat - Voltage 10.5v - Shutting System Down in (countdown 10 to 0)\r\n");
-			Flags.setFlag(Status, BATTERY_FLAT_SHUTDOWN, true);
-			Flags.setFlag(Settings, LOG_TO_MASTER, true);
-			Monitor.isShutDownInitiated = true;
-			Monitor.ShutDownCounter = 10;
-			lastMessageDisplayed = HAL_GetTick();
-			Flags.setFlag(Status, TRIGGER_WARNING,true);
-		}
-		else if((((Flags.flagStatus(Status, BATTERY_CRITICAL)) && (!Flags.flagStatus(Settings, BATTERY_LOW_SHUTDON)))))
-		{
-			Flags.setFlag(Status, TRIGGER_WARNING,true);
-			Monitor.isShutDownInitiated = false;
-		}
-		else if (Flags.flagStatus(Status, BATTERY_CHARGING_DETECTED))
-		{
-			Flags.setFlag(Settings, LOG_TO_MASTER, true);
-			menu.Display_Log("System Battery Charging (%.2fv)", BatteryVoltage);
-			((RgbDriver*)WLED1)->setRgbColor(GREEN);
-			WLED1->setOutputPattern(1, 500, 500);
-			Flags.setFlag(Settings, LOG_TO_MASTER, true);
-			lastMessageDisplayed = HAL_GetTick();
-			Monitor.isShutDownInitiated = false;
-		}
-	}
 
 		if((Monitor.isShutDownInitiated == true && (HAL_GetTick()-lastShutDownTime)>1000))
 		{
@@ -381,7 +383,7 @@ else
 			Flags.setFlag(Status, TRIGGER_WARNING,true);
 		triggers = 6;
 	}
-}
+	}
 //void BatteryMonitor::ADCSelectCH(uint32_t CH)
 //{
 //	ADC_ChannelConfTypeDef sConfig = {0};

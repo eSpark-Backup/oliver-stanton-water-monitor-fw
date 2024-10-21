@@ -53,8 +53,10 @@ public:
 	void displayMenu(const MenuItem *menu, int elements);
 	void navigateMenu(MenuItem *currentMenu, bool checkReturn);
 
-private:
+public:
 	bool jumpToNextItem_ = false;
+
+private:
 	uint8_t numChild_;
 	uint8_t numItems_;
 	uint8_t choice_;	
@@ -73,14 +75,18 @@ private:
 void getButtonStates();
 void resetButtonStates();
 void setButtonStates(std::initializer_list<SWITCHES> buttons, bool enableSelected);
+void defaultMenuSetup(void);
 void introSetup(void);
 bool introPageSelection(uint32_t argChoice, MenuItem* argMenu);
 void mainMenuSetup(void);
 bool mainMenuSelection(uint32_t argChoice, MenuItem *argMenu);
 void batIndexSetup(void);
 bool batIndexSelection(uint32_t argChoice, MenuItem *argMenu);
+void fodMenuSetup(void);
+void roSaverSetup(void);
+void BatConsumptionTableSetup(void);
 
-extern Switches ButtonE;			//Enter/OK button obj
+extern Switches ButtonE;		// Enter/OK button obj
 extern Switches ButtonB;			//Back button obj
 extern Switches ButtonU;			//UP button obj
 extern Switches ButtonD;			//Down button obj

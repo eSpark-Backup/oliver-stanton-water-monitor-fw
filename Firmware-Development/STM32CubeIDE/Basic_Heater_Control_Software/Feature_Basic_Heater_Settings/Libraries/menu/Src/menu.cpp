@@ -22,6 +22,7 @@
 
 MenuItem *currentM;
 short choiceSelect = 0;
+short g_csIndex = 0;
 
 void Menu::menuSetup()
 {
@@ -63,8 +64,8 @@ void Menu::navigateMenu(MenuItem* currentMenu, bool checkReturn)
 		return;
 	}
 
-		numChild_ = currentMenu->Items[choiceSelect].num_childmenus;
-		numItems_ = currentMenu->Items[choiceSelect].num_items;
+		numChild_ = currentMenu->Items[g_csIndex].num_childmenus;
+		numItems_ = currentMenu->Items[g_csIndex].num_items;
 		choice_ = choiceSelect;
 
 		if (ButtonU.isButtonEnabled() && ButtonU.state())
@@ -110,14 +111,15 @@ void Menu::navigateMenu(MenuItem* currentMenu, bool checkReturn)
 		}
 
 		// when BACK button is pressed
-		if (ButtonB.isButtonEnabled() && ButtonB.state() && currentMenu->Items[choiceSelect].prev != nullptr)
+		if (ButtonB.isButtonEnabled() && ButtonB.state() && currentMenu->Items[g_csIndex].prev != nullptr)
 		{
 			DEBUG_LOG(LOG_INFO, "******* BACK Button *******\n ButtonB.period : %d\n", ButtonB.period());
 			Battery.getMonitor().isBackButtonPressed = true;
 
-			choiceSelect = 1;
-			currentMenu = (MenuItem *)currentMenu->Items[choiceSelect].prev;
-			displayMenu(currentMenu, currentMenu->Items[choiceSelect].num_items);
+			g_csIndex = 0;
+			choiceSelect = 0;
+			currentMenu = (MenuItem *)currentMenu->Items[g_csIndex].prev;
+			displayMenu(currentMenu, currentMenu->Items[g_csIndex].num_items);
 			currentM = currentMenu; //}
 			currentMenu->oneTimeSetup();
 
@@ -125,11 +127,11 @@ void Menu::navigateMenu(MenuItem* currentMenu, bool checkReturn)
 		}
 
 		// when RODI button is pressed
-		if (ButtonR.isButtonEnabled() && ButtonR.state() && currentMenu->Items[choiceSelect].prev == nullptr)
+		if (ButtonR.isButtonEnabled() && ButtonR.state() && currentMenu->Items[g_csIndex].prev == nullptr)
 		{
 			DEBUG_LOG(LOG_INFO, "******* RODI Button *******\n ButtonR.period : %d\n", ButtonR.period());
 
-			if (strcmp(currentMenu->Items[choiceSelect].label, intro.Items[choiceSelect].label) == 0)
+			if (strcmp(currentMenu->Items[g_csIndex].label, intro.Items[g_csIndex].label) == 0)
 			{
 				jumpToNextItem_ = true;
 			}
@@ -148,17 +150,17 @@ void Menu::navigateMenu(MenuItem* currentMenu, bool checkReturn)
 			{
 				Disp->display("Choose one of the options.");
 			}
-			else if (numItems_ > 1 && choice_ != 0)
+			else if (numItems_ > 0)
 			{
 
 				if (currentMenu->Items[choice_ == 0 ? 0 : choice_ - 1].next == nullptr)
 				{
 					Display_Log("nullptr ================");
-
-					currentMenu = (MenuItem *)currentMenu->Items[choiceSelect].prev;
-					displayMenu(currentMenu, currentMenu->Items[choiceSelect].num_items);
-					currentM = currentMenu;
+					g_csIndex = 0;
 					choiceSelect = 0;
+					currentMenu = (MenuItem *)currentMenu->Items[g_csIndex].prev;
+					displayMenu(currentMenu, currentMenu->Items[g_csIndex].num_items);
+					currentM = currentMenu;
 				}
 				else
 				{
@@ -173,16 +175,20 @@ void Menu::navigateMenu(MenuItem* currentMenu, bool checkReturn)
 		}
 	}
 
-	if(jumpToNextItem_ == true)
+	if (jumpToNextItem_)
 	{
-		currentMenu = (MenuItem *)currentMenu->Items[choice_ == 0 ? 0 : choice_ - 1].next;
-		numItems_ = currentMenu->Items[choice_ == 0 ? 0 : choice_ - 1].num_items;
 		numChild_ = currentMenu->Items[choice_ == 0 ? 0 : choice_ - 1].num_childmenus;
-		displayMenu(currentMenu, numChild_ ? numItems_ : numChild_);
+		currentMenu = (MenuItem *)currentMenu->Items[choice_ == 0 ? 0 : choice_ - 1].next;
+		displayMenu(currentMenu, numChild_);
 		currentM = currentMenu;
 
 		jumpToNextItem_ = false;
 	}
+	if(choiceSelect>0)
+		g_csIndex = choiceSelect - 1;
+	else if(!choiceSelect)
+		g_csIndex = 0;
+
 	resetButtonStates();
 	}
 
@@ -221,6 +227,9 @@ void setButtonStates(std::initializer_list<SWITCHES> buttons, bool enableSelecte
 			ButtonR.enableButton(enableSelected);
 			hasValidButton = true;
 			break;
+		case NONE:
+			hasValidButton = true;
+			break;
 		default:
 			break; // Ignore any invalid or unknown enums
 		}
@@ -254,9 +263,14 @@ void resetButtonStates()
 	ButtonR.reset();
 }
 
+void defaultMenuSetup(void)
+{
+	setButtonStates({RODI}, false);
+}
+
 void introSetup(void)
 {
-	setButtonStates({NONE}, false);
+	setButtonStates({NONE}, true);
 }
 
 bool introPageSelection(uint32_t argChoice, MenuItem* argMenu)
@@ -265,10 +279,15 @@ bool introPageSelection(uint32_t argChoice, MenuItem* argMenu)
 	uint8_t numItems = argMenu->Items[choiceSelect].num_items;
 	uint8_t choice = choiceSelect;
 
-	if(ButtonU.state() && (numItems==1 && ((choice == 0) || (strcmp(argMenu->Items[argChoice].label,intro.Items[0].label)==0))))
+	if (ButtonU.state() && argMenu->Items[choiceSelect].prev == nullptr)
 	{
 		currentM = &Battery_Index;
 		menu.displayMenu(&Battery_Index, Battery_Index.Items[0].num_items);
+		return true;
+	}
+	else if (ButtonR.state() && argMenu->Items[choiceSelect].prev == nullptr)
+	{
+		menu.jumpToNextItem_ = true;
 		return true;
 	}
 	return false;
@@ -276,7 +295,7 @@ bool introPageSelection(uint32_t argChoice, MenuItem* argMenu)
 
 void mainMenuSetup(void)
 {
-	setButtonStates({RODI}, false);
+	setButtonStates({BACK}, true);
 }
 
 bool mainMenuSelection(uint32_t argChoice, MenuItem *argMenu)
@@ -297,6 +316,11 @@ bool mainMenuSelection(uint32_t argChoice, MenuItem *argMenu)
 	return false;
 }
 
+void fodMenuSetup(void)
+{
+	setButtonStates({RODI}, true);
+}
+
 void roSaverSetup()
 {
 	setButtonStates({BACK}, true);
@@ -304,8 +328,7 @@ void roSaverSetup()
 
 void batIndexSetup(void)
 {
-	DEBUG_LOG(LOG_ERROR, "batIndexSetup");
-	setButtonStates({RODI}, false);
+	setButtonStates({ENTER_OK, BACK}, true);
 }
 
 bool batIndexSelection(uint32_t argChoice, MenuItem *argMenu)
@@ -313,14 +336,10 @@ bool batIndexSelection(uint32_t argChoice, MenuItem *argMenu)
 	uint8_t numChild = argMenu->Items[choiceSelect].num_childmenus;
 	uint8_t numItems = argMenu->Items[choiceSelect].num_items;
 	uint8_t choice = choiceSelect;
-
-	if (ButtonE.state())
-	{
-		argMenu = (MenuItem *)argMenu->Items[choiceSelect].next;
-		numItems = argMenu->Items[choiceSelect].num_items;
-		menu.displayMenu(argMenu, numItems);
-		currentM = argMenu;
-		return true;
-	}
 	return false;
+}
+
+void BatConsumptionTableSetup(void)
+{
+	setButtonStates({ENTER_OK, BACK}, true);
 }

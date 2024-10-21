@@ -79,14 +79,15 @@ extern Menu menu;
 extern MenuItem *currentM;			//pointer to the menu item we are currently at
 //static size_t currentE;
 extern short choiceSelect;		//next menu item choice item we want to jump to, we can also pass this variable to functions where we need to set a certain value(whole number) as setting
+extern short g_csIndex;
 //extern short ro_saver_thresh_set_value;
 
-	/**
-	 * Functions that are directly called from MenuList
-	 * <condition> <Function name>(<choiceselect variable>)
-	 *
-	 * return condition is if we want the function to jump back to previous menuItem or not
-	 */
+/**
+ * Functions that are directly called from MenuList
+ * <condition> <Function name>(<choiceselect variable>)
+ *
+ * return condition is if we want the function to jump back to previous menuItem or not
+ */
 
 bool fodOFF(uint32_t argChoice, MenuItem *argMenu);
 bool fodON(uint32_t argChoice, MenuItem* argMenu);

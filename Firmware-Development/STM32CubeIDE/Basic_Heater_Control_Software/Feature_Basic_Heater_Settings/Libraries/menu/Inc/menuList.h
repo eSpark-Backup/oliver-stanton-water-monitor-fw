@@ -35,7 +35,7 @@ MenuItem mainMenu = {
 	{{"Default LLROFS Home Page", nullptr, nullptr, &fodMenu, &intro, 2, 1}},
 };
 MenuItem fodMenu = {
-	nullptr,
+	defaultMenuSetup,
 	nullptr,
 	{{"Fill on Demand On/Off", nullptr, nullptr, &fodOptns, &mainMenu, 2, 2},
 	 {"RO_Saver", nullptr, nullptr, &roSaver, &mainMenu, 2, 2}}};
@@ -79,7 +79,7 @@ MenuItem Battery_Index = {
 	{{"Default LL-DCPMS Home Page", nullptr, nullptr, &BatMonitorMenu, &intro, 2, 1}}
 };
 MenuItem BatMonitorMenu = {
-	nullptr,
+	defaultMenuSetup,
 	nullptr,
 	{{"Battery Low Power Shutdown", nullptr, nullptr, &BatLowMenuOptns, &mainMenu, 2, 2},
 	 {"Power Consumption Monitor", nullptr, nullptr, &BatPowerConsumptiontable, &mainMenu, 1, 2}}
@@ -94,44 +94,43 @@ MenuItem BatLowMenuOFF = {
 	nullptr,
 	BatLowShutdown,
 	{{"Are you sure you want to switch this system critical setting off? ",
-	  nullptr, nullptr, &BatLowMenuOptns, &BatLowMenuOptns, 2, 3},
-	 {"Yes", nullptr, nullptr, &BatLowMenuOptns, &BatLowMenuOptns, 2, 3},
-	 {"No", nullptr, nullptr, &BatLowMenuOptns, &BatLowMenuOptns, 1, 3}},
+	  nullptr, nullptr,  nullptr, &BatMonitorMenu, 2, 3},
+	 {"Yes", nullptr, nullptr,  nullptr, &BatMonitorMenu, 2, 3},
+	 {"No", nullptr, nullptr,  nullptr, &BatMonitorMenu, 1, 3}},
 };
 MenuItem BatPowerConsumptiontable = {
+	BatConsumptionTableSetup,
 	nullptr,
-	nullptr,
-	{{"Component Power Consumption Table", nullptr, nullptr, &BatPowerConsumptionOptns, &BatMonitorMenu, 2, 1}}
-};
+	{{"Component Power Consumption Table", nullptr, nullptr, &BatPowerConsumptionOptns, &BatMonitorMenu, 2, 1}}};
 MenuItem BatPowerConsumptionOptns = {
-	nullptr,
+	defaultMenuSetup,
 	BatPowerMonitor,
-	{{"Off", nullptr, BatPowerMonitorOff, &BatPowerConsumptiontable, &BatPowerConsumptiontable, 2, 2},
-	{"On", nullptr, BatPowerMonitorOn, nullptr, &BatPowerConsumptiontable, 2, 2}}
-};
+	{{"Off", nullptr, nullptr, nullptr, &BatPowerConsumptiontable, 2, 2},
+	 {"On", nullptr, nullptr, nullptr, &BatPowerConsumptiontable, 2, 2}}};
 //	MenuItem BatPowerConsumptionOptnsON = {
 //		{{"Pump One (LL.PDS.01) is drawing 13.2 amps, higher than specification, service required", 	nullptr, 		nullptr, 		BatMonitorMenu, 1, 2}},
 //	};
 
 MenuItem DeviceStandByScreen = {
+	BatConsumptionTableSetup,
 	nullptr,
-	nullptr,
-	{{"Device In StandBy", nullptr, nullptr, &mainMenu, &mainMenu, 1, 1}}
+	{{"Device In StandBy", nullptr, nullptr, nullptr, &mainMenu, 0, 1}}
 };
 MenuItem DeviceShutDown = {
+	BatConsumptionTableSetup,
 	nullptr,
-	nullptr,
-	{{"Device Shutdown Screen", nullptr, nullptr, &mainMenu, &mainMenu, 1, 1}}
+	{{"Device Shutdown Screen", nullptr, nullptr, nullptr, &mainMenu, 0, 1}}
 };
 MenuItem BatteryChargingDetected = {
+	BatConsumptionTableSetup,
 	nullptr,
-	nullptr,
-	{{"System Battery Charging (%.2f v)", nullptr, nullptr, &mainMenu, &mainMenu, 1, 1}}
+	{{"System Battery Charging (%.2f v)", nullptr, nullptr, nullptr, &mainMenu, 0, 1}}
 };
 MenuItem BatteryChargingDisconnected = {
 	nullptr,
 	nullptr,
-	{{"Charger Disconnected", nullptr, nullptr, &mainMenu, &mainMenu, 1, 1}}};
+	{{"Charger Disconnected", nullptr, nullptr, nullptr, &mainMenu, 0, 1}}
+};
 #endif /* INC_MENULIST_H_ */
 
 //-------------------------------P. S.----------------------------------
