@@ -184,8 +184,6 @@ bool fodON(uint32_t argChoice, MenuItem* argMenu)
 
 		Flags.setFlag(Settings, FoD, true);
 		Flags.setFlag(Settings, MEM_SAVER, true);
-		currentM = &fodMenu;
-		menu.displayMenu(&fodMenu, fodMenu.Items[0].num_items);
 		return true;
 	}
 	return false;
@@ -199,7 +197,7 @@ bool roSaverThreshAdj(uint32_t argChoice, MenuItem* argMenu)
 		if(threshVal > 0)	threshVal--;
 		Disp->display(threshVal);
 	}
-	else if (ButtonD.state())
+	else if (ButtonU.state())
 	{
 		if(threshVal < 20)	threshVal++;
 		Disp->display(threshVal);
@@ -207,9 +205,8 @@ bool roSaverThreshAdj(uint32_t argChoice, MenuItem* argMenu)
 	else if (ButtonE.state())
 	{
 		roSaverThreshValue = threshVal;
+		threshVal = 0;
 		DEBUG_RTT(LOG_WARNING, "RO_Saver threshold value set to %d.", roSaverThreshValue);
-		currentM = &roSaver;
-		menu.displayMenu(&roSaver, roSaver.Items[0].num_items);
 		return true;
 	}
 	else
@@ -230,8 +227,6 @@ bool roSaverThreshDefault(uint32_t argChoice, MenuItem *argMenu)
 {
 	roSaverThreshValue = 0;
 	DEBUG_RTT(LOG_WARNING, "RO_Saver default threshold value set to %d.", roSaverThreshValue);
-	currentM = &roSaver;
-	menu.displayMenu(&roSaver, roSaver.Items[0].num_items);
 	return true;
 }
 
@@ -253,8 +248,6 @@ bool roSaverOn(uint32_t argChoice, MenuItem *argMenu)
 {
 	Flags.setFlag(Settings, RESIN_SAVER, true);
 	DEBUG_RTT(LOG_WARNING, "RO_Saver setting Turned on.");
-	currentM = &roSaver;
-	menu.displayMenu(&roSaver, roSaver.Items[0].num_items);
 	return true;
 }
 
@@ -262,8 +255,6 @@ bool roSaverOff(uint32_t argChoice, MenuItem * argMenu)
 {
 	Flags.setFlag(Settings, RESIN_SAVER, false);
 	DEBUG_RTT(LOG_WARNING, "RO_Saver setting Turned off.");
-	currentM = &roSaver;
-	menu.displayMenu(&roSaver, roSaver.Items[0].num_items);
 	return true;
 }
 

@@ -51,7 +51,7 @@ MenuItem fodOptnsOff = {
 	{{"Press OK to commence the purification filling process", nullptr, nullptr, &fodMenu, &fodOptns, 2, 1}}
 };
 MenuItem roSaver = {
-	nullptr,
+	defaultMenuSetup,
 	nullptr,
 	{{"roSaver on/off", nullptr, nullptr, &roSaverOptns, &fodMenu, 2, 2},
 	 {"roSaver_tds_thres", nullptr, nullptr, &roSaverThresh, &fodMenu, 2, 2}}
@@ -69,10 +69,9 @@ MenuItem roSaverThresh = {
 	 {"Adjustable 1-20 ppm", nullptr, nullptr, &roSaverThreshAdjust, &roSaver, 1, 2}}
 };
 MenuItem roSaverThreshAdjust = {
-	nullptr,
+	backAndForthSetup,
 	roSaverThreshAdj,
-	{{"Select ppm value from 1-20", nullptr, nullptr, nullptr, &roSaver, 0, 1}}
-};
+	{{"Select ppm value from 1-20", nullptr, nullptr, nullptr, &roSaver, 0, 1}}};
 MenuItem Battery_Index = {
 	batIndexSetup,
 	batIndexSelection,
@@ -99,7 +98,7 @@ MenuItem BatLowMenuOFF = {
 	 {"No", nullptr, nullptr,  nullptr, &BatMonitorMenu, 1, 3}},
 };
 MenuItem BatPowerConsumptiontable = {
-	BatConsumptionTableSetup,
+	batConsumptionTableSetup,
 	nullptr,
 	{{"Component Power Consumption Table", nullptr, nullptr, &BatPowerConsumptionOptns, &BatMonitorMenu, 2, 1}}};
 MenuItem BatPowerConsumptionOptns = {
@@ -112,17 +111,17 @@ MenuItem BatPowerConsumptionOptns = {
 //	};
 
 MenuItem DeviceStandByScreen = {
-	BatConsumptionTableSetup,
+	batConsumptionTableSetup,
 	nullptr,
 	{{"Device In StandBy", nullptr, nullptr, nullptr, &mainMenu, 0, 1}}
 };
 MenuItem DeviceShutDown = {
-	BatConsumptionTableSetup,
+	batConsumptionTableSetup,
 	nullptr,
 	{{"Device Shutdown Screen", nullptr, nullptr, nullptr, &mainMenu, 0, 1}}
 };
 MenuItem BatteryChargingDetected = {
-	BatConsumptionTableSetup,
+	batConsumptionTableSetup,
 	nullptr,
 	{{"System Battery Charging (%.2f v)", nullptr, nullptr, nullptr, &mainMenu, 0, 1}}
 };

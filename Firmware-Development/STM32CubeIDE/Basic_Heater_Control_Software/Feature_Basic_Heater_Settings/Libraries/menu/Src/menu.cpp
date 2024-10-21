@@ -326,6 +326,11 @@ void roSaverSetup()
 	setButtonStates({BACK}, true);
 }
 
+void backAndForthSetup(void)
+{
+	setButtonStates({ENTER_OK, BACK}, true);
+}
+
 void batIndexSetup(void)
 {
 	setButtonStates({ENTER_OK, BACK}, true);
@@ -339,7 +344,7 @@ bool batIndexSelection(uint32_t argChoice, MenuItem *argMenu)
 	return false;
 }
 
-void BatConsumptionTableSetup(void)
+void batConsumptionTableSetup(void)
 {
 	setButtonStates({ENTER_OK, BACK}, true);
 }

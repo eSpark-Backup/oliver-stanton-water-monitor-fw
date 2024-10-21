@@ -84,7 +84,8 @@ void batIndexSetup(void);
 bool batIndexSelection(uint32_t argChoice, MenuItem *argMenu);
 void fodMenuSetup(void);
 void roSaverSetup(void);
-void BatConsumptionTableSetup(void);
+void backAndForthSetup(void);
+void batConsumptionTableSetup(void);
 
 extern Switches ButtonE;		// Enter/OK button obj
 extern Switches ButtonB;			//Back button obj
