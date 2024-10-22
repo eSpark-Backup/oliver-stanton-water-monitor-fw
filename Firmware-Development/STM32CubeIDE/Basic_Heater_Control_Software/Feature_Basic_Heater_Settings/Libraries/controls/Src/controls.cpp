@@ -70,11 +70,7 @@ bool fodOFF(uint32_t argChoice, MenuItem* argMenu)
 			Flags.setFlag(Settings, MEM_SAVER, false);
 			Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
 			invokeST3(false);
-			if(!roSaverST1())						//call RO_Saver function here
-			{
-				mainMenuFunc();
-			}
-	//		return true;
+			mainMenuFunc();
 		}
 		else if (ButtonE.period() < SINGLE_PRESS)
 		{
@@ -320,10 +316,11 @@ void invokeST5(bool status)
 bool roSaverST1()
 {
 	Flags.update();
-	if(Flags.flagStatus(Status, PURE_CYCLE) && Flags.flagStatus(Settings, RESIN_SAVER) && !Flags.flagStatus(Status, MEM_SAVER) && !Flags.flagStatus(Status, AUTO_FILL))
+	if (!Flags.flagStatus(Settings, MEM_SAVER_PAUSE) && Flags.flagStatus(Status, PURE_CYCLE) 
+		&& Flags.flagStatus(Settings, RESIN_SAVER) && !Flags.flagStatus(Status, MEM_SAVER) && !Flags.flagStatus(Status, AUTO_FILL))
 	{
 		Disp->display("Completing Purification Cycle - Dosing RO Membrane.");
-		invokeST1(true);
+		invokeST1(true); 
 		invokeST5(true);
 		Flags.update();
 		return true;
@@ -333,6 +330,7 @@ bool roSaverST1()
 		if(tds2.readTDS() < roSaverThreshValue)
 		{
 		Disp->display("Purification Cycle Complete.");
+		tds2.resetTDS(); //for simulation value
 		invokeST1(false);
 		invokeST5(false);
 		Flags.update();
@@ -357,29 +355,29 @@ void memSaverST3()
 	Flags.update();
 	if(Flags.timeElapsed(MEM_SAVER, MEM_SAVER_PAUSE_TIMEOUT) && Flags.flagStatus(Settings, MEM_SAVER_PAUSE))
 	{
+		Flags.setFlag(Settings, MEM_SAVER, false);
 		Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
+		invokeST3(false);
+		mainMenuFunc();
 		DEBUG_RTT(LOG_WARNING, "***MEM_SAVER_PAUSE_TIMEOUT OCCURRED***");
-		if(!roSaverST1())
-			mainMenuFunc();
 	}
-	if(Flags.flagStatus(Status, LEVEL_SENSOR) != false &&
-	   Flags.flagStatus(Status, MEM_SAVER) &&
-	   (Flags.flagStatus(Settings, MEM_SAVER) || Flags.flagStatus(Settings, FoD) == true))
+	if (Flags.flagStatus(Settings, MEM_SAVER_PAUSE) == false && Flags.flagStatus(Status, LEVEL_SENSOR) != false
+		&& Flags.flagStatus(Status, MEM_SAVER) && (Flags.flagStatus(Settings, MEM_SAVER) || Flags.flagStatus(Settings, FoD)))
 	{
-			invokeST3(false);
-//			Flags.setFlag(Settings, MEM_SAVER, false);
-			roSaverST1();
+		invokeST3(false);
+		//			Flags.setFlag(Settings, MEM_SAVER, false);
+		roSaverST1();
 	}
 	else if(Flags.timeElapsed(LEVEL_SENSOR, FOD_AUTORUN_DELAY_PERIOD) &&
 			Flags.flagStatus(Settings, FoD) == true &&
 			Flags.flagStatus(Status, LEVEL_SENSOR) != true
 			&& Flags.flagStatus(Status, MEM_SAVER) != true)
 	{
-//				Disp->display("Starting Purification - System Filling.");
-//				Flags.setFlag(Settings, MEM_SAVER, true);
-//				Flags.setFlag(Status, PURE_CYCLE, true);
-//				DEBUG_RTT("W", "SAVE LOG TO FILE HERE.");			//perform logging to file here
+		//				Disp->display("Starting Purification - System Filling.");
+		//				Flags.setFlag(Settings, MEM_SAVER, true);
+		//				Flags.setFlag(Status, PURE_CYCLE, true);
+		//				DEBUG_RTT("W", "SAVE LOG TO FILE HERE.");			//perform logging to file here
 
-				invokeST3(true);
+		invokeST3(true);
 	}
 }

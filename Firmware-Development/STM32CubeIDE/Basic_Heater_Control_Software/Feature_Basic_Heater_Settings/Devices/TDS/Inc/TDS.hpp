@@ -85,6 +85,7 @@ public:
 
 
 	float readTDS(void);
+	void resetTDS(void);
 protected:
 
 

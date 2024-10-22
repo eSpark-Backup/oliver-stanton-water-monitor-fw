@@ -8,13 +8,20 @@
 
 
 #include "TDS.hpp"
+#include <cmath>
 
 float TDS::readTDS()
 {
 	getValue();
 	calculateTDS();
-	DEBUG_RTT('0', "TDS Value %f",this->tdsValue);
+	if(fmod(tdsValue, 1000.0) == 0.0 || tdsValue == 0)
+		DEBUG_RTT('0', "TDS Value %f", this->tdsValue);
 	return this->tdsValue;
+}
+
+void TDS::resetTDS(void)
+{
+	this->tdsValue = TDS_DUMMY_VALUE;
 }
 
 void TDS::calculateTDS(void)
@@ -25,7 +32,7 @@ void TDS::calculateTDS(void)
 //	this->ecValue=(133.42*this->voltage*this->voltage*this->voltage - 255.86*this->voltage*this->voltage + 857.39*this->voltage);//*this->kValue;
 //	this->ecValue25  =  this->ecValue / (1.0+0.02*(this->temperature-25.0));  //temperature compensation
 //	this->tdsValue = ecValue25 * 1.0;  //TdsFactor;
-
+	
 	this->tdsValue -= rand()%4;			//--this is just simulation for decreasing TDS value
 }
 

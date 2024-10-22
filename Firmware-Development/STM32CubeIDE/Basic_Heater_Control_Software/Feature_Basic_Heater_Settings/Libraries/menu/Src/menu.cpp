@@ -302,7 +302,8 @@ bool mainMenuSelection(uint32_t argChoice, MenuItem *argMenu)
 {
 	uint8_t numItems = argMenu->Items[choiceSelect].num_items;
 
-	if ((ButtonE.period() > LONG_PRESS || ButtonD.period() > LONG_PRESS) && (ButtonE.period() < LONG_LONG_PRESS || ButtonD.period() < LONG_LONG_PRESS))
+	if ((ButtonE.period() > LONG_PRESS || ButtonD.period() > LONG_PRESS)
+		&& (ButtonE.period() < LONG_LONG_PRESS || ButtonD.period() < LONG_LONG_PRESS))
 	{
 		argMenu = (MenuItem *)argMenu->Items[choiceSelect].next;
 		numItems = argMenu->Items[choiceSelect].num_items;
@@ -314,7 +315,8 @@ bool mainMenuSelection(uint32_t argChoice, MenuItem *argMenu)
 		return true;
 	}
 
-	else if(ButtonE.period() > MINIMUM_PRESS && ButtonE.period() < SHORT_PRESS)
+	else if (ButtonE.period() > MINIMUM_PRESS && ButtonE.period() < SHORT_PRESS
+			&& !Flags.flagStatus(Status, RESIN_SAVER))
 	{
 		menu.changeMenu(&fodOptnsOff);
 		ButtonE.reset();
