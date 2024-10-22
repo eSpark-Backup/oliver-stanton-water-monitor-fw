@@ -313,6 +313,12 @@ bool mainMenuSelection(uint32_t argChoice, MenuItem *argMenu)
 		ButtonD.reset();
 		return true;
 	}
+
+	else if(ButtonE.period() > MINIMUM_PRESS && ButtonE.period() < SHORT_PRESS)
+	{
+		menu.changeMenu(&fodOptnsOff);
+		ButtonE.reset();
+	}
 	return false;
 }
 

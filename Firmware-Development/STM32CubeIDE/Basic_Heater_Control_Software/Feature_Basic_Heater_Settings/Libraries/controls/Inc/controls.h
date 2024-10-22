@@ -24,6 +24,7 @@
 #include "TDS.hpp"
 
 //-------button press durations, in milliseconds
+#define MINIMUM_PRESS		100
 #define SINGLE_PRESS		800
 #define SHORT_PRESS			2000
 #define LONG_PRESS			3000
