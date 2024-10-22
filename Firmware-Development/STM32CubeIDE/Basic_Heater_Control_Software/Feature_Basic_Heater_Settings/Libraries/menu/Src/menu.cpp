@@ -321,6 +321,11 @@ void fodMenuSetup(void)
 	setButtonStates({RODI}, true);
 }
 
+void fodOffSetup(void)
+{
+	roSaverSetup();
+}
+
 void roSaverSetup()
 {
 	setButtonStates({BACK}, true);

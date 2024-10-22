@@ -83,6 +83,7 @@ bool mainMenuSelection(uint32_t argChoice, MenuItem *argMenu);
 void batIndexSetup(void);
 bool batIndexSelection(uint32_t argChoice, MenuItem *argMenu);
 void fodMenuSetup(void);
+void fodOffSetup(void);
 void roSaverSetup(void);
 void backAndForthSetup(void);
 void batConsumptionTableSetup(void);

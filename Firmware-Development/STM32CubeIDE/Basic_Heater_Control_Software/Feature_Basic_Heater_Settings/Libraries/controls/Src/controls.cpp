@@ -57,9 +57,8 @@ float tdsSensor(uint32_t channel)
 //***********************Purefication Cycle**************************
 bool fodOFF(uint32_t argChoice, MenuItem* argMenu)
 {
-	if (argChoice == 2 && ButtonE.state())
+	if (ButtonE.state())
 	{
-	
 		if (Flags.flagStatus(Settings, FoD))
 		{
 			Flags.setFlag(Settings, FoD, false);
@@ -101,7 +100,6 @@ bool fodOFF(uint32_t argChoice, MenuItem* argMenu)
 				invokeST3(false);
 			}
 		}
-		menu.changeMenu(&fodMenu);
 		return true;
 	}
 	return false;
