@@ -70,6 +70,7 @@ bool fodOFF(uint32_t argChoice, MenuItem* argMenu)
 			Flags.setFlag(Settings, MEM_SAVER, false);
 			Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
 			invokeST3(false);
+			invokeST5(false);
 			mainMenuFunc();
 		}
 		else if (ButtonE.period() < SINGLE_PRESS)
@@ -87,6 +88,7 @@ bool fodOFF(uint32_t argChoice, MenuItem* argMenu)
 //				Flags.setFlag(Settings, MEM_SAVER, true);
 //				Flags.setFlag(Status, PURE_CYCLE, true);
 				invokeST3(true);
+				invokeST5(true);
 			}
 			else
 			{
@@ -94,6 +96,7 @@ bool fodOFF(uint32_t argChoice, MenuItem* argMenu)
 				Flags.setFlag(Settings, MEM_SAVER_PAUSE, true);
 				Disp->display("System Purification paused.");
 				invokeST3(false);
+				invokeST5(false);
 			}
 		}
 		return true;
@@ -268,6 +271,7 @@ void fillOpen()
 	WLED1->setOutputPattern(1, 1000, 1000);
 
 	invokeST3(false);
+	invokeST5(false);
 	DEBUG_RTT(LOG_WARNING, "SAVE LOG TO FILE HERE.");			//perform logging to file here
 	mainMenuFunc();
 	//add buzzer/LED warning handler here
@@ -325,7 +329,7 @@ bool roSaverST1()
 		Flags.update();
 		return true;
 	}
-	else if(Flags.flagStatus(Status, PURE_CYCLE) && Flags.flagStatus(Status, AUTO_FILL))
+	else if (Flags.flagStatus(Status, PURE_CYCLE) && Flags.flagStatus(Status, RESIN_SAVER) && Flags.flagStatus(Status, AUTO_FILL))
 	{
 		if(tds2.readTDS() < roSaverThreshValue)
 		{
@@ -358,6 +362,7 @@ void memSaverST3()
 		Flags.setFlag(Settings, MEM_SAVER, false);
 		Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
 		invokeST3(false);
+		invokeST5(false);
 		mainMenuFunc();
 		DEBUG_RTT(LOG_WARNING, "***MEM_SAVER_PAUSE_TIMEOUT OCCURRED***");
 	}
@@ -365,6 +370,7 @@ void memSaverST3()
 		&& Flags.flagStatus(Status, MEM_SAVER) && (Flags.flagStatus(Settings, MEM_SAVER) || Flags.flagStatus(Settings, FoD)))
 	{
 		invokeST3(false);
+		invokeST5(false);
 		//			Flags.setFlag(Settings, MEM_SAVER, false);
 		roSaverST1();
 	}
@@ -379,5 +385,6 @@ void memSaverST3()
 		//				DEBUG_RTT("W", "SAVE LOG TO FILE HERE.");			//perform logging to file here
 
 		invokeST3(true);
+		invokeST5(true);
 	}
 }

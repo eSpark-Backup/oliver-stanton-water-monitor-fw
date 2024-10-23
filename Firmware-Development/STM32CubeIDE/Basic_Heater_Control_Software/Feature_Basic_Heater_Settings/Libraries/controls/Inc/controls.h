@@ -111,6 +111,7 @@ bool BatPowerMonitorOff(uint32_t argChoice, MenuItem* argMenu);
 void mainMenuFunc(void);
 void fillOpen(void);
 void invokeST3(bool);
+void invokeST5(bool);
 
 /*  Main Output Control functions  */
 void memSaverST3(void);
