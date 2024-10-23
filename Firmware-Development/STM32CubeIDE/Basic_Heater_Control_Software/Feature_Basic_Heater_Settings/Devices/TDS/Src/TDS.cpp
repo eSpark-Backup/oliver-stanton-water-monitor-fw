@@ -32,8 +32,9 @@ void TDS::calculateTDS(void)
 //	this->ecValue=(133.42*this->voltage*this->voltage*this->voltage - 255.86*this->voltage*this->voltage + 857.39*this->voltage);//*this->kValue;
 //	this->ecValue25  =  this->ecValue / (1.0+0.02*(this->temperature-25.0));  //temperature compensation
 //	this->tdsValue = ecValue25 * 1.0;  //TdsFactor;
-	
-	this->tdsValue -= rand()%4;			//--this is just simulation for decreasing TDS value
+	this->tdsValue = this->analogValueAN1 / 4096 * MAX_TDS_PPM; // this->adcRange*this->aref;
+
+	// this->tdsValue -= rand()%4;			//--this is just simulation for decreasing TDS value
 }
 
 void ADCSelectCH(uint32_t CH)

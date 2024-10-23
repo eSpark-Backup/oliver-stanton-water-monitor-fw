@@ -14,6 +14,7 @@
 #include "mainApp.hpp"
 
 #define TDS_DUMMY_VALUE 18000
+#define MAX_TDS_PPM 20
 
 /* The Physical header of TDS probes are mentioned below
  *
