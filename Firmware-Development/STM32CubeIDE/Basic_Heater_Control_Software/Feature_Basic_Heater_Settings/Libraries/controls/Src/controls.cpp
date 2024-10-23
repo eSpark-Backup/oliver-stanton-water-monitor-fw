@@ -320,8 +320,8 @@ void invokeST5(bool status)
 bool roSaverST1()
 {
 	Flags.update();
-	if (!Flags.flagStatus(Settings, MEM_SAVER_PAUSE) && Flags.flagStatus(Status, PURE_CYCLE) 
-		&& Flags.flagStatus(Settings, RESIN_SAVER) && !Flags.flagStatus(Status, MEM_SAVER) && !Flags.flagStatus(Status, AUTO_FILL))
+	if (!Flags.flagStatus(Settings, MEM_SAVER_PAUSE) && Flags.flagStatus(Status, PURE_CYCLE)
+	&& Flags.flagStatus(Settings, RESIN_SAVER) && !Flags.flagStatus(Status, MEM_SAVER) && !Flags.flagStatus(Status, AUTO_FILL))
 	{
 		Disp->display("Completing Purification Cycle - Dosing RO Membrane.");
 		invokeST1(true); 
@@ -331,7 +331,7 @@ bool roSaverST1()
 	}
 	else if (Flags.flagStatus(Status, PURE_CYCLE) && Flags.flagStatus(Status, RESIN_SAVER) && Flags.flagStatus(Status, AUTO_FILL))
 	{
-		if(tds2.readTDS() < roSaverThreshValue)
+		if(tds2.readTDS() <= roSaverThreshValue)
 		{
 		Disp->display("Purification Cycle Complete.");
 		tds2.resetTDS(); //for simulation value
