@@ -54,7 +54,7 @@ float tdsSensor(uint32_t channel)
 //*******************************************************************
 
 
-//***********************Purefication Cycle**************************
+//***********************Purification Cycle**************************
 bool fodOFF(uint32_t argChoice, MenuItem* argMenu)
 {
 	if (ButtonE.state())
@@ -80,13 +80,9 @@ bool fodOFF(uint32_t argChoice, MenuItem* argMenu)
 			{
 				Flags.setFlag(Settings, MEM_SAVER, false);
 				fillOpen();
-				// invokeST3(false); /// called twice
 			}
 			else if(!Flags.flagStatus(Settings, MEM_SAVER))
 			{
-//				Disp->display("Starting Purification - System Filling.");
-//				Flags.setFlag(Settings, MEM_SAVER, true);
-//				Flags.setFlag(Status, PURE_CYCLE, true);
 				invokeST3(true);
 				invokeST5(true);
 			}
