@@ -1,18 +1,12 @@
-/*
- * menuList.h
- *
- *  Created on: Dec 20, 2023
- *      Author: Farhan Ahmed
- */
 #pragma once
 
-#ifndef INC_MENULIST_H_
-#define INC_MENULIST_H_
+#ifndef INC_MENULIST_01_H_
+#define INC_MENULIST_01_H_
 
-//#include "menu.h"
+#include "menu.h"
 #include "mainApp.hpp"
 #include "controls.h"
-#include "menu.h"
+#include "menu_01.h"
 
 
 ///-----------------------------Creating Menu Items List-----------------------------
@@ -130,7 +124,7 @@ MenuItem BatteryChargingDisconnected = {
 	nullptr,
 	{{"Charger Disconnected", nullptr, nullptr, nullptr, &mainMenu, 0, 1}}
 };
-#endif /* INC_MENULIST_H_ */
+#endif /* INC_MENULIST_01_H_ */
 
 //-------------------------------P. S.----------------------------------
 //---------These menu structs need to be declared in menu.h file--------

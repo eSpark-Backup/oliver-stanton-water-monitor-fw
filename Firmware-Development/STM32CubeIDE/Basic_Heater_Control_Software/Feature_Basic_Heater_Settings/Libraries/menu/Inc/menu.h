@@ -1,10 +1,3 @@
-/*
- * menu.h
- *
- *  Created on: Dec 20, 2023
- *      Author: Farhan Ahmed
- */
-
 #pragma once
 
 #include "string.h"
@@ -33,11 +26,6 @@ struct MenuItem
 	subMenu Items[];
 };
 
-//-----------declare MenuItem Structs defined in menuList.h down below ----------------
-extern struct MenuItem intro, mainMenu, fodMenu, fodOptns, roSaver, fodOptnsOff, roSaverOptns, roSaverThresh, roSaverThreshAdjust\
-,Battery_Index, BatMonitorMenu, BatLowMenuOptns,BatLowMenuOFF,BatPowerConsumptionOptns,BatPowerConsumptiontable,BatPowerConsumptionOptnsON\
-,DeviceStandByScreen,DeviceShutDown,BatteryChargingDetected,BatteryChargingDisconnected;
-//-------------------------------------------------------------------------------------
 
 class Menu{
 public:
@@ -76,20 +64,16 @@ void getButtonStates();
 void resetButtonStates();
 void setButtonStates(std::initializer_list<SWITCHES> buttons, bool enableSelected);
 void defaultMenuSetup(void);
-void introSetup(void);
-bool introPageSelection(uint32_t argChoice, MenuItem* argMenu);
-void mainMenuSetup(void);
-bool mainMenuSelection(uint32_t argChoice, MenuItem *argMenu);
-void batIndexSetup(void);
-bool batIndexSelection(uint32_t argChoice, MenuItem *argMenu);
-void fodMenuSetup(void);
-void fodOffSetup(void);
-void roSaverSetup(void);
-void backAndForthSetup(void);
-void batConsumptionTableSetup(void);
+
 
 extern Switches ButtonE;		// Enter/OK button obj
 extern Switches ButtonB;			//Back button obj
 extern Switches ButtonU;			//UP button obj
 extern Switches ButtonD;			//Down button obj
 extern Switches ButtonR;			//RODI button obj
+
+//-----------declare MenuItem Structs defined in menuList.h down below ----------------
+extern struct MenuItem intro, mainMenu, fodMenu, fodOptns, roSaver, fodOptnsOff, roSaverOptns, roSaverThresh,
+roSaverThreshAdjust, Battery_Index, BatMonitorMenu, BatLowMenuOptns, BatLowMenuOFF, BatPowerConsumptionOptns,
+BatPowerConsumptiontable, BatPowerConsumptionOptnsON, DeviceStandByScreen, DeviceShutDown, BatteryChargingDetected, BatteryChargingDisconnected;
+//-------------------------------------------------------------------------------------
