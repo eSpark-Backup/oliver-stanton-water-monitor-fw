@@ -77,3 +77,7 @@ extern struct MenuItem intro, mainMenu, fodMenu, fodOptns, roSaver, fodOptnsOff,
 roSaverThreshAdjust, Battery_Index, BatMonitorMenu, BatLowMenuOptns, BatLowMenuOFF, BatPowerConsumptionOptns,
 BatPowerConsumptiontable, BatPowerConsumptionOptnsON, DeviceStandByScreen, DeviceShutDown, BatteryChargingDetected, BatteryChargingDisconnected;
 //-------------------------------------------------------------------------------------
+
+extern struct MenuItem intro05, mainMenu05, fodMenu05, fodOptnsOff05, mainsTDSThreshold, mainsTDSTemp,
+mainsTDSShutdown, roTDS, roTDSThreshold, roDynamicTDSThreshold, roFixedTDSThreshold, roTDSTemp, roTDSShutdown,
+diTDS, diTDSThreshold, diTDSTemp, diTDSShutdown;

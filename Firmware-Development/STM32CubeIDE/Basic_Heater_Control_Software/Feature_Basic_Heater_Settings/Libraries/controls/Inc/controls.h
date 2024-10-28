@@ -35,7 +35,8 @@ extern Switches ButtonB;			//Back button obj
 extern Switches ButtonU;			//UP button obj
 extern Switches ButtonD;			//Down button obj
 
-typedef enum{
+typedef enum
+{
 	LEVEL_SENSOR,
 	PRESSURE_SENSOR,
 	FLOW_METER_1,
@@ -50,20 +51,26 @@ typedef enum{
 	RGB,
 	BUZZER,
 	FoD,
+	MAINS_TDS_THRESHOLD,
+	RO_TDS_THRESHOLD,
+	DI_TDS_THRESHOLD,
+	MAINS_TDS_TEMPERATURE,
+	RO_TDS_TEMPERATURE,
+	DI_TDS_TEMPERATURE,
 	BATTERY_CHARGING_DETECTED,
-	BATTERY_CRITICAL, //Status
-	BATTERY_LOW,      //Status
-	BATTERY_HIGH,	  //Status
-	BATTERY_LOW_SHUTDON,//SETTING
-	BATTERY_VOLTAGE_LOW,//Status
-	BATTERY_FLAT_SHUTDOWN,//Status
-	BATTERY_WARNING_SPIKES,//Status
-	BATTERY_POWER_MONITOR, //SETTING
-	BATTERY_PUMP_IGNORE_WARNING,//Status
+	BATTERY_CRITICAL,			 // Status
+	BATTERY_LOW,				 // Status
+	BATTERY_HIGH,				 // Status
+	BATTERY_LOW_SHUTDON,		 // SETTING
+	BATTERY_VOLTAGE_LOW,		 // Status
+	BATTERY_FLAT_SHUTDOWN,		 // Status
+	BATTERY_WARNING_SPIKES,		 // Status
+	BATTERY_POWER_MONITOR,		 // SETTING
+	BATTERY_PUMP_IGNORE_WARNING, // Status
 	LOG_TO_MASTER,
 	TRIGGER_WARNING,
-	_sensors_						//placeholder for the max number of sensors declared
-}Sensors;
+	_sensors_ // placeholder for the max number of sensors declared
+} Sensors;
 
 typedef enum{
 	Settings,
@@ -82,6 +89,17 @@ extern MenuItem *currentM;			//pointer to the menu item we are currently at
 extern short choiceSelect;		//next menu item choice item we want to jump to, we can also pass this variable to functions where we need to set a certain value(whole number) as setting
 extern short g_csIndex;
 //extern short ro_saver_thresh_set_value;
+
+typedef struct
+{
+	uint16_t mainsThreshold = 0;
+	uint16_t mainsTemperature = 0;
+	uint16_t roThreshold = 0;
+	uint16_t roTemperature = 0;
+	uint16_t diThreshold = 0;
+	uint16_t diTemperature = 0;
+}TdsValues;
+
 
 /**
  * Functions that are directly called from MenuList
@@ -118,5 +136,7 @@ void memSaverST3(void);
 bool roSaverST1(void);
 
 float tdsSensor(uint32_t);
+
+extern TdsValues setTDS;
 
 #endif /* INC_CONTROLS_H_ */

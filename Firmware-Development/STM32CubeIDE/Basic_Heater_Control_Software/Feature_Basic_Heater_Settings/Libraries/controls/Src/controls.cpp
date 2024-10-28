@@ -16,6 +16,7 @@
 
 
 short roSaverThreshValue = 0;
+TdsValues setTDS;
 //short currentRoValue;
 
 

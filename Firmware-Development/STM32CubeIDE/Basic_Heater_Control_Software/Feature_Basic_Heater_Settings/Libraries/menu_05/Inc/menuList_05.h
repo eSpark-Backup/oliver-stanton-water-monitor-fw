@@ -18,59 +18,59 @@
  * If you want to be able to select a range of values in item, set <NextItems> to 0 and set the <Items> from 0-items range
  */
 
-MenuItem intro = {
+MenuItem intro05 = {
 	introSetup_05,
 	introPageSelection_05,
-	{{"Water Monitor Control Software", nullptr, nullptr, &mainMenu, nullptr, 1, 1}}
+	{{"Water Monitor Control Software", nullptr, nullptr, &mainMenu05, nullptr, 1, 1}}
 };
-MenuItem mainMenu = {
+MenuItem mainMenu05 = {
 	mainMenuSetup_05,
 	mainMenuSelection_05,
-	{{"Default LLROFS Home Page", nullptr, nullptr, &fodMenu, &intro, 2, 1}},
+	{{"Default LLROFS Home Page", nullptr, nullptr, &fodMenu05, &intro05, 2, 1}},
 };
-MenuItem fodMenu = {
+MenuItem fodMenu05 = {
 	defaultMenuSetup,
 	nullptr,
-	{{"Fill on Demand (Not Active)", nullptr, nullptr, nullptr, &mainMenu, 2, 2},
-	 {"Select TDS", nullptr, nullptr, &selectTDS, &mainMenu, 2, 2}}
+	{{"Fill on Demand (Not Active)", nullptr, nullptr, nullptr, &mainMenu05, 2, 2},
+	 {"Select TDS", nullptr, nullptr, &selectTDS, &mainMenu05, 2, 2}}
 };
 MenuItem selectTDS = {
 	defaultMenuSetup,
 	nullptr,
-	{{"Mains TDS & Temp Control", nullptr, nullptr, nullptr, &mainMenu, 3, 3},
-	 {"RO TDS & Temp Control"	, nullptr, nullptr, &roSaver, &mainMenu, 3, 3},
-	 {"DI TDS & Temp Control"	, nullptr, nullptr, &roSaver, &mainMenu, 3, 3}}
+	{{"Mains TDS & Temp Control", nullptr, nullptr, nullptr, &mainMenu05, 3, 3},
+	 {"RO TDS & Temp Control"	, nullptr, nullptr, &roSaver, &mainMenu05, 3, 3},
+	 {"DI TDS & Temp Control"	, nullptr, nullptr, &roSaver, &mainMenu05, 3, 3}}
 };
-MenuItem fodOptnsOff = {
+MenuItem fodOptnsOff05 = {
 	fodOffSetup_05,
 	fodOFF,
-	{{"Press OK to commence the purification filling process", nullptr, nullptr, nullptr, &fodMenu, 2, 1}}
+	{{"Press OK to commence the purification filling process", nullptr, nullptr, nullptr, &fodMenu05, 2, 1}}
 };
 ///-----------------------------Mains TDS-----------------------------
 
 MenuItem mainsTDS = {
 	defaultMenuSetup,
 	nullptr,
-	{{"Mains TDS Threshold", nullptr, nullptr, &mainsTDSThreshold, &mainMenu, 3, 3},
-	 {"Mains Temp Control", nullptr, nullptr, &mainsTDSTemp, &mainMenu, 3, 3},
-	 {"Mains TDS Shutdown", nullptr, nullptr, &mainsTDSShutdown, &mainMenu, 3, 3}}
+	{{"Mains TDS Threshold", nullptr, nullptr, &mainsTDSThreshold, &mainMenu05, 3, 3},
+	 {"Mains Temp Control", nullptr, nullptr, &mainsTDSTemp, &mainMenu05, 3, 3},
+	 {"Mains TDS Shutdown", nullptr, nullptr, &mainsTDSShutdown, &mainMenu05, 3, 3}}
 };
 MenuItem mainsTDSThreshold = {
-	backAndForthSetup,
-	nullptr,
+	backAndForthSetup_05,
+	mainsTDSThresholdLoop,
 	{{"Off", nullptr, nullptr, nullptr, &mainsTDS, 0, 3},
 	 {"Default 500ppm"	, nullptr, nullptr, nullptr, &mainsTDS, 0, 3},
-	 {"Adjustable 50-60ppm"	, nullptr, nullptr, nullptr, &mainsTDS, 0, 3}}
+	 {"Adjustable 50-600ppm"	, nullptr, nullptr, nullptr, &mainsTDS, 0, 3}}
 };
 MenuItem mainsTDSTemp = {
-	backAndForthSetup,
+	backAndForthSetup_05,
 	nullptr,
 	{{"Off", nullptr, nullptr, nullptr, &mainsTDS, 0, 3},
 	 {"Default 2*C"	, nullptr, nullptr, nullptr, &mainsTDS, 0, 3},
 	 {"Adjustable 0-10*C"	, nullptr, nullptr, nullptr, &mainsTDS, 0, 3}}
 };
 MenuItem mainsTDSShutdown = {
-	backAndForthSetup,
+	backAndForthSetup_05,
 	nullptr,
 	{{"Off", nullptr, nullptr, nullptr, &mainsTDS, 0, 2},
 	 {"On"	, nullptr, nullptr, nullptr, &mainsTDS, 0, 2}}
@@ -81,9 +81,9 @@ MenuItem mainsTDSShutdown = {
 MenuItem roTDS = {
 	defaultMenuSetup,
 	nullptr,
-	{{"RO TDS Threshold", nullptr, nullptr, &roTDSThreshold, &mainMenu, 3, 3},
-	 {"RO Temp Control"	, nullptr, nullptr, &roTDSTemp, &mainMenu, 3, 3},
-	 {"RO TDS Shutdown"	, nullptr, nullptr, &roTDSShutdown, &mainMenu, 3, 3}}
+	{{"RO TDS Threshold", nullptr, nullptr, &roTDSThreshold, &mainMenu05, 3, 3},
+	 {"RO Temp Control"	, nullptr, nullptr, &roTDSTemp, &mainMenu05, 3, 3},
+	 {"RO TDS Shutdown"	, nullptr, nullptr, &roTDSShutdown, &mainMenu05, 3, 3}}
 };
 MenuItem roTDSThreshold = {
 	defaultMenuSetup,
@@ -93,26 +93,26 @@ MenuItem roTDSThreshold = {
 	 {"Fixed TDS Theshold"	, nullptr, nullptr, &roFixedTDSThreshold, &roTDS, 2, 3}}
 };
 MenuItem roDynamicTDSThreshold = {
-	backAndForthSetup,
+	backAndForthSetup_05,
 	nullptr,
 	{{"RO Dynamic Default 92% Rejection", nullptr, nullptr, nullptr, &roTDSThreshold, 0, 2},
 	 {"RO Dynamic Adjustable 50-99%", nullptr, nullptr, nullptr, &roTDSThreshold, 0, 2}}
 };
 MenuItem roFixedTDSThreshold = {
-	backAndForthSetup,
+	backAndForthSetup_05,
 	nullptr,
 	{{"RO Fixed Default 50ppm", nullptr, nullptr, nullptr, &roTDSThreshold, 0, 2},
 	 {"RO Fixed Adjustable 1-100ppm", nullptr, nullptr, nullptr, &roTDSThreshold, 0, 2}}
 };
 MenuItem roTDSTemp = {
-	backAndForthSetup,
+	backAndForthSetup_05,
 	nullptr,
 	{{"Off", nullptr, nullptr, nullptr, &roTDS, 0, 3},
 	 {"Default 2*C"	, nullptr, nullptr, nullptr, &roTDS, 0, 3},
 	 {"Adjustable 0-10*C"	, nullptr, nullptr, nullptr, &roTDS, 0, 3}}
 };
 MenuItem roTDSShutdown = {
-	backAndForthSetup,
+	backAndForthSetup_05,
 	nullptr,
 	{{"Off", nullptr, nullptr, nullptr, &roTDS, 0, 2},
 	 {"On"	, nullptr, nullptr, nullptr, &roTDS, 0, 2}}
@@ -123,26 +123,26 @@ MenuItem roTDSShutdown = {
 MenuItem diTDS = {
 	defaultMenuSetup,
 	nullptr,
-	{{"DI TDS Threshold", nullptr, nullptr, nullptr, &mainMenu, 3, 3},
-	 {"DI Temp Control"	, nullptr, nullptr, &roSaver, &mainMenu, 3, 3},
-	 {"DI TDS Shutdown"	, nullptr, nullptr, &roSaver, &mainMenu, 3, 3}}
+	{{"DI TDS Threshold", nullptr, nullptr, nullptr, &mainMenu05, 3, 3},
+	 {"DI Temp Control"	, nullptr, nullptr, &roSaver, &mainMenu05, 3, 3},
+	 {"DI TDS Shutdown"	, nullptr, nullptr, &roSaver, &mainMenu05, 3, 3}}
 };
 MenuItem diTDSThreshold = {
-	backAndForthSetup,
+	backAndForthSetup_05,
 	nullptr,
 	{{"Off", nullptr, nullptr, nullptr, &diTDS, 0, 3},
 	 {"Default 10ppm"	, nullptr, nullptr, nullptr, &diTDS, 0, 3},
 	 {"Adjustable 1-15ppm"	, nullptr, nullptr, nullptr, &diTDS, 0, 3}}
 };
 MenuItem diTDSTemp = {
-	backAndForthSetup,
+	backAndForthSetup_05,
 	nullptr,
 	{{"Off", nullptr, nullptr, nullptr, &diTDS, 0, 3},
 	 {"Default 2*C"	, nullptr, nullptr, nullptr, &diTDS, 0, 3},
 	 {"Adjustable 0-10*C"	, nullptr, nullptr, nullptr, &diTDS, 0, 3}}
 };
 MenuItem diTDSShutdown = {
-	backAndForthSetup,
+	backAndForthSetup_05,
 	nullptr,
 	{{"Off", nullptr, nullptr, nullptr, &diTDS, 0, 2},
 	 {"On"	, nullptr, nullptr, nullptr, &diTDS, 0, 2}}

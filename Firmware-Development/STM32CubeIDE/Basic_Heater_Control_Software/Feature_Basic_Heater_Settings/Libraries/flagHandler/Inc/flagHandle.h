@@ -92,7 +92,16 @@ protected:
 	   uint64_t FillOnDemand    :1;
 	   uint64_t Buzzer          :1;
 	   uint64_t WLED			:1;
-	   uint64_t RGB			    :1;			//MSB
+	   uint64_t RGB			    :1;
+	   uint64_t mainsTdsThresh  :1;
+	   uint64_t roTdsThresh	    :1;
+	   uint64_t diTdsThresh	    :1;
+	   uint64_t mainsTdsTemp    :1;
+	   uint64_t roTdsTemp	    :1;
+	   uint64_t diTdsTemp	    :1;
+	   uint64_t mainsTdsShutdown:1;
+	   uint64_t roTdsShutdown	:1;
+	   uint64_t diTdsShutdown   :1;
 	   uint64_t Battery_low_shutdown			    :1;			//MSB
 	   uint64_t Battery_power_monitor			    :1;			//MSB
 	   } settings;
