@@ -18,10 +18,6 @@ void introSetup_05(void)
 
 bool introPageSelection_05(uint32_t argChoice, MenuItem* argMenu)
 {
-	uint8_t numChild = argMenu->Items[choiceSelect].num_childmenus;
-	uint8_t numItems = argMenu->Items[choiceSelect].num_items;
-	uint8_t choice = choiceSelect;
-
 	if (ButtonR.state() && argMenu->Items[choiceSelect].prev == nullptr)
 	{
 		menu.jumpToNextItem_ = true;
@@ -158,15 +154,20 @@ bool TDSThresholdAdjustedValue(bool mainsTdsMenu)
 	return false;
 }
 
-bool TDSThresholdAdj(uint32_t argChoice, MenuItem *argMenu)
+bool TDSThresholdLoop(uint32_t argChoice, MenuItem *argMenu)
 {
-	if (strcmp(argMenu->Items[2].label, mainsTDSThreshold.Items[2].label) == 0)
+	if (argChoice == 1 && ButtonE.state()) TdsSettingsOff(argChoice, argMenu);
+	else if (argChoice == 2 && ButtonE.state()) TdsDefaultThresholdValue(argChoice, argMenu);
+	else if (argChoice == 3 && ButtonE.state())
 	{
-		return TDSThresholdAdjustedValue(true);
+		if (strcmp(argMenu->Items[2].label, mainsTDSThreshold.Items[2].label) == 0)
+		{
+			return TDSThresholdAdjustedValue(true);
+		}
+		else if (strcmp(argMenu->Items[2].label, diTDSThreshold.Items[2].label) == 0)
+		{
+			return TDSThresholdAdjustedValue(false);
+		}
+		return false;
 	}
-	else if (strcmp(argMenu->Items[2].label, diTDSThreshold.Items[2].label) == 0)
-	{
-		return TDSThresholdAdjustedValue(false);
-	}
-	return false;
 }

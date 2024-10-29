@@ -57,7 +57,7 @@ MenuItem mainsTDS = {
 };
 MenuItem mainsTDSThreshold = {
 	backAndForthSetup_05,
-	mainsTDSThresholdLoop,
+	TDSThresholdLoop,
 	{{"Off", nullptr, nullptr, nullptr, &mainsTDS, 0, 3},
 	 {"Default 500ppm"	, nullptr, nullptr, nullptr, &mainsTDS, 0, 3},
 	 {"Adjustable 50-600ppm"	, nullptr, nullptr, nullptr, &mainsTDS, 0, 3}}
