@@ -78,6 +78,6 @@ roSaverThreshAdjust, Battery_Index, BatMonitorMenu, BatLowMenuOptns, BatLowMenuO
 BatPowerConsumptiontable, BatPowerConsumptionOptnsON, DeviceStandByScreen, DeviceShutDown, BatteryChargingDetected, BatteryChargingDisconnected;
 //-------------------------------------------------------------------------------------
 
-extern struct MenuItem intro05, mainMenu05, fodMenu05, fodOptnsOff05, mainsTDSThreshold, mainsTDSTemp,
+extern struct MenuItem intro05, mainMenu05, fodMenu05, fodOptnsOff05, mainsTDSThreshold, mainsTDSTemperature,
 mainsTDSShutdown, roTDS, roTDSThreshold, roDynamicTDSThreshold, roFixedTDSThreshold, roTDSTemp, roTDSShutdown,
-diTDS, diTDSThreshold, diTDSTemp, diTDSShutdown;
+diTDS, diTDSThreshold, diTDSTemperature, diTDSShutdown;

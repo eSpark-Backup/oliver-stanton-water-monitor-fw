@@ -52,7 +52,7 @@ MenuItem mainsTDS = {
 	defaultMenuSetup,
 	nullptr,
 	{{"Mains TDS Threshold", nullptr, nullptr, &mainsTDSThreshold, &mainMenu05, 3, 3},
-	 {"Mains Temp Control", nullptr, nullptr, &mainsTDSTemp, &mainMenu05, 3, 3},
+	 {"Mains Temp Control", nullptr, nullptr, &mainsTDSTemperature, &mainMenu05, 3, 3},
 	 {"Mains TDS Shutdown", nullptr, nullptr, &mainsTDSShutdown, &mainMenu05, 3, 3}}
 };
 MenuItem mainsTDSThreshold = {
@@ -62,9 +62,9 @@ MenuItem mainsTDSThreshold = {
 	 {"Default 500ppm"	, nullptr, nullptr, nullptr, &mainsTDS, 0, 3},
 	 {"Adjustable 50-600ppm"	, nullptr, nullptr, nullptr, &mainsTDS, 0, 3}}
 };
-MenuItem mainsTDSTemp = {
+MenuItem mainsTDSTemperature = {
 	backAndForthSetup_05,
-	nullptr,
+	TDSTemperatureLoop,
 	{{"Off", nullptr, nullptr, nullptr, &mainsTDS, 0, 3},
 	 {"Default 2*C"	, nullptr, nullptr, nullptr, &mainsTDS, 0, 3},
 	 {"Adjustable 0-10*C"	, nullptr, nullptr, nullptr, &mainsTDS, 0, 3}}
@@ -82,7 +82,7 @@ MenuItem roTDS = {
 	defaultMenuSetup,
 	nullptr,
 	{{"RO TDS Threshold", nullptr, nullptr, &roTDSThreshold, &mainMenu05, 3, 3},
-	 {"RO Temp Control"	, nullptr, nullptr, &roTDSTemp, &mainMenu05, 3, 3},
+	 {"RO Temp Control"	, nullptr, nullptr, &roTDSTemperature, &mainMenu05, 3, 3},
 	 {"RO TDS Shutdown"	, nullptr, nullptr, &roTDSShutdown, &mainMenu05, 3, 3}}
 };
 MenuItem roTDSThreshold = {
@@ -104,7 +104,7 @@ MenuItem roFixedTDSThreshold = {
 	{{"RO Fixed Default 50ppm", nullptr, nullptr, nullptr, &roTDSThreshold, 0, 2},
 	 {"RO Fixed Adjustable 1-100ppm", nullptr, nullptr, nullptr, &roTDSThreshold, 0, 2}}
 };
-MenuItem roTDSTemp = {
+MenuItem roTDSTemperature = {
 	backAndForthSetup_05,
 	nullptr,
 	{{"Off", nullptr, nullptr, nullptr, &roTDS, 0, 3},
@@ -134,7 +134,7 @@ MenuItem diTDSThreshold = {
 	 {"Default 10ppm"	, nullptr, nullptr, nullptr, &diTDS, 0, 3},
 	 {"Adjustable 1-15ppm"	, nullptr, nullptr, nullptr, &diTDS, 0, 3}}
 };
-MenuItem diTDSTemp = {
+MenuItem diTDSTemperature = {
 	backAndForthSetup_05,
 	nullptr,
 	{{"Off", nullptr, nullptr, nullptr, &diTDS, 0, 3},

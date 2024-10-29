@@ -11,6 +11,12 @@
 #define MIN_DI_TDS_THRESHOLD 		01
 #define DIFF_DI_TDS_THRESHOLD 		01
 
+#define MAX_TDS_TEMPERATURE		10
+#define DEFAULT_TDS_TEMPERATURE	02
+#define MIN_TDS_TEMPERATURE		00
+#define DIFF_TDS_TEMPERATURE	01
+
+
 void introSetup_05(void)
 {
 	setButtonStates({NONE}, true);
@@ -167,6 +173,80 @@ bool TDSThresholdLoop(uint32_t argChoice, MenuItem *argMenu)
 		else if (strcmp(argMenu->Items[2].label, diTDSThreshold.Items[2].label) == 0)
 		{
 			return TDSThresholdAdjustedValue(false);
+		}
+		return false;
+	}
+}
+
+bool TdsDefaultTemperatureValue(uint32_t argChoice, MenuItem *argMenu)
+{
+	DEBUG_RTT(LOG_INFO, "TDS Temperature value set to default 2*C");
+
+	if (strcmp(argMenu->Items[1].label, mainsTDSTemperature.Items[1].label) == 0)
+	{
+		Flags.setFlag(Settings, MAINS_TDS_TEMPERATURE, true);
+		setTDS.mainsTemperature = DEFAULT_TDS_TEMPERATURE;
+		return true;
+	}
+	else if (strcmp(argMenu->Items[1].label, diTDSTemperature.Items[1].label) == 0)
+	{
+		Flags.setFlag(Settings, DI_TDS_TEMPERATURE, true);
+		setTDS.diTemperature = DEFAULT_TDS_TEMPERATURE;
+		return true;
+	}
+	return false;
+}
+
+bool TDSTemperatureAdjustedValue(bool mainsTdsMenu)
+{
+	static uint8_t threshVal = MIN_TDS_TEMPERATURE;
+
+	if (ButtonD.state() && threshVal > MIN_TDS_TEMPERATURE)
+	{
+		threshVal -= DIFF_TDS_TEMPERATURE;
+	}
+	else if (ButtonU.state() && threshVal < MAX_TDS_TEMPERATURE)
+	{
+		threshVal += DIFF_TDS_TEMPERATURE;
+	}
+
+	Disp->display(threshVal);
+
+	if (ButtonE.state())
+	{
+		Flags.setFlag(Settings, mainsTdsMenu ? MAINS_TDS_TEMPERATURE : DI_TDS_TEMPERATURE, true);
+		if (mainsTdsMenu)
+		{
+			setTDS.mainsTemperature = threshVal;
+		}
+		else
+		{
+			setTDS.diTemperature = threshVal;
+		}
+
+		DEBUG_RTT(LOG_WARNING, "Temperature value set to %d.", threshVal);
+		threshVal = MIN_TDS_TEMPERATURE;
+
+		return true;
+	}
+	return false;
+}
+
+bool TDSTemperatureLoop(uint32_t argChoice, MenuItem *argMenu)
+{
+	if (argChoice == 1 && ButtonE.state())
+		TdsSettingsOff(argChoice, argMenu);
+	else if (argChoice == 2 && ButtonE.state())
+		TdsDefaultTemperatureValue(argChoice, argMenu);
+	else if (argChoice == 3 && ButtonE.state())
+	{
+		if (strcmp(argMenu->Items[2].label, mainsTDSTemperature.Items[2].label) == 0)
+		{
+			return TDSTemperatureAdjustedValue(true);
+		}
+		else if (strcmp(argMenu->Items[2].label, diTDSTemperature.Items[2].label) == 0)
+		{
+			return TDSTemperatureAdjustedValue(false);
 		}
 		return false;
 	}
