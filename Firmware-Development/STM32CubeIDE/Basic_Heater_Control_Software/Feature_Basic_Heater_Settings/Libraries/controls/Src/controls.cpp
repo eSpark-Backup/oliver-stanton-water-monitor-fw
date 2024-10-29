@@ -8,6 +8,7 @@
 //#include "mainApp.hpp"
 #include "controls.h"
 #include "TDS.hpp"
+#include "menu_05.h"
 
 #define SECONDS_TO_MS(x) 				((x) * 1000) 						//converts seconds to milliseconds
 #define MIN_TO_MS(x) 					((x) * SECONDS_TO_MS(60))			//converts minutes to milliseconds
@@ -16,8 +17,16 @@
 
 
 short roSaverThreshValue = 0;
-TdsValues setTDS;
-//short currentRoValue;
+
+TdsValues setTDS{
+	DEFAULT_MAINS_TDS_THRESHOLD,
+	DEFAULT_TDS_TEMPERATURE,
+	DEFAULT_DYNAMIC_TDS_THRESHOLD,
+	DEFAULT_FIXED_TDS_THRESHOLD,
+	DEFAULT_TDS_TEMPERATURE,
+	DEFAULT_DI_TDS_THRESHOLD,
+	DEFAULT_TDS_TEMPERATURE
+};
 
 
 //***************************Buzzer*******************************
@@ -393,4 +402,52 @@ void memSaverST3()
 		invokeST3(true);
 		invokeST5(true);
 	}
+}
+
+// MAINS_TDS_THRESHOLD,
+// RO_TDS_THRESHOLD,
+// DI_TDS_THRESHOLD,
+// MAINS_TDS_TEMPERATURE,
+// RO_TDS_TEMPERATURE,
+// DI_TDS_TEMPERATURE,
+// MAINS_TDS_SHUTDOWN,
+// RO_TDS_SHUTDOWN,
+// DI_TDS_SHUTDOWN,
+
+
+void MonitorTdsCycle(void)
+{
+	Flags.update();
+	if (Flags.flagStatus(Status, BATTERY_HIGH) || Flags.flagStatus(Status, BATTERY_CHARGING_DETECTED))
+	{
+		if (Flags.flagStatus(Settings, MAINS_TDS_TEMPERATURE))
+		{
+			menu.Display_Log("Mains Water Temperature too low \"%d\"*C- system at danger of freezing.", setTDS.mainsTemperature);
+		}
+		if (Flags.flagStatus(Settings, RO_TDS_TEMPERATURE))
+		{
+			menu.Display_Log("RO Membranes Temperature too low \"%d\"*C- system at danger of freezing.", setTDS.roTemperature);
+		}
+		if (Flags.flagStatus(Settings, RO_TDS_TEMPERATURE))
+		{
+			menu.Display_Log("DI RESIN Temperature too low \"%d\"*C- system at danger of freezing.", setTDS.diTemperature);
+		}
+	}
+
+	if (Flags.flagStatus(Status, AUTO_FILL) && !Flags.flagStatus(Status, AUTO_FLUSH))
+	{
+		if (Flags.flagStatus(Settings, MAINS_TDS_THRESHOLD))
+		{
+			menu.Display_Log("Mains Input Too High (\"%d\" ppm) - System Inspection Required", setTDS.mainsThreshold);
+		}
+		else if (Flags.flagStatus(Settings, RO_TDS_THRESHOLD))
+		{
+			menu.Display_Log("RO TDS Too High (\"%d\" ppm) - System Inspection Required", setTDS.roFixedThreshold);
+		}
+		else if (Flags.flagStatus(Settings, DI_TDS_THRESHOLD))
+		{
+			menu.Display_Log("DI RESIN TDS Too High (\"%d\" ppm) - Requires change", setTDS.diThreshold);
+		}
+	}
+
 }

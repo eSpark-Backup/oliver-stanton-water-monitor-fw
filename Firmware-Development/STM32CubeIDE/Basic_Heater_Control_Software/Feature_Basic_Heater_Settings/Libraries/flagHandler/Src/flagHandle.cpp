@@ -175,15 +175,24 @@ bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor)
 {
 	if(op == Settings)
 	{
-		if(sensor == FoD)					return FlagsReg.settings.FillOnDemand;
-		else if(sensor == BUZZER)			return FlagsReg.settings.Buzzer;
-		else if(sensor == RGB)				return FlagsReg.settings.RGB;
-		else if(sensor == WLED)				return FlagsReg.settings.WLED;
-		else if(sensor == MEM_SAVER)		return FlagsReg.settings.Mem_Saver;
-		else if(sensor == MEM_SAVER_PAUSE)	return FlagsReg.settings.Mem_Saver_Pause;
-		else if(sensor == RESIN_SAVER)		return FlagsReg.settings.Resin_Saver;
-		else if(sensor == AUTO_FILL)		return FlagsReg.settings.Auto_Fill;
-		else if(sensor == BATTERY_LOW_SHUTDON)	return FlagsReg.settings.Battery_low_shutdown;
+		if(sensor == FoD)							return FlagsReg.settings.FillOnDemand;
+		else if(sensor == BUZZER)					return FlagsReg.settings.Buzzer;
+		else if(sensor == RGB)						return FlagsReg.settings.RGB;
+		else if(sensor == WLED)						return FlagsReg.settings.WLED;
+		else if(sensor == MEM_SAVER)				return FlagsReg.settings.Mem_Saver;
+		else if(sensor == MEM_SAVER_PAUSE)			return FlagsReg.settings.Mem_Saver_Pause;
+		else if(sensor == RESIN_SAVER)				return FlagsReg.settings.Resin_Saver;
+		else if(sensor == AUTO_FILL)				return FlagsReg.settings.Auto_Fill;
+		else if(sensor == MAINS_TDS_THRESHOLD)		return FlagsReg.settings.mainsTdsThresh;
+		else if(sensor == RO_TDS_THRESHOLD)			return FlagsReg.settings.roTdsThresh;
+		else if(sensor == DI_TDS_THRESHOLD)			return FlagsReg.settings.diTdsThresh;
+		else if(sensor == MAINS_TDS_TEMPERATURE)	return FlagsReg.settings.mainsTdsTemp;
+		else if(sensor == RO_TDS_TEMPERATURE)		return FlagsReg.settings.roTdsTemp;
+		else if(sensor == DI_TDS_TEMPERATURE)		return FlagsReg.settings.diTdsTemp;
+		else if(sensor == MAINS_TDS_SHUTDOWN)		return FlagsReg.settings.mainsTdsShutdown;
+		else if(sensor == RO_TDS_SHUTDOWN)			return FlagsReg.settings.roTdsShutdown;
+		else if(sensor == DI_TDS_SHUTDOWN)			return FlagsReg.settings.diTdsShutdown;
+		else if(sensor == BATTERY_LOW_SHUTDON)		return FlagsReg.settings.Battery_low_shutdown;
 		else if(sensor == BATTERY_POWER_MONITOR)	return FlagsReg.settings.Battery_power_monitor;
 	}
 	else if (op == Status)
@@ -196,6 +205,7 @@ bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor)
 		else if(sensor == FLOW_METER_3)			return FlagsReg.status.Flow_Meter_3;
 		else if(sensor == RESIN_SAVER)			return FlagsReg.status.Resin_Saver;
 		else if(sensor == MEM_SAVER)			return FlagsReg.status.Mem_Saver;
+		else if(sensor == AUTO_FLUSH)			return FlagsReg.status.Auto_Flush;
 		else if(sensor == AUTO_FILL)			return FlagsReg.status.Auto_Fill;
 		else if(sensor == PURE_CYCLE)			return FlagsReg.status.Pure_CYCLE;
 		else if(sensor == BATTERY_CHARGING_DETECTED) return FlagsReg.status.Battery_charging_detected;
@@ -269,8 +279,14 @@ void FlagHandle::flagsInit()								//Implement flashRetrieve() here
 //	flashRetrieve();
 	setFlag(Settings, WLED, true);
 	setFlag(Settings, BUZZER, true);
-	setFlag(Settings,BATTERY_LOW_SHUTDON,true);
-	setFlag(Settings,BATTERY_POWER_MONITOR,true);
+	setFlag(Settings, BATTERY_LOW_SHUTDON,true);
+	setFlag(Settings, BATTERY_POWER_MONITOR,true);
+	setFlag(Settings, MAINS_TDS_THRESHOLD, true);
+	setFlag(Settings, RO_TDS_THRESHOLD, true);
+	setFlag(Settings, DI_TDS_THRESHOLD, true);
+	setFlag(Settings, MAINS_TDS_TEMPERATURE, true);
+	setFlag(Settings, RO_TDS_TEMPERATURE, true);
+	setFlag(Settings, DI_TDS_TEMPERATURE, true);
 }
 
 //void flagHandle::(){
