@@ -85,21 +85,29 @@ void backAndForthSetup_05(void)
 
 bool TdsSettingsOff(uint32_t argChoice, MenuItem *argMenu)
 {
-	DEBUG_RTT(LOG_INFO, "TDS threshold settings disabled");
+	DEBUG_RTT(LOG_INFO, "TDS settings disabled");
 
 	if (strcmp(argMenu->Items[0].label, mainsTDSThreshold.Items[0].label) == 0)
 	{
 		Flags.setFlag(Settings, MAINS_TDS_THRESHOLD, false);
 		Flags.setFlag(Settings, MAINS_TDS_TEMPERATURE, false);
-		return true;
+	}
+	else if (strcmp(argMenu->Items[0].label, roTDSThreshold.Items[0].label) == 0)
+	{
+		Flags.setFlag(Settings, RO_TDS_THRESHOLD, false);
+		Flags.setFlag(Settings, RO_TDS_TEMPERATURE, false);
 	}
 	else if (strcmp(argMenu->Items[0].label, diTDSThreshold.Items[0].label) == 0)
 	{
 		Flags.setFlag(Settings, DI_TDS_THRESHOLD, false);
 		Flags.setFlag(Settings, DI_TDS_TEMPERATURE, false);
-		return true;
 	}
-	return false;
+	else
+	{
+		return false;
+	}
+
+	return true;
 }
 
 bool TdsDefaultThresholdValue(uint32_t argChoice, MenuItem *argMenu)

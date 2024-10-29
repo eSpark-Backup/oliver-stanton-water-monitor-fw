@@ -87,7 +87,7 @@ MenuItem roTDS = {
 };
 MenuItem roTDSThreshold = {
 	defaultMenuSetup,
-	nullptr,
+	TDSThresholdLoop,
 	{{"Off", nullptr, nullptr, nullptr, &roTDS, 0, 3},
 	 {"Dynamic TDS Theshold"	, nullptr, nullptr, &roDynamicTDSThreshold, &roTDS, 2, 3},
 	 {"Fixed TDS Theshold"	, nullptr, nullptr, &roFixedTDSThreshold, &roTDS, 2, 3}}
