@@ -79,5 +79,5 @@ BatPowerConsumptiontable, BatPowerConsumptionOptnsON, DeviceStandByScreen, Devic
 //-------------------------------------------------------------------------------------
 
 extern struct MenuItem intro05, mainMenu05, fodMenu05, fodOptnsOff05, mainsTDSThreshold, mainsTDSTemperature,
-mainsTDSShutdown, roTDS, roTDSThreshold, roDynamicTDSThreshold, roFixedTDSThreshold, roTDSTemp, roTDSShutdown,
+mainsTDSShutdown, roTDS, roTDSThreshold, roDynamicTDSThreshold, roFixedTDSThreshold, roTDSTemperature, roTDSShutdown,
 diTDS, diTDSThreshold, diTDSTemperature, diTDSShutdown;

@@ -6,6 +6,14 @@
 #define DEFAULT_MAINS_TDS_THRESHOLD 500
 #define MIN_MAINS_TDS_THRESHOLD 	50
 #define DIFF_MAINS_TDS_THRESHOLD	20
+
+#define MAX_RO_TDS_THRESHOLD 			100
+#define DEFAULT_DYNAMIC_TDS_THRESHOLD 	92
+#define DEFAULT_FIXED_TDS_THRESHOLD 	50
+#define MIN_DYNAMIC_TDS_THRESHOLD 		50
+#define MIN_FIXED_TDS_THRESHOLD 		01
+#define DIFF_RO_TDS_THRESHOLD 			01
+
 #define MAX_DI_TDS_THRESHOLD 		15
 #define DEFAULT_DI_TDS_THRESHOLD 	10
 #define MIN_DI_TDS_THRESHOLD 		01
@@ -16,6 +24,12 @@
 #define MIN_TDS_TEMPERATURE		00
 #define DIFF_TDS_TEMPERATURE	01
 
+
+// Helper function to check if the menu label matches the target threshold
+bool isMenuLabelMatch(MenuItem *menu, const MenuItem &targetThreshold)
+{
+	return strcmp(menu->Items[2].label, targetThreshold.Items[2].label) == 0;
+}
 
 void introSetup_05(void)
 {
@@ -87,17 +101,17 @@ bool TdsSettingsOff(uint32_t argChoice, MenuItem *argMenu)
 {
 	DEBUG_RTT(LOG_INFO, "TDS settings disabled");
 
-	if (strcmp(argMenu->Items[0].label, mainsTDSThreshold.Items[0].label) == 0)
+	if (isMenuLabelMatch(argMenu, mainsTDSThreshold) == 0)
 	{
 		Flags.setFlag(Settings, MAINS_TDS_THRESHOLD, false);
 		Flags.setFlag(Settings, MAINS_TDS_TEMPERATURE, false);
 	}
-	else if (strcmp(argMenu->Items[0].label, roTDSThreshold.Items[0].label) == 0)
+	else if (isMenuLabelMatch(argMenu, roTDSThreshold))
 	{
 		Flags.setFlag(Settings, RO_TDS_THRESHOLD, false);
 		Flags.setFlag(Settings, RO_TDS_TEMPERATURE, false);
 	}
-	else if (strcmp(argMenu->Items[0].label, diTDSThreshold.Items[0].label) == 0)
+	else if (isMenuLabelMatch(argMenu, diTDSThreshold))
 	{
 		Flags.setFlag(Settings, DI_TDS_THRESHOLD, false);
 		Flags.setFlag(Settings, DI_TDS_TEMPERATURE, false);
@@ -170,94 +184,132 @@ bool TDSThresholdAdjustedValue(bool mainsTdsMenu)
 
 bool TDSThresholdLoop(uint32_t argChoice, MenuItem *argMenu)
 {
-	if (argChoice == 1 && ButtonE.state()) TdsSettingsOff(argChoice, argMenu);
-	else if (argChoice == 2 && ButtonE.state()) TdsDefaultThresholdValue(argChoice, argMenu);
-	else if (argChoice == 3 && ButtonE.state())
+	static bool isThresholdAdjustable = false;
+
+	if (!isThresholdAdjustable && ButtonE.state())
 	{
-		if (strcmp(argMenu->Items[2].label, mainsTDSThreshold.Items[2].label) == 0)
+		switch (argChoice)
 		{
-			return TDSThresholdAdjustedValue(true);
+		case 1:
+			return TdsSettingsOff(argChoice, argMenu);
+		case 2:
+			return TdsDefaultThresholdValue(argChoice, argMenu);
+		case 3:
+			if (isMenuLabelMatch(argMenu, mainsTDSThreshold))
+			{
+				Disp->display("Select Threshold value from 50-600ppm");
+				isThresholdAdjustable = true;
+			}
+			else if (isMenuLabelMatch(argMenu, diTDSThreshold))
+			{
+				Disp->display("Select Threshold value from 1-15ppm");
+				isThresholdAdjustable = true;
+			}
+			backAndForthSetup_05();
+			break;
 		}
-		else if (strcmp(argMenu->Items[2].label, diTDSThreshold.Items[2].label) == 0)
-		{
-			return TDSThresholdAdjustedValue(false);
-		}
-		return false;
 	}
+	else if (isThresholdAdjustable)
+	{
+		return TDSThresholdAdjustedValue(isMenuLabelMatch(argMenu, mainsTDSThreshold));
+	}
+
+	return false;
 }
 
 bool TdsDefaultTemperatureValue(uint32_t argChoice, MenuItem *argMenu)
 {
 	DEBUG_RTT(LOG_INFO, "TDS Temperature value set to default 2*C");
 
-	if (strcmp(argMenu->Items[1].label, mainsTDSTemperature.Items[1].label) == 0)
+	if (isMenuLabelMatch(argMenu, mainsTDSTemperature))
 	{
 		Flags.setFlag(Settings, MAINS_TDS_TEMPERATURE, true);
 		setTDS.mainsTemperature = DEFAULT_TDS_TEMPERATURE;
-		return true;
 	}
-	else if (strcmp(argMenu->Items[1].label, diTDSTemperature.Items[1].label) == 0)
+	else if (isMenuLabelMatch(argMenu, roTDSTemperature))
+	{
+		Flags.setFlag(Settings, RO_TDS_TEMPERATURE, true);
+		setTDS.roTemperature = DEFAULT_TDS_TEMPERATURE;
+	}
+	else if (isMenuLabelMatch(argMenu, diTDSTemperature))
 	{
 		Flags.setFlag(Settings, DI_TDS_TEMPERATURE, true);
 		setTDS.diTemperature = DEFAULT_TDS_TEMPERATURE;
-		return true;
 	}
-	return false;
+	else
+	{
+		return false;
+	}
+	return true;
 }
 
-bool TDSTemperatureAdjustedValue(bool mainsTdsMenu)
+bool TDSTemperatureAdjustedValue(MenuItem *argMenu)
 {
-	static uint8_t threshVal = MIN_TDS_TEMPERATURE;
+	static uint8_t tempVal = MIN_TDS_TEMPERATURE;
 
-	if (ButtonD.state() && threshVal > MIN_TDS_TEMPERATURE)
+	if (ButtonD.state() && tempVal > MIN_TDS_TEMPERATURE)
 	{
-		threshVal -= DIFF_TDS_TEMPERATURE;
+		tempVal -= DIFF_TDS_TEMPERATURE;
 	}
-	else if (ButtonU.state() && threshVal < MAX_TDS_TEMPERATURE)
+	else if (ButtonU.state() && tempVal < MAX_TDS_TEMPERATURE)
 	{
-		threshVal += DIFF_TDS_TEMPERATURE;
+		tempVal += DIFF_TDS_TEMPERATURE;
 	}
 
-	Disp->display(threshVal);
-
+	Disp->display(tempVal);
 	if (ButtonE.state())
 	{
-		Flags.setFlag(Settings, mainsTdsMenu ? MAINS_TDS_TEMPERATURE : DI_TDS_TEMPERATURE, true);
-		if (mainsTdsMenu)
+		if (isMenuLabelMatch(argMenu, mainsTDSTemperature))
 		{
-			setTDS.mainsTemperature = threshVal;
+			Flags.setFlag(Settings, MAINS_TDS_TEMPERATURE, true);
+			setTDS.mainsTemperature = tempVal;
+		}
+		else if (isMenuLabelMatch(argMenu, roTDSTemperature))
+		{
+			Flags.setFlag(Settings, RO_TDS_TEMPERATURE, true);
+			setTDS.roTemperature = tempVal;
+		}
+		else if (isMenuLabelMatch(argMenu, diTDSTemperature))
+		{
+			Flags.setFlag(Settings, DI_TDS_TEMPERATURE, true);
+			setTDS.diTemperature = tempVal;
 		}
 		else
 		{
-			setTDS.diTemperature = threshVal;
+			return false;
 		}
 
-		DEBUG_RTT(LOG_WARNING, "Temperature value set to %d.", threshVal);
-		threshVal = MIN_TDS_TEMPERATURE;
-
+		DEBUG_RTT(LOG_WARNING, "Temperature value set to %d.", tempVal);
+		tempVal = MIN_TDS_TEMPERATURE;
 		return true;
 	}
-	return false;
 }
 
 bool TDSTemperatureLoop(uint32_t argChoice, MenuItem *argMenu)
 {
-	if (argChoice == 1 && ButtonE.state())
-		TdsSettingsOff(argChoice, argMenu);
-	else if (argChoice == 2 && ButtonE.state())
-		TdsDefaultTemperatureValue(argChoice, argMenu);
-	else if (argChoice == 3 && ButtonE.state())
+	static bool isTemperatureAdjustable = false;
+
+	if (!isTemperatureAdjustable && ButtonE.state())
 	{
-		if (strcmp(argMenu->Items[2].label, mainsTDSTemperature.Items[2].label) == 0)
+		switch (argChoice)
 		{
-			return TDSTemperatureAdjustedValue(true);
+		case 1:
+			return TdsSettingsOff(argChoice, argMenu);
+		case 2:
+			return TdsDefaultTemperatureValue(argChoice, argMenu);
+		case 3:
+			Disp->display("Select Temperature value from 0-10*C");
+			isTemperatureAdjustable = true;
+			backAndForthSetup_05();
+			break;
 		}
-		else if (strcmp(argMenu->Items[2].label, diTDSTemperature.Items[2].label) == 0)
-		{
-			return TDSTemperatureAdjustedValue(false);
-		}
-		return false;
 	}
+	else if (isTemperatureAdjustable)
+	{
+		return TDSTemperatureAdjustedValue(argMenu);
+	}
+
+	return false;
 }
 
 bool TdsShutdown(uint32_t argChoice, MenuItem *argMenu)
@@ -265,15 +317,15 @@ bool TdsShutdown(uint32_t argChoice, MenuItem *argMenu)
 	DEBUG_RTT(LOG_INFO, "TDS shutdown settings");
 	bool isShutdownEnable = (argChoice == 2 && ButtonE.state());
 
-	if (strcmp(argMenu->Items[0].label, mainsTDSThreshold.Items[0].label) == 0)
+	if (isMenuLabelMatch(argMenu, mainsTDSShutdown))
 	{
 		Flags.setFlag(Settings, MAINS_TDS_SHUTDOWN, isShutdownEnable);
 	}
-	else if (strcmp(argMenu->Items[0].label, roTDSThreshold.Items[0].label) == 0)
+	else if (isMenuLabelMatch(argMenu, roTDSShutdown))
 	{
 		Flags.setFlag(Settings, RO_TDS_SHUTDOWN, isShutdownEnable);
 	}
-	else if (strcmp(argMenu->Items[0].label, diTDSThreshold.Items[0].label) == 0)
+	else if (isMenuLabelMatch(argMenu, diTDSShutdown))
 	{
 		Flags.setFlag(Settings, DI_TDS_SHUTDOWN, isShutdownEnable);
 	}
@@ -283,4 +335,78 @@ bool TdsShutdown(uint32_t argChoice, MenuItem *argMenu)
 	}
 
 	return true;
+}
+
+bool RoTdsThresholdAdj(bool dynamicTdsMenu)
+{
+	uint8_t minThreshold = dynamicTdsMenu ? MIN_DYNAMIC_TDS_THRESHOLD : MIN_FIXED_TDS_THRESHOLD;
+	uint8_t maxThreshold = MAX_RO_TDS_THRESHOLD;
+	uint8_t diffThreshold = DIFF_RO_TDS_THRESHOLD;
+
+	static uint8_t threshVal = minThreshold;
+
+	if (ButtonD.state() && threshVal > minThreshold)
+	{
+		threshVal -= diffThreshold;
+	}
+	else if (ButtonU.state() && threshVal < maxThreshold)
+	{
+		threshVal += diffThreshold;
+	}
+
+	Disp->display(threshVal);
+
+	if (ButtonE.state())
+	{
+		Flags.setFlag(Settings, RO_TDS_THRESHOLD, true);
+		if (dynamicTdsMenu)
+		{
+			setTDS.mainsThreshold = threshVal;
+		}
+		else
+		{
+			setTDS.diThreshold = threshVal;
+		}
+
+		DEBUG_RTT(LOG_WARNING, "Ro Threshold value set to %d.", threshVal);
+		threshVal = minThreshold;
+
+		return true;
+	}
+	return false;
+}
+
+bool RoTdsThreshold(uint32_t argChoice, MenuItem *argMenu)
+{
+	if (!ButtonE.state())	return false;
+
+	if (argChoice == 1)
+	{
+		if (isMenuLabelMatch(argMenu, roDynamicTDSThreshold))
+		{
+			setTDS.roDynamicThreshold = DEFAULT_DYNAMIC_TDS_THRESHOLD;
+		}
+		else if (isMenuLabelMatch(argMenu, roFixedTDSThreshold))
+		{
+			setTDS.roFixedThreshold = DEFAULT_FIXED_TDS_THRESHOLD;
+		}
+		else
+		{
+			return false;
+		}
+		Flags.setFlag(Settings, RO_TDS_THRESHOLD, true);
+		return true;
+	}
+	else if (argChoice == 2)
+	{
+		if (isMenuLabelMatch(argMenu, roDynamicTDSThreshold))
+		{
+			return RoTdsThresholdAdj(true);
+		}
+		else if (isMenuLabelMatch(argMenu, roFixedTDSThreshold))
+		{
+			return RoTdsThresholdAdj(false);
+		}
+		return false;
+	}
 }

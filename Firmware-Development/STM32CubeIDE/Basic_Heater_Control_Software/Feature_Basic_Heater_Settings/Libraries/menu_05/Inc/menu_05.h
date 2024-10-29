@@ -15,3 +15,4 @@ bool TdsSettingsOff(uint32_t argChoice, MenuItem *argMenu);
 bool TDSThresholdLoop(uint32_t argChoice, MenuItem *argMenu);
 bool TDSTemperatureLoop(uint32_t argChoice, MenuItem *argMenu);
 bool TdsShutdown(uint32_t argChoice, MenuItem *argMenu);
+bool RoTdsThreshold(uint32_t argChoice, MenuItem *argMenu);

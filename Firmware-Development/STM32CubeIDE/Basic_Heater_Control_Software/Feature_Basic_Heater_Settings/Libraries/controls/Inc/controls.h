@@ -95,13 +95,14 @@ extern short g_csIndex;
 
 typedef struct
 {
-	uint16_t mainsThreshold = 0;
-	uint16_t mainsTemperature = 0;
-	uint16_t roThreshold = 0;
-	uint16_t roTemperature = 0;
-	uint16_t diThreshold = 0;
-	uint16_t diTemperature = 0;
-}TdsValues;
+	uint16_t mainsThreshold 	= 0;
+	uint8_t mainsTemperature 	= 0;
+	uint8_t roDynamicThreshold 	= 0;
+	uint8_t roFixedThreshold 	= 0;
+	uint8_t roTemperature 		= 0;
+	uint8_t diThreshold 		= 0;
+	uint8_t diTemperature 		= 0;
+}	TdsValues;
 
 
 /**
