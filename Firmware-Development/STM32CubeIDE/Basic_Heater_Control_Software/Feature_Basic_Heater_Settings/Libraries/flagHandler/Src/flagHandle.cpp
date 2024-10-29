@@ -218,20 +218,23 @@ bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state)
 	// DEBUG_RTT('0', " operation: %d, Sensor: %d, State: %d", op, sensor, state);
 	if(op == Settings)
 	{
-		if(sensor == FoD)					FlagsReg.settings.FillOnDemand = state;
-		else if(sensor == BUZZER)			FlagsReg.settings.Buzzer = state;
-		else if(sensor == RGB)				FlagsReg.settings.RGB = state;
-		else if(sensor == WLED)				FlagsReg.settings.WLED = state;
-		else if(sensor == RESIN_SAVER)		FlagsReg.settings.Resin_Saver = state;			//used for ro_saver_thresh
-		else if(sensor == MEM_SAVER)		FlagsReg.settings.Mem_Saver = state;
-		else if(sensor == MEM_SAVER_PAUSE)	FlagsReg.settings.Mem_Saver_Pause = state;
-		else if(sensor == AUTO_FILL)		FlagsReg.settings.Auto_Fill = state;
+		if(sensor == FoD)							FlagsReg.settings.FillOnDemand = state;
+		else if(sensor == BUZZER)					FlagsReg.settings.Buzzer = state;
+		else if(sensor == RGB)						FlagsReg.settings.RGB = state;
+		else if(sensor == WLED)						FlagsReg.settings.WLED = state;
+		else if(sensor == RESIN_SAVER)				FlagsReg.settings.Resin_Saver = state;			//used for ro_saver_thresh
+		else if(sensor == MEM_SAVER)				FlagsReg.settings.Mem_Saver = state;
+		else if(sensor == MEM_SAVER_PAUSE)			FlagsReg.settings.Mem_Saver_Pause = state;
+		else if(sensor == AUTO_FILL)				FlagsReg.settings.Auto_Fill = state;
 		else if(sensor == MAINS_TDS_THRESHOLD)		FlagsReg.settings.mainsTdsThresh = state;
 		else if(sensor == RO_TDS_THRESHOLD)			FlagsReg.settings.roTdsThresh = state;
 		else if(sensor == DI_TDS_THRESHOLD)			FlagsReg.settings.diTdsThresh = state;
 		else if(sensor == MAINS_TDS_TEMPERATURE)	FlagsReg.settings.mainsTdsTemp = state;
 		else if(sensor == RO_TDS_TEMPERATURE)		FlagsReg.settings.roTdsTemp = state;
 		else if(sensor == DI_TDS_TEMPERATURE)		FlagsReg.settings.diTdsTemp = state;
+		else if(sensor == MAINS_TDS_SHUTDOWN)		FlagsReg.settings.mainsTdsShutdown = state;
+		else if(sensor == RO_TDS_SHUTDOWN)			FlagsReg.settings.roTdsShutdown = state;
+		else if(sensor == DI_TDS_SHUTDOWN)			FlagsReg.settings.diTdsShutdown = state;
 		else if(sensor == BATTERY_LOW_SHUTDON)		FlagsReg.settings.Battery_low_shutdown = state;
 		else if(sensor == BATTERY_POWER_MONITOR)	FlagsReg.settings.Battery_power_monitor = state;
 	}

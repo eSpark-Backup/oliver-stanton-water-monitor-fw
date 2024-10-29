@@ -251,3 +251,28 @@ bool TDSTemperatureLoop(uint32_t argChoice, MenuItem *argMenu)
 		return false;
 	}
 }
+
+bool TdsShutdown(uint32_t argChoice, MenuItem *argMenu)
+{
+	DEBUG_RTT(LOG_INFO, "TDS shutdown settings");
+	bool isShutdownEnable = (argChoice == 2 && ButtonE.state());
+
+	if (strcmp(argMenu->Items[0].label, mainsTDSThreshold.Items[0].label) == 0)
+	{
+		Flags.setFlag(Settings, MAINS_TDS_SHUTDOWN, isShutdownEnable);
+	}
+	else if (strcmp(argMenu->Items[0].label, roTDSThreshold.Items[0].label) == 0)
+	{
+		Flags.setFlag(Settings, RO_TDS_SHUTDOWN, isShutdownEnable);
+	}
+	else if (strcmp(argMenu->Items[0].label, diTDSThreshold.Items[0].label) == 0)
+	{
+		Flags.setFlag(Settings, DI_TDS_SHUTDOWN, isShutdownEnable);
+	}
+	else
+	{
+		return false;
+	}
+
+	return true;
+}

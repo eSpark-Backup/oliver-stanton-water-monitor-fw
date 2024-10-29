@@ -71,7 +71,7 @@ MenuItem mainsTDSTemperature = {
 };
 MenuItem mainsTDSShutdown = {
 	backAndForthSetup_05,
-	nullptr,
+	TdsShutdown,
 	{{"Off", nullptr, nullptr, nullptr, &mainsTDS, 0, 2},
 	 {"On"	, nullptr, nullptr, nullptr, &mainsTDS, 0, 2}}
 };
@@ -113,7 +113,7 @@ MenuItem roTDSTemperature = {
 };
 MenuItem roTDSShutdown = {
 	backAndForthSetup_05,
-	nullptr,
+	TdsShutdown,
 	{{"Off", nullptr, nullptr, nullptr, &roTDS, 0, 2},
 	 {"On"	, nullptr, nullptr, nullptr, &roTDS, 0, 2}}
 };
@@ -129,21 +129,21 @@ MenuItem diTDS = {
 };
 MenuItem diTDSThreshold = {
 	backAndForthSetup_05,
-	nullptr,
+	TDSThresholdLoop,
 	{{"Off", nullptr, nullptr, nullptr, &diTDS, 0, 3},
 	 {"Default 10ppm"	, nullptr, nullptr, nullptr, &diTDS, 0, 3},
 	 {"Adjustable 1-15ppm"	, nullptr, nullptr, nullptr, &diTDS, 0, 3}}
 };
 MenuItem diTDSTemperature = {
 	backAndForthSetup_05,
-	nullptr,
+	TDSTemperatureLoop,
 	{{"Off", nullptr, nullptr, nullptr, &diTDS, 0, 3},
 	 {"Default 2*C"	, nullptr, nullptr, nullptr, &diTDS, 0, 3},
 	 {"Adjustable 0-10*C"	, nullptr, nullptr, nullptr, &diTDS, 0, 3}}
 };
 MenuItem diTDSShutdown = {
 	backAndForthSetup_05,
-	nullptr,
+	TdsShutdown,
 	{{"Off", nullptr, nullptr, nullptr, &diTDS, 0, 2},
 	 {"On"	, nullptr, nullptr, nullptr, &diTDS, 0, 2}}
 };

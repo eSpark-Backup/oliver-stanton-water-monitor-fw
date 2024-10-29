@@ -12,6 +12,6 @@ void fodOffSetup_05(void);
 void roSaverSetup_05(void);
 void backAndForthSetup_05(void);
 bool TdsSettingsOff(uint32_t argChoice, MenuItem *argMenu);
-bool TdsDefaultThresholdValue(uint32_t argChoice, MenuItem *argMenu);
-bool TDSThresholdAdjustedValue(bool mainsTdsMenu);
 bool TDSThresholdLoop(uint32_t argChoice, MenuItem *argMenu);
+bool TDSTemperatureLoop(uint32_t argChoice, MenuItem *argMenu);
+bool TdsShutdown(uint32_t argChoice, MenuItem *argMenu);
