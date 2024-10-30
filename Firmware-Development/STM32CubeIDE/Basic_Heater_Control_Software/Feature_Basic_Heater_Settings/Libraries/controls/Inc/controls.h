@@ -136,14 +136,15 @@ typedef union
  */
 
 /*	Support Functions	*/
-void mainMenuFunc(void);
 void fillOpen(void);
 void invokeST3(bool);
+void invokeST4(bool);
 void invokeST5(bool);
 
 /*  Main Output Control functions  */
 void memSaverST3(void);
 bool roSaverST1(void);
+void monitorTdsCycle(void);
 bool isTDSConnected(tdsSensor);
 
 extern TdsValues setTDS;

@@ -4,8 +4,8 @@
 #define INC_MENULIST_05_H_
 
 #include "menu.h"
-#include "mainApp.hpp"
-#include "controls.h"
+// #include "mainApp.hpp"
+// #include "controls.h"
 #include "menu_05.h"
 
 
@@ -45,6 +45,12 @@ MenuItem fodOptnsOff05 = {
 	fodOffSetup_05,
 	fodOFF,
 	{{"Press OK to commence the purification filling process", nullptr, nullptr, nullptr, &fodMenu05, 2, 1}}
+};
+
+MenuItem haltMenu = {
+	introSetup_05,
+	haltMenuLoop,
+	{{"TEST", nullptr, nullptr, nullptr, nullptr, 0, 1}}
 };
 ///-----------------------------Mains TDS-----------------------------
 

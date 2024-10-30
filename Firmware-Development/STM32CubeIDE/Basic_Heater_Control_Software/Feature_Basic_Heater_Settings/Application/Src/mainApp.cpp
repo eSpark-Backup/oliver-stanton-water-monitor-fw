@@ -5,6 +5,7 @@
 #include "menu.h"
 #include "menu_01.h"
 #include "menuList_01.h"
+#include "menuList_05.h"
 #include "motorDriver.h"
 #include "Battery.hpp"
 //#include "flash.h"
@@ -100,6 +101,7 @@ void MainApp::loop()
 	Flags.update();
 	memSaverST3();
 	roSaverST1();
+	monitorTdsCycle();
 	Buzzzer->Run();
 	WLED1->Run();
 	Battery.powerManager();

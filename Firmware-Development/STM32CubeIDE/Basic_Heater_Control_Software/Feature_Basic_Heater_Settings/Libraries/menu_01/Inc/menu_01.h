@@ -36,3 +36,6 @@ void batIndexSetup(void);
 bool batIndexSelection(uint32_t argChoice, MenuItem *argMenu);
 
 void backAndForthSetup(void);
+
+/// extra helper functins
+void mainMenuFunc(void);

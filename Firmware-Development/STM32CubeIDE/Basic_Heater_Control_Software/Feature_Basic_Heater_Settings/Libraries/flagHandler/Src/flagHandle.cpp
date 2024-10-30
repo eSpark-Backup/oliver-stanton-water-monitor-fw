@@ -134,9 +134,13 @@ bool FlagHandle::timeElapsed(uint8_t sensor, uint32_t elapsedTime)
 		{
 			return true;
 		}
-		else
+	}
+	if ((sensor == AUTO_FLUSH) && (flagStatus(Status, AUTO_FLUSH)))
+	{
+		uint32_t elapsed = HAL_GetTick() - statusFlagTimeStamp[sensor];
+		if (elapsed >= elapsedTime)
 		{
-			return false;
+			return true;
 		}
 	}
 //	if(sensor == PRESSURE_SENSOR && FlagsReg.bits.Pressure_Sensor == false){
@@ -182,6 +186,7 @@ bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor)
 		else if(sensor == MEM_SAVER)				return FlagsReg.settings.Mem_Saver;
 		else if(sensor == MEM_SAVER_PAUSE)			return FlagsReg.settings.Mem_Saver_Pause;
 		else if(sensor == RESIN_SAVER)				return FlagsReg.settings.Resin_Saver;
+		else if(sensor == AUTO_FLUSH)				return FlagsReg.settings.Auto_Flush;
 		else if(sensor == AUTO_FILL)				return FlagsReg.settings.Auto_Fill;
 		else if(sensor == MAINS_TDS_THRESHOLD)		return FlagsReg.settings.mainsTdsThresh;
 		else if(sensor == RO_TDS_THRESHOLD)			return FlagsReg.settings.roTdsThresh;
@@ -235,6 +240,7 @@ bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state)
 		else if(sensor == RESIN_SAVER)				FlagsReg.settings.Resin_Saver = state;			//used for ro_saver_thresh
 		else if(sensor == MEM_SAVER)				FlagsReg.settings.Mem_Saver = state;
 		else if(sensor == MEM_SAVER_PAUSE)			FlagsReg.settings.Mem_Saver_Pause = state;
+		else if(sensor == AUTO_FLUSH)				FlagsReg.settings.Auto_Flush = state;
 		else if(sensor == AUTO_FILL)				FlagsReg.settings.Auto_Fill = state;
 		else if(sensor == MAINS_TDS_THRESHOLD)		FlagsReg.settings.mainsTdsThresh = state;
 		else if(sensor == RO_TDS_THRESHOLD)			FlagsReg.settings.roTdsThresh = state;
@@ -258,6 +264,7 @@ bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state)
 		else if(sensor == FLOW_METER_3)		FlagsReg.status.Flow_Meter_3 = state;
 		else if(sensor == RESIN_SAVER)		FlagsReg.status.Resin_Saver = state;			//used for ro_saver_thresh
 		else if(sensor == MEM_SAVER)		FlagsReg.status.Mem_Saver = state;
+		else if(sensor == AUTO_FLUSH)		FlagsReg.status.Auto_Flush = state;
 		else if(sensor == AUTO_FILL)		FlagsReg.status.Auto_Fill = state;
 		else if(sensor == PURE_CYCLE)		FlagsReg.status.Pure_CYCLE = state;
 		else if(sensor == BATTERY_CHARGING_DETECTED) FlagsReg.status.Battery_charging_detected = state;

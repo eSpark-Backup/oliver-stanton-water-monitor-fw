@@ -15,6 +15,7 @@
 #define MIN_TO_MS(x) 					((x) * SECONDS_TO_MS(60))			//converts minutes to milliseconds
 #define FOD_AUTORUN_DELAY_PERIOD		SECONDS_TO_MS(60)					//60secs
 #define MEM_SAVER_PAUSE_TIMEOUT			MIN_TO_MS(15)						//15mins or 900secs
+#define AUTO_FLUSH_TIMEOUT				MIN_TO_MS(20)						//20 mins or 1200secs
 
 
 TdsValues setTDS{
@@ -125,6 +126,14 @@ void invokeST1(bool status)
 	if(Flags.flagStatus(Status, RESIN_SAVER) != status)
 	{
 		Flags.setFlag(Status, RESIN_SAVER, status);
+	}
+}
+
+void invokeST4(bool status)
+{
+	if (Flags.flagStatus(Status, AUTO_FLUSH) != status)
+	{
+		Flags.setFlag(Status, AUTO_FLUSH, status);
 	}
 }
 
@@ -267,6 +276,14 @@ void monitorTdsCycle(void)
 {
 	Flags.update();
 
+	if (TdsWarn.Tds2_FixedThresh && Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_TIMEOUT) && Flags.flagStatus(Settings, AUTO_FLUSH))
+	{
+		Flags.setFlag(Settings, AUTO_FLUSH, false);
+		invokeST4(false);
+		TdsWarn.Tds2_FixedThresh = false;
+		DEBUG_RTT(LOG_WARNING, "***AUTO_FLUSH_TIMEOUT OCCURRED***");
+	}
+
 	if (Flags.flagStatus(Status, BATTERY_HIGH) || Flags.flagStatus(Status, BATTERY_CHARGING_DETECTED))
 		checkTemperatureWarnings();
 
@@ -279,6 +296,7 @@ void monitorTdsCycle(void)
 		menu.Display_Log("Would you like to ignore this warning for this fill cycle?");
 		if (TdsWarn.Tds2_FixedThresh)
 			menu.Display_Log("OR \nWould you like to a longer 20 minutes Auto-Flush?");
-		TdsWarn.all_flags = 0;
+
+		menu.changeMenu(&haltMenu);
 	}
 }
