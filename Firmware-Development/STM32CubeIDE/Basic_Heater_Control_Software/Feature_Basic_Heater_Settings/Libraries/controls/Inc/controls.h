@@ -120,23 +120,6 @@ typedef enum
  * return condition is if we want the function to jump back to previous menuItem or not
  */
 
-bool fodOFF(uint32_t argChoice, MenuItem *argMenu);
-bool fodON(uint32_t argChoice, MenuItem* argMenu);
-bool setRoSaverThresh(uint32_t argChoice, MenuItem *argMenu);
-bool roSaverThreshAdj(uint32_t argChoice, MenuItem* argMenu);
-bool roSaverThreshDefault(uint32_t argChoice, MenuItem* argMenu);
-bool roSaverOptions(uint32_t argChoice, MenuItem* argMenu);
-bool roSaverOn(uint32_t argChoice, MenuItem* argMenu);
-bool roSaverOff(uint32_t argChoice, MenuItem* argMenu);
-bool BatLowMenuOption(uint32_t argChoice, MenuItem* argMenu);
-bool BatLowShutdown(uint32_t argChoice, MenuItem* argMenu);
-bool BatLowShutdownOn(uint32_t argChoice, MenuItem* argMenu);
-bool BatLowShutdownOff(uint32_t argChoice, MenuItem* argMenu);
-bool BatPowerMonitor(uint32_t argChoice, MenuItem *argMenu);
-bool BatPowerMonitorOn(uint32_t argChoice, MenuItem *argMenu);
-bool BatPowerMonitorOff(uint32_t argChoice, MenuItem* argMenu);
-
-
 /*	Support Functions	*/
 void mainMenuFunc(void);
 void fillOpen(void);

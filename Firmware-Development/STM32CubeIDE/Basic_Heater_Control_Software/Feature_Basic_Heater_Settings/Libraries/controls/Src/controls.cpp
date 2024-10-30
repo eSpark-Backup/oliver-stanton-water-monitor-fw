@@ -8,6 +8,7 @@
 //#include "mainApp.hpp"
 #include "controls.h"
 #include "TDS.hpp"
+#include "menu_01.h"
 #include "menu_05.h"
 
 #define SECONDS_TO_MS(x) 				((x) * 1000) 						//converts seconds to milliseconds
@@ -15,8 +16,6 @@
 #define FOD_AUTORUN_DELAY_PERIOD		SECONDS_TO_MS(60)					//60secs
 #define MEM_SAVER_PAUSE_TIMEOUT			MIN_TO_MS(15)						//15mins or 900secs
 
-
-short roSaverThreshValue = 0;
 
 TdsValues setTDS{
 	DEFAULT_MAINS_TDS_THRESHOLD,
@@ -64,208 +63,6 @@ bool isTDSConnected(tdsSensor sensor)
 }
 
 //***********************Purification Cycle**************************
-bool fodOFF(uint32_t argChoice, MenuItem* argMenu)
-{
-	if (ButtonE.state())
-	{
-		if (Flags.flagStatus(Settings, FoD))
-		{
-			Flags.setFlag(Settings, FoD, false);
-			DEBUG_RTT(LOG_WARNING, "Fill on Demand disabled");
-		}
-		if(ButtonE.period() > SHORT_PRESS && ButtonE.period() < LONG_LONG_PRESS)
-		{
-			Disp->display("System Purification stopped.");
-			Flags.setFlag(Settings, MEM_SAVER, false);
-			Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
-			invokeST3(false);
-			invokeST5(false);
-			mainMenuFunc();
-		}
-		else if (ButtonE.period() < SINGLE_PRESS)
-		{
-			Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
-			if(Flags.flagStatus(Status, LEVEL_SENSOR) == true)
-			{
-				Flags.setFlag(Settings, MEM_SAVER, false);
-				fillOpen();
-			}
-			else if(!Flags.flagStatus(Settings, MEM_SAVER))
-			{
-				invokeST3(true);
-				invokeST5(true);
-			}
-			else
-			{
-				Flags.setFlag(Settings, MEM_SAVER, false);
-				Flags.setFlag(Settings, MEM_SAVER_PAUSE, true);
-				Disp->display("System Purification paused.");
-				invokeST3(false);
-				invokeST5(false);
-			}
-		}
-		return true;
-	}
-	return false;
-}
-
-
-bool BatLowMenuOption(uint32_t argChoice, MenuItem *argMenu)
-{
-	if (argChoice == 2 && ButtonE.state())
-	{
-		return BatLowShutdownOn(argChoice, argMenu);
-	}
-	else
-		return false;
-}
-
-bool BatLowShutdown(uint32_t argChoice, MenuItem *argMenu)
-{
-	if (argChoice == 2 && ButtonE.state())
-	{
-		return BatLowShutdownOff(argChoice, argMenu);
-	}
-	else if (argChoice == 3 && ButtonE.state())
-	{
-		return BatLowShutdownOn(argChoice, argMenu);
-	}
-	else
-		return false;
-}
-
-bool BatLowShutdownOn(uint32_t argChoice, MenuItem *argMenu)
-{
-	Disp->display("Battery LOW power shutdown Enabled.");
-	Flags.setFlag(Settings, BATTERY_LOW_SHUTDON, true);
-	return true;
-}
-
-bool BatLowShutdownOff(uint32_t argChoice, MenuItem* argMenu)
-{
-	Disp->display("Battery LOW power shutdown Disabled.");
-
-	Flags.setFlag(Settings, LOG_TO_MASTER, true);
-	Flags.setFlag(Settings, BATTERY_LOW_SHUTDON, false);
-	return true;
-}
-
-bool BatPowerMonitor(uint32_t argChoice, MenuItem *argMenu)
-{
-	if (argChoice == 1 && ButtonE.state())
-	{
-		return BatPowerMonitorOff(argChoice, argMenu);
-	}
-	else if (argChoice == 2 && ButtonE.state())
-	{
-		return BatPowerMonitorOn(argChoice, argMenu);
-	}
-	else
-		return false;
-}
-
-bool BatPowerMonitorOn(uint32_t argChoice, MenuItem *argMenu)
-{
-	Disp->display("Battery Power Monitoring Enabled.");
-	Flags.setFlag(Settings, BATTERY_POWER_MONITOR, true);
-	return true;
-}
-
-bool BatPowerMonitorOff(uint32_t argChoice, MenuItem* argMenu)
-{
-	Disp->display("Battery Power Monitoring Disabled.");
-	Flags.setFlag(Settings, BATTERY_POWER_MONITOR, false);
-	return true;
-}
-
-bool fodON(uint32_t argChoice, MenuItem* argMenu)
-{
-	if (argChoice == 2 && ButtonE.state())
-	{
-		DEBUG_RTT(LOG_ERROR, "fodON");
-
-		Flags.setFlag(Settings, FoD, true);
-		Flags.setFlag(Settings, MEM_SAVER, true);
-		return true;
-	}
-	return false;
-}
-bool roSaverThreshAdj(uint32_t argChoice, MenuItem* argMenu)
-{
-	static uint8_t threshVal = 0;
-
-	if (ButtonD.state())
-	{
-		if(threshVal > 0)	threshVal--;
-		Disp->display(threshVal);
-	}
-	else if (ButtonU.state())
-	{
-		if(threshVal < 20)	threshVal++;
-		Disp->display(threshVal);
-	}
-	else if (ButtonE.state())
-	{
-		roSaverThreshValue = threshVal;
-		threshVal = 0;
-		DEBUG_RTT(LOG_WARNING, "RO_Saver threshold value set to %d.", roSaverThreshValue);
-		return true;
-	}
-	else
-		return false;
-}
-
-bool setRoSaverThresh(uint32_t argChoice, MenuItem *argMenu)
-{
-	if (argChoice == 1 && ButtonE.state())
-	{
-		roSaverThreshDefault(argChoice, argMenu);
-	}
-	else
-		return false;
-}
-
-bool roSaverThreshDefault(uint32_t argChoice, MenuItem *argMenu)
-{
-	roSaverThreshValue = 0;
-	DEBUG_RTT(LOG_WARNING, "RO_Saver default threshold value set to %d.", roSaverThreshValue);
-	return true;
-}
-
-bool roSaverOptions(uint32_t argChoice, MenuItem *argMenu)
-{
-	if (argChoice == 1 && ButtonE.state())
-	{
-		roSaverOn(argChoice, argMenu);
-	}
-	else if (argChoice == 2 && ButtonE.state())
-	{
-		roSaverOff(argChoice, argMenu);
-	}
-	else
-		return false;
-}
-
-bool roSaverOn(uint32_t argChoice, MenuItem *argMenu)
-{
-	Flags.setFlag(Settings, RESIN_SAVER, true);
-	DEBUG_RTT(LOG_WARNING, "RO_Saver setting Turned on.");
-	return true;
-}
-
-bool roSaverOff(uint32_t argChoice, MenuItem * argMenu)
-{
-	Flags.setFlag(Settings, RESIN_SAVER, false);
-	DEBUG_RTT(LOG_WARNING, "RO_Saver setting Turned off.");
-	return true;
-}
-
-void mainMenuFunc()
-{
-	currentM = &mainMenu;
-	menu.displayMenu(&mainMenu, mainMenu.Items[0].num_items);
-}
-
 
 void fillOpen()
 {
@@ -345,7 +142,7 @@ bool roSaverST1()
 	}
 	else if (Flags.flagStatus(Status, PURE_CYCLE) && Flags.flagStatus(Status, RESIN_SAVER) && Flags.flagStatus(Status, AUTO_FILL))
 	{
-		if(tds2.readTDS() <= roSaverThreshValue)
+		if(tds2.readTDS() <= setTDS.roFixedThreshold)
 		{
 			Disp->display("Purification Cycle Complete.");
 			tds2.resetTDS(); //for simulation value
@@ -437,5 +234,5 @@ void MonitorTdsCycle(void)
 			menu.Display_Log("DI RESIN TDS Too High (\"%d\" ppm) - Requires change", setTDS.diThreshold);
 		}
 	}
-
+	
 }
