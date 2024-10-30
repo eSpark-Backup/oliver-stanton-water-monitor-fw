@@ -113,6 +113,21 @@ typedef enum
 	TDS4
 } tdsSensor;
 
+typedef union
+{
+	struct
+	{
+		uint16_t Tds1_Thresh : 1;
+		uint16_t Tds1_Temp : 1;
+		uint16_t Tds2_DynamicThresh : 1;
+		uint16_t Tds2_FixedThresh : 1;
+		uint16_t Tds2_Temp : 1;
+		uint16_t Tds3_Thresh : 1;
+		uint16_t Tds3_Temp : 1;
+	};
+	uint16_t all_flags; // Full-width member to reset all flags
+} WarningFlags;
+
 /**
  * Functions that are directly called from MenuList
  * <condition> <Function name>(<choiceselect variable>)
