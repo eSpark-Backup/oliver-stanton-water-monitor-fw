@@ -105,6 +105,13 @@ typedef struct
 	uint8_t diTemperature 		= 0;
 }	TdsValues;
 
+typedef enum
+{
+	TDS1,
+	TDS2,
+	TDS3,
+	TDS4
+} tdsSensor;
 
 /**
  * Functions that are directly called from MenuList
@@ -139,8 +146,7 @@ void invokeST5(bool);
 /*  Main Output Control functions  */
 void memSaverST3(void);
 bool roSaverST1(void);
-
-float tdsSensor(uint32_t);
+bool isTDSConnected(tdsSensor);
 
 extern TdsValues setTDS;
 

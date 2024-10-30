@@ -47,22 +47,21 @@ Menu menu;
 
 //--------------------------------Functions definitions-------------------------
 
-
-//***************************TDS Sensor*******************************
-float tdsSensor(uint32_t channel)
+bool isTDSConnected(tdsSensor sensor)
 {
-    switch (channel) {
-    case ADC_CHANNEL_14: case ADC_CHANNEL_15:
-		return tds2.readTDS();
-		break;
-    case ADC_CHANNEL_1: case ADC_CHANNEL_2:
-		return tds4.readTDS();
-		break;
+	switch (sensor)
+	{
+	case TDS1:
+		return tds1.readTDS() ? true : false;
+	case TDS2:
+		return tds2.readTDS() ? true : false;
+	case TDS3:
+		return tds3.readTDS() ? true : false;
+	case TDS4:
+		return tds4.readTDS() ? true : false;
 	}
 	return 0;
 }
-//*******************************************************************
-
 
 //***********************Purification Cycle**************************
 bool fodOFF(uint32_t argChoice, MenuItem* argMenu)
@@ -329,9 +328,9 @@ bool roSaverST1()
 	if (!Flags.flagStatus(Settings, MEM_SAVER_PAUSE) && Flags.flagStatus(Status, PURE_CYCLE)
 	&& Flags.flagStatus(Settings, RESIN_SAVER) && !Flags.flagStatus(Status, MEM_SAVER) && !Flags.flagStatus(Status, AUTO_FILL))
 	{
-		if (tdsSensor(ADC_CHANNEL_14) < 1.0 && tdsSensor(ADC_CHANNEL_15) < 1.0) // Assuming a pulldown resistor [not connected means 0 value]
+		if (isTDSConnected(TDS2)) // Assuming a pulldown resistor [not connected means 0 value]
 		{
-			Disp->display("TDS Sensor Disconnected - unable to run RO Saver cycle");
+			Disp->display("TDS2 Sensor Disconnected - unable to run RO Saver cycle");
 			Flags.setFlag(Status, PURE_CYCLE, false);
 			Buzzzer->setOutputPattern(1, 500, 1000);
 			((RgbDriver *)WLED1)->setRgbColor(RED);
@@ -403,17 +402,6 @@ void memSaverST3()
 		invokeST5(true);
 	}
 }
-
-// MAINS_TDS_THRESHOLD,
-// RO_TDS_THRESHOLD,
-// DI_TDS_THRESHOLD,
-// MAINS_TDS_TEMPERATURE,
-// RO_TDS_TEMPERATURE,
-// DI_TDS_TEMPERATURE,
-// MAINS_TDS_SHUTDOWN,
-// RO_TDS_SHUTDOWN,
-// DI_TDS_SHUTDOWN,
-
 
 void MonitorTdsCycle(void)
 {
