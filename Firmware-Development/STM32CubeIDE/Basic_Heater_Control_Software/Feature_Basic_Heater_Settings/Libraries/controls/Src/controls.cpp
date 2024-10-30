@@ -62,6 +62,23 @@ bool isTDSConnected(tdsSensor sensor)
 	return 0;
 }
 
+int roRejectionPc()
+{
+	int mainsPc = (setTDS.mainsThreshold * 100) / MAX_MAINS_TDS_THRESHOLD;
+	int roPc = (setTDS.mainsThreshold * 100) / MAX_RO_TDS_THRESHOLD;
+
+	int rejectionPercentage = mainsPc - roPc;
+
+	return rejectionPercentage;
+}
+
+void warningIndication(HexColor ledColor)
+{
+	Buzzzer->setOutputPattern(3, 500, 500, 500, 500);
+	((RgbDriver *)WLED1)->setRgbColor(ledColor);
+	WLED1->setOutputPattern(3, 500, 500, 500, 500);
+}
+
 //***********************Purification Cycle**************************
 
 void fillOpen()
@@ -200,39 +217,75 @@ void memSaverST3()
 	}
 }
 
-void MonitorTdsCycle(void)
+void checkTemperatureWarnings(bool &isTempWarn)
 {
-	Flags.update();
-	if (Flags.flagStatus(Status, BATTERY_HIGH) || Flags.flagStatus(Status, BATTERY_CHARGING_DETECTED))
-	{
-		if (Flags.flagStatus(Settings, MAINS_TDS_TEMPERATURE))
-		{
-			menu.Display_Log("Mains Water Temperature too low \"%d\"*C- system at danger of freezing.", setTDS.mainsTemperature);
-		}
-		if (Flags.flagStatus(Settings, RO_TDS_TEMPERATURE))
-		{
-			menu.Display_Log("RO Membranes Temperature too low \"%d\"*C- system at danger of freezing.", setTDS.roTemperature);
-		}
-		if (Flags.flagStatus(Settings, RO_TDS_TEMPERATURE))
-		{
-			menu.Display_Log("DI RESIN Temperature too low \"%d\"*C- system at danger of freezing.", setTDS.diTemperature);
-		}
-	}
+    if (Flags.flagStatus(Settings, MAINS_TDS_TEMPERATURE))
+    {
+        menu.Display_Log("Mains Water Temperature too low \"%d\"*C- system at danger of freezing.", setTDS.mainsTemperature);
+        return;
+    }
+    if (Flags.flagStatus(Settings, RO_TDS_TEMPERATURE))
+    {
+        menu.Display_Log("RO Membranes Temperature too low \"%d\"*C- system at danger of freezing.", setTDS.roTemperature);
+        return;
+    }
+    if (Flags.flagStatus(Settings, DI_TDS_TEMPERATURE))
+    {
+        menu.Display_Log("DI RESIN Temperature too low \"%d\"*C- system at danger of freezing.", setTDS.diTemperature);
+        return;
+    }
+    
+    isTempWarn = false;
+}
 
-	if (Flags.flagStatus(Status, AUTO_FILL) && !Flags.flagStatus(Status, AUTO_FLUSH))
+void checkThresholdWarnings(bool &isThreshWarn)
+{
+	if (isTDSConnected(TDS1) && Flags.flagStatus(Settings, MAINS_TDS_THRESHOLD) && setTDS.mainsThreshold < tds1.readTDS())
 	{
-		if (Flags.flagStatus(Settings, MAINS_TDS_THRESHOLD))
-		{
-			menu.Display_Log("Mains Input Too High (\"%d\" ppm) - System Inspection Required", setTDS.mainsThreshold);
-		}
-		else if (Flags.flagStatus(Settings, RO_TDS_THRESHOLD))
+		menu.Display_Log("Mains Input Too High (\"%d\" ppm) - System Inspection Required", setTDS.mainsThreshold);
+		return;
+	}
+	if (isTDSConnected(TDS2) && Flags.flagStatus(Settings, RO_TDS_THRESHOLD))
+	{
+		if (setTDS.roFixedThreshold < tds2.readTDS())
 		{
 			menu.Display_Log("RO TDS Too High (\"%d\" ppm) - System Inspection Required", setTDS.roFixedThreshold);
+			return;
 		}
-		else if (Flags.flagStatus(Settings, DI_TDS_THRESHOLD))
+		if (setTDS.roDynamicThreshold < roRejectionPc())
 		{
-			menu.Display_Log("DI RESIN TDS Too High (\"%d\" ppm) - Requires change", setTDS.diThreshold);
+			warningIndication(RED);
+			return;
 		}
 	}
-	
+	if (isTDSConnected(TDS3) && Flags.flagStatus(Settings, DI_TDS_THRESHOLD) && setTDS.diThreshold < tds3.readTDS())
+	{
+		menu.Display_Log("DI RESIN TDS Too High (\"%d\" ppm) - Requires change", setTDS.diThreshold);
+		return;
+	}
+
+	isThreshWarn = false;
+}
+void monitorTdsCycle(void)
+{
+	bool isTempWarn = true;
+	bool isThreshWarn = true;
+
+	Flags.update();
+
+	if (Flags.flagStatus(Status, BATTERY_HIGH) || Flags.flagStatus(Status, BATTERY_CHARGING_DETECTED))
+		checkTemperatureWarnings(isTempWarn);
+	else
+		isTempWarn = false;
+
+	if (Flags.flagStatus(Status, AUTO_FILL) && !Flags.flagStatus(Status, AUTO_FLUSH))
+		checkThresholdWarnings(isThreshWarn);
+	else
+		isThreshWarn = false;
+
+
+	if (isTempWarn || isThreshWarn)
+	{
+		warningIndication(RED);
+	}
 }
