@@ -124,6 +124,7 @@ typedef union
 		uint16_t Tds2_Temp : 1;
 		uint16_t Tds3_Thresh : 1;
 		uint16_t Tds3_Temp : 1;
+		uint16_t Tds_Shutdown : 1;
 	};
 	uint16_t all_flags; // Full-width member to reset all flags
 } WarningFlags;
@@ -144,8 +145,9 @@ void invokeST5(bool);
 /*  Main Output Control functions  */
 void memSaverST3(void);
 bool roSaverST1(void);
-void checkTemperatureWarnings(void);
-void checkThresholdWarnings(void);
+void checkTdsTemperatureWarnings(void);
+void checkTdsThresholdWarnings(void);
+void checkTdsShutdownWarnings(void);
 void monitorTdsCycle(void);
 bool isTDSConnected(tdsSensor);
 

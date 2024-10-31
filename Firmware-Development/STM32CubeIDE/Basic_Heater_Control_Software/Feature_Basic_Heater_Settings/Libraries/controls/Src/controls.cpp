@@ -226,7 +226,7 @@ void memSaverST3()
 	}
 }
 
-void checkTemperatureWarnings(void)
+void checkTdsTemperatureWarnings(void)
 {
     if (Flags.flagStatus(Settings, MAINS_TDS_TEMPERATURE))
     {
@@ -245,7 +245,7 @@ void checkTemperatureWarnings(void)
 	}
 }
 
-void checkThresholdWarnings(void)
+void checkTdsThresholdWarnings(void)
 {
 	if (isTDSConnected(TDS1) && Flags.flagStatus(Settings, MAINS_TDS_THRESHOLD) && setTDS.mainsThreshold < tds1.readTDS())
 	{
@@ -272,11 +272,40 @@ void checkThresholdWarnings(void)
 	}
 }
 
+void checkTdsShutdownWarnings(void)
+{
+	TdsWarn.Tds_Shutdown = false;
+	if (isTDSConnected(TDS1) && Flags.flagStatus(Settings, MAINS_TDS_THRESHOLD)
+		&& Flags.flagStatus(Settings, MAINS_TDS_SHUTDOWN) && setTDS.mainsThreshold < tds1.readTDS())
+	{
+		menu.Display_Log("Tank Full Purification Stopped - Mains Input TDS too High", setTDS.mainsThreshold);
+		TdsWarn.Tds_Shutdown = true;
+	}
+	if (isTDSConnected(TDS2) && Flags.flagStatus(Settings, RO_TDS_THRESHOLD) && Flags.flagStatus(Settings, RO_TDS_SHUTDOWN)
+		&& (setTDS.roFixedThreshold < tds2.readTDS() || setTDS.roDynamicThreshold < roRejectionPc()))
+	{
+		menu.Display_Log("Tank Full Purification Stopped - RO Membrane TDS Output too High");
+		TdsWarn.Tds_Shutdown = true;
+	}
+	if (isTDSConnected(TDS3) && Flags.flagStatus(Settings, DI_TDS_THRESHOLD)
+		&& Flags.flagStatus(Settings, DI_TDS_SHUTDOWN) && setTDS.diThreshold < tds3.readTDS())
+	{
+		menu.Display_Log("Tank Full Purification Stopped - DI RESIN too High");
+		TdsWarn.Tds_Shutdown = true;
+	}
+
+	if (TdsWarn.Tds_Shutdown)
+	{
+		warningIndication(ORANGE);
+		TdsWarn.Tds_Shutdown = false;
+	}
+}
+
 void monitorTdsCycle(void)
 {
 	Flags.update();
 	static long lastMsgDisplayed = 0u;
-
+	
 	if (!lastMsgDisplayed && HAL_GetTick() - lastMsgDisplayed < 500)
 		return;
 
@@ -289,10 +318,13 @@ void monitorTdsCycle(void)
 	}
 
 	if (Flags.flagStatus(Status, BATTERY_HIGH) || Flags.flagStatus(Status, BATTERY_CHARGING_DETECTED))
-		checkTemperatureWarnings();
+		checkTdsTemperatureWarnings();
 
 	if (Flags.flagStatus(Status, AUTO_FILL) && !Flags.flagStatus(Status, AUTO_FLUSH))
-		checkThresholdWarnings();
+		checkTdsThresholdWarnings();
+
+	if (Flags.flagStatus(Status, AUTO_FILL) || Flags.flagStatus(Status, AUTO_FLUSH))
+		checkTdsShutdownWarnings();
 
 	if (TdsWarn.Tds1_Thresh || TdsWarn.Tds1_Temp || TdsWarn.Tds2_FixedThresh || TdsWarn.Tds2_Temp || TdsWarn.Tds3_Thresh || TdsWarn.Tds3_Temp)
 	{
