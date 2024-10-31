@@ -28,3 +28,5 @@ void masterLog::logToMaster(const char* inputLog, ...)
 
     // save to SD card function
 }
+
+masterLog Log;

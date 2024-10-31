@@ -1,6 +1,6 @@
 #include "menu_05.h"
 #include "controls.h"
-
+#include "masterLog.h"
 
 // Helper function to check if the menu label matches the target threshold
 bool isMenuLabelMatch(MenuItem *menu, const MenuItem &targetThreshold)
@@ -390,15 +390,25 @@ bool RoTdsThreshold(uint32_t argChoice, MenuItem *argMenu)
 
 bool haltMenuLoop(uint32_t argChoice, MenuItem *argMenu)
 {
+	char warningTDS[30] = {0};
 	if (TdsWarn.Tds2_FixedThresh && ButtonU.state())
 	{
 		autoFlushEnable(true);
 		invokeST4(true);
 		menu.changeMenu(&mainMenu05);
-		TdsWarn.all_flags = 0;
+		Log.logToMaster("User pressed UP key to override RO TDS threshold warning and Start Auto Flush.");
+		return TdsWarn.all_flags = 0;
 	}
 	else if (ButtonE.state())
 	{
+		if(TdsWarn.Tds1_Thresh) strncpy(warningTDS,"Mains TDS threshold", sizeof(warningTDS) - 1);
+		if(TdsWarn.Tds1_Temp)	strncpy(warningTDS,"Mains Temperature threshold", sizeof(warningTDS) - 1);
+		if(TdsWarn.Tds2_DynamicThresh) strncpy(warningTDS,"RO rejection", sizeof(warningTDS) - 1);
+		if(TdsWarn.Tds2_FixedThresh) strncpy(warningTDS,"RO TDS threshold", sizeof(warningTDS) - 1);
+		if(TdsWarn.Tds2_Temp) strncpy(warningTDS,"RO Temperature threshold", sizeof(warningTDS) - 1);
+		if(TdsWarn.Tds3_Thresh) strncpy(warningTDS,"DI RESIN TDS threshold", sizeof(warningTDS) - 1);
+		if(TdsWarn.Tds3_Temp) strncpy(warningTDS,"DI Temperature threshold", sizeof(warningTDS) - 1);
+
 		menu.changeMenu(&mainMenu05);
 		TdsWarn.all_flags = 0;
 	}
@@ -406,6 +416,8 @@ bool haltMenuLoop(uint32_t argChoice, MenuItem *argMenu)
 	{
 		return false;
 	}
+
+	Log.logToMaster("User pressed enter key to override %s warning.", warningTDS);
 	return true;
 }
 

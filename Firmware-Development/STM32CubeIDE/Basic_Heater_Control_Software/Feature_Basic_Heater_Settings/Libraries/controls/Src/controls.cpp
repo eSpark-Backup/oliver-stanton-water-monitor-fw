@@ -45,7 +45,6 @@ TDS tds3 = TDS(tds3PinConfig);
 TDS tds4 = TDS(tds4PinConfig);
 //*******************************************************************
 Menu menu;
-masterLog Log;
 WarningFlags TdsWarn = {0};
 	//--------------------------------Functions definitions-------------------------
 
@@ -68,17 +67,26 @@ bool isTDSConnected(tdsSensor sensor)
 void calCurrentTdsReading(void)
 {
 	if (isTDSConnected(TDS1) && Flags.flagStatus(Status, AUTO_FILL))
+	{
 		menu.Display_Log("Input Stage - Mains Water TDS: \"%d\" ppm", tds1.readTDS());
+		Log.logToMaster("Input Stage - Mains Water TDS: \"%d\" ppm", tds1.readTDS());
+	}
 	else
 		menu.Display_Log("Input Stage - Mains Water TDS: --- ppm");
 
 	if (isTDSConnected(TDS2) && Flags.flagStatus(Status, AUTO_FILL))
+	{
 		menu.Display_Log("Mid Stage - RO Output TDS: \"%d\" ppm", tds2.readTDS());
+		Log.logToMaster("Mid Stage - RO Output TDS: \"%d\" ppm", tds2.readTDS());
+	}
 	else
 		menu.Display_Log("Mid Stage - RO Output TDS: --- ppm");
 
 	if (isTDSConnected(TDS3) && Flags.flagStatus(Status, AUTO_FILL))
+	{
 		menu.Display_Log("Final Stage - DI Output TDS: \"%d\" ppm", tds3.readTDS());
+		Log.logToMaster("Final Stage - DI Output TDS: \"%d\" ppm", tds3.readTDS());
+	}
 	else
 		menu.Display_Log("Final Stage - DI Output TDS: --- ppm");
 }
@@ -105,14 +113,13 @@ void warningIndication(HexColor ledColor)
 void fillOpen()
 {
 	Disp->display("Tank Full - System not Filling");
-
 	Buzzzer->setOutputPattern(1, 500, 1000);
 	((RgbDriver*)WLED1)->setRgbColor(BLUE);
 	WLED1->setOutputPattern(1, 1000, 1000);
 
 	invokeST3(false);
 	invokeST5(false);
-	DEBUG_RTT(LOG_WARNING, "SAVE LOG TO FILE HERE.");			//perform logging to file here
+	Log.logToMaster("Float Circuit Open - Unable to commence filling");
 	mainMenuFunc();
 	//add buzzer/LED warning handler here
 }
@@ -128,9 +135,7 @@ void invokeST3(bool status)
 		Disp->display("Starting Purification - System Filling.");
 		Flags.setFlag(Settings, MEM_SAVER, status);
 		Flags.setFlag(Status, PURE_CYCLE, status);
-		//perform logging function here
-		DEBUG_RTT(LOG_WARNING, "SAVE LOG TO FILE HERE.");			//perform logging to file here
-
+		Log.logToMaster("Float Circuit Closed - System filling commenced");
 		Buzzzer->setOutputPattern(2, 500, 1100, 500);
 		// WLED1->setOutputPattern(-1, 1000, 1000);					// -1 to run infinitely
 	}

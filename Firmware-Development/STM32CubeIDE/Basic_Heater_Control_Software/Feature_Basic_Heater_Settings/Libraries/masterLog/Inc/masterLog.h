@@ -18,5 +18,6 @@ public:
 
 };
 
+extern masterLog Log;
 
 #endif /* INC_MASTERLOG_H_ */
