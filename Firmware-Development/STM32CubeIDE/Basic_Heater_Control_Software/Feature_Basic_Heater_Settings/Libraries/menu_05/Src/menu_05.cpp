@@ -390,15 +390,17 @@ bool RoTdsThreshold(uint32_t argChoice, MenuItem *argMenu)
 
 bool haltMenuLoop(uint32_t argChoice, MenuItem *argMenu)
 {
-	if (ButtonE.state())
+	if (TdsWarn.Tds2_FixedThresh && ButtonU.state())
 	{
 		autoFlushEnable(true);
 		invokeST4(true);
 		menu.changeMenu(&mainMenu05);
+		TdsWarn.all_flags = 0;
 	}
-	else if (ButtonR.state())
+	else if (ButtonE.state())
 	{
 		menu.changeMenu(&mainMenu05);
+		TdsWarn.all_flags = 0;
 	}
 	else
 	{

@@ -145,12 +145,13 @@ void invokeST5(bool);
 /*  Main Output Control functions  */
 void memSaverST3(void);
 bool roSaverST1(void);
-void checkTdsTemperatureWarnings(void);
-void checkTdsThresholdWarnings(void);
+bool checkTdsTemperatureWarnings(void);
+bool checkTdsThresholdWarnings(void);
 void checkTdsShutdownWarnings(void);
 void monitorTdsCycle(void);
 bool isTDSConnected(tdsSensor);
 
 extern TdsValues setTDS;
+extern WarningFlags TdsWarn;
 
 #endif /* INC_CONTROLS_H_ */

@@ -226,49 +226,49 @@ void memSaverST3()
 	}
 }
 
-void checkTdsTemperatureWarnings(void)
+bool checkTdsTemperatureWarnings(void)
 {
     if (Flags.flagStatus(Settings, MAINS_TDS_TEMPERATURE))
     {
         menu.Display_Log("Mains Water Temperature too low \"%d\"*C- system at danger of freezing.", setTDS.mainsTemperature);
-		TdsWarn.Tds1_Temp = true;
+		return TdsWarn.Tds1_Temp = true;
 	}
     if (Flags.flagStatus(Settings, RO_TDS_TEMPERATURE))
     {
         menu.Display_Log("RO Membranes Temperature too low \"%d\"*C- system at danger of freezing.", setTDS.roTemperature);
-		TdsWarn.Tds2_Temp = true;
+		return TdsWarn.Tds2_Temp = true;
 	}
     if (Flags.flagStatus(Settings, DI_TDS_TEMPERATURE))
     {
         menu.Display_Log("DI RESIN Temperature too low \"%d\"*C- system at danger of freezing.", setTDS.diTemperature);
-		TdsWarn.Tds3_Temp = true;
+		return TdsWarn.Tds3_Temp = true;
 	}
 }
 
-void checkTdsThresholdWarnings(void)
+bool checkTdsThresholdWarnings(void)
 {
 	if (isTDSConnected(TDS1) && Flags.flagStatus(Settings, MAINS_TDS_THRESHOLD) && setTDS.mainsThreshold < tds1.readTDS())
 	{
 		menu.Display_Log("Mains Input Too High (\"%d\" ppm) - System Inspection Required", setTDS.mainsThreshold);
-		TdsWarn.Tds1_Thresh = true;
+		return TdsWarn.Tds1_Thresh = true;
 	}
 	if (isTDSConnected(TDS2) && Flags.flagStatus(Settings, RO_TDS_THRESHOLD))
 	{
 		if (setTDS.roFixedThreshold < tds2.readTDS())
 		{
 			menu.Display_Log("RO TDS Too High (\"%d\" ppm) - System Inspection Required", setTDS.roFixedThreshold);
-			TdsWarn.Tds2_FixedThresh = true;
+			return TdsWarn.Tds2_FixedThresh = true;
 		}
 		if (setTDS.roDynamicThreshold < roRejectionPc())
 		{
 			warningIndication(RED);
-			TdsWarn.Tds2_DynamicThresh = true;
+			return TdsWarn.Tds2_DynamicThresh = true;
 		}
 	}
 	if (isTDSConnected(TDS3) && Flags.flagStatus(Settings, DI_TDS_THRESHOLD) && setTDS.diThreshold < tds3.readTDS())
 	{
 		menu.Display_Log("DI RESIN TDS Too High (\"%d\" ppm) - Requires change", setTDS.diThreshold);
-		TdsWarn.Tds3_Thresh = true;
+		return TdsWarn.Tds3_Thresh = true;
 	}
 }
 
@@ -305,28 +305,28 @@ void monitorTdsCycle(void)
 {
 	Flags.update();
 	static long lastMsgDisplayed = 0u;
-	
+	bool isShowWarnMsg = false;
+
 	if (!lastMsgDisplayed && HAL_GetTick() - lastMsgDisplayed < 500)
 		return;
 
-	if (TdsWarn.Tds2_FixedThresh && Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_TIMEOUT) && Flags.flagStatus(Settings, AUTO_FLUSH))
+	if (Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_TIMEOUT) && Flags.flagStatus(Settings, AUTO_FLUSH))
 	{
 		autoFlushEnable(false);
 		invokeST4(false);
-		TdsWarn.Tds2_FixedThresh = false;
 		DEBUG_RTT(LOG_WARNING, "***AUTO_FLUSH_TIMEOUT OCCURRED***");
 	}
 
 	if (Flags.flagStatus(Status, BATTERY_HIGH) || Flags.flagStatus(Status, BATTERY_CHARGING_DETECTED))
-		checkTdsTemperatureWarnings();
+		isShowWarnMsg = checkTdsTemperatureWarnings();
 
 	if (Flags.flagStatus(Status, AUTO_FILL) && !Flags.flagStatus(Status, AUTO_FLUSH))
-		checkTdsThresholdWarnings();
+		isShowWarnMsg = checkTdsThresholdWarnings();
 
 	if (Flags.flagStatus(Status, AUTO_FILL) || Flags.flagStatus(Status, AUTO_FLUSH))
 		checkTdsShutdownWarnings();
 
-	if (TdsWarn.Tds1_Thresh || TdsWarn.Tds1_Temp || TdsWarn.Tds2_FixedThresh || TdsWarn.Tds2_Temp || TdsWarn.Tds3_Thresh || TdsWarn.Tds3_Temp)
+	if (isShowWarnMsg && !TdsWarn.Tds2_DynamicThresh)
 	{
 		warningIndication(RED);
 		menu.Display_Log("Would you like to ignore this warning for this fill cycle?");
