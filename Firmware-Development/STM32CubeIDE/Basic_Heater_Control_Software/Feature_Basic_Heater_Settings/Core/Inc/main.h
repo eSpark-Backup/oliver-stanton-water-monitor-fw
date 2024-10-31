@@ -128,6 +128,8 @@ void Error_Handler(void);
 #define BUZZER_GPIO_Port GPIOA
 #define PUMPS_Control_Pin GPIO_PIN_12
 #define PUMPS_Control_GPIO_Port GPIOC
+#define AUTO_FLUSH_Pin GPIO_PIN_1
+#define AUTO_FLUSH_GPIO_Port GPIOD
 #define RO_SAVER_Pin GPIO_PIN_2
 #define RO_SAVER_GPIO_Port GPIOD
 #define LEVEL_SENSOR_Pin GPIO_PIN_3

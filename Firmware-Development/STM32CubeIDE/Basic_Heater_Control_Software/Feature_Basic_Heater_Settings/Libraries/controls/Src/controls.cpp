@@ -226,7 +226,7 @@ void memSaverST3()
 	}
 }
 
-void checkTemperatureWarnings()
+void checkTemperatureWarnings(void)
 {
     if (Flags.flagStatus(Settings, MAINS_TDS_TEMPERATURE))
     {
@@ -245,7 +245,7 @@ void checkTemperatureWarnings()
 	}
 }
 
-void checkThresholdWarnings()
+void checkThresholdWarnings(void)
 {
 	if (isTDSConnected(TDS1) && Flags.flagStatus(Settings, MAINS_TDS_THRESHOLD) && setTDS.mainsThreshold < tds1.readTDS())
 	{
@@ -275,10 +275,14 @@ void checkThresholdWarnings()
 void monitorTdsCycle(void)
 {
 	Flags.update();
+	static long lastMsgDisplayed = 0u;
+
+	if (!lastMsgDisplayed && HAL_GetTick() - lastMsgDisplayed < 500)
+		return;
 
 	if (TdsWarn.Tds2_FixedThresh && Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_TIMEOUT) && Flags.flagStatus(Settings, AUTO_FLUSH))
 	{
-		Flags.setFlag(Settings, AUTO_FLUSH, false);
+		autoFlushEnable(false);
 		invokeST4(false);
 		TdsWarn.Tds2_FixedThresh = false;
 		DEBUG_RTT(LOG_WARNING, "***AUTO_FLUSH_TIMEOUT OCCURRED***");
@@ -296,7 +300,7 @@ void monitorTdsCycle(void)
 		menu.Display_Log("Would you like to ignore this warning for this fill cycle?");
 		if (TdsWarn.Tds2_FixedThresh)
 			menu.Display_Log("OR \nWould you like to a longer 20 minutes Auto-Flush?");
-
+		lastMsgDisplayed = HAL_GetTick();
 		menu.changeMenu(&haltMenu);
 	}
 }

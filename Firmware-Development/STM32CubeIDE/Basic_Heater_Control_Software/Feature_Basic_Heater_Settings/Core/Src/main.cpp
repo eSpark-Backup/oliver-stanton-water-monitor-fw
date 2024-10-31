@@ -461,7 +461,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOE, LED3_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, AuxHeater_Pin|RO_SAVER_Pin
+  HAL_GPIO_WritePin(GPIOD, AuxHeater_Pin|RO_SAVER_Pin|AUTO_FLUSH_Pin
                           |W_LED_CTRL_Pin|R_CNTRL_Pin|G_CNTRL_Pin|B_CNTRL_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
@@ -508,7 +508,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pins : AuxHeater_Pin TDS1_T1_Pin TDS1_T2_Pin RO_SAVER_Pin
                            W_LED_CTRL_Pin R_CNTRL_Pin G_CNTRL_Pin B_CNTRL_Pin */
-  GPIO_InitStruct.Pin = AuxHeater_Pin|TDS1_T1_Pin|TDS1_T2_Pin|RO_SAVER_Pin
+  GPIO_InitStruct.Pin = AuxHeater_Pin|TDS1_T1_Pin|TDS1_T2_Pin|RO_SAVER_Pin|AUTO_FLUSH_Pin
                           |W_LED_CTRL_Pin|R_CNTRL_Pin|G_CNTRL_Pin|B_CNTRL_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;

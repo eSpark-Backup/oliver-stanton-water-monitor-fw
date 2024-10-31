@@ -50,7 +50,7 @@ MenuItem fodOptnsOff05 = {
 MenuItem haltMenu = {
 	introSetup_05,
 	haltMenuLoop,
-	{{"TEST", nullptr, nullptr, nullptr, nullptr, 0, 1}}
+	{{"", nullptr, nullptr, nullptr, nullptr, 0, 1}}
 };
 ///-----------------------------Mains TDS-----------------------------
 
@@ -78,7 +78,7 @@ MenuItem mainsTDSTemperature = {
 MenuItem mainsTDSShutdown = {
 	defaultMenuSetup,
 	TdsShutdown,
-	{{"Off", nullptr, nullptr, nullptr, &mainsTDS, 0, 2},
+	{{"Off (default)", nullptr, nullptr, nullptr, &mainsTDS, 0, 2},
 	 {"On"	, nullptr, nullptr, nullptr, &mainsTDS, 0, 2}}
 };
 
@@ -120,7 +120,7 @@ MenuItem roTDSTemperature = {
 MenuItem roTDSShutdown = {
 	defaultMenuSetup,
 	TdsShutdown,
-	{{"Off", nullptr, nullptr, nullptr, &roTDS, 0, 2},
+	{{"Off (default)", nullptr, nullptr, nullptr, &roTDS, 0, 2},
 	 {"On"	, nullptr, nullptr, nullptr, &roTDS, 0, 2}}
 };
 
@@ -150,7 +150,7 @@ MenuItem diTDSTemperature = {
 MenuItem diTDSShutdown = {
 	defaultMenuSetup,
 	TdsShutdown,
-	{{"Off", nullptr, nullptr, nullptr, &diTDS, 0, 2},
+	{{"Off (default)", nullptr, nullptr, nullptr, &diTDS, 0, 2},
 	 {"On"	, nullptr, nullptr, nullptr, &diTDS, 0, 2}}
 };
 

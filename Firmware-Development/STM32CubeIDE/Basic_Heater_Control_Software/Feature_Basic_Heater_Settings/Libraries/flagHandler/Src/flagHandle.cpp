@@ -48,13 +48,11 @@ void FlagHandle::update(void)
 //		setFlag(Status, MEM_SAVER, HAL_GPIO_ReadPin(MEM_SAVER_GPIO_Port, MEM_SAVER_Pin));		//inverse logic
 		if(flagStatus(Status, MEM_SAVER))
 		{
-			HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(MEM_SAVER_GPIO_Port, MEM_SAVER_Pin, GPIO_PIN_SET);
 			DEBUG_RTT(LOG_WARNING, "Mem_Saver_ST3 turned on.");
 		}
 		else
 		{
-			HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
 			HAL_GPIO_WritePin(MEM_SAVER_GPIO_Port, MEM_SAVER_Pin, GPIO_PIN_RESET);
 			DEBUG_RTT(LOG_WARNING, "Mem_Saver_ST3 turned off.");	//}
 //		if(flagStatus(Status, MEM_SAVER) == false)	{
@@ -65,17 +63,29 @@ void FlagHandle::update(void)
 	{
 		if(flagStatus(Status, RESIN_SAVER))
 		{
-			HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(RO_SAVER_GPIO_Port, RO_SAVER_Pin, GPIO_PIN_SET);
 			DEBUG_RTT(LOG_WARNING, "RO_Saver_ST1 turned on.");
 		}
 		else
 		{
-			HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET);
 			HAL_GPIO_WritePin(RO_SAVER_GPIO_Port, RO_SAVER_Pin, GPIO_PIN_RESET);
 			DEBUG_RTT(LOG_WARNING, "RO_Saver_ST1 turned off.");	//}
 //		if(flagStatus(Status, MEM_SAVER) == false)	{
 			statusFlagTimeStamp[RESIN_SAVER] = HAL_GetTick();
+		}
+	}
+	if(HAL_GPIO_ReadPin(AUTO_FLUSH_GPIO_Port, AUTO_FLUSH_Pin) != flagStatus(Status, AUTO_FLUSH))
+	{
+		if(flagStatus(Status, AUTO_FLUSH))
+		{
+			HAL_GPIO_WritePin(AUTO_FLUSH_GPIO_Port, AUTO_FLUSH_Pin, GPIO_PIN_SET);
+			DEBUG_RTT(LOG_WARNING, "AUTO_FLUSH_ST4 turned on.");
+		}
+		else
+		{
+			HAL_GPIO_WritePin(AUTO_FLUSH_GPIO_Port, AUTO_FLUSH_Pin, GPIO_PIN_RESET);
+			DEBUG_RTT(LOG_WARNING, "AUTO_FLUSH_ST4 turned off.");	
+			statusFlagTimeStamp[AUTO_FLUSH] = HAL_GetTick();
 		}
 	}
 	if(HAL_GPIO_ReadPin(AUTO_FILL_GPIO_Port, AUTO_FILL_Pin) != flagStatus(Status, AUTO_FILL))

@@ -392,6 +392,7 @@ bool haltMenuLoop(uint32_t argChoice, MenuItem *argMenu)
 {
 	if (ButtonE.state())
 	{
+		autoFlushEnable(true);
 		invokeST4(true);
 		menu.changeMenu(&mainMenu05);
 	}
@@ -403,5 +404,22 @@ bool haltMenuLoop(uint32_t argChoice, MenuItem *argMenu)
 	{
 		return false;
 	}
+	return true;
+}
+
+bool autoFlushOptions(uint32_t argChoice, MenuItem *argMenu)
+{
+	if (argChoice < 3 && ButtonE.state())
+	{
+		autoFlushEnable(argChoice == 1 ? false : true);
+	}
+	else
+		return false;
+}
+
+bool autoFlushEnable(bool activateST4)
+{
+	Flags.setFlag(Settings, AUTO_FLUSH, activateST4);
+	DEBUG_RTT(LOG_WARNING, "AUTO_FLUSH setting Turned %s.", activateST4 ? "On" : "Off");
 	return true;
 }

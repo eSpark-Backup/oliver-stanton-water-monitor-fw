@@ -41,3 +41,6 @@ bool TDSTemperatureLoop(uint32_t argChoice, MenuItem *argMenu);
 bool TdsShutdown(uint32_t argChoice, MenuItem *argMenu);
 bool RoTdsThreshold(uint32_t argChoice, MenuItem *argMenu);
 bool haltMenuLoop(uint32_t argChoice, MenuItem *argMenu);
+
+bool autoFlushOptions(uint32_t argChoice, MenuItem *argMenu);
+bool autoFlushEnable(bool activateST4);
