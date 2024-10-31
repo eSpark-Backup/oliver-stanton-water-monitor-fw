@@ -63,6 +63,24 @@ bool isTDSConnected(tdsSensor sensor)
 	return 0;
 }
 
+void calCurrentTdsReading(void)
+{
+	if (isTDSConnected(TDS1) && Flags.flagStatus(Status, AUTO_FILL))
+		menu.Display_Log("Input Stage - Mains Water TDS: \"%d\" ppm", tds1.readTDS());
+	else
+		menu.Display_Log("Input Stage - Mains Water TDS: --- ppm");
+
+	if (isTDSConnected(TDS2) && Flags.flagStatus(Status, AUTO_FILL))
+		menu.Display_Log("Mid Stage - RO Output TDS: \"%d\" ppm", tds2.readTDS());
+	else
+		menu.Display_Log("Mid Stage - RO Output TDS: --- ppm");
+
+	if (isTDSConnected(TDS3) && Flags.flagStatus(Status, AUTO_FILL))
+		menu.Display_Log("Final Stage - DI Output TDS: \"%d\" ppm", tds3.readTDS());
+	else
+		menu.Display_Log("Final Stage - DI Output TDS: --- ppm");
+}
+
 int roRejectionPc()
 {
 	int mainsPc = (setTDS.mainsThreshold * 100) / MAX_MAINS_TDS_THRESHOLD;
