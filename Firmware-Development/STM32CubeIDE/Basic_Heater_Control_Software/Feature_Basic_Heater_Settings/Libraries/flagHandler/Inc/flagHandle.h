@@ -27,6 +27,7 @@ public:
     void flashRetrieve(void);										//retrieves settings from flash memory
 	void flashCommit(void);											//saves settings into flash memory
 	void update(void);												//updates the status of input/output controls
+	bool checkOnTime(uint8_t sensor, uint32_t elapsedTime);
 	bool timeElapsed(uint8_t sensor, uint32_t elapsedTime);			//used for time based settings
 	bool flagStatus(uint8_t op, uint8_t sensor);					//returns the status of status flags for input/output controls
 	bool setFlag(uint8_t op, uint8_t sensor, uint8_t state);		//sets setting flag for particular feature

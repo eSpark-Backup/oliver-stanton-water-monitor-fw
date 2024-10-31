@@ -17,7 +17,7 @@
 #define FOD_AUTORUN_DELAY_PERIOD		SECONDS_TO_MS(60)					//60secs
 #define MEM_SAVER_PAUSE_TIMEOUT			MIN_TO_MS(15)						//15mins or 900secs
 #define AUTO_FLUSH_TIMEOUT				MIN_TO_MS(20)						//20 mins or 1200secs
-
+#define AUTO_FLUSH_FINISH_5M			MIN_TO_MS(05)
 
 TdsValues setTDS{
 	DEFAULT_MAINS_TDS_THRESHOLD,
@@ -287,7 +287,7 @@ bool checkTdsThresholdWarnings(void)
 	}
 	if (isTDSConnected(TDS2) && Flags.flagStatus(Settings, RO_TDS_THRESHOLD))
 	{
-		if (setTDS.roFixedThreshold < tds2.readTDS())
+		if (Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_FINISH_5M) && setTDS.roFixedThreshold < tds2.readTDS())
 		{
 			menu.Display_Log("RO TDS Too High (\"%d\" ppm) - System Inspection Required", setTDS.roFixedThreshold);
 			Log.logToMaster("During Auto-Fill, RO Membrane Fixed TDS threshold triggered. Threshold TDS : %d ppm. Actual TDS : %d ppm."
@@ -332,7 +332,7 @@ void checkTdsShutdownWarnings(void)
 				tds2.readTDS());
 		TdsWarn.Tds_Shutdown = true;
 	}
-	if (isTDSConnected(TDS3) && Flags.flagStatus(Settings, DI_TDS_THRESHOLD)
+	if (isTDSConnected(TDS3) && Flags.flagStatus(Settings, DI_TDS_THRESHOLD) && Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_FINISH_5M)
 		&& Flags.flagStatus(Settings, DI_TDS_SHUTDOWN) && setTDS.diThreshold < tds3.readTDS())
 	{
 		menu.Display_Log("Tank Full Purification Stopped - DI RESIN too High");
@@ -358,7 +358,7 @@ void monitorTdsCycle(void)
 	if (!lastMsgDisplayed && HAL_GetTick() - lastMsgDisplayed < 500)
 		return;
 
-	if (Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_TIMEOUT) && Flags.flagStatus(Settings, AUTO_FLUSH))
+	if (Flags.checkOnTime(AUTO_FLUSH, AUTO_FLUSH_TIMEOUT) && Flags.flagStatus(Settings, AUTO_FLUSH))
 	{
 		autoFlushEnable(false);
 		invokeST4(false);
