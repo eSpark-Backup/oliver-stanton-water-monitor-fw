@@ -1,6 +1,7 @@
 #include "menu_02.h"
 #include "controls.h"
 #include "masterLog.h"
+#include "rofsCore.h"
 
 
 #define MAX_TIME 60

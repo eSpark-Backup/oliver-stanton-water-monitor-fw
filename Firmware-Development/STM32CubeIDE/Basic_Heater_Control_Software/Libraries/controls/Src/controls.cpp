@@ -11,6 +11,7 @@
 #include "menu_01.h"
 #include "menu_05.h"
 #include "masterLog.h"
+#include "rofsCore.h"
 
 #define SECONDS_TO_MS(x) 				((x) * 1000) 						//converts seconds to milliseconds
 #define MIN_TO_MS(x) 					((x) * SECONDS_TO_MS(60))			//converts minutes to milliseconds
@@ -118,6 +119,7 @@ void fillOpen()
 	WLED1->setOutputPattern(1, 1000, 1000);
 
 	invokeST3(false);
+	invokeST4(true);	Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_FINISH_5M);
 	invokeST5(false);
 	Log.logToMaster("Float Circuit Open - Unable to commence filling");
 	mainMenuFunc();
@@ -358,9 +360,10 @@ void monitorTdsCycle(void)
 	if (!lastMsgDisplayed && HAL_GetTick() - lastMsgDisplayed < 500)
 		return;
 
-	if (Flags.checkOnTime(AUTO_FLUSH, AUTO_FLUSH_TIMEOUT) && Flags.flagStatus(Settings, AUTO_FLUSH))
+	if ((Flags.flagStatus(Status, LEVEL_SENSOR) && Flags.checkOnTime(AUTO_FLUSH, AUTO_FLUSH_FINISH_5M))
+		|| Flags.checkOnTime(AUTO_FLUSH, AUTO_FLUSH_TIMEOUT) && Flags.flagStatus(Settings, AUTO_FLUSH))
 	{
-		autoFlushEnable(false);
+		// autoFlushEnable(false);
 		invokeST4(false);
 		DEBUG_RTT(LOG_WARNING, "***AUTO_FLUSH_TIMEOUT OCCURRED***");
 	}
