@@ -64,6 +64,7 @@ void getButtonStates();
 void resetButtonStates();
 void setButtonStates(std::initializer_list<SWITCHES> buttons, bool enableSelected);
 void defaultMenuSetup(void);
+void backAndForthSetup(void);
 
 
 extern Switches ButtonE;		// Enter/OK button obj
@@ -81,3 +82,6 @@ BatPowerConsumptiontable, BatPowerConsumptionOptnsON, DeviceStandByScreen, Devic
 extern struct MenuItem intro05, mainMenu05, fodMenu05, selectTDS, fodOptnsOff05, haltMenu, mainsTDSThreshold, mainsTDSTemperature,
 mainsTDSShutdown, roTDS, roTDSThreshold, roDynamicTDSThreshold, roFixedTDSThreshold, roTDSTemperature, roTDSShutdown,
 diTDS, diTDSThreshold, diTDSTemperature, diTDSShutdown;
+//-------------------------------------------------------------------------------------
+
+extern struct MenuItem autoFlushOptns, autoFlushTimer;

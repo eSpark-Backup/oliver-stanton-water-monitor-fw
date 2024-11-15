@@ -16,4 +16,20 @@
  * If you want to be able to select a range of values in item, set <NextItems> to 0 and set the <Items> from 0-items range
  */
 
+MenuItem autoFlushOptns = {
+	nullptr,
+	autoFlushLoop,
+	{{"Enable", nullptr, nullptr, nullptr, &fodMenu, 0, 4},
+	 {"Disable", nullptr, nullptr, nullptr, &fodMenu, 0, 4},
+     {"StartUp Timer", nullptr, nullptr, &autoFlushTimer, &fodMenu, 2, 4},
+     {"Subsequent Timer", nullptr, nullptr, &autoFlushTimer, &fodMenu, 2, 4}}
+};
+
+MenuItem autoFlushTimer = {
+	nullptr,
+	autoFlushTimerLoop,
+	{{"Default 10 minutes", nullptr, nullptr, nullptr, &autoFlushOptns, 0, 2},
+	 {"Adjustable 5-60 minutes"	, nullptr, nullptr, nullptr, &autoFlushOptns, 0, 2}}
+};
+
 #endif /* INC_MENULIST_02_H_ */

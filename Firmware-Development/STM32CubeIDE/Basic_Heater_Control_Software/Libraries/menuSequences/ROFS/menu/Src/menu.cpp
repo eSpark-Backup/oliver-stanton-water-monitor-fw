@@ -260,3 +260,8 @@ void defaultMenuSetup(void)
 {
 	setButtonStates({RODI}, false);
 }
+
+void backAndForthSetup(void)
+{
+	setButtonStates({ENTER_OK, BACK}, true);
+}

@@ -317,8 +317,10 @@ bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state)
 		else if(sensor == BATTERY_PUMP_IGNORE_WARNING)		FlagsReg.status.Battery_Pump_Ignore = state;
 		else if(sensor == TRIGGER_WARNING) FlagsReg.status.Battery_warning = state;
 	}
-	// DEBUG_RTT(LOG_INFO, "Exiting setFlag.");
-	return false;
+	else
+		return false;
+	
+	return true;
 }
 
 void FlagHandle::flagsInit()								//Implement flashRetrieve() here

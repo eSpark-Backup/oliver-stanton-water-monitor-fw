@@ -73,11 +73,6 @@ void roSaverSetup()
 	setButtonStates({BACK}, true);
 }
 
-void backAndForthSetup(void)
-{
-	setButtonStates({ENTER_OK, BACK}, true);
-}
-
 void batIndexSetup(void)
 {
 	setButtonStates({ENTER_OK, BACK}, true);

@@ -7,7 +7,7 @@
 // #include "mainApp.hpp"
 // #include "controls.h"
 #include "menu_01.h"
-
+#include "menuList_02.h"
 
 ///-----------------------------Creating Menu Items List-----------------------------
 // Items in Menu
@@ -31,8 +31,10 @@ MenuItem mainMenu = {
 MenuItem fodMenu = {
 	defaultMenuSetup,
 	nullptr,
-	{{"Fill on Demand On/Off", nullptr, nullptr, &fodOptns, &mainMenu, 2, 2},
-	 {"RO_Saver", nullptr, nullptr, &roSaver, &mainMenu, 2, 2}}};
+	{{"Fill on Demand On/Off", nullptr, nullptr, &fodOptns, &mainMenu, 2, 3},
+	 {"Auto Flush Settings", nullptr, nullptr, &autoFlushOptns, &mainMenu, 4, 3},
+	 {"RO_Saver", nullptr, nullptr, &roSaver, &mainMenu, 2, 3}}
+};
 MenuItem fodOptns = {
 	nullptr,
 	fodON,
