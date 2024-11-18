@@ -360,8 +360,8 @@ void monitorTdsCycle(void)
 	if (!lastMsgDisplayed && HAL_GetTick() - lastMsgDisplayed < 500)
 		return;
 
-	if ((Flags.flagStatus(Status, LEVEL_SENSOR) && Flags.checkOnTime(AUTO_FLUSH, AUTO_FLUSH_FINISH_5M))
-		|| Flags.checkOnTime(AUTO_FLUSH, AUTO_FLUSH_TIMEOUT) && Flags.flagStatus(Settings, AUTO_FLUSH))
+	if ((!Flags.flagStatus(Status, LEVEL_SENSOR) && Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_FINISH_5M))
+		|| Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_TIMEOUT) && Flags.flagStatus(Settings, AUTO_FLUSH))
 	{
 		// autoFlushEnable(false);
 		invokeST4(false);
