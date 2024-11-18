@@ -32,6 +32,7 @@ public:
 	bool flagStatus(uint8_t op, uint8_t sensor);					//returns the status of status flags for input/output controls
 	bool setFlag(uint8_t op, uint8_t sensor, uint8_t state);		//sets setting flag for particular feature
 	void flagsInit(void);
+	uint32_t getTime(uint8_t sensor);
 
 private:
 	FlagHandle(){

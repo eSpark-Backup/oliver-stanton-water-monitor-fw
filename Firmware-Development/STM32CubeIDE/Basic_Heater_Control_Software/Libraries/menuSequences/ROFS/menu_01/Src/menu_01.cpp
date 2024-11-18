@@ -1,6 +1,6 @@
 #include "menu_01.h"
 #include "controls.h"
-
+#include "rofsCore.h"
 
 void introSetup(void)
 {
@@ -131,7 +131,7 @@ bool fodOFF(uint32_t argChoice, MenuItem *argMenu)
 				Flags.setFlag(Settings, MEM_SAVER_PAUSE, true);
 				Disp->display("System Purification paused.");
 				invokeST3(false);
-				invokeST4(false);
+				invokeST4(false);	flushTimer.pausedTime = Flags.getTime(AUTO_FLUSH);
 				invokeST5(false);
 			}
 		}

@@ -14,7 +14,7 @@
 
 uint32_t statusFlagTimeStamp[_sensors_];			//Time when status of output/sensor was changed
 uint32_t statusOnFlagTimeStamp[_sensors_];
-
+uint32_t activeTimeStamp[_sensors_];
 
 void FlagHandle::flashRetrieve()
 {
@@ -152,6 +152,19 @@ bool FlagHandle::checkOnTime(uint8_t sensor, uint32_t elapsedTime)
 	{
 		return false;
 	}
+}
+
+uint32_t FlagHandle::getTime(uint8_t sensor)
+{
+	uint32_t getActivatedTime = 0;
+
+	if (sensor != LEVEL_SENSOR && flagStatus(Status, sensor))
+		getActivatedTime = HAL_GetTick() - statusFlagTimeStamp[sensor];
+
+	else if (sensor == LEVEL_SENSOR && !flagStatus(Status, LEVEL_SENSOR))
+		getActivatedTime = HAL_GetTick() - statusFlagTimeStamp[sensor];
+
+	return getActivatedTime;
 }
 
 bool FlagHandle::timeElapsed(uint8_t sensor, uint32_t elapsedTime)
