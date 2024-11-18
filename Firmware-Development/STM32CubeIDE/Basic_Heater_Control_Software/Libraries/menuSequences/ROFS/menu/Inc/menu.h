@@ -84,4 +84,4 @@ mainsTDSShutdown, roTDS, roTDSThreshold, roDynamicTDSThreshold, roFixedTDSThresh
 diTDS, diTDSThreshold, diTDSTemperature, diTDSShutdown;
 //-------------------------------------------------------------------------------------
 
-extern struct MenuItem autoFlushOptns, autoFlushTimer;
+extern struct MenuItem autoFlushOptns, autoFlushTimer, productionTimer;

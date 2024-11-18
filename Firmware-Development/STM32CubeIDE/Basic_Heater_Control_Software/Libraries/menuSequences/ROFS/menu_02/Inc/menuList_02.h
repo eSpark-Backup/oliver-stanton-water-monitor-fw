@@ -19,10 +19,11 @@
 MenuItem autoFlushOptns = {
 	nullptr,
 	autoFlushLoop,
-	{{"Enable", nullptr, nullptr, nullptr, &fodMenu, 0, 4},
-	 {"Disable", nullptr, nullptr, nullptr, &fodMenu, 0, 4},
-     {"StartUp Timer", nullptr, nullptr, &autoFlushTimer, &fodMenu, 2, 4},
-     {"Subsequent Timer", nullptr, nullptr, &autoFlushTimer, &fodMenu, 2, 4}}
+	{{"Enable", nullptr, nullptr, nullptr, &fodMenu, 0, 5},
+	 {"Disable", nullptr, nullptr, nullptr, &fodMenu, 0, 5},
+     {"Initial Flush Timer", nullptr, nullptr, &autoFlushTimer, &fodMenu, 2, 5},
+	 {"Production Timer", nullptr, nullptr, &productionTimer, &fodMenu, 2, 5},
+     {"Subsequent Flush Timer", nullptr, nullptr, &autoFlushTimer, &fodMenu, 2, 5}}
 };
 
 MenuItem autoFlushTimer = {
@@ -30,6 +31,13 @@ MenuItem autoFlushTimer = {
 	autoFlushTimerLoop,
 	{{"Default 10 minutes", nullptr, nullptr, nullptr, &autoFlushOptns, 0, 2},
 	 {"Adjustable 5-60 minutes"	, nullptr, nullptr, nullptr, &autoFlushOptns, 0, 2}}
+};
+
+MenuItem productionTimer = {
+	nullptr,
+	productionTimerLoop,
+	{{"Default 50 minutes", nullptr, nullptr, nullptr, &autoFlushOptns, 0, 2},
+	 {"Adjustable 50-150 minutes"	, nullptr, nullptr, nullptr, &autoFlushOptns, 0, 2}}
 };
 
 #endif /* INC_MENULIST_02_H_ */

@@ -120,7 +120,7 @@ bool TdsDefaultThresholdValue(uint32_t argChoice, MenuItem *argMenu)
 	return false;
 }
 
-bool TDSThresholdAdjustedValue(bool mainsTdsMenu)
+bool TDSThresholdAdjustedValue(bool mainsTdsMenu, bool *thresholdAdjFlag)
 {
 	uint8_t minThreshold = mainsTdsMenu ? MIN_MAINS_TDS_THRESHOLD : MIN_DI_TDS_THRESHOLD;
 	uint8_t maxThreshold = mainsTdsMenu ? MAX_MAINS_TDS_THRESHOLD : MAX_DI_TDS_THRESHOLD;
@@ -153,7 +153,7 @@ bool TDSThresholdAdjustedValue(bool mainsTdsMenu)
 
 		DEBUG_RTT(LOG_WARNING, "Threshold value set to %d.", threshVal);
 		threshVal = minThreshold;
-
+		*thresholdAdjFlag = false;
 		return true;
 	}
 	return false;
@@ -188,7 +188,7 @@ bool TDSThresholdLoop(uint32_t argChoice, MenuItem *argMenu)
 	}
 	else if (isThresholdAdjustable)
 	{
-		return TDSThresholdAdjustedValue(isMenuLabelMatch(argMenu, mainsTDSThreshold));
+		return TDSThresholdAdjustedValue(isMenuLabelMatch(argMenu, mainsTDSThreshold), &isThresholdAdjustable);
 	}
 
 	return false;
@@ -220,7 +220,7 @@ bool TdsDefaultTemperatureValue(uint32_t argChoice, MenuItem *argMenu)
 	return true;
 }
 
-bool TDSTemperatureAdjustedValue(MenuItem *argMenu)
+bool TDSTemperatureAdjustedValue(MenuItem *argMenu, bool *tempAdjFlag)
 {
 	static uint8_t tempVal = MIN_TDS_TEMPERATURE;
 
@@ -258,6 +258,7 @@ bool TDSTemperatureAdjustedValue(MenuItem *argMenu)
 
 		DEBUG_RTT(LOG_WARNING, "Temperature value set to %d.", tempVal);
 		tempVal = MIN_TDS_TEMPERATURE;
+		*tempAdjFlag = false;
 		return true;
 	}
 }
@@ -283,7 +284,7 @@ bool TDSTemperatureLoop(uint32_t argChoice, MenuItem *argMenu)
 	}
 	else if (isTemperatureAdjustable)
 	{
-		return TDSTemperatureAdjustedValue(argMenu);
+		return TDSTemperatureAdjustedValue(argMenu, &isTemperatureAdjustable);
 	}
 
 	return false;

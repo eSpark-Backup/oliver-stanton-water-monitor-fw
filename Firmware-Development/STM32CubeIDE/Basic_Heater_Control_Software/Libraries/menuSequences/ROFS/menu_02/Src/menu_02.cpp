@@ -5,6 +5,8 @@
 
 
 #define MAX_TIME 60
+#define MAX_PROD_TIME 150
+#define DEFAULT_PROD_TIME 50
 #define DEFAULT_TIME 10
 #define MIN_TIME 05
 #define DIFF_TIME 05
@@ -12,30 +14,37 @@
 autoFlushTimers flushTimer;
 
 // // Helper function to check if the menu label matches the target menu label
-// bool isMenuLabelMatch(MenuItem *menu, const MenuItem &targetThreshold, uint8_t childMenu = 0)
+// bool isMenuLabelMatch(MenuItem *menu, const MenuItem &targetCountTime, uint8_t childMenu = 0)
 // {
-//     return strcmp(menu->Items[childMenu].label, targetThreshold.Items[childMenu].label) == 0;
+//     return strcmp(menu->Items[childMenu].label, targetCountTime.Items[childMenu].label) == 0;
 // }
 
-bool autoFlushTimerAdjValue(bool timerDefaultMode)
+bool autoFlushTimerAdjValue(bool *timerDefaultMode)
 {
-    static bool isDefaultTimer = timerDefaultMode;
-    static uint8_t timerVal = isDefaultTimer ? DEFAULT_TIME: MIN_TIME;
 
-    if (ButtonD.state() && timerVal > MIN_TIME)
+    uint8_t minCountTime = flushTimer.selectTimer == PRODUCTION_TIMER ? DEFAULT_PROD_TIME : MIN_TIME;
+    uint8_t maxCountTime = flushTimer.selectTimer == PRODUCTION_TIMER ? MAX_PROD_TIME : MAX_TIME;
+
+    static uint8_t timerVal = minCountTime;
+
+    if (ButtonD.state() && timerVal > minCountTime)
     {
         timerVal -= DIFF_TIME;
     }
-    else if (ButtonU.state() && timerVal < MAX_TIME)
+    else if (ButtonU.state() && timerVal < maxCountTime)
     {
         timerVal += DIFF_TIME;
     }
 
-    if (ButtonE.state() || isDefaultTimer)
+    if (ButtonE.state())
     {
         if (flushTimer.selectTimer == STARTUP_TIMER)
         {
             flushTimer.startUpTimer = timerVal;
+        }
+        else if (flushTimer.selectTimer == PRODUCTION_TIMER)
+        {
+            flushTimer.productionTimer = timerVal;
         }
         else if (flushTimer.selectTimer == SUBSEQUENT_TIMER)
         {
@@ -50,7 +59,7 @@ bool autoFlushTimerAdjValue(bool timerDefaultMode)
         DEBUG_RTT(LOG_WARNING, "Timer value set to %d.", timerVal);
         Flags.setFlag(Settings, AUTO_FLUSH, true);
         timerVal = MIN_TIME;
-        isDefaultTimer = false;
+        *timerDefaultMode = false;
         flushTimer.selectTimer = NO_TIMER;
         return true;
     }
@@ -66,7 +75,8 @@ bool autoFlushLoop(uint32_t argChoice, MenuItem *argMenu)
         case 1:  return Flags.setFlag(Settings, AUTO_FLUSH, true);
         case 2:  return Flags.setFlag(Settings, AUTO_FLUSH, false);
         case 3:  flushTimer.selectTimer = STARTUP_TIMER; return true;
-        case 4:  flushTimer.selectTimer = SUBSEQUENT_TIMER; return true;
+        case 4:  flushTimer.selectTimer = PRODUCTION_TIMER; return true;
+        case 5:  flushTimer.selectTimer = SUBSEQUENT_TIMER; return true;
         }
     }
     return false;
@@ -82,7 +92,11 @@ bool autoFlushTimerLoop(uint32_t argChoice, MenuItem *argMenu)
         {
         case 1:
             Disp->display("Default time 10 minutes is set");
-            return autoFlushTimerAdjValue(true);
+            flushTimer.selectTimer == STARTUP_TIMER ?
+            flushTimer.startUpTimer = DEFAULT_TIME : flushTimer.subsequentTimer = DEFAULT_TIME ;
+            flushTimer.selectTimer == NO_TIMER;
+            return true;
+
         case 2:
             Disp->display("Set time from 05-60 minutes");
             autoFlushTimer = true;
@@ -92,7 +106,36 @@ bool autoFlushTimerLoop(uint32_t argChoice, MenuItem *argMenu)
     }
     else if (autoFlushTimer)
     {
-        return autoFlushTimerAdjValue(false);
+        return autoFlushTimerAdjValue(&autoFlushTimer);
+    }
+
+    return false;
+}
+
+bool productionTimerLoop(uint32_t argChoice, MenuItem *argMenu)
+{
+    static bool productionTimer = false;
+
+    if (!productionTimer && ButtonE.state())
+    {
+        switch (argChoice)
+        {
+        case 1:
+            Disp->display("Default time 50 minutes is set");
+            flushTimer.productionTimer = DEFAULT_PROD_TIME;
+            flushTimer.selectTimer == NO_TIMER;
+            return true;
+      
+        case 2:
+            Disp->display("Set time from 50-150 minutes");
+            productionTimer = true;
+            backAndForthSetup();
+            break;
+        }
+    }
+    else if (productionTimer)
+    {
+        return autoFlushTimerAdjValue(&productionTimer);
     }
 
     return false;
