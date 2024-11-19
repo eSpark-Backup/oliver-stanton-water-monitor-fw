@@ -13,8 +13,7 @@
 
 
 uint32_t statusFlagTimeStamp[_sensors_];			//Time when status of output/sensor was changed
-uint32_t statusOnFlagTimeStamp[_sensors_];
-uint32_t activeTimeStamp[_sensors_];
+uint32_t statusOffFlagTimeStamp[_sensors_];
 
 void FlagHandle::flashRetrieve()
 {
@@ -39,7 +38,7 @@ void FlagHandle::update(void)
 		}
 		else
 		{
-			statusOnFlagTimeStamp[LEVEL_SENSOR] = HAL_GetTick();
+			statusOffFlagTimeStamp[LEVEL_SENSOR] = HAL_GetTick();
 			DEBUG_RTT(LOG_WARNING, "Level Sensor Open.");
 		}
 	}
@@ -51,7 +50,7 @@ void FlagHandle::update(void)
 		{
 			HAL_GPIO_WritePin(MEM_SAVER_GPIO_Port, MEM_SAVER_Pin, GPIO_PIN_SET);
 			DEBUG_RTT(LOG_WARNING, "Mem_Saver_ST3 turned on.");
-			statusOnFlagTimeStamp[MEM_SAVER] = HAL_GetTick();
+			statusOffFlagTimeStamp[MEM_SAVER] = HAL_GetTick();
 		}
 		else
 		{
@@ -67,7 +66,7 @@ void FlagHandle::update(void)
 		{
 			HAL_GPIO_WritePin(RO_SAVER_GPIO_Port, RO_SAVER_Pin, GPIO_PIN_SET);
 			DEBUG_RTT(LOG_WARNING, "RO_Saver_ST1 turned on.");
-			statusOnFlagTimeStamp[RESIN_SAVER] = HAL_GetTick();
+			statusOffFlagTimeStamp[RESIN_SAVER] = HAL_GetTick();
 		}
 		else
 		{
@@ -83,7 +82,7 @@ void FlagHandle::update(void)
 		{
 			HAL_GPIO_WritePin(AUTO_FLUSH_GPIO_Port, AUTO_FLUSH_Pin, GPIO_PIN_SET);
 			DEBUG_RTT(LOG_WARNING, "AUTO_FLUSH_ST4 turned on.");
-			statusOnFlagTimeStamp[AUTO_FLUSH] = HAL_GetTick();
+			statusOffFlagTimeStamp[AUTO_FLUSH] = HAL_GetTick();
 		}
 		else
 		{
@@ -99,7 +98,7 @@ void FlagHandle::update(void)
 			HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(AUTO_FILL_GPIO_Port, AUTO_FILL_Pin, GPIO_PIN_SET);
 			DEBUG_RTT(LOG_WARNING, "Auto_Fill_ST5 turned on.");
-			statusOnFlagTimeStamp[AUTO_FILL] = HAL_GetTick();
+			statusOffFlagTimeStamp[AUTO_FILL] = HAL_GetTick();
 		}
 		else
 		{
@@ -129,9 +128,9 @@ void FlagHandle::update(void)
 
 }
 
-bool FlagHandle::checkOnTime(uint8_t sensor, uint32_t elapsedTime)
+bool FlagHandle::checkOffTime(uint8_t sensor, uint32_t elapsedTime)
 {
-	uint32_t elapsed = HAL_GetTick() - statusOnFlagTimeStamp[sensor];
+	uint32_t elapsed = HAL_GetTick() - statusOffFlagTimeStamp[sensor];
 	if ((sensor == LEVEL_SENSOR) && (flagStatus(Status, LEVEL_SENSOR) != true) && elapsed >= elapsedTime)
 	{
 		return true;
@@ -264,7 +263,6 @@ bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor)
 		else if(sensor == RESIN_SAVER)			return FlagsReg.status.Resin_Saver;
 		else if(sensor == MEM_SAVER)			return FlagsReg.status.Mem_Saver;
 		else if(sensor == AUTO_FLUSH)			return FlagsReg.status.Auto_Flush;
-		else if(sensor == AUTO_FLUSH_PAUSE)		return FlagsReg.status.Auto_Flush_Pause;
 		else if(sensor == AUTO_FILL)			return FlagsReg.status.Auto_Fill;
 		else if(sensor == PURE_CYCLE)			return FlagsReg.status.Pure_CYCLE;
 		else if(sensor == BATTERY_CHARGING_DETECTED) return FlagsReg.status.Battery_charging_detected;

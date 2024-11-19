@@ -22,9 +22,19 @@ typedef enum
     SUBSEQUENT_TIMER
 } flushTimerType;
 
+typedef enum
+{
+    TDS_ACTIVATION,
+    DEACTIVATED,
+    ACTIVATED,
+    PAUSE,
+    WAIT
+} autoflushStatusType;
+
 typedef struct
 {
     flushTimerType selectTimer = NO_TIMER;
+    autoflushStatusType activityStatus = DEACTIVATED;
     uint8_t cycleCount = 1;
     uint8_t startUpTimer = 10;
     uint8_t productionTimer = 50;

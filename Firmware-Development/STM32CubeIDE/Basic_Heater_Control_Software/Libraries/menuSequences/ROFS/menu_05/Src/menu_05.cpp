@@ -1,6 +1,7 @@
 #include "menu_05.h"
 #include "controls.h"
 #include "masterLog.h"
+#include "rofsCore.h"
 
 // Helper function to check if the menu label matches the target threshold
 bool isMenuLabelMatch(MenuItem *menu, const MenuItem &targetThreshold)
@@ -395,6 +396,7 @@ bool haltMenuLoop(uint32_t argChoice, MenuItem *argMenu)
 	if (TdsWarn.Tds2_FixedThresh && ButtonU.state())
 	{
 		autoFlushEnable(true);
+		flushTimer.activityStatus = TDS_ACTIVATION;
 		invokeST4(true);
 		menu.changeMenu(&mainMenu05);
 		Log.logToMaster("User pressed UP key to override RO TDS threshold warning and Start Auto Flush.");

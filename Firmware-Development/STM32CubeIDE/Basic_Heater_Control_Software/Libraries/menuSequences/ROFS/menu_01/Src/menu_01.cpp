@@ -106,6 +106,7 @@ bool fodOFF(uint32_t argChoice, MenuItem *argMenu)
 			Flags.setFlag(Settings, MEM_SAVER, false);
 			Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
 			flushTimer.cycleCount = 0;
+			flushTimer.activityStatus = DEACTIVATED;
 			invokeST3(false);
 			invokeST4(false);
 			invokeST5(false);
@@ -125,12 +126,13 @@ bool fodOFF(uint32_t argChoice, MenuItem *argMenu)
 				invokeST4(true);
 				invokeST5(true);
 				calCurrentTdsReading();
+				flushTimer.activityStatus = ACTIVATED;
 			}
 			else
 			{
 				Flags.setFlag(Settings, MEM_SAVER, false);
 				Flags.setFlag(Settings, MEM_SAVER_PAUSE, true);
-				Flags.setFlag(Status, AUTO_FLUSH_PAUSE, true);
+				flushTimer.activityStatus = PAUSE;
 				Disp->display("System Purification paused.");
 				invokeST3(false);
 				invokeST4(false);	

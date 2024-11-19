@@ -205,6 +205,7 @@ bool roSaverST1()
 		Flags.setFlag(Status, PURE_CYCLE, false);
 		Disp->display("Tank Full, System Purification Stopped.");
 		flushTimer.cycleCount = 0;
+		flushTimer.activityStatus = DEACTIVATED;
 		mainMenuFunc();
 		return true;
 	}

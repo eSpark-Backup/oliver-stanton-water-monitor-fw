@@ -27,7 +27,7 @@ public:
     void flashRetrieve(void);										//retrieves settings from flash memory
 	void flashCommit(void);											//saves settings into flash memory
 	void update(void);												//updates the status of input/output controls
-	bool checkOnTime(uint8_t sensor, uint32_t elapsedTime);
+	bool checkOffTime(uint8_t sensor, uint32_t elapsedTime);
 	bool timeElapsed(uint8_t sensor, uint32_t elapsedTime);			//used for time based settings
 	bool flagStatus(uint8_t op, uint8_t sensor);					//returns the status of status flags for input/output controls
 	bool setFlag(uint8_t op, uint8_t sensor, uint8_t state);		//sets setting flag for particular feature
@@ -50,7 +50,6 @@ protected:
 	   uint64_t _8              :1;			//LSB
 	   uint64_t Prop_Mixing     :1;
 	   uint64_t Auto_Flush      :1;
-	   uint64_t Auto_Flush_Pause:1;
 	   uint64_t Pump_1          :1;
 	   uint64_t Pump_2          :1;
 	   uint64_t Main_Heater     :1;
