@@ -140,3 +140,41 @@ bool productionTimerLoop(uint32_t argChoice, MenuItem *argMenu)
 
     return false;
 }
+
+void cycleCount()
+{
+    uint8_t flushCycleCount = 0;
+    const char *cycle[] = {"First", "Second", "Third", "Fourth", "Fifth", "Subsequent (5+)"};
+    flushTimer.cycleCount > 6 ? flushCycleCount = 0 : flushCycleCount;
+    uint32_t timeLeft = HAL_GetTick() - (flushTimer.cycleCount == 1 ? flushTimer.startUpTimer : flushTimer.subsequentTimer);
+    menu.Display_Log("Purifying - %s Auto Flush Cycle - Flush time left: ", cycle[flushCycleCount], timeLeft);
+}
+
+void autoFlushST4(void)
+{
+    Flags.update();
+    static uint8_t curCycleCount = 0;
+    if (!Flags.flagStatus(Status, AUTO_FLUSH) && Flags.flagStatus(Settings, AUTO_FLUSH))
+    {
+        curCycleCount++;
+    }
+    if (Flags.flagStatus(Status, LEVEL_SENSOR) && curCycleCount > 0)
+    {
+        curCycleCount = 0;
+    }
+	if ((Flags.flagStatus(Status, LEVEL_SENSOR) && Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_FINISH_5M))
+		|| Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_TIMEOUT) && Flags.flagStatus(Status, AUTO_FLUSH)
+		|| !Flags.flagStatus(Status, LEVEL_SENSOR) && Flags.flagStatus(Status, AUTO_FLUSH_PAUSE) 
+		&& Flags.timeElapsed(AUTO_FLUSH, flushTimer.pausedTime) && Flags.flagStatus(Status, AUTO_FLUSH))
+    {
+        invokeST4(false);
+        Flags.setFlag(Status, AUTO_FLUSH_PAUSE, false);
+        flushTimer.pausedTime = 0;
+        DEBUG_RTT(LOG_WARNING, "***AUTO_FLUSH_CYCLE_STOPPED***");
+    }
+    else if (Flags.flagStatus(Status, PURE_CYCLE) && Flags.flagStatus(Settings, AUTO_FLUSH) && !Flags.flagStatus(Status, LEVEL_SENSOR))
+    {
+        cycleCount();
+        invokeST4(true);
+    }
+}

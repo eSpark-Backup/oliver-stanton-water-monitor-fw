@@ -50,6 +50,7 @@ protected:
 	   uint64_t _8              :1;			//LSB
 	   uint64_t Prop_Mixing     :1;
 	   uint64_t Auto_Flush      :1;
+	   uint64_t Auto_Flush_Pause:1;
 	   uint64_t Pump_1          :1;
 	   uint64_t Pump_2          :1;
 	   uint64_t Main_Heater     :1;

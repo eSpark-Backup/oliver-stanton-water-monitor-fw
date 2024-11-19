@@ -7,3 +7,5 @@
 bool autoFlushLoop(uint32_t argChoice, MenuItem *argMenu);
 bool autoFlushTimerLoop(uint32_t argChoice, MenuItem *argMenu);
 bool productionTimerLoop(uint32_t argChoice, MenuItem *argMenu);
+
+void autoFlushST4(void);

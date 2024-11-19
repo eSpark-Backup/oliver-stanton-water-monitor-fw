@@ -13,13 +13,6 @@
 #include "masterLog.h"
 #include "rofsCore.h"
 
-#define SECONDS_TO_MS(x) 				((x) * 1000) 						//converts seconds to milliseconds
-#define MIN_TO_MS(x) 					((x) * SECONDS_TO_MS(60))			//converts minutes to milliseconds
-#define FOD_AUTORUN_DELAY_PERIOD		SECONDS_TO_MS(60)					//60secs
-#define MEM_SAVER_PAUSE_TIMEOUT			MIN_TO_MS(15)						//15mins or 900secs
-#define AUTO_FLUSH_TIMEOUT				MIN_TO_MS(20)						//20 mins or 1200secs
-#define AUTO_FLUSH_FINISH_5M			MIN_TO_MS(05)
-
 TdsValues setTDS{
 	DEFAULT_MAINS_TDS_THRESHOLD,
 	DEFAULT_TDS_TEMPERATURE,
@@ -211,6 +204,7 @@ bool roSaverST1()
 	{
 		Flags.setFlag(Status, PURE_CYCLE, false);
 		Disp->display("Tank Full, System Purification Stopped.");
+		flushTimer.cycleCount = 0;
 		mainMenuFunc();
 		return true;
 	}
@@ -250,14 +244,6 @@ void memSaverST3()
 
 		invokeST3(true);
 		invokeST5(true);
-	}
-	if ((!Flags.flagStatus(Status, LEVEL_SENSOR) && Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_FINISH_5M))
-		|| Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_TIMEOUT) && Flags.flagStatus(Status, AUTO_FLUSH)
-		|| Flags.flagStatus(Status, LEVEL_SENSOR) && Flags.timeElapsed(AUTO_FLUSH, flushTimer.startUpTimer - flushTimer.pausedTime))
-	{
-		invokeST4(false);
-		flushTimer.pausedTime = 0;
-		DEBUG_RTT(LOG_WARNING, "***AUTO_FLUSH_STOPPED***");
 	}
 }
 

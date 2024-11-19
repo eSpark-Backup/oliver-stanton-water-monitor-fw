@@ -264,6 +264,7 @@ bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor)
 		else if(sensor == RESIN_SAVER)			return FlagsReg.status.Resin_Saver;
 		else if(sensor == MEM_SAVER)			return FlagsReg.status.Mem_Saver;
 		else if(sensor == AUTO_FLUSH)			return FlagsReg.status.Auto_Flush;
+		else if(sensor == AUTO_FLUSH_PAUSE)		return FlagsReg.status.Auto_Flush_Pause;
 		else if(sensor == AUTO_FILL)			return FlagsReg.status.Auto_Fill;
 		else if(sensor == PURE_CYCLE)			return FlagsReg.status.Pure_CYCLE;
 		else if(sensor == BATTERY_CHARGING_DETECTED) return FlagsReg.status.Battery_charging_detected;
