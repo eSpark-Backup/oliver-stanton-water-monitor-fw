@@ -85,8 +85,8 @@ bool didWork = false;
 
 void MainApp::setup()
 {
-	currentM = &intro;
-	HAL_Delay(2000);  		menu.displayMenu(currentM, intro.Items[0].num_items);
+	currentM = &intro05;
+	HAL_Delay(2000);  		menu.displayMenu(currentM, intro05.Items[0].num_items);
 
 	Flags.flagsInit();				//initiate flags from flash
 	DEBUG_LOG(LOG_INFO, "Water Monitor Controller Initialization complete.");
