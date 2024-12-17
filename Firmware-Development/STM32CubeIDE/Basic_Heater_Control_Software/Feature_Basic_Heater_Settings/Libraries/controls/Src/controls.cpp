@@ -267,7 +267,7 @@ void fillOpen()
 	Disp->display("Tank Full - System not Filling");
 
 	Buzzzer->setOutputPattern(1, 500, 1000);
-	((RgbDriver*)WLED1)->setRgbColor(BLUE);
+	((RgbDriver*)WLED1)->setRgbColor(RED);
 	WLED1->setOutputPattern(1, 1000, 1000);
 
 	invokeST3(false);
