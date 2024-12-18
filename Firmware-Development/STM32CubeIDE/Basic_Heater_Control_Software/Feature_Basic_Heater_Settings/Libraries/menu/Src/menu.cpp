@@ -315,7 +315,7 @@ bool mainMenuSelection(uint32_t argChoice, MenuItem *argMenu)
 		return true;
 	}
 
-	else if (ButtonE.period() > MINIMUM_PRESS && ButtonE.period() < SHORT_PRESS
+	else if (ButtonR.period() > MINIMUM_PRESS && ButtonR.period() < SHORT_PRESS
 			&& !Flags.flagStatus(Status, RESIN_SAVER))
 	{
 		menu.changeMenu(&fodOptnsOff);

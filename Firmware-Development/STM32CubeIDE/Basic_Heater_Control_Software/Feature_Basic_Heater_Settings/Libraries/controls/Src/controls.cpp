@@ -16,6 +16,7 @@
 
 
 short roSaverThreshValue = 0;
+long lastMsgDisplayed = 0;
 //short currentRoValue;
 
 
@@ -323,19 +324,26 @@ bool roSaverST1()
 	if (!Flags.flagStatus(Settings, MEM_SAVER_PAUSE) && Flags.flagStatus(Status, PURE_CYCLE)
 	&& Flags.flagStatus(Settings, RESIN_SAVER) && !Flags.flagStatus(Status, MEM_SAVER) && !Flags.flagStatus(Status, AUTO_FILL))
 	{
-		if (tdsSensor(ADC_CHANNEL_14) < 1.0 && tdsSensor(ADC_CHANNEL_15) < 1.0) // Assuming a pulldown resistor [not connected means 0 value]
+		if (tdsSensor(ADC_CHANNEL_14) == 0) // Assuming a pulldown resistor [not connected means 0 value]
 		{
-			Disp->display("TDS Sensor Disconnected - unable to run RO Saver cycle");
-			Flags.setFlag(Status, PURE_CYCLE, false);
-			Buzzzer->setOutputPattern(1, 500, 1000);
-			((RgbDriver *)WLED1)->setRgbColor(RED);
-			WLED1->setOutputPattern(1, 1000, 1000);
-			return false;
+			if (!lastMsgDisplayed)
+			{
+				Buzzzer->setOutputPattern(1, 500, 1000);
+				((RgbDriver *)WLED1)->setRgbColor(RED);
+				WLED1->setOutputPattern(1, 1000, 1000);
+			}
+			if ((HAL_GetTick() - lastMsgDisplayed) > 1000)
+			{
+				Disp->display("TDS2 Sensor Disconnected - unable to run RO Saver cycle");
+				lastMsgDisplayed = HAL_GetTick();
+			}
+				return false;
 		}
 		Disp->display("Completing Purification Cycle - Dosing RO Membrane.");
 		invokeST1(true); 
 		invokeST5(true);
 		Flags.update();
+		lastMsgDisplayed = 0;
 		return true;
 	}
 	else if (Flags.flagStatus(Status, PURE_CYCLE) && Flags.flagStatus(Status, RESIN_SAVER) && Flags.flagStatus(Status, AUTO_FILL))
