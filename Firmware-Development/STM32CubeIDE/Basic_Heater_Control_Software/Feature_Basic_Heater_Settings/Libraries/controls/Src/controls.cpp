@@ -65,44 +65,57 @@ bool fodOFF(uint32_t argChoice, MenuItem* argMenu)
 			Flags.setFlag(Settings, FoD, false);
 			DEBUG_RTT(LOG_WARNING, "Fill on Demand disabled");
 		}
-		if(ButtonE.period() > SHORT_PRESS && ButtonE.period() < LONG_LONG_PRESS)
+		if ((Flags.flagStatus(Settings, MEM_SAVER) || Flags.flagStatus(Settings, MEM_SAVER_PAUSE)))
 		{
-			Disp->display("System Purification stopped.");
-			Flags.setFlag(Settings, MEM_SAVER, false);
-			Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
-			invokeST3(false);
-			invokeST5(false);
-			mainMenuFunc();
+			if (ButtonE.period() > SHORT_PRESS && ButtonE.period() < LONG_LONG_PRESS)
+			{
+				Disp->display("System Purification stopped.");
+				Flags.setFlag(Settings, MEM_SAVER, false);
+				Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
+				invokeST3(false);
+				invokeST5(false);
+				mainMenuFunc();
+			}
+			else if (ButtonE.period() < SINGLE_PRESS)
+			{
+				bool statusFlag = false;
+				if (Flags.flagStatus(Settings, MEM_SAVER))
+				{
+					Disp->display("System Purification paused.");
+					statusFlag = true;
+				}
+				Flags.setFlag(Settings, MEM_SAVER_PAUSE, statusFlag);
+				invokeST3(!statusFlag);
+				invokeST5(!statusFlag);
+			}
 		}
-		else if (ButtonE.period() < SINGLE_PRESS)
+	}
+	else if (ButtonR.state() && !Flags.flagStatus(Settings, MEM_SAVER))
+	{
+		if (ButtonR.period() < SINGLE_PRESS)
 		{
 			Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
-			if(Flags.flagStatus(Status, LEVEL_SENSOR) == true)
+			if (Flags.flagStatus(Status, LEVEL_SENSOR) == true)
 			{
 				Flags.setFlag(Settings, MEM_SAVER, false);
 				fillOpen();
 				// invokeST3(false); /// called twice
 			}
-			else if(!Flags.flagStatus(Settings, MEM_SAVER))
+			else if (!Flags.flagStatus(Settings, MEM_SAVER))
 			{
-//				Disp->display("Starting Purification - System Filling.");
-//				Flags.setFlag(Settings, MEM_SAVER, true);
-//				Flags.setFlag(Status, PURE_CYCLE, true);
+				//				Disp->display("Starting Purification - System Filling.");
+				//				Flags.setFlag(Settings, MEM_SAVER, true);
+				//				Flags.setFlag(Status, PURE_CYCLE, true);
 				invokeST3(true);
 				invokeST5(true);
 			}
-			else
-			{
-				Flags.setFlag(Settings, MEM_SAVER, false);
-				Flags.setFlag(Settings, MEM_SAVER_PAUSE, true);
-				Disp->display("System Purification paused.");
-				invokeST3(false);
-				invokeST5(false);
-			}
 		}
-		return true;
 	}
-	return false;
+	else
+	{
+		return false;
+	}
+	return true;
 }
 
 
