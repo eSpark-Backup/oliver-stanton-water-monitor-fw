@@ -58,7 +58,15 @@ float tdsSensor(uint32_t channel)
 //***********************Purefication Cycle**************************
 bool fodOFF(uint32_t argChoice, MenuItem* argMenu)
 {
-	if (ButtonE.state())
+	if (ButtonB.state())
+	{
+		currentM = lastMenuItem;
+		menu.displayMenu(currentM, currentM->Items[0].num_items);
+		currentM->oneTimeSetup();
+
+		ButtonB.reset();
+	}
+	else if (ButtonE.state())
 	{
 		if (Flags.flagStatus(Settings, FoD))
 		{

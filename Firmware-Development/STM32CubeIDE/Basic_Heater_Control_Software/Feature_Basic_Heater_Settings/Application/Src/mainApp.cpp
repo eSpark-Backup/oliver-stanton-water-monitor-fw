@@ -69,6 +69,7 @@ bool sw7Flag = false;
 bool timeStamped = false;
 uint32_t buttonPressTime;
 MenuItem *previousMenuItem = nullptr;
+MenuItem *lastMenuItem = nullptr;
 bool didWork = false;
 
 
@@ -114,6 +115,7 @@ bool MainApp::invokeMenu()
 	if (currentMenuItem->oneTimeSetup != nullptr && currentMenuItem != previousMenuItem)
 	{
 		currentMenuItem->oneTimeSetup();
+		lastMenuItem = previousMenuItem;
 		previousMenuItem = currentMenuItem;
 	}
 
