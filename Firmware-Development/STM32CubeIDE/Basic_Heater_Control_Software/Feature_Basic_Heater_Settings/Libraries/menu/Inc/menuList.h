@@ -48,7 +48,7 @@ MenuItem fodOptns = {
 MenuItem fodOptnsOff = {
 	fodOffSetup,
 	fodOFF,
-	{{"Press RODI to commence the purification filling process", nullptr, nullptr, nullptr, &fodMenu, 2, 1}}
+	{{"Press OK to commence the purification filling process", nullptr, nullptr, nullptr, &fodMenu, 2, 1}}
 };
 MenuItem roSaver = {
 	defaultMenuSetup,
