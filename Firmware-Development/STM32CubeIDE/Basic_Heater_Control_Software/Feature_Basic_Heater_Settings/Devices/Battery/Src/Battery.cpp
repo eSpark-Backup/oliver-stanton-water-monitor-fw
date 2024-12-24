@@ -148,6 +148,7 @@ else
 			lastMessageDisplayed = HAL_GetTick();
 			LastBatteryVoltage = BatteryVoltage;
 		}
+	}
 		if(BatteryVoltage < BATTERY_LOW_VOLTAGE && BatteryVoltage > BATTERY_CRITICAL_VOLTAGE)
 		{
 //			BATTERY_LOW
@@ -188,7 +189,6 @@ else
 //			Monitor.isPreviouslyCharging = charging;
 //		}
 
-	}
 	/// will be added to loop Battery monitor ON condition
 	// else if (strcmp(Menu->Items[g_csIndex].label, BatPowerConsumptiontable.Items[0].label) == 0)
 	// { 
@@ -205,12 +205,11 @@ else
 
 
 	// }
-	else if (strcmp(Menu->Items[g_csIndex].label, DeviceShutDown.Items[0].label) == 0)
+	if (strcmp(Menu->Items[g_csIndex].label, DeviceShutDown.Items[0].label) == 0)
 	{
 		if(BatteryVoltage < BATTERY_CRITICAL_VOLTAGE)
 		{
-			Flags.setFlag(Status, TRIGGER_WARNING,false
-					);
+			Flags.setFlag(Status, TRIGGER_WARNING,false);
 			triggers = 6;
 			Monitor.isKeepDeviceInShutdown = true;
 		}
@@ -310,18 +309,18 @@ else
 				Monitor.isActivityDetected = true;
 				return;
 			}
-			else if (BatteryVoltage > BATTERY_CRITICAL_VOLTAGE)
-			{
-				Flags.setFlag(Status, TRIGGER_WARNING,false);
-				Flags.setFlag(Status, BATTERY_CRITICAL, false);
-				menu.Display_Log("Battery Voltage Restored - Returning to Normal\r\n");
-				Monitor.isShutDownInitiated = false;
-				triggers = 6;
-			}
 			
 
 			Monitor.ShutDownCounter--;
 
+		}
+		else if ((Flags.flagStatus(Status, TRIGGER_WARNING) || Monitor.isShutDownInitiated == true) && BatteryVoltage > BATTERY_CRITICAL_VOLTAGE)
+		{
+			Flags.setFlag(Status, TRIGGER_WARNING,false);
+			Flags.setFlag(Status, BATTERY_CRITICAL, false);
+			menu.Display_Log("Battery Voltage Restored - Returning to Normal\r\n");
+			Monitor.isShutDownInitiated = false;
+			triggers = 6;
 		}
 
 
@@ -352,38 +351,41 @@ else
 	}
 //	long WarninigTriggerLast = 0u;
 //	uint8_t triggers = 6;
-	if(Flags.flagStatus(Status, TRIGGER_WARNING)&& ((HAL_GetTick()-WarninigTriggerLast > 1000) ) && (triggers > 0))
+	if(Flags.flagStatus(Status, TRIGGER_WARNING))
 	{
-		WarninigTriggerLast = HAL_GetTick();
-		switch(triggers %2)
+		if((HAL_GetTick()-WarninigTriggerLast > 1000)  && (triggers > 0))
 		{
-		case 0:
-			Buzzzer->setOutputPattern(1, 500, 500);
-			((RgbDriver*)WLED1)->setRgbColor(RED);
-			WLED1->setOutputPattern(1, 500, 500);
-			menu.Display_Log("Turn On Buzzer\r\n");
-			menu.Display_Log("Turn On LED\r\n");
-			break;
-		case 1:
-			menu.Display_Log("Turn Off Buzzer\r\n");
-			menu.Display_Log("Turn Off LED\r\n");
-			break;
+			WarninigTriggerLast = HAL_GetTick();
+			switch(triggers %2)
+			{
+			case 0:
+				Buzzzer->setOutputPattern(1, 500, 500);
+				((RgbDriver*)WLED1)->setRgbColor(RED);
+				WLED1->setOutputPattern(1, 500, 500);
+				menu.Display_Log("Turn On Buzzer\r\n");
+				menu.Display_Log("Turn On LED\r\n");
+				break;
+			case 1:
+				menu.Display_Log("Turn Off Buzzer\r\n");
+				menu.Display_Log("Turn Off LED\r\n");
+				break;
+			}
+			if(triggers == 0)
+			{
+				menu.Display_Log("Wait 30s");
+				Flags.setFlag(Status, TRIGGER_WARNING,false);
+			}
+			triggers--;
 		}
-		if(triggers == 0)
+		else if(HAL_GetTick()-WarninigTriggerLast > 30000 && triggers == 0)
 		{
-			menu.Display_Log("Wait 30s");
-			Flags.setFlag(Status, TRIGGER_WARNING,false);
+			menu.Display_Log("30s Elapsed\r\n");
+			if(Flags.flagStatus(Status, BATTERY_CRITICAL))
+				Flags.setFlag(Status, TRIGGER_WARNING,true);
+			triggers = 6;
 		}
-		triggers--;
 	}
-	else if(HAL_GetTick()-WarninigTriggerLast > 30000 && triggers == 0)
-	{
-		menu.Display_Log("30s Elapsed\r\n");
-		if(Flags.flagStatus(Status, BATTERY_CRITICAL))
-			Flags.setFlag(Status, TRIGGER_WARNING,true);
-		triggers = 6;
-	}
-	}
+}
 //void BatteryMonitor::ADCSelectCH(uint32_t CH)
 //{
 //	ADC_ChannelConfTypeDef sConfig = {0};

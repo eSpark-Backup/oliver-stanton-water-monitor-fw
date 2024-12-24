@@ -115,6 +115,8 @@ bool fodOFF(uint32_t argChoice, MenuItem* argMenu)
 
 bool BatLowMenuOption(uint32_t argChoice, MenuItem *argMenu)
 {
+	if (argChoice == 1 && ButtonE.state())
+		menu.Display_Log("Are you sure you want to switch this system critical setting off? ");
 	if (argChoice == 2 && ButtonE.state())
 	{
 		return BatLowShutdownOn(argChoice, argMenu);
@@ -125,11 +127,11 @@ bool BatLowMenuOption(uint32_t argChoice, MenuItem *argMenu)
 
 bool BatLowShutdown(uint32_t argChoice, MenuItem *argMenu)
 {
-	if (argChoice == 2 && ButtonE.state())
+	if (argChoice == 1 && ButtonE.state())
 	{
 		return BatLowShutdownOff(argChoice, argMenu);
 	}
-	else if (argChoice == 3 && ButtonE.state())
+	else if (argChoice == 2 && ButtonE.state())
 	{
 		return BatLowShutdownOn(argChoice, argMenu);
 	}

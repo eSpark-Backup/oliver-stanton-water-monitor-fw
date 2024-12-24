@@ -86,16 +86,14 @@ MenuItem BatMonitorMenu = {
 MenuItem BatLowMenuOptns = {
 	nullptr,
 	BatLowMenuOption,
-	{{"Off", nullptr, nullptr, &BatLowMenuOFF, &BatMonitorMenu, 3, 2},
+	{{"Off", nullptr, nullptr, &BatLowMenuOFF, &BatMonitorMenu, 2, 2},
 	 {"On", nullptr, nullptr, &BatMonitorMenu, &BatMonitorMenu, 2, 2}}
 };
 MenuItem BatLowMenuOFF = {
 	nullptr,
 	BatLowShutdown,
-	{{"Are you sure you want to switch this system critical setting off? ",
-	  nullptr, nullptr,  nullptr, &BatMonitorMenu, 2, 3},
-	 {"Yes", nullptr, nullptr,  nullptr, &BatMonitorMenu, 2, 3},
-	 {"No", nullptr, nullptr,  nullptr, &BatMonitorMenu, 1, 3}},
+	{{"Yes", nullptr, nullptr, nullptr, &BatMonitorMenu, 2, 2},
+	 {"No", nullptr, nullptr, nullptr, &BatMonitorMenu, 1, 2}},
 };
 MenuItem BatPowerConsumptiontable = {
 	batConsumptionTableSetup,
