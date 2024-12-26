@@ -80,8 +80,8 @@ MenuItem Battery_Index = {
 MenuItem BatMonitorMenu = {
 	defaultMenuSetup,
 	nullptr,
-	{{"Battery Low Power Shutdown", nullptr, nullptr, &BatLowMenuOptns, &mainMenu, 2, 2},
-	 {"Power Consumption Monitor", nullptr, nullptr, &BatPowerConsumptiontable, &mainMenu, 1, 2}}
+	{{"Battery Low Power Shutdown", nullptr, nullptr, &BatLowMenuOptns, &Battery_Index, 2, 2},
+	 {"Power Consumption Monitor", nullptr, nullptr, &BatPowerConsumptiontable, &Battery_Index, 1, 2}}
 };
 MenuItem BatLowMenuOptns = {
 	nullptr,

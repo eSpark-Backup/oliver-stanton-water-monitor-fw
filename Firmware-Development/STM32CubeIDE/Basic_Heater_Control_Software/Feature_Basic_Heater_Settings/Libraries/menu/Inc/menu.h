@@ -93,4 +93,5 @@ extern Switches ButtonB;			//Back button obj
 extern Switches ButtonU;			//UP button obj
 extern Switches ButtonD;			//Down button obj
 extern Switches ButtonR;			//RODI button obj
+extern Switches ButtonX;			//DEL button obj
 extern MenuItem *lastMenuItem;

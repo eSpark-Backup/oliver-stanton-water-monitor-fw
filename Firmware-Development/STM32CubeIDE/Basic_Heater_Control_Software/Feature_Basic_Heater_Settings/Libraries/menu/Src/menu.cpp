@@ -200,6 +200,7 @@ void setButtonStates(std::initializer_list<SWITCHES> buttons, bool enableSelecte
 	ButtonU.enableButton(!enableSelected);
 	ButtonD.enableButton(!enableSelected);
 	ButtonR.enableButton(!enableSelected);
+	ButtonX.enableButton(!enableSelected);
 
 	bool hasValidButton = false;
 
@@ -227,6 +228,10 @@ void setButtonStates(std::initializer_list<SWITCHES> buttons, bool enableSelecte
 			ButtonR.enableButton(enableSelected);
 			hasValidButton = true;
 			break;
+		case DEL:
+			ButtonX.enableButton(enableSelected);
+			hasValidButton = true;
+			break;
 		case NONE:
 			hasValidButton = true;
 			break;
@@ -242,6 +247,7 @@ void setButtonStates(std::initializer_list<SWITCHES> buttons, bool enableSelecte
 		ButtonU.enableButton(true);
 		ButtonD.enableButton(true);
 		ButtonR.enableButton(true);
+		ButtonX.enableButton(true);
 	}
 }
 
@@ -252,6 +258,7 @@ void getButtonStates()
 	ButtonU.getState(UP);
 	ButtonD.getState(DOWN);
 	ButtonR.getState(RODI);
+	ButtonX.getState(DEL);
 }
 
 void resetButtonStates()
@@ -261,6 +268,7 @@ void resetButtonStates()
 	ButtonU.reset();
 	ButtonD.reset();
 	ButtonR.reset();
+	ButtonX.reset();
 }
 
 void defaultMenuSetup(void)
@@ -279,7 +287,7 @@ bool introPageSelection(uint32_t argChoice, MenuItem* argMenu)
 	uint8_t numItems = argMenu->Items[choiceSelect].num_items;
 	uint8_t choice = choiceSelect;
 
-	if (ButtonU.state() && argMenu->Items[choiceSelect].prev == nullptr)
+	if (ButtonX.state() && argMenu->Items[choiceSelect].prev == nullptr)
 	{
 		currentM = &Battery_Index;
 		menu.displayMenu(&Battery_Index, Battery_Index.Items[0].num_items);

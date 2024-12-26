@@ -19,7 +19,7 @@ typedef enum{
 	UP,
 	DOWN,
 	RODI,
-//	DEL
+	DEL,
 	NONE
 }SWITCHES;
 
