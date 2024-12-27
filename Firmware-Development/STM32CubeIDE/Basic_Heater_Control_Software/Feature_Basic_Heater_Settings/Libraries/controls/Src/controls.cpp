@@ -346,7 +346,7 @@ bool roSaverST1()
 			}
 				return false;
 		}
-		Disp->display("Completing Purification Cycle - Dosing RO Membrane.");
+		menu.Display_Log("Completing Purification Cycle - Dosing RO Membrane. RO TDS-2: %.2f ppm", tds2.readTDS());
 		invokeST1(true); 
 		invokeST5(true);
 		Flags.update();
@@ -355,9 +355,15 @@ bool roSaverST1()
 	}
 	else if (Flags.flagStatus(Status, PURE_CYCLE) && Flags.flagStatus(Status, RESIN_SAVER) && Flags.flagStatus(Status, AUTO_FILL))
 	{
-		if(tds2.readTDS() <= roSaverThreshValue)
+		float tds2Value = tds2.readTDS();
+		if ((HAL_GetTick() - lastMsgDisplayed) > 1000)
 		{
-			Disp->display("Purification Cycle Complete.");
+			menu.Display_Log("RO TDS-2: %.2f ppm", tds2Value);
+			lastMsgDisplayed = HAL_GetTick();
+		}
+		if (tds2Value <= roSaverThreshValue)
+		{
+			menu.Display_Log("Purification Cycle Complete. RO TDS-2: %.2f ppm", tds2.readTDS());
 			tds2.resetTDS(); //for simulation value
 			invokeST1(false);
 			invokeST5(false);
