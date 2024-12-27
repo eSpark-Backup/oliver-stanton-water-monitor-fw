@@ -32,14 +32,14 @@ MenuItem fodMenu05 = {
 	defaultMenuSetup,
 	nullptr,
 	{{"Fill on Demand (Not Active)", nullptr, nullptr, nullptr, &mainMenu05, 2, 2},
-	 {"Select TDS", nullptr, nullptr, &selectTDS, &mainMenu05, 2, 2}}
+	 {"Select TDS", nullptr, nullptr, &selectTDS, &mainMenu05, 3, 2}}
 };
 MenuItem selectTDS = {
 	defaultMenuSetup,
 	nullptr,
-	{{"Mains TDS & Temp Control", nullptr, nullptr, nullptr, &mainMenu05, 3, 3},
+	{{"Mains TDS & Temp Control", nullptr, nullptr, &mainsTDS, &mainMenu05, 3, 3},
 	 {"RO TDS & Temp Control"	, nullptr, nullptr, &roSaver, &mainMenu05, 3, 3},
-	 {"DI TDS & Temp Control"	, nullptr, nullptr, &roSaver, &mainMenu05, 3, 3}}
+	 {"DI TDS & Temp Control"	, nullptr, nullptr, &diTDS, &mainMenu05, 3, 3}}
 };
 MenuItem fodOptnsOff05 = {
 	fodOffSetup_05,
@@ -59,7 +59,7 @@ MenuItem mainsTDS = {
 	nullptr,
 	{{"Mains TDS Threshold", nullptr, nullptr, &mainsTDSThreshold, &mainMenu05, 3, 3},
 	 {"Mains Temp Control", nullptr, nullptr, &mainsTDSTemperature, &mainMenu05, 3, 3},
-	 {"Mains TDS Shutdown", nullptr, nullptr, &mainsTDSShutdown, &mainMenu05, 3, 3}}
+	 {"Mains TDS Shutdown", nullptr, nullptr, &mainsTDSShutdown, &mainMenu05, 2, 3}}
 };
 MenuItem mainsTDSThreshold = {
 	defaultMenuSetup,
@@ -89,7 +89,7 @@ MenuItem roTDS = {
 	nullptr,
 	{{"RO TDS Threshold", nullptr, nullptr, &roTDSThreshold, &mainMenu05, 3, 3},
 	 {"RO Temp Control"	, nullptr, nullptr, &roTDSTemperature, &mainMenu05, 3, 3},
-	 {"RO TDS Shutdown"	, nullptr, nullptr, &roTDSShutdown, &mainMenu05, 3, 3}}
+	 {"RO TDS Shutdown"	, nullptr, nullptr, &roTDSShutdown, &mainMenu05, 2, 3}}
 };
 MenuItem roTDSThreshold = {
 	defaultMenuSetup,
@@ -129,9 +129,9 @@ MenuItem roTDSShutdown = {
 MenuItem diTDS = {
 	defaultMenuSetup,
 	nullptr,
-	{{"DI TDS Threshold", nullptr, nullptr, nullptr, &mainMenu05, 3, 3},
-	 {"DI Temp Control"	, nullptr, nullptr, &roSaver, &mainMenu05, 3, 3},
-	 {"DI TDS Shutdown"	, nullptr, nullptr, &roSaver, &mainMenu05, 3, 3}}
+	{{"DI TDS Threshold", nullptr, nullptr, &diTDSThreshold, &mainMenu05, 3, 3},
+	 {"DI Temp Control"	, nullptr, nullptr, &diTDSTemperature, &mainMenu05, 3, 3},
+	 {"DI TDS Shutdown"	, nullptr, nullptr, &diTDSShutdown, &mainMenu05, 2, 3}}
 };
 MenuItem diTDSThreshold = {
 	defaultMenuSetup,

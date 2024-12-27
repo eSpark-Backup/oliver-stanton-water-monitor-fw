@@ -196,7 +196,6 @@ bool TDSThresholdLoop(uint32_t argChoice, MenuItem *argMenu)
 
 bool TdsDefaultTemperatureValue(uint32_t argChoice, MenuItem *argMenu)
 {
-	DEBUG_RTT(LOG_INFO, "TDS Temperature value set to default 2*C");
 
 	if (isMenuLabelMatch(argMenu, mainsTDSTemperature))
 	{
@@ -291,7 +290,6 @@ bool TDSTemperatureLoop(uint32_t argChoice, MenuItem *argMenu)
 
 bool TdsShutdown(uint32_t argChoice, MenuItem *argMenu)
 {
-	DEBUG_RTT(LOG_INFO, "TDS shutdown settings");
 	bool isShutdownEnable = (argChoice == 2 && ButtonE.state());
 
 	if (isMenuLabelMatch(argMenu, mainsTDSShutdown))
@@ -311,6 +309,7 @@ bool TdsShutdown(uint32_t argChoice, MenuItem *argMenu)
 		return false;
 	}
 
+	DEBUG_RTT(LOG_INFO, "TDS shutdown settings");
 	return true;
 }
 
