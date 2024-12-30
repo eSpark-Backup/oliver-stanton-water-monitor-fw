@@ -54,26 +54,34 @@ bool isTDSConnected(tdsSensor sensor)
 	{
 	case TDS1:
 		if (!tds1.readTDS())
+		{
 			Disp->display("TDS1 Sensor Disconnected - unable to run Mains cycle");
 			return false;
+		}
 		else
 			return true;
 	case TDS2:
 		if (!tds2.readTDS())
+		{
 			Disp->display("TDS2 Sensor Disconnected - unable to run RO Saver cycle");
 			return false;
+		}
 		else
 			return true;
 	case TDS3:
 		if (!tds3.readTDS())
+		{
 			Disp->display("TDS3 Sensor Disconnected - unable to run DI cycle");
 			return false;
+		}
 		else
 			return true;
 	case TDS4:
 		if (!tds4.readTDS())
+		{
 			Disp->display("TDS4 Sensor Disconnected - unable to run TDS4 cycle");
 			return false;
+		}
 		else
 			return true;
 	}
@@ -84,24 +92,24 @@ void calCurrentTdsReading(void)
 {
 	if (isTDSConnected(TDS1) && Flags.flagStatus(Status, AUTO_FILL))
 	{
-		menu.Display_Log("Input Stage - Mains Water TDS: \"%d\" ppm", tds1.readTDS());
-		Log.logToMaster("Input Stage - Mains Water TDS: \"%d\" ppm", tds1.readTDS());
+		menu.Display_Log("Input Stage - Mains Water TDS: \"%.2f\" ppm", tds1.readTDS());
+		Log.logToMaster("Input Stage - Mains Water TDS: \"%.2f\" ppm", tds1.readTDS());
 	}
 	else
 		menu.Display_Log("Input Stage - Mains Water TDS: --- ppm");
 
 	if (isTDSConnected(TDS2) && Flags.flagStatus(Status, AUTO_FILL))
 	{
-		menu.Display_Log("Mid Stage - RO Output TDS: \"%d\" ppm", tds2.readTDS());
-		Log.logToMaster("Mid Stage - RO Output TDS: \"%d\" ppm", tds2.readTDS());
+		menu.Display_Log("Mid Stage - RO Output TDS: \"%.2f\" ppm", tds2.readTDS());
+		Log.logToMaster("Mid Stage - RO Output TDS: \"%.2f\" ppm", tds2.readTDS());
 	}
 	else
 		menu.Display_Log("Mid Stage - RO Output TDS: --- ppm");
 
 	if (isTDSConnected(TDS3) && Flags.flagStatus(Status, AUTO_FILL))
 	{
-		menu.Display_Log("Final Stage - DI Output TDS: \"%d\" ppm", tds3.readTDS());
-		Log.logToMaster("Final Stage - DI Output TDS: \"%d\" ppm", tds3.readTDS());
+		menu.Display_Log("Final Stage - DI Output TDS: \"%.2f\" ppm", tds3.readTDS());
+		Log.logToMaster("Final Stage - DI Output TDS: \"%.2f\" ppm", tds3.readTDS());
 	}
 	else
 		menu.Display_Log("Final Stage - DI Output TDS: --- ppm");
@@ -119,6 +127,7 @@ int roRejectionPc()
 
 void warningIndication(HexColor ledColor)
 {
+	DEBUG_RTT(LOG_INFO, "***warningIndication OCCURRED***");
 	Buzzzer->setOutputPattern(3, 500, 500, 500, 500);
 	((RgbDriver *)WLED1)->setRgbColor(ledColor);
 	WLED1->setOutputPattern(3, 500, 500, 500, 500);
@@ -152,7 +161,7 @@ void invokeST3(bool status)
 		Flags.setFlag(Settings, MEM_SAVER, status);
 		Flags.setFlag(Status, PURE_CYCLE, status);
 		Log.logToMaster("Float Circuit Closed - System filling commenced");
-		Buzzzer->setOutputPattern(2, 500, 1100, 500);
+		Buzzzer->setOutputPattern(2, 500, 500, 500);
 		// WLED1->setOutputPattern(-1, 1000, 1000);					// -1 to run infinitely
 	}
 	else
@@ -192,7 +201,7 @@ bool roSaverST1()
 	if (!Flags.flagStatus(Settings, MEM_SAVER_PAUSE) && Flags.flagStatus(Status, PURE_CYCLE)
 	&& Flags.flagStatus(Settings, RESIN_SAVER) && !Flags.flagStatus(Status, MEM_SAVER) && !Flags.flagStatus(Status, AUTO_FILL))
 	{
-		if (isTDSConnected(TDS2)) // Assuming a pulldown resistor [not connected means 0 value]
+		if (!isTDSConnected(TDS2)) // Assuming a pulldown resistor [not connected means 0 value]
 		{
 			Flags.setFlag(Status, PURE_CYCLE, false);
 			Buzzzer->setOutputPattern(1, 500, 1000);
@@ -295,7 +304,7 @@ bool checkTdsThresholdWarnings(void)
 {
 	if (isTDSConnected(TDS1) && Flags.flagStatus(Settings, MAINS_TDS_THRESHOLD) && setTDS.mainsThreshold < tds1.readTDS())
 	{
-		menu.Display_Log("Mains Input Too High (\"%d\" ppm) - System Inspection Required", setTDS.mainsThreshold);
+		menu.Display_Log("Mains Input Too High (\"%.2f\" ppm) - System Inspection Required", tds1.readTDS());
 		Log.logToMaster("During Auto-Fill, Mains TDS threshold triggered. Threshold TDS : %d ppm. Actual TDS : %d ppm."
 						"Fill Duration xx minutes.", setTDS.mainsTemperature, tds1.readTDS());
 		return TdsWarn.Tds1_Thresh = true;
@@ -304,7 +313,7 @@ bool checkTdsThresholdWarnings(void)
 	{
 		if (Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_FINISH_5M) && setTDS.roFixedThreshold < tds2.readTDS())
 		{
-			menu.Display_Log("RO TDS Too High (\"%d\" ppm) - System Inspection Required", setTDS.roFixedThreshold);
+			menu.Display_Log("RO TDS Too High (\"%.2f\" ppm) - System Inspection Required", tds2.readTDS());
 			Log.logToMaster("During Auto-Fill, RO Membrane Fixed TDS threshold triggered. Threshold TDS : %d ppm. Actual TDS : %d ppm."
 							"Fill Duration xx minutes.", setTDS.roFixedThreshold, tds2.readTDS());
 			return TdsWarn.Tds2_FixedThresh = true;
@@ -319,7 +328,7 @@ bool checkTdsThresholdWarnings(void)
 	}
 	if (isTDSConnected(TDS3) && Flags.flagStatus(Settings, DI_TDS_THRESHOLD) && setTDS.diThreshold < tds3.readTDS())
 	{
-		menu.Display_Log("DI RESIN TDS Too High (\"%d\" ppm) - Requires change", setTDS.diThreshold);
+		menu.Display_Log("DI RESIN TDS Too High (\"%.2f\" ppm) - Requires change", tds3.readTDS());
 		Log.logToMaster("During Auto-Fill, DI RESIN TDS threshold triggered. Threshold TDS : %d ppm. Actual TDS : %d ppm."
 						"Fill Duration xx minutes.", setTDS.diThreshold, tds3.readTDS());
 		return TdsWarn.Tds3_Thresh = true;
@@ -370,7 +379,7 @@ void monitorTdsCycle(void)
 	static long lastMsgDisplayed = 0u;
 	bool isShowWarnMsg = false;
 
-	if (!lastMsgDisplayed && HAL_GetTick() - lastMsgDisplayed < 500)
+	if (HAL_GetTick() - lastMsgDisplayed < 1000)
 		return;
 
 	if (Flags.checkOnTime(AUTO_FLUSH, AUTO_FLUSH_TIMEOUT) && Flags.flagStatus(Settings, AUTO_FLUSH))
@@ -391,7 +400,8 @@ void monitorTdsCycle(void)
 
 	if (isShowWarnMsg && !TdsWarn.Tds2_DynamicThresh)
 	{
-		warningIndication(RED);
+		if (HAL_GetTick() - lastMsgDisplayed > 1000)
+			warningIndication(RED);
 		menu.Display_Log("Would you like to ignore this warning for this fill cycle?");
 		if (TdsWarn.Tds2_FixedThresh)
 			menu.Display_Log("OR \nWould you like to a longer 20 minutes Auto-Flush?");

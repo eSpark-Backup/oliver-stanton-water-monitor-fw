@@ -92,6 +92,7 @@ void EventHandle::Run()
 
 void EventHandle::setOutputPattern(int8_t numBlinks, uint16_t timePeriod, ...)
 {
+	turnOff();
 	va_list paramList;
 //	first elements is the number of times you want it to run, second is the inactive time time period, rest are the time periods of on state
 	lastToggleTime_ = HAL_GetTick();

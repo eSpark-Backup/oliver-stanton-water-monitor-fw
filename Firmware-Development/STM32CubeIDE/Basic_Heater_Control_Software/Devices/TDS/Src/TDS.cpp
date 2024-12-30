@@ -15,7 +15,6 @@ float TDS::readTDS()
 	getValue();
 	calculateTDS();
 	if(fmod(tdsValue, 1000.0) == 0.0 || tdsValue < 25)
-		DEBUG_RTT('0', "TDS Value %f", this->tdsValue);
 	return this->tdsValue;
 }
 
