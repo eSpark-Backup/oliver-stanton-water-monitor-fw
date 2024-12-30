@@ -53,13 +53,29 @@ bool isTDSConnected(tdsSensor sensor)
 	switch (sensor)
 	{
 	case TDS1:
-		return tds1.readTDS() ? true : false;
+		if (!tds1.readTDS())
+			Disp->display("TDS1 Sensor Disconnected - unable to run Mains cycle");
+			return false;
+		else
+			return true;
 	case TDS2:
-		return tds2.readTDS() ? true : false;
+		if (!tds2.readTDS())
+			Disp->display("TDS2 Sensor Disconnected - unable to run RO Saver cycle");
+			return false;
+		else
+			return true;
 	case TDS3:
-		return tds3.readTDS() ? true : false;
+		if (!tds3.readTDS())
+			Disp->display("TDS3 Sensor Disconnected - unable to run DI cycle");
+			return false;
+		else
+			return true;
 	case TDS4:
-		return tds4.readTDS() ? true : false;
+		if (!tds4.readTDS())
+			Disp->display("TDS4 Sensor Disconnected - unable to run TDS4 cycle");
+			return false;
+		else
+			return true;
 	}
 	return 0;
 }
@@ -178,7 +194,6 @@ bool roSaverST1()
 	{
 		if (isTDSConnected(TDS2)) // Assuming a pulldown resistor [not connected means 0 value]
 		{
-			Disp->display("TDS2 Sensor Disconnected - unable to run RO Saver cycle");
 			Flags.setFlag(Status, PURE_CYCLE, false);
 			Buzzzer->setOutputPattern(1, 500, 1000);
 			((RgbDriver *)WLED1)->setRgbColor(RED);
