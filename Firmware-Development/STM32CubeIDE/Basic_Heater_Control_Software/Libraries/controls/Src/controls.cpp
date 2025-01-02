@@ -409,3 +409,11 @@ void monitorTdsCycle(void)
 		menu.changeMenu(&haltMenu);
 	}
 }
+
+
+void controlPeripherals(void)
+{
+	memSaverST3();
+	roSaverST1();
+	monitorTdsCycle();
+}

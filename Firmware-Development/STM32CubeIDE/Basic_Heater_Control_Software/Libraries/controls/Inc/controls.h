@@ -151,6 +151,7 @@ void checkTdsShutdownWarnings(void);
 void monitorTdsCycle(void);
 bool isTDSConnected(tdsSensor);
 void calCurrentTdsReading(void);
+void controlPeripherals(void);
 
 extern TdsValues setTDS;
 extern WarningFlags TdsWarn;

@@ -99,9 +99,7 @@ void MainApp::loop()
 	didWork = invokeMenu();
 	menu.navigateMenu(currentM, didWork);	
 	Flags.update();
-	memSaverST3();
-	roSaverST1();
-	monitorTdsCycle();
+	controlPeripherals();
 	Buzzzer->Run();
 	WLED1->Run();
 	Battery.powerManager();
