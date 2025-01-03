@@ -1,5 +1,5 @@
 /*
- * controls.h
+ * controlsequence.h
  *
  *  Created on: Dec 20, 2023
  *      Author: Farhan AHmed
@@ -7,8 +7,8 @@
 
 #pragma once
 
-#ifndef INC_CONTROLS_H_
-#define INC_CONTROLS_H_
+#ifndef INC_CONTROLS05_H_
+#define INC_CONTROLS05_H_
 
 //#include "mainApp.hpp"
 #include "_DEBUG_.h"
@@ -22,6 +22,7 @@
 #include "LED.h"
 #include "switches.hpp"
 #include "TDS.hpp"
+#include "stm32f0xx_hal_conf.h"
 
 //-------button press durations, in milliseconds
 #define MINIMUM_PRESS		100
@@ -156,4 +157,4 @@ void controlPeripherals(void);
 extern TdsValues setTDS;
 extern WarningFlags TdsWarn;
 
-#endif /* INC_CONTROLS_H_ */
+#endif /* INC_CONTROLS05_H_ */

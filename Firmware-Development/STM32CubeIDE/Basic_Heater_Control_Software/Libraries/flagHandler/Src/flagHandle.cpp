@@ -7,7 +7,7 @@
 
 
 #include "flagHandle.h"
-#include "controls.h"
+#include "controlsequence.h"
 #include "eventHandle.hpp"
 #include "Buzzer.hpp"
 

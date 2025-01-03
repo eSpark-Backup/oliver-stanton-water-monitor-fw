@@ -11,7 +11,7 @@
 //#include "flash.h"
 #include "Display.h"
 #include "CDC_Serial.h"
-#include "controls.h"
+#include "controlsequence.h"
 #include "flagHandle.h"
 #include "eventHandle.hpp"
 #include "Buzzer.hpp"

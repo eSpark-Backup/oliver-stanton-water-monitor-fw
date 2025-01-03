@@ -6,7 +6,8 @@
  */
 
 //#include "mainApp.hpp"
-#include "controls.h"
+#include "controls05.h"
+#if MENU_05 == 1
 #include "TDS.hpp"
 #include "menu_01.h"
 #include "menu_05.h"
@@ -417,3 +418,5 @@ void controlPeripherals(void)
 	roSaverST1();
 	monitorTdsCycle();
 }
+
+#endif

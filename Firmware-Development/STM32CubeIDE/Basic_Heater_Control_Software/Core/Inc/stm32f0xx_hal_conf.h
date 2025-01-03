@@ -297,6 +297,9 @@
  #include "stm32f0xx_hal_wwdg.h"
 #endif /* HAL_WWDG_MODULE_ENABLED */
 
+#define MENU_01                 0
+#define MENU_05                 1
+
 /* Exported macro ------------------------------------------------------------*/
 #ifdef  USE_FULL_ASSERT
 /**

@@ -1,5 +1,5 @@
 #include "menu.h"
-#include "controls.h"
+#include "controlsequence.h"
 #include "Battery.hpp"
 
 

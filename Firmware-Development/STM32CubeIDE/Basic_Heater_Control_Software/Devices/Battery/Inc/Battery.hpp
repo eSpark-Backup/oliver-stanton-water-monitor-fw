@@ -12,7 +12,7 @@
 #include "_DEBUG_.h"
 #include "Adc_select.h"
 #include "mainApp.hpp"
-#include "controls.h"
+#include "controlsequence.h"
 #include "switches.hpp"
 
 extern BatteryMonitor Battery;

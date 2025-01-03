@@ -1,5 +1,5 @@
 #include "menu_01.h"
-#include "controls.h"
+#include "controlsequence.h"
 
 
 void introSetup(void)

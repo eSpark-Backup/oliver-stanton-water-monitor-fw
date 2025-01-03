@@ -1,5 +1,5 @@
 #include "menu_05.h"
-#include "controls.h"
+#include "controlsequence.h"
 #include "masterLog.h"
 
 // Helper function to check if the menu label matches the target threshold
