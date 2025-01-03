@@ -13,8 +13,10 @@
 #include "Adc_select.h"
 #include "mainApp.hpp"
 
-#define TDS_DUMMY_VALUE 18000
-#define MAX_TDS_PPM 20
+#define TDS_DUMMY_VALUE 1000
+#define MAX_TDS_PPM 999
+#define TEMP_DUMMY_VALUE 100
+#define MAX_TEMP_C 99
 
 /* The Physical header of TDS probes are mentioned below
  *
@@ -23,6 +25,16 @@
  * 		-	T2				//Calibration pin, give high on this pin to receive max value on AN1 pin
  * 		-	T1				//TDS enable pin?,	connected directly to one of the probes, enable this pin to get reading on AN1
  * 		-	AN2				//Analog read pin of the probe's second pin (or) maybe it can be used for calibration
+ * 		-	GND				//GND
+ */
+
+/* As per Renesas [ RL78/G11 ] TDS Water Quality Tester
+ *
+ * 		-	VDD				//3.3v power
+ * 		-	AN0				//Temperature out
+ * 		-	T3				//Tester probe
+ * 		-	T4				//Tester probe
+ * 		-	AN2				//TDS out
  * 		-	GND				//GND
  */
 
@@ -65,6 +77,7 @@ private:
     float analogValueAN1;
     float analogValueAN2;
     float tdsValue = TDS_DUMMY_VALUE;
+    float tempValue = TEMP_DUMMY_VALUE;
 //    float aref = 3.3;				//voltage reference, 3.3v
 //    float adcRange = 4096;			//12bit ADC
 //    float kValue;      // k value of the probe,you can calibrate in buffer solution ,such as 706.5ppm(1413us/cm)@25^C
@@ -72,8 +85,10 @@ private:
 
 
 	void calculateTDS(void);
+	void calculateTemp(void);
 	friend void ADCSelectCH(uint32_t);
-	void getValue(void);
+	void getTDSValue(void);
+	void getTempValue(void);
 public:
 	TDS(const GPIOConfig& config) : config(config) {
 	        // Constructor to initialize the GPIO port and pin
@@ -86,6 +101,7 @@ public:
 
 
 	float readTDS(void);
+	float readTemp(void);
 	void resetTDS(void);
 protected:
 

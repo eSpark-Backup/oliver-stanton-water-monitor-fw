@@ -12,10 +12,17 @@
 
 float TDS::readTDS()
 {
-	getValue();
+	getTDSValue();
 	calculateTDS();
-	if(fmod(tdsValue, 1000.0) == 0.0 || tdsValue < 25)
-	return this->tdsValue;
+	if (fmod(tdsValue, 1000.0) == 0.0 || tdsValue < TDS_DUMMY_VALUE)
+		return this->tdsValue;
+}
+
+float TDS::readTemp()
+{
+	getTempValue();
+	calculateTemp();
+	return this->tempValue;
 }
 
 void TDS::resetTDS(void)
@@ -34,6 +41,11 @@ void TDS::calculateTDS(void)
 	this->tdsValue = this->analogValueAN1 / 4096 * MAX_TDS_PPM; // this->adcRange*this->aref;
 
 	// this->tdsValue -= rand()%4;			//--this is just simulation for decreasing TDS value
+}
+
+void TDS::calculateTemp(void)
+{
+	this->tempValue = this->analogValueAN2 / 4096 * MAX_TEMP_C; // this->adcRange*this->aref;
 }
 
 void ADCSelectCH(uint32_t CH)
@@ -73,7 +85,7 @@ void ADCSelectCH(uint32_t CH)
 	  }
 }
 
-void TDS::getValue()
+void TDS::getTDSValue()
 {
 	HAL_GPIO_WritePin(this->config.T1_port, this->config.T1_pin, GPIO_PIN_SET);
 	ADCSelectCH(this->config.AN1_pin_Channel);
@@ -81,7 +93,12 @@ void TDS::getValue()
 	HAL_ADC_PollForConversion(&hadc, 100);
 	this->analogValueAN1 = HAL_ADC_GetValue(&hadc);
 	HAL_ADC_Stop(&hadc);
+	HAL_GPIO_WritePin(this->config.T1_port, this->config.T1_pin, GPIO_PIN_RESET);
 
+}
+void TDS::getTempValue()
+{
+	HAL_GPIO_WritePin(this->config.T1_port, this->config.T1_pin, GPIO_PIN_SET);
 	ADCSelectCH(this->config.AN2_pin_Channel);
 	HAL_ADC_Start(&hadc);
 	HAL_ADC_PollForConversion(&hadc, 100);
