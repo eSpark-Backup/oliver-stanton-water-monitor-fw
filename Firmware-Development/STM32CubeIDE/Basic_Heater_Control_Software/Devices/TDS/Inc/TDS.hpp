@@ -100,8 +100,8 @@ public:
 	};
 
 
-	float readTDS(void);
-	float readTemp(void);
+	int readTDS(void);
+	int readTemp(void);
 	void resetTDS(void);
 protected:
 

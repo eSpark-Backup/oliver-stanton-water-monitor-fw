@@ -10,19 +10,19 @@
 #include "TDS.hpp"
 #include <cmath>
 
-float TDS::readTDS()
+int TDS::readTDS()
 {
 	getTDSValue();
 	calculateTDS();
 	if (fmod(tdsValue, 1000.0) == 0.0 || tdsValue < TDS_DUMMY_VALUE)
-		return this->tdsValue;
+		return (int)this->tdsValue;
 }
 
-float TDS::readTemp()
+int TDS::readTemp()
 {
 	getTempValue();
 	calculateTemp();
-	return this->tempValue;
+	return (int)this->tempValue;
 }
 
 void TDS::resetTDS(void)
