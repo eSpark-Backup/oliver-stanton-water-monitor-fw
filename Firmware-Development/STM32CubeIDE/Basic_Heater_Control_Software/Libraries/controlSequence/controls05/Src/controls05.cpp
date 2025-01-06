@@ -336,75 +336,79 @@ bool checkTdsTemperatureWarnings(void)
 
 bool checkTdsThresholdWarnings(void)
 {
-	int getCurTDSValue = tds1.readTDS();
-	if (getCurTDSValue && Flags.flagStatus(Settings, MAINS_TDS_THRESHOLD) && setTDS.mainsThreshold < getCurTDSValue)
+	if (isTDSConnected(TDS1) && Flags.flagStatus(Settings, MAINS_TDS_THRESHOLD) && setTDS.mainsThreshold < tds1.readTDS())
 	{
-		menu.Display_Log("Mains Input Too High (\"%d\" ppm) - System Inspection Required", getCurTDSValue);
+		menu.Display_Log("Mains Input Too High (\"%d\" ppm) - System Inspection Required", tds1.readTDS());
 		Log.logToMaster("During Auto-Fill, Mains TDS threshold triggered. Threshold TDS : %d ppm. Actual TDS : %d ppm."
-						"Fill Duration xx minutes.", setTDS.mainsTemperature, getCurTDSValue);
+						"Fill Duration xx minutes.",
+						setTDS.mainsTemperature, tds1.readTDS());
 		return TdsWarn.Tds1_Thresh = true;
 	}
-
-	getCurTDSValue = tds2.readTDS();
-	if (getCurTDSValue && Flags.flagStatus(Settings, RO_TDS_THRESHOLD))
+	if (Flags.flagStatus(Status, AUTO_FILL) && !Flags.flagStatus(Status, AUTO_FLUSH))
 	{
-		if (Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_FINISH_5M) && setTDS.roFixedThreshold < getCurTDSValue)
+		if (isTDSConnected(TDS2) && Flags.flagStatus(Settings, RO_TDS_THRESHOLD))
 		{
-			menu.Display_Log("RO TDS Too High (\"%d\" ppm) - System Inspection Required", getCurTDSValue);
-			Log.logToMaster("During Auto-Fill, RO Membrane Fixed TDS threshold triggered. Threshold TDS : %d ppm. Actual TDS : %d ppm."
-							"Fill Duration xx minutes.", setTDS.roFixedThreshold, getCurTDSValue);
-			return TdsWarn.Tds2_FixedThresh = true;
+			if (Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_FINISH_5M) && setTDS.roFixedThreshold < tds2.readTDS())
+			{
+				menu.Display_Log("RO TDS Too High (\"%d\" ppm) - System Inspection Required", tds2.readTDS());
+				Log.logToMaster("During Auto-Fill, RO Membrane Fixed TDS threshold triggered. Threshold TDS : %d ppm. Actual TDS : %d ppm."
+								"Fill Duration xx minutes.",
+								setTDS.roFixedThreshold, tds2.readTDS());
+				return TdsWarn.Tds2_FixedThresh = true;
+			}
+			if (setTDS.roDynamicThreshold < roRejectionPc())
+			{
+				warningIndication(RED);
+				Log.logToMaster("During Auto-Fill, RO Membrane Dynamic TDS rejection percentage triggered. Threshold TDS : %d %. Actual TDS : %d %."
+								"Fill Duration xx minutes.",
+								setTDS.roDynamicThreshold, roRejectionPc());
+				return TdsWarn.Tds2_DynamicThresh = true;
+			}
 		}
-		if (setTDS.roDynamicThreshold < roRejectionPc())
+		if (isTDSConnected(TDS3) && Flags.flagStatus(Settings, DI_TDS_THRESHOLD) && setTDS.diThreshold < tds3.readTDS())
 		{
-			warningIndication(RED);
-			Log.logToMaster("During Auto-Fill, RO Membrane Dynamic TDS rejection percentage triggered. Threshold TDS : %d %. Actual TDS : %d %."
-							"Fill Duration xx minutes.", setTDS.roDynamicThreshold, roRejectionPc());
-			return TdsWarn.Tds2_DynamicThresh = true;
+			menu.Display_Log("DI RESIN TDS Too High (\"%d\" ppm) - Requires change", tds3.readTDS());
+			Log.logToMaster("During Auto-Fill, DI RESIN TDS threshold triggered. Threshold TDS : %d ppm. Actual TDS : %d ppm."
+							"Fill Duration xx minutes.",
+							setTDS.diThreshold, tds3.readTDS());
+			return TdsWarn.Tds3_Thresh = true;
 		}
-	}
-
-	getCurTDSValue = tds3.readTDS();
-	if (getCurTDSValue && Flags.flagStatus(Settings, DI_TDS_THRESHOLD) && setTDS.diThreshold < getCurTDSValue)
-	{
-		menu.Display_Log("DI RESIN TDS Too High (\"%d\" ppm) - Requires change", getCurTDSValue);
-		Log.logToMaster("During Auto-Fill, DI RESIN TDS threshold triggered. Threshold TDS : %d ppm. Actual TDS : %d ppm."
-						"Fill Duration xx minutes.", setTDS.diThreshold, getCurTDSValue);
-		return TdsWarn.Tds3_Thresh = true;
 	}
 }
 
 void checkTdsShutdownWarnings(void)
 {
 	TdsWarn.Tds_Shutdown = false;
-	if (isTDSConnected(TDS1) && Flags.flagStatus(Settings, MAINS_TDS_THRESHOLD)
-		&& Flags.flagStatus(Settings, MAINS_TDS_SHUTDOWN) && setTDS.mainsThreshold < tds1.readTDS())
+	if (isTDSConnected(TDS1) && Flags.flagStatus(Settings, MAINS_TDS_THRESHOLD) && Flags.flagStatus(Settings, MAINS_TDS_SHUTDOWN) && setTDS.mainsThreshold < tds1.readTDS())
 	{
 		menu.Display_Log("Tank Full Purification Stopped - Mains Input TDS too High", setTDS.mainsThreshold);
 		Log.logToMaster("During Auto-Fill, Mains TDS & Temperature shutdown triggered. Threshold TDS/Temperature: %d ppm / %d celcius."
-						"Actual TDS/Temperature: %d ppm, xx celcius. Fill Duration xx minutes.", setTDS.mainsThreshold, setTDS.mainsTemperature,
+						"Actual TDS/Temperature: %d ppm, xx celcius. Fill Duration xx minutes.",
+						setTDS.mainsThreshold, setTDS.mainsTemperature,
 						tds1.readTDS());
 		TdsWarn.Tds_Shutdown = true;
 	}
-	if (isTDSConnected(TDS2) && Flags.flagStatus(Settings, RO_TDS_THRESHOLD) && Flags.flagStatus(Settings, RO_TDS_SHUTDOWN)
-		&& (setTDS.roFixedThreshold < tds2.readTDS() || setTDS.roDynamicThreshold < roRejectionPc()))
+	if (Flags.flagStatus(Status, AUTO_FILL) && !Flags.flagStatus(Status, AUTO_FLUSH))
 	{
-		menu.Display_Log("Tank Full Purification Stopped - RO Membrane TDS Output too High");
-		Log.logToMaster("During Auto-Fill, RO TDS & Temperature shutdown triggered. Threshold TDS/Temperature: %d ppm / %d celcius."
-				"Actual TDS/Temperature: %d ppm, xx celcius. Fill Duration xx minutes.", setTDS.roFixedThreshold, setTDS.roTemperature,
-				tds2.readTDS());
-		TdsWarn.Tds_Shutdown = true;
+		if (isTDSConnected(TDS2) && Flags.flagStatus(Settings, RO_TDS_THRESHOLD) && Flags.flagStatus(Settings, RO_TDS_SHUTDOWN) && (setTDS.roFixedThreshold < tds2.readTDS() || setTDS.roDynamicThreshold < roRejectionPc()))
+		{
+			menu.Display_Log("Tank Full Purification Stopped - RO Membrane TDS Output too High");
+			Log.logToMaster("During Auto-Fill, RO TDS & Temperature shutdown triggered. Threshold TDS/Temperature: %d ppm / %d celcius."
+							"Actual TDS/Temperature: %d ppm, xx celcius. Fill Duration xx minutes.",
+							setTDS.roFixedThreshold, setTDS.roTemperature,
+							tds2.readTDS());
+			TdsWarn.Tds_Shutdown = true;
+		}
+		if (isTDSConnected(TDS3) && Flags.flagStatus(Settings, DI_TDS_THRESHOLD) && Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_FINISH_5M) && Flags.flagStatus(Settings, DI_TDS_SHUTDOWN) && setTDS.diThreshold < tds3.readTDS())
+		{
+			menu.Display_Log("Tank Full Purification Stopped - DI RESIN too High");
+			Log.logToMaster("During Auto-Fill, DI TDS & Temperature shutdown triggered. Threshold TDS/Temperature: %d ppm / %d celcius."
+							"Actual TDS/Temperature: %d ppm, xx celcius. Fill Duration xx minutes.",
+							setTDS.diThreshold, setTDS.diTemperature,
+							tds3.readTDS());
+			TdsWarn.Tds_Shutdown = true;
+		}
 	}
-	if (isTDSConnected(TDS3) && Flags.flagStatus(Settings, DI_TDS_THRESHOLD) && Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_FINISH_5M)
-		&& Flags.flagStatus(Settings, DI_TDS_SHUTDOWN) && setTDS.diThreshold < tds3.readTDS())
-	{
-		menu.Display_Log("Tank Full Purification Stopped - DI RESIN too High");
-		Log.logToMaster("During Auto-Fill, DI TDS & Temperature shutdown triggered. Threshold TDS/Temperature: %d ppm / %d celcius."
-				"Actual TDS/Temperature: %d ppm, xx celcius. Fill Duration xx minutes.", setTDS.diThreshold, setTDS.diTemperature,
-				tds3.readTDS());
-		TdsWarn.Tds_Shutdown = true;
-	}
-
 	if (TdsWarn.Tds_Shutdown)
 	{
 		warningIndication(ORANGE);
@@ -427,17 +431,15 @@ void monitorTdsCycle(void)
 		invokeST4(false);
 		DEBUG_RTT(LOG_WARNING, "***AUTO_FLUSH_TIMEOUT OCCURRED***");
 	}
-	
-	ifTdsIsDisconnected();
 
 	if (Flags.flagStatus(Status, BATTERY_HIGH) || Flags.flagStatus(Status, BATTERY_CHARGING_DETECTED))
 		isShowWarnMsg = checkTdsTemperatureWarnings();
 
-	if (Flags.flagStatus(Status, AUTO_FILL) && !Flags.flagStatus(Status, AUTO_FLUSH))
-		isShowWarnMsg = checkTdsThresholdWarnings();
-
 	if (Flags.flagStatus(Status, AUTO_FILL) || Flags.flagStatus(Status, AUTO_FLUSH))
+	{
+		isShowWarnMsg = checkTdsThresholdWarnings();
 		checkTdsShutdownWarnings();
+	}
 
 	if (isShowWarnMsg && !TdsWarn.Tds2_DynamicThresh)
 	{
