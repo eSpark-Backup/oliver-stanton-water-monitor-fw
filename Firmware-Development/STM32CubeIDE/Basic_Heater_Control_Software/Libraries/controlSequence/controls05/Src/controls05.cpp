@@ -269,15 +269,20 @@ bool roSaverST1()
 		return false;
 }
 
+void stopAutoFillCycle(void)
+{
+	Flags.setFlag(Settings, MEM_SAVER, false);
+	Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
+	invokeST3(false);
+	invokeST5(false);
+}
+
 void memSaverST3()
 {
 	Flags.update();
 	if(Flags.timeElapsed(MEM_SAVER, MEM_SAVER_PAUSE_TIMEOUT) && Flags.flagStatus(Settings, MEM_SAVER_PAUSE))
 	{
-		Flags.setFlag(Settings, MEM_SAVER, false);
-		Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
-		invokeST3(false);
-		invokeST5(false);
+		stopAutoFillCycle();
 		mainMenuFunc();
 		DEBUG_RTT(LOG_WARNING, "***MEM_SAVER_PAUSE_TIMEOUT OCCURRED***");
 	}
@@ -384,8 +389,7 @@ void checkTdsShutdownWarnings(void)
 		menu.Display_Log("Tank Full Purification Stopped - Mains Input TDS too High", setTDS.mainsThreshold);
 		Log.logToMaster("During Auto-Fill, Mains TDS & Temperature shutdown triggered. Threshold TDS/Temperature: %d ppm / %d celcius."
 						"Actual TDS/Temperature: %d ppm, xx celcius. Fill Duration xx minutes.",
-						setTDS.mainsThreshold, setTDS.mainsTemperature,
-						tds1.readTDS());
+						setTDS.mainsThreshold, setTDS.mainsTemperature, tds1.readTDS());
 		TdsWarn.Tds_Shutdown = true;
 	}
 	if (Flags.flagStatus(Status, AUTO_FILL) && !Flags.flagStatus(Status, AUTO_FLUSH))
@@ -395,8 +399,7 @@ void checkTdsShutdownWarnings(void)
 			menu.Display_Log("Tank Full Purification Stopped - RO Membrane TDS Output too High");
 			Log.logToMaster("During Auto-Fill, RO TDS & Temperature shutdown triggered. Threshold TDS/Temperature: %d ppm / %d celcius."
 							"Actual TDS/Temperature: %d ppm, xx celcius. Fill Duration xx minutes.",
-							setTDS.roFixedThreshold, setTDS.roTemperature,
-							tds2.readTDS());
+							setTDS.roFixedThreshold, setTDS.roTemperature, tds2.readTDS());
 			TdsWarn.Tds_Shutdown = true;
 		}
 		if (isTDSConnected(TDS3) && Flags.flagStatus(Settings, DI_TDS_THRESHOLD) && Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_FINISH_5M) && Flags.flagStatus(Settings, DI_TDS_SHUTDOWN) && setTDS.diThreshold < tds3.readTDS())
@@ -404,14 +407,14 @@ void checkTdsShutdownWarnings(void)
 			menu.Display_Log("Tank Full Purification Stopped - DI RESIN too High");
 			Log.logToMaster("During Auto-Fill, DI TDS & Temperature shutdown triggered. Threshold TDS/Temperature: %d ppm / %d celcius."
 							"Actual TDS/Temperature: %d ppm, xx celcius. Fill Duration xx minutes.",
-							setTDS.diThreshold, setTDS.diTemperature,
-							tds3.readTDS());
+							setTDS.diThreshold, setTDS.diTemperature, tds3.readTDS());
 			TdsWarn.Tds_Shutdown = true;
 		}
 	}
 	if (TdsWarn.Tds_Shutdown)
 	{
 		warningIndication(ORANGE);
+		stopAutoFillCycle();
 		TdsWarn.Tds_Shutdown = false;
 	}
 }

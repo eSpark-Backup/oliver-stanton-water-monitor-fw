@@ -3,9 +3,9 @@
 #include "masterLog.h"
 
 // Helper function to check if the menu label matches the target threshold
-bool isMenuLabelMatch(MenuItem *menu, const MenuItem &targetThreshold)
+bool isMenuLabelMatch(MenuItem *menu, const MenuItem &targetThreshold, uint8_t index = 0)
 {
-	return strcmp(menu->Items[2].label, targetThreshold.Items[2].label) == 0;
+	return strcmp(menu->Items[index].label, targetThreshold.Items[index].label) == 0;
 }
 
 void introSetup_05(void)
@@ -290,19 +290,23 @@ bool TDSTemperatureLoop(uint32_t argChoice, MenuItem *argMenu)
 
 bool TdsShutdown(uint32_t argChoice, MenuItem *argMenu)
 {
-	bool isShutdownEnable = (argChoice == 2 && ButtonE.state());
+	if (ButtonE.state())
+	{
+	 	bool isShutdownEnable = argChoice == 2 ? true : false;
 
-	if (isMenuLabelMatch(argMenu, mainsTDSShutdown))
-	{
-		Flags.setFlag(Settings, MAINS_TDS_SHUTDOWN, isShutdownEnable);
-	}
-	else if (isMenuLabelMatch(argMenu, roTDSShutdown))
-	{
-		Flags.setFlag(Settings, RO_TDS_SHUTDOWN, isShutdownEnable);
-	}
-	else if (isMenuLabelMatch(argMenu, diTDSShutdown))
-	{
-		Flags.setFlag(Settings, DI_TDS_SHUTDOWN, isShutdownEnable);
+		if (isMenuLabelMatch(argMenu, mainsTDSShutdown))
+		{
+			Flags.setFlag(Settings, MAINS_TDS_SHUTDOWN, isShutdownEnable);
+		}
+		else if (isMenuLabelMatch(argMenu, roTDSShutdown))
+		{
+			Flags.setFlag(Settings, RO_TDS_SHUTDOWN, isShutdownEnable);
+		}
+		else if (isMenuLabelMatch(argMenu, diTDSShutdown))
+		{
+			Flags.setFlag(Settings, DI_TDS_SHUTDOWN, isShutdownEnable);
+		}
+		DEBUG_RTT(LOG_INFO, "TDS shutdown settings -: %d",isShutdownEnable);
 	}
 	else
 	{
