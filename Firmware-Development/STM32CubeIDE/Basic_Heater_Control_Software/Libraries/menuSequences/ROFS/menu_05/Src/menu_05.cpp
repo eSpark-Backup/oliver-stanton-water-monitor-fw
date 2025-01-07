@@ -8,6 +8,14 @@ bool isMenuLabelMatch(MenuItem *menu, const MenuItem &targetThreshold, uint8_t i
 	return strcmp(menu->Items[index].label, targetThreshold.Items[index].label) == 0;
 }
 
+bool isMenuMatch(MenuItem *menu1, const MenuItem &menu2, uint8_t index = 0)
+{
+	return menu1->Items[index].prev == menu2.Items[index].prev &&
+		   menu1->Items[index].next == menu2.Items[index].next &&
+		   menu1->Items[index].setup == menu2.Items[index].setup &&
+		   menu1->Items[index].DoWork == menu2.Items[index].DoWork;
+}
+
 void introSetup_05(void)
 {
 	setButtonStates({NONE}, true);
@@ -209,6 +217,7 @@ bool TDSThresholdLoop(uint32_t argChoice, MenuItem *argMenu)
 
 bool TdsDefaultTemperatureValue(uint32_t argChoice, MenuItem *argMenu)
 {
+	DEBUG_RTT(LOG_INFO, "TDS temp value set to default 2*C");
 
 	if (isMenuLabelMatch(argMenu, mainsTDSTemperature))
 	{
@@ -239,26 +248,27 @@ bool TDSTemperatureAdjustedValue(MenuItem *argMenu)
 	if (ButtonD.state() && tempVal > MIN_TDS_TEMPERATURE)
 	{
 		tempVal -= DIFF_TDS_TEMPERATURE;
+		Disp->display(tempVal);
 	}
 	else if (ButtonU.state() && tempVal < MAX_TDS_TEMPERATURE)
 	{
 		tempVal += DIFF_TDS_TEMPERATURE;
+		Disp->display(tempVal);
 	}
 
-	Disp->display(tempVal);
 	if (ButtonE.state())
 	{
-		if (isMenuLabelMatch(argMenu, mainsTDSTemperature))
+		if (isMenuLabelMatch(argMenu, mainsTDSTemperature, 1))
 		{
 			Flags.setFlag(Settings, MAINS_TDS_TEMPERATURE, true);
 			setTDS.mainsTemperature = tempVal;
 		}
-		else if (isMenuLabelMatch(argMenu, roTDSTemperature))
+		else if (isMenuLabelMatch(argMenu, roTDSTemperature, 1))
 		{
 			Flags.setFlag(Settings, RO_TDS_TEMPERATURE, true);
 			setTDS.roTemperature = tempVal;
 		}
-		else if (isMenuLabelMatch(argMenu, diTDSTemperature))
+		else if (isMenuLabelMatch(argMenu, diTDSTemperature, 1))
 		{
 			Flags.setFlag(Settings, DI_TDS_TEMPERATURE, true);
 			setTDS.diTemperature = tempVal;
@@ -290,12 +300,14 @@ bool TDSTemperatureLoop(uint32_t argChoice, MenuItem *argMenu)
 			Disp->display("Select Temperature value from 0-10*C");
 			isTemperatureAdjustable = true;
 			backAndForthSetup_05();
+			ButtonE.reset();
 			break;
 		}
 	}
 	else if (isTemperatureAdjustable)
 	{
-		return TDSTemperatureAdjustedValue(argMenu);
+		isTemperatureAdjustable = !TDSTemperatureAdjustedValue(argMenu);
+		return !isTemperatureAdjustable;
 	}
 
 	return false;
@@ -307,15 +319,15 @@ bool TdsShutdown(uint32_t argChoice, MenuItem *argMenu)
 	{
 	 	bool isShutdownEnable = argChoice == 2 ? true : false;
 
-		if (isMenuLabelMatch(argMenu, mainsTDSShutdown))
+		if (isMenuMatch(argMenu, mainsTDSShutdown))
 		{
 			Flags.setFlag(Settings, MAINS_TDS_SHUTDOWN, isShutdownEnable);
 		}
-		else if (isMenuLabelMatch(argMenu, roTDSShutdown))
+		else if (isMenuMatch(argMenu, roTDSShutdown))
 		{
 			Flags.setFlag(Settings, RO_TDS_SHUTDOWN, isShutdownEnable);
 		}
-		else if (isMenuLabelMatch(argMenu, diTDSShutdown))
+		else if (isMenuMatch(argMenu, diTDSShutdown))
 		{
 			Flags.setFlag(Settings, DI_TDS_SHUTDOWN, isShutdownEnable);
 		}

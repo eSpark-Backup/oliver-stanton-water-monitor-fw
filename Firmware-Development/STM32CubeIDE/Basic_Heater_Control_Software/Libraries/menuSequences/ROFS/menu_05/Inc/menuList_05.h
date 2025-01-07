@@ -62,17 +62,17 @@ MenuItem mainsTDS = {
 	 {"Mains TDS Shutdown", nullptr, nullptr, &mainsTDSShutdown, &mainMenu05, 2, 3}}
 };
 MenuItem mainsTDSThreshold = {
-	defaultMenuSetup,
+	navigationTrue,
 	TDSThresholdLoop,
 	{{"Off", nullptr, nullptr, nullptr, &mainsTDS, 0, 3},
 	 {"Default 500ppm"	, nullptr, nullptr, nullptr, &mainsTDS, 0, 3},
 	 {"Adjustable 50-600ppm"	, nullptr, nullptr, nullptr, &mainsTDS, 0, 3}}
 };
 MenuItem mainsTDSTemperature = {
-	defaultMenuSetup,
+	navigationTrue,
 	TDSTemperatureLoop,
 	{{"Off", nullptr, nullptr, nullptr, &mainsTDS, 0, 3},
-	 {"Default 2*C"	, nullptr, nullptr, nullptr, &mainsTDS, 0, 3},
+	 {"(Mains) Default 2*C", nullptr, nullptr, nullptr, &mainsTDS, 0, 3},
 	 {"Adjustable 0-10*C"	, nullptr, nullptr, nullptr, &mainsTDS, 0, 3}}
 };
 MenuItem mainsTDSShutdown = {
@@ -111,10 +111,10 @@ MenuItem roFixedTDSThreshold = {
 	 {"RO Fixed Adjustable 1-100ppm", nullptr, nullptr, nullptr, &roTDSThreshold, 0, 2}}
 };
 MenuItem roTDSTemperature = {
-	defaultMenuSetup,
+	navigationTrue,
 	TDSTemperatureLoop,
 	{{"Off", nullptr, nullptr, nullptr, &roTDS, 0, 3},
-	 {"Default 2*C"	, nullptr, nullptr, nullptr, &roTDS, 0, 3},
+	 {"(RO) Default 2*C"	, nullptr, nullptr, nullptr, &roTDS, 0, 3},
 	 {"Adjustable 0-10*C"	, nullptr, nullptr, nullptr, &roTDS, 0, 3}}
 };
 MenuItem roTDSShutdown = {
@@ -140,10 +140,10 @@ MenuItem diTDSThreshold = {
 	 {"Default 10ppm", nullptr, nullptr, nullptr, &diTDS, 0, 3},
 	 {"Adjustable 1-15ppm", nullptr, nullptr, nullptr, &diTDS, 0, 3}}};
 MenuItem diTDSTemperature = {
-	defaultMenuSetup,
+	navigationTrue,
 	TDSTemperatureLoop,
 	{{"Off", nullptr, nullptr, nullptr, &diTDS, 0, 3},
-	 {"Default 2*C"	, nullptr, nullptr, nullptr, &diTDS, 0, 3},
+	 {"(DI) Default 2*C"	, nullptr, nullptr, nullptr, &diTDS, 0, 3},
 	 {"Adjustable 0-10*C"	, nullptr, nullptr, nullptr, &diTDS, 0, 3}}
 };
 MenuItem diTDSShutdown = {
