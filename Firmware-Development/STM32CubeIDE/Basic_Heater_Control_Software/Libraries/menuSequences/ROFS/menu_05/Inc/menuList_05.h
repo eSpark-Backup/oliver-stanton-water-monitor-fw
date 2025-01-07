@@ -134,12 +134,11 @@ MenuItem diTDS = {
 	 {"DI TDS Shutdown"	, nullptr, nullptr, &diTDSShutdown, &mainMenu05, 2, 3}}
 };
 MenuItem diTDSThreshold = {
-	defaultMenuSetup,
+	navigationTrue,
 	TDSThresholdLoop,
 	{{"Off", nullptr, nullptr, nullptr, &diTDS, 0, 3},
-	 {"Default 10ppm"	, nullptr, nullptr, nullptr, &diTDS, 0, 3},
-	 {"Adjustable 1-15ppm"	, nullptr, nullptr, nullptr, &diTDS, 0, 3}}
-};
+	 {"Default 10ppm", nullptr, nullptr, nullptr, &diTDS, 0, 3},
+	 {"Adjustable 1-15ppm", nullptr, nullptr, nullptr, &diTDS, 0, 3}}};
 MenuItem diTDSTemperature = {
 	defaultMenuSetup,
 	TDSTemperatureLoop,

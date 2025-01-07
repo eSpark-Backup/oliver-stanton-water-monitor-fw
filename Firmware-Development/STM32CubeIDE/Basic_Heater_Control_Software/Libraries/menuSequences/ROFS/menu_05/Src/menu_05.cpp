@@ -120,8 +120,16 @@ bool TdsDefaultThresholdValue(uint32_t argChoice, MenuItem *argMenu)
 	return false;
 }
 
-bool TDSThresholdAdjustedValue(bool mainsTdsMenu)
+void navigationTrue(void)
 {
+	DEBUG_RTT(LOG_INFO, "navigationTrue:");
+	setButtonStates({ENTER_OK, RODI}, false);
+}
+
+bool TDSThresholdAdjustedValue(MenuItem *argMenu)
+{
+	static bool mainsTdsMenu = isMenuLabelMatch(argMenu, mainsTDSThreshold,2);
+
 	uint8_t minThreshold = mainsTdsMenu ? MIN_MAINS_TDS_THRESHOLD : MIN_DI_TDS_THRESHOLD;
 	uint8_t maxThreshold = mainsTdsMenu ? MAX_MAINS_TDS_THRESHOLD : MAX_DI_TDS_THRESHOLD;
 	uint8_t diffThreshold = mainsTdsMenu ? DIFF_MAINS_TDS_THRESHOLD : DIFF_DI_TDS_THRESHOLD;
@@ -131,13 +139,14 @@ bool TDSThresholdAdjustedValue(bool mainsTdsMenu)
 	if (ButtonD.state() && threshVal > minThreshold)
 	{
 		threshVal -= diffThreshold;
+		Disp->display(threshVal);
 	}
 	else if (ButtonU.state() && threshVal < maxThreshold)
 	{
 		threshVal += diffThreshold;
+		Disp->display(threshVal);
 	}
 
-	Disp->display(threshVal);
 
 	if (ButtonE.state())
 	{
@@ -153,6 +162,7 @@ bool TDSThresholdAdjustedValue(bool mainsTdsMenu)
 
 		DEBUG_RTT(LOG_WARNING, "Threshold value set to %d.", threshVal);
 		threshVal = minThreshold;
+		mainsTdsMenu = false;
 
 		return true;
 	}
@@ -172,23 +182,26 @@ bool TDSThresholdLoop(uint32_t argChoice, MenuItem *argMenu)
 		case 2:
 			return TdsDefaultThresholdValue(argChoice, argMenu);
 		case 3:
-			if (isMenuLabelMatch(argMenu, mainsTDSThreshold))
+			if (isMenuLabelMatch(argMenu, mainsTDSThreshold, 2))
 			{
 				Disp->display("Select Threshold value from 50-600ppm");
 				isThresholdAdjustable = true;
 			}
-			else if (isMenuLabelMatch(argMenu, diTDSThreshold))
+			else if (isMenuLabelMatch(argMenu, diTDSThreshold, 2))
 			{
 				Disp->display("Select Threshold value from 1-15ppm");
 				isThresholdAdjustable = true;
 			}
+
 			backAndForthSetup_05();
+			ButtonE.reset();
 			break;
 		}
 	}
 	else if (isThresholdAdjustable)
 	{
-		return TDSThresholdAdjustedValue(isMenuLabelMatch(argMenu, mainsTDSThreshold));
+		isThresholdAdjustable = !TDSThresholdAdjustedValue(argMenu);
+		return !isThresholdAdjustable; 
 	}
 
 	return false;
