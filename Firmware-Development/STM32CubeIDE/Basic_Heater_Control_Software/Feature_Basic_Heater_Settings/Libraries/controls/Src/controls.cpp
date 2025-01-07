@@ -68,7 +68,7 @@ bool fodOFF(uint32_t argChoice, MenuItem* argMenu)
 	}
 	else if (ButtonE.state())
 	{
-		if (Flags.flagStatus(Settings, FoD))
+		if (Flags.flagStatus(Settings, FoD) && (strcmp(lastMenuItem->Items[0].label, fodMenu.Items[0].label) == 0))
 		{
 			Flags.setFlag(Settings, FoD, false);
 			DEBUG_RTT(LOG_WARNING, "Fill on Demand disabled");
@@ -84,14 +84,14 @@ bool fodOFF(uint32_t argChoice, MenuItem* argMenu)
 		}
 		else if (ButtonE.period() < SINGLE_PRESS)
 		{
-			Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
 			if (Flags.flagStatus(Status, LEVEL_SENSOR) == true)
 			{
 				Flags.setFlag(Settings, MEM_SAVER, false);
 				fillOpen();
 			}
-			else if (!Flags.flagStatus(Settings, MEM_SAVER))
+			else if (!Flags.flagStatus(Status, MEM_SAVER))
 			{
+				Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
 				invokeST3(true);
 				invokeST5(true);
 			}
