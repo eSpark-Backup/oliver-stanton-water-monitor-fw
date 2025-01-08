@@ -43,10 +43,12 @@ void Menu::changeMenu(MenuItem* menu)
 void Menu::displayMenu(const MenuItem *menu, int elements)
 {
 	Disp->itemsToDisplay(elements);
+	Disp->display("");
 	for (uint8_t count = 0; count < elements; count++)
 	{
 		Disp->display(menu->Items[count].label);
 	}
+	Disp->display("");
 }
 
 void Menu::navigateMenu(MenuItem* currentMenu, bool checkReturn)
