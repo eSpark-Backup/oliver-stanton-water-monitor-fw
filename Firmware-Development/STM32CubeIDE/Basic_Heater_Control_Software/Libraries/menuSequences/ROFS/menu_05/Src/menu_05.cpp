@@ -373,6 +373,13 @@ bool RoTdsThresholdAdj(bool dynamicTdsMenu)
 	uint8_t diffThreshold = DIFF_RO_TDS_THRESHOLD;
 
 	static uint8_t threshVal = minThreshold;
+	static bool lastMenu = dynamicTdsMenu;
+
+	if (lastMenu != dynamicTdsMenu)
+	{
+		lastMenu = dynamicTdsMenu;
+		threshVal = minThreshold;
+	}
 
 	if (ButtonD.state() && threshVal > minThreshold)
 	{
@@ -384,7 +391,6 @@ bool RoTdsThresholdAdj(bool dynamicTdsMenu)
 		threshVal += diffThreshold;
 		Disp->display(threshVal);
 	}
-
 
 	if (ButtonE.state())
 	{
@@ -408,9 +414,10 @@ bool RoTdsThresholdAdj(bool dynamicTdsMenu)
 
 bool setRoTdsThreshold(uint32_t argChoice, MenuItem *argMenu)
 {
-	if (!ButtonE.state())	return false;
+	static bool isRoTdsAdjustable = false;
+	if (!ButtonE.state() && !isRoTdsAdjustable)	return false;
 
-	if (argChoice == 1)
+	if (argChoice == 1 && !isRoTdsAdjustable)
 	{
 		if (isMenuLabelMatch(argMenu, roDynamicTDSThreshold))
 		{
@@ -427,18 +434,33 @@ bool setRoTdsThreshold(uint32_t argChoice, MenuItem *argMenu)
 		Flags.setFlag(Settings, RO_TDS_THRESHOLD, true);
 		return true;
 	}
-	else if (argChoice == 2)
+	else if (argChoice == 2 && !isRoTdsAdjustable)
+	{
+		isRoTdsAdjustable = true;
+		backAndForthSetup_05();
+		ButtonE.reset();
+		if (isMenuLabelMatch(argMenu, roDynamicTDSThreshold))
+			Disp->display("Select RO Dynamic value from 50-99%");
+		else if (isMenuLabelMatch(argMenu, roFixedTDSThreshold))
+			Disp->display("Select RO Fixed value from 1-100ppm");
+	}
+	else if (isRoTdsAdjustable)
 	{
 		if (isMenuLabelMatch(argMenu, roDynamicTDSThreshold))
 		{
-			return RoTdsThresholdAdj(true);
+			isRoTdsAdjustable = !RoTdsThresholdAdj(true);
 		}
 		else if (isMenuLabelMatch(argMenu, roFixedTDSThreshold))
 		{
-			return RoTdsThresholdAdj(false);
+			isRoTdsAdjustable = !RoTdsThresholdAdj(false);
 		}
-		return false;
+		else
+			return false;
+
+		return !isRoTdsAdjustable;
 	}
+
+	return false;
 }
 
 bool haltMenuLoop(uint32_t argChoice, MenuItem *argMenu)
