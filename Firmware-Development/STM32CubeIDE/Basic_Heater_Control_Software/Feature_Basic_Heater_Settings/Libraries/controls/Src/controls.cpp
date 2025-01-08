@@ -17,6 +17,7 @@
 
 short roSaverThreshValue = 0;
 long lastMsgDisplayed = 0;
+long lastRoMsgDisplayed = 0;
 //short currentRoValue;
 
 
@@ -71,6 +72,8 @@ bool fodOFF(uint32_t argChoice, MenuItem* argMenu)
 		if (Flags.flagStatus(Settings, FoD) && (strcmp(lastMenuItem->Items[0].label, fodMenu.Items[0].label) == 0))
 		{
 			Flags.setFlag(Settings, FoD, false);
+			Flags.setFlag(Settings, MEM_SAVER, false);
+			Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
 			DEBUG_RTT(LOG_WARNING, "Fill on Demand disabled");
 		}
 		if (ButtonE.period() > SHORT_PRESS && ButtonE.period() < LONG_LONG_PRESS)
@@ -416,5 +419,10 @@ void memSaverST3()
 
 		invokeST3(true);
 		invokeST5(true);
+	}
+	else if (Flags.flagStatus(Status, AUTO_FILL) && (strcmp(currentM->Items[0].label, fodOptnsOff.Items[0].label) != 0) && (HAL_GetTick() - lastRoMsgDisplayed > 30000))
+	{
+		Disp->display("\"Purification in progress - System filling\"");
+		lastRoMsgDisplayed = HAL_GetTick();
 	}
 }
