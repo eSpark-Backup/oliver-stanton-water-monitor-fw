@@ -86,19 +86,40 @@ bool TdsSettingsOff(uint32_t argChoice, MenuItem *argMenu)
 {
 	DEBUG_RTT(LOG_INFO, "TDS settings disabled");
 
-	if (isMenuLabelMatch(argMenu, mainsTDSThreshold) == 0)
+	if (isMenuLabelMatch(argMenu, mainsTDSThreshold, 1))
 	{
 		Flags.setFlag(Settings, MAINS_TDS_THRESHOLD, false);
-		Flags.setFlag(Settings, MAINS_TDS_TEMPERATURE, false);
 	}
-	else if (isMenuLabelMatch(argMenu, roTDSThreshold))
+	else if (isMenuLabelMatch(argMenu, roTDSThreshold, 1))
 	{
 		Flags.setFlag(Settings, RO_TDS_THRESHOLD, false);
-		Flags.setFlag(Settings, RO_TDS_TEMPERATURE, false);
 	}
-	else if (isMenuLabelMatch(argMenu, diTDSThreshold))
+	else if (isMenuLabelMatch(argMenu, diTDSThreshold, 1))
 	{
 		Flags.setFlag(Settings, DI_TDS_THRESHOLD, false);
+	}
+	else
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool tempSettingsOff(uint32_t argChoice, MenuItem *argMenu)
+{
+	DEBUG_RTT(LOG_INFO, "Temp settings disabled");
+
+	if (isMenuMatch(argMenu, mainsTDSThreshold))
+	{
+		Flags.setFlag(Settings, MAINS_TDS_TEMPERATURE, false);
+	}
+	else if (isMenuMatch(argMenu, roTDSThreshold))
+	{
+		Flags.setFlag(Settings, RO_TDS_TEMPERATURE, false);
+	}
+	else if (isMenuMatch(argMenu, diTDSThreshold))
+	{
 		Flags.setFlag(Settings, DI_TDS_TEMPERATURE, false);
 	}
 	else
@@ -111,21 +132,22 @@ bool TdsSettingsOff(uint32_t argChoice, MenuItem *argMenu)
 
 bool TdsDefaultThresholdValue(uint32_t argChoice, MenuItem *argMenu)
 {
-	DEBUG_RTT(LOG_INFO, "TDS threshold value set to default ppm");
-
 	if (strcmp(argMenu->Items[1].label, mainsTDSThreshold.Items[1].label) == 0)
 	{
 		Flags.setFlag(Settings, MAINS_TDS_THRESHOLD, true);
 		setTDS.mainsThreshold = DEFAULT_MAINS_TDS_THRESHOLD;
-		return true;
+		DEBUG_RTT(LOG_INFO, "Mains TDS threshold value set to %d ppm", setTDS.mainsThreshold);
 	}
 	else if (strcmp(argMenu->Items[1].label, diTDSThreshold.Items[1].label) == 0)
 	{
 		Flags.setFlag(Settings, DI_TDS_THRESHOLD, true);
 		setTDS.diThreshold = DEFAULT_DI_TDS_THRESHOLD;
-		return true;
+		DEBUG_RTT(LOG_INFO, "DI TDS threshold value set to default ppm", setTDS.diThreshold);
 	}
-	return false;
+	else
+		return false;
+
+	return true;
 }
 
 void navigationTrue(void)
@@ -200,6 +222,8 @@ bool TDSThresholdLoop(uint32_t argChoice, MenuItem *argMenu)
 				Disp->display("Select Threshold value from 1-15ppm");
 				isThresholdAdjustable = true;
 			}
+			else
+				return false;
 
 			backAndForthSetup_05();
 			ButtonE.reset();
@@ -217,22 +241,24 @@ bool TDSThresholdLoop(uint32_t argChoice, MenuItem *argMenu)
 
 bool TdsDefaultTemperatureValue(uint32_t argChoice, MenuItem *argMenu)
 {
-	DEBUG_RTT(LOG_INFO, "TDS temp value set to default 2*C");
 
-	if (isMenuLabelMatch(argMenu, mainsTDSTemperature))
+	if (isMenuMatch(argMenu, mainsTDSTemperature))
 	{
 		Flags.setFlag(Settings, MAINS_TDS_TEMPERATURE, true);
 		setTDS.mainsTemperature = DEFAULT_TDS_TEMPERATURE;
+		DEBUG_RTT(LOG_INFO, "Mains TDS temp value set to default %d*C", setTDS.mainsTemperature);
 	}
-	else if (isMenuLabelMatch(argMenu, roTDSTemperature))
+	else if (isMenuMatch(argMenu, roTDSTemperature))
 	{
 		Flags.setFlag(Settings, RO_TDS_TEMPERATURE, true);
 		setTDS.roTemperature = DEFAULT_TDS_TEMPERATURE;
+		DEBUG_RTT(LOG_INFO, "RO TDS temp value set to default %d*C", setTDS.roTemperature);
 	}
-	else if (isMenuLabelMatch(argMenu, diTDSTemperature))
+	else if (isMenuMatch(argMenu, diTDSTemperature))
 	{
 		Flags.setFlag(Settings, DI_TDS_TEMPERATURE, true);
 		setTDS.diTemperature = DEFAULT_TDS_TEMPERATURE;
+		DEBUG_RTT(LOG_INFO, "DI TDS temp value set to default %d*C", setTDS.diTemperature);
 	}
 	else
 	{
@@ -293,7 +319,7 @@ bool TDSTemperatureLoop(uint32_t argChoice, MenuItem *argMenu)
 		switch (argChoice)
 		{
 		case 1:
-			return TdsSettingsOff(argChoice, argMenu);
+			return tempSettingsOff(argChoice, argMenu);
 		case 2:
 			return TdsDefaultTemperatureValue(argChoice, argMenu);
 		case 3:
@@ -331,14 +357,12 @@ bool TdsShutdown(uint32_t argChoice, MenuItem *argMenu)
 		{
 			Flags.setFlag(Settings, DI_TDS_SHUTDOWN, isShutdownEnable);
 		}
-		DEBUG_RTT(LOG_INFO, "TDS shutdown settings -: %d",isShutdownEnable);
+		DEBUG_RTT(LOG_INFO, "TDS shutdown settings : %d",isShutdownEnable);
 	}
 	else
 	{
 		return false;
 	}
-
-	DEBUG_RTT(LOG_INFO, "TDS shutdown settings");
 	return true;
 }
 
@@ -353,13 +377,14 @@ bool RoTdsThresholdAdj(bool dynamicTdsMenu)
 	if (ButtonD.state() && threshVal > minThreshold)
 	{
 		threshVal -= diffThreshold;
+		Disp->display(threshVal);
 	}
 	else if (ButtonU.state() && threshVal < maxThreshold)
 	{
 		threshVal += diffThreshold;
+		Disp->display(threshVal);
 	}
 
-	Disp->display(threshVal);
 
 	if (ButtonE.state())
 	{
@@ -381,7 +406,7 @@ bool RoTdsThresholdAdj(bool dynamicTdsMenu)
 	return false;
 }
 
-bool RoTdsThreshold(uint32_t argChoice, MenuItem *argMenu)
+bool setRoTdsThreshold(uint32_t argChoice, MenuItem *argMenu)
 {
 	if (!ButtonE.state())	return false;
 

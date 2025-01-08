@@ -148,7 +148,6 @@ void Menu::navigateMenu(MenuItem* currentMenu, bool checkReturn)
 
 				if (currentMenu->Items[choice_ == 0 ? 0 : choice_ - 1].next == nullptr)
 				{
-					Display_Log("nullptr ================");
 					g_csIndex = 0;
 					choiceSelect = 0;
 					currentMenu = (MenuItem *)currentMenu->Items[g_csIndex].prev;
@@ -157,14 +156,11 @@ void Menu::navigateMenu(MenuItem* currentMenu, bool checkReturn)
 				}
 				else
 				{
-					Display_Log("jump ================");
-
 					jumpToNextItem_ = true;
 					choiceSelect = 0;
 				}
 			}
 			else{
-			Display_Log(" ********************* enter else *********************");
 		}
 	}
 
