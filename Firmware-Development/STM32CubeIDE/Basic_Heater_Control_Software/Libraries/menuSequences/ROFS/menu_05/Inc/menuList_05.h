@@ -160,17 +160,18 @@ MenuItem diTDSShutdown = {
 MenuItem configureWarning = {
 	selectWarningMenuSetup,
 	configureTdsWarning,
-	{{"TDS", nullptr, nullptr, &tdsWarningList, &fodMenu05, 6, 1}}
+	{{"TDS", nullptr, nullptr, &tdsWarningList, &fodMenu05, 7, 1}}
 };
 MenuItem tdsWarningList = {
 	defaultMenuSetup,
 	selectTdsWarningItem,
-	{{"Mains TDS warning", 	nullptr, nullptr, &SetWarnState, &configureWarning, 2, 6},
-	 {"Mains Temp warning", nullptr, nullptr, &SetWarnState, &configureWarning, 2, 6},
-	 {"RO TDS warning", 	nullptr, nullptr, &SetWarnState, &configureWarning, 2, 6},
-	 {"RO Temp warning", 	nullptr, nullptr, &SetWarnState, &configureWarning, 2, 6},
-	 {"DI TDS warning", 	nullptr, nullptr, &SetWarnState, &configureWarning, 2, 6},
-	 {"DI Temp warning", 	nullptr, nullptr, &SetWarnState, &configureWarning, 2, 6}}
+	{{"Mains TDS warning", 		nullptr, nullptr, &SetWarnState, &configureWarning, 2, 7},
+	 {"Mains Temp warning", 	nullptr, nullptr, &SetWarnState, &configureWarning, 2, 7},
+	 {"RO Fixed TDS warning", 	nullptr, nullptr, &SetWarnState, &configureWarning, 2, 7},
+	 {"RO Dynamic TDS warning",	nullptr, nullptr, &SetWarnState, &configureWarning, 2, 7},
+	 {"RO Temp warning", 		nullptr, nullptr, &SetWarnState, &configureWarning, 2, 7},
+	 {"DI TDS warning", 		nullptr, nullptr, &SetWarnState, &configureWarning, 2, 7},
+	 {"DI Temp warning", 		nullptr, nullptr, &SetWarnState, &configureWarning, 2, 7}}
 };
 MenuItem SetWarnState = {
 	defaultMenuSetup,
