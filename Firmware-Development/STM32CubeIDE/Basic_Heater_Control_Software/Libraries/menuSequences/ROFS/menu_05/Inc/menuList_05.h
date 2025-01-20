@@ -26,13 +26,14 @@ MenuItem intro05 = {
 MenuItem mainMenu05 = {
 	mainMenuSetup_05,
 	mainMenuSelection_05,
-	{{"Default LLROFS Home Page", nullptr, nullptr, &fodMenu05, &intro05, 2, 1}},
+	{{"Default LLROFS Home Page", nullptr, nullptr, &fodMenu05, &intro05, 3, 1}},
 };
 MenuItem fodMenu05 = {
 	defaultMenuSetup,
 	nullptr,
-	{{"Fill on Demand (Not Active)", nullptr, nullptr, nullptr, &mainMenu05, 2, 2},
-	 {"Select TDS", nullptr, nullptr, &selectTDS, &mainMenu05, 3, 2}}
+	{{"Fill on Demand (Not Active)", nullptr, nullptr, nullptr, &mainMenu05, 2, 3},
+	 {"Select TDS", nullptr, nullptr, &selectTDS, &mainMenu05, 3, 3},
+	 {"Set Warnings", nullptr, nullptr, &configureWarning, &mainMenu05, 1, 3}}
 };
 MenuItem selectTDS = {
 	defaultMenuSetup,
@@ -152,6 +153,30 @@ MenuItem diTDSShutdown = {
 	TdsShutdown,
 	{{"Off (default)", nullptr, nullptr, nullptr, &diTDS, 0, 2},
 	 {"On"	, nullptr, nullptr, nullptr, &diTDS, 0, 2}}
+};
+
+///-----------------------------TDS END-----------------------------
+
+MenuItem configureWarning = {
+	selectWarningMenuSetup,
+	configureTdsWarning,
+	{{"TDS", nullptr, nullptr, &tdsWarningList, &fodMenu05, 6, 1}}
+};
+MenuItem tdsWarningList = {
+	defaultMenuSetup,
+	selectTdsWarningItem,
+	{{"Mains TDS warning", 	nullptr, nullptr, &SetWarnState, &configureWarning, 2, 6},
+	 {"Mains Temp warning", nullptr, nullptr, &SetWarnState, &configureWarning, 2, 6},
+	 {"RO TDS warning", 	nullptr, nullptr, &SetWarnState, &configureWarning, 2, 6},
+	 {"RO Temp warning", 	nullptr, nullptr, &SetWarnState, &configureWarning, 2, 6},
+	 {"DI TDS warning", 	nullptr, nullptr, &SetWarnState, &configureWarning, 2, 6},
+	 {"DI Temp warning", 	nullptr, nullptr, &SetWarnState, &configureWarning, 2, 6}}
+};
+MenuItem SetWarnState = {
+	defaultMenuSetup,
+	configureTdsWarning,
+	{{"Disable" , nullptr, nullptr, nullptr, &tdsWarningList, 0, 2},
+	 {"Enable"	, nullptr, nullptr, nullptr, &tdsWarningList, 0, 2}}
 };
 
 ///-----------------------------TDS END-----------------------------

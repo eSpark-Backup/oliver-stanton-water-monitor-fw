@@ -156,5 +156,6 @@ void controlPeripherals(void);
 
 extern TdsValues setTDS;
 extern WarningFlags TdsWarn;
+extern WarningFlags isTdsWarningEnable;
 
 #endif /* INC_CONTROLS05_H_ */

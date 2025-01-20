@@ -512,3 +512,41 @@ bool autoFlushEnable(bool activateST4)
 	DEBUG_RTT(LOG_WARNING, "AUTO_FLUSH setting Turned %s.", activateST4 ? "On" : "Off");
 	return true;
 }
+
+void selectWarningMenuSetup(void)
+{
+	setButtonStates({RODI}, false);
+	Disp->display("From above, select to configure warning setting:");
+}
+
+bool configureTdsWarning(uint32_t argChoice, MenuItem *argMenu)
+{
+	static uint8_t index = 0;
+	if(isMenuMatch(argMenu, tdsWarningList))
+	{
+		index = argChoice - 1;
+		return true;
+	}
+	else if (isMenuMatch(argMenu, SetWarnState) && ButtonE.state())
+	{
+		bool bitSet = false;
+
+		if (argChoice == 1)			bitSet = false;
+		else if (argChoice == 2)	bitSet = true;
+		else						return false;
+
+		if (bitSet)		isTdsWarningEnable.all_flags |= (1 << index); // Set the bit
+		else			isTdsWarningEnable.all_flags &= ~(1 << index); // Clear the bit
+
+		DEBUG_RTT(LOG_INFO, "Index : %d and bit: %d and warn %d", index, bitSet, isTdsWarningEnable.all_flags);
+		index = 0;
+		return true;
+	}
+	else
+		return false;
+}
+
+bool selectTdsWarningItem(uint32_t argChoice, MenuItem *argMenu)
+{
+	if (ButtonE.state()) configureTdsWarning(argChoice, argMenu);
+}

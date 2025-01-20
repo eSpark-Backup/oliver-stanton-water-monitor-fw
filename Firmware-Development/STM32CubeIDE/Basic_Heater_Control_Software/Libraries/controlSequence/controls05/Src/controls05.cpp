@@ -46,8 +46,10 @@ TDS tds3 = TDS(tds3PinConfig);
 TDS tds4 = TDS(tds4PinConfig);
 //*******************************************************************
 Menu menu;
-WarningFlags TdsWarn = {0};
-	//--------------------------------Functions definitions-------------------------
+WarningFlags TdsWarn = {.all_flags = 0};			  // all disabled by default
+WarningFlags isTdsWarningEnable{.all_flags = 0x0}; // all enabled by default
+
+//--------------------------------Functions definitions-------------------------
 
 bool isTDSConnected(tdsSensor sensor)
 {
