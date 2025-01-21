@@ -26,14 +26,15 @@ MenuItem intro05 = {
 MenuItem mainMenu05 = {
 	mainMenuSetup_05,
 	mainMenuSelection_05,
-	{{"Default LLROFS Home Page", nullptr, nullptr, &fodMenu05, &intro05, 3, 1}},
+	{{"Default LLROFS Home Page", nullptr, nullptr, &fodMenu05, &intro05, 4, 1}},
 };
 MenuItem fodMenu05 = {
 	defaultMenuSetup,
 	nullptr,
-	{{"Fill on Demand (Not Active)", nullptr, nullptr, nullptr, &mainMenu05, 2, 3},
-	 {"Select TDS", nullptr, nullptr, &selectTDS, &mainMenu05, 3, 3},
-	 {"Set Warnings", nullptr, nullptr, &configureWarning, &mainMenu05, 1, 3}}
+	{{"Fill on Demand (Not Active)", nullptr, nullptr, nullptr, &mainMenu05, 2, 4},
+	 {"Select TDS", nullptr, nullptr, &selectTDS, &mainMenu05, 3, 4},
+	 {"Set Warnings", nullptr, nullptr, &configureWarning, &mainMenu05, 1, 4},
+	 {"Set Auto Flush", nullptr, nullptr, &setAutoFlush, &mainMenu05, 2, 4}}
 };
 MenuItem selectTDS = {
 	defaultMenuSetup,
@@ -182,5 +183,12 @@ MenuItem SetWarnState = {
 };
 
 ///-----------------------------TDS END-----------------------------
+
+MenuItem setAutoFlush = {
+	defaultMenuSetup,
+	autoFlushOptions,
+	{{"Off" , nullptr, nullptr, nullptr, &fodMenu05, 0, 2},
+	 {"On"	, nullptr, nullptr, nullptr, &fodMenu05, 0, 2}}
+};
 
 #endif /* INC_MENULIST_05_H_ */
