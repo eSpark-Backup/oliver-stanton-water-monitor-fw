@@ -438,7 +438,6 @@ void monitorTdsCycle(void)
 
 	if (Flags.checkOnTime(AUTO_FLUSH, AUTO_FLUSH_TIMEOUT) && Flags.flagStatus(Settings, AUTO_FLUSH))
 	{
-		autoFlushEnable(false);
 		invokeST4(false);
 		DEBUG_RTT(LOG_WARNING, "***AUTO_FLUSH_TIMEOUT OCCURRED***");
 	}
@@ -454,11 +453,10 @@ void monitorTdsCycle(void)
 
 	if (isShowWarnMsg && !TdsWarn.Tds2_DynamicThresh)
 	{
-		DEBUG_RTT(LOG_WARNING, "isShowWarnMsg %d TdsWarn.Tds2_DynamicThresh%d", isShowWarnMsg,TdsWarn.Tds2_DynamicThresh);
 		if (HAL_GetTick() - lastMsgDisplayed > 1000)
 			warningIndication(RED);
 		menu.Display_Log("Would you like to ignore this warning for this fill cycle?");
-		if (TdsWarn.Tds2_FixedThresh)
+		if (TdsWarn.Tds2_FixedThresh && Flags.flagStatus(Settings, AUTO_FLUSH))
 			menu.Display_Log("OR \nWould you like to a longer 20 minutes Auto-Flush?");
 		lastMsgDisplayed = HAL_GetTick();
 		menu.changeMenu(&haltMenu);

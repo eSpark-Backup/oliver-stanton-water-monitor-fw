@@ -132,19 +132,19 @@ void FlagHandle::update(void)
 bool FlagHandle::checkOnTime(uint8_t sensor, uint32_t elapsedTime)
 {
 	uint32_t elapsed = HAL_GetTick() - statusOnFlagTimeStamp[sensor];
-	if ((sensor == LEVEL_SENSOR) && (flagStatus(Status, LEVEL_SENSOR) != true) && elapsed >= elapsedTime)
+	if ((sensor == LEVEL_SENSOR) && (flagStatus(Status, LEVEL_SENSOR) == true) && elapsed >= elapsedTime)
 	{
 		return true;
 	}
-	if ((sensor == MEM_SAVER) && (flagStatus(Status, MEM_SAVER) != true) && elapsed >= elapsedTime)
+	if ((sensor == MEM_SAVER) && (flagStatus(Status, MEM_SAVER) == true) && elapsed >= elapsedTime)
 	{
 		return true;
 	}
-	if ((sensor == AUTO_FILL) && (flagStatus(Status, AUTO_FILL) != true) && elapsed >= elapsedTime)
+	if ((sensor == AUTO_FILL) && (flagStatus(Status, AUTO_FILL) == true) && elapsed >= elapsedTime)
 	{
 		return true;
 	}
-	if ((sensor == AUTO_FLUSH) && (flagStatus(Status, AUTO_FLUSH) != true) && elapsed >= elapsedTime)
+	if ((sensor == AUTO_FLUSH) && (flagStatus(Status, AUTO_FLUSH) == true) && elapsed >= elapsedTime)
 	{
 		return true;
 	}
@@ -175,7 +175,7 @@ bool FlagHandle::timeElapsed(uint8_t sensor, uint32_t elapsedTime)
 			return true;
 		}
 	}
-	if ((sensor == AUTO_FLUSH) && (flagStatus(Status, AUTO_FLUSH)))
+	if ((sensor == AUTO_FLUSH) && (flagStatus(Status, AUTO_FLUSH) != true))
 	{
 		uint32_t elapsed = HAL_GetTick() - statusFlagTimeStamp[sensor];
 		if (elapsed >= elapsedTime)

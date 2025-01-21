@@ -466,9 +466,8 @@ bool setRoTdsThreshold(uint32_t argChoice, MenuItem *argMenu)
 bool haltMenuLoop(uint32_t argChoice, MenuItem *argMenu)
 {
 	char warningTDS[30] = {0};
-	if (TdsWarn.Tds2_FixedThresh && ButtonU.state())
+	if (TdsWarn.Tds2_FixedThresh && ButtonU.state() && Flags.flagStatus(Settings, AUTO_FLUSH))
 	{
-		autoFlushEnable(true);
 		invokeST4(true);
 		menu.changeMenu(&mainMenu05);
 		Log.logToMaster("User pressed UP key to override RO TDS threshold warning and Start Auto Flush.");
