@@ -46,6 +46,5 @@ bool haltMenuLoop(uint32_t argChoice, MenuItem *argMenu);
 
 bool autoFlushOptions(uint32_t argChoice, MenuItem *argMenu);
 bool autoFlushEnable(bool activateST4);
-void selectWarningMenuSetup(void);
 bool configureTdsWarning(uint32_t argChoice, MenuItem *argMenu);
 bool selectTdsWarningItem(uint32_t argChoice, MenuItem *argMenu);

@@ -513,11 +513,6 @@ bool autoFlushEnable(bool activateST4)
 	return true;
 }
 
-void selectWarningMenuSetup(void)
-{
-	setButtonStates({RODI}, false);
-	Disp->display("From above, select to configure warning setting:");
-}
 
 bool configureTdsWarning(uint32_t argChoice, MenuItem *argMenu)
 {

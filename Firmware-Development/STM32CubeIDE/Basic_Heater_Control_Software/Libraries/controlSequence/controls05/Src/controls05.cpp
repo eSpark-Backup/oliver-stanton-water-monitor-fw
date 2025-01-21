@@ -47,7 +47,7 @@ TDS tds4 = TDS(tds4PinConfig);
 //*******************************************************************
 Menu menu;
 WarningFlags TdsWarn = {.all_flags = 0};			  // all disabled by default
-WarningFlags isTdsWarningEnable{.all_flags = 0x0}; // all enabled by default
+WarningFlags isTdsWarningEnable{.all_flags = 0xFFFF}; // all enabled by default
 
 //--------------------------------Functions definitions-------------------------
 
@@ -139,7 +139,7 @@ void calCurrentTdsReading(void)
 
 	if (isTDSConnected(TDS3) && Flags.flagStatus(Status, AUTO_FILL))
 	{
-		menu.Display_Log("Final Stage - DI Output TDS: \"%d\" ppm", tds3.readTDS());
+		menu.Display_Log("Final Stage - DI Output TDS: \"%d\" ppm\n", tds3.readTDS());
 		Log.logToMaster("Final Stage - DI Output TDS: \"%d\" ppm", tds3.readTDS());
 	}
 	else
@@ -316,28 +316,31 @@ bool checkTdsTemperatureWarnings(void)
     int getCurTempValue = tds1.readTemp();
 	if (isTDSConnected(TDS1) && Flags.flagStatus(Settings, MAINS_TDS_TEMPERATURE) && setTDS.mainsTemperature < getCurTempValue)
 	{
-		menu.Display_Log("Mains Water Temperature too low \"%d\"*C- system at danger of freezing.", getCurTempValue);
+		if (isTdsWarningEnable.Tds1_Temp)
+			menu.Display_Log("Mains Water Temperature too low \"%d\"*C- system at danger of freezing.", getCurTempValue);
 		Log.logToMaster("During Auto-Fill, Mains Minimum Temperature threshold triggered.Threshold Temperature: %d celcius."
 						"Actual Temperature: %d celcius. Fill Duration xx minutes.", setTDS.mainsTemperature, getCurTempValue);
-		return TdsWarn.Tds1_Temp = !isTdsWarningEnable.Tds1_Temp;
+		return TdsWarn.Tds1_Temp = isTdsWarningEnable.Tds1_Temp;
 	}
 	
 	getCurTempValue = tds2.readTemp();
 	if (isTDSConnected(TDS2) && Flags.flagStatus(Settings, RO_TDS_TEMPERATURE) && setTDS.roTemperature < getCurTempValue)
 	{
-		menu.Display_Log("RO Membranes Temperature too low \"%d\"*C- system at danger of freezing.", getCurTempValue);
+		if (isTdsWarningEnable.Tds2_Temp)
+			menu.Display_Log("RO Membranes Temperature too low \"%d\"*C- system at danger of freezing.", getCurTempValue);
 		Log.logToMaster("During Auto-Fill, RO Minimum Temperature threshold triggered.Threshold Temperature: %d celcius."
 						"Actual Temperature: %d celcius. Fill Duration xx minutes.", setTDS.roTemperature, getCurTempValue);
-		return TdsWarn.Tds2_Temp = !isTdsWarningEnable.Tds2_Temp;
+		return TdsWarn.Tds2_Temp = isTdsWarningEnable.Tds2_Temp;
 	}
 	
 	getCurTempValue = tds3.readTemp();
 	if (isTDSConnected(TDS2) && Flags.flagStatus(Settings, DI_TDS_TEMPERATURE) && setTDS.diTemperature < getCurTempValue)
 	{
-		menu.Display_Log("DI RESIN Temperature too low \"%d\"*C- system at danger of freezing.", getCurTempValue);
+		if (isTdsWarningEnable.Tds3_Temp)
+			menu.Display_Log("DI RESIN Temperature too low \"%d\"*C- system at danger of freezing.", getCurTempValue);
 		Log.logToMaster("During Auto-Fill, DI Minimum Temperature threshold triggered.Threshold Temperature: %d celcius."
 						"Actual Temperature: %d celcius. Fill Duration xx minutes.", setTDS.diTemperature, getCurTempValue);
-		return TdsWarn.Tds3_Temp = !isTdsWarningEnable.Tds3_Temp;
+		return TdsWarn.Tds3_Temp = isTdsWarningEnable.Tds3_Temp;
 	}
 }
 
@@ -345,11 +348,12 @@ bool checkTdsThresholdWarnings(void)
 {
 	if (isTDSConnected(TDS1) && Flags.flagStatus(Settings, MAINS_TDS_THRESHOLD) && setTDS.mainsThreshold < tds1.readTDS())
 	{
-		menu.Display_Log("Mains Input Too High (\"%d\" ppm) - System Inspection Required", tds1.readTDS());
+		if (isTdsWarningEnable.Tds1_Thresh)
+			menu.Display_Log("Mains Input Too High (\"%d\" ppm) - System Inspection Required", tds1.readTDS());
 		Log.logToMaster("During Auto-Fill, Mains TDS threshold triggered. Threshold TDS : %d ppm. Actual TDS : %d ppm."
 						"Fill Duration xx minutes.",
 						setTDS.mainsTemperature, tds1.readTDS());
-		return TdsWarn.Tds1_Thresh = !isTdsWarningEnable.Tds1_Thresh;
+		return TdsWarn.Tds1_Thresh = isTdsWarningEnable.Tds1_Thresh;
 	}
 	if (Flags.flagStatus(Status, AUTO_FILL) && !Flags.flagStatus(Status, AUTO_FLUSH))
 	{
@@ -357,11 +361,12 @@ bool checkTdsThresholdWarnings(void)
 		{
 			if (Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_FINISH_5M) && setTDS.roFixedThreshold < tds2.readTDS())
 			{
-				menu.Display_Log("RO TDS Too High (\"%d\" ppm) - System Inspection Required", tds2.readTDS());
+				if (isTdsWarningEnable.Tds2_FixedThresh)
+					menu.Display_Log("RO TDS Too High (\"%d\" ppm) - System Inspection Required", tds2.readTDS());
 				Log.logToMaster("During Auto-Fill, RO Membrane Fixed TDS threshold triggered. Threshold TDS : %d ppm. Actual TDS : %d ppm."
 								"Fill Duration xx minutes.",
 								setTDS.roFixedThreshold, tds2.readTDS());
-				return TdsWarn.Tds2_FixedThresh = !isTdsWarningEnable.Tds2_FixedThresh;
+				return TdsWarn.Tds2_FixedThresh = isTdsWarningEnable.Tds2_FixedThresh;
 			}
 			if (setTDS.roDynamicThreshold < roRejectionPc())
 			{
@@ -374,11 +379,12 @@ bool checkTdsThresholdWarnings(void)
 		}
 		if (isTDSConnected(TDS3) && Flags.flagStatus(Settings, DI_TDS_THRESHOLD) && setTDS.diThreshold < tds3.readTDS())
 		{
-			menu.Display_Log("DI RESIN TDS Too High (\"%d\" ppm) - Requires change", tds3.readTDS());
+			if (isTdsWarningEnable.Tds3_Thresh)
+				menu.Display_Log("DI RESIN TDS Too High (\"%d\" ppm) - Requires change", tds3.readTDS());
 			Log.logToMaster("During Auto-Fill, DI RESIN TDS threshold triggered. Threshold TDS : %d ppm. Actual TDS : %d ppm."
 							"Fill Duration xx minutes.",
 							setTDS.diThreshold, tds3.readTDS());
-			return TdsWarn.Tds3_Thresh = !isTdsWarningEnable.Tds3_Thresh;
+			return TdsWarn.Tds3_Thresh = isTdsWarningEnable.Tds3_Thresh;
 		}
 	}
 }
