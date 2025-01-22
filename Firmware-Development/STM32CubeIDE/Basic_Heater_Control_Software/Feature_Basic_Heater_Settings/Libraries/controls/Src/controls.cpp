@@ -303,7 +303,8 @@ void invokeST3(bool status)
 		DEBUG_RTT(LOG_WARNING, "SAVE LOG TO FILE HERE.");			//perform logging to file here
 
 		Buzzzer->setOutputPattern(2, 500, 1100, 500);
-		// WLED1->setOutputPattern(-1, 1000, 1000);					// -1 to run infinitely
+		((RgbDriver *)WLED1)->setRgbColor(BLUE);
+		WLED1->setOutputPattern(2, 500, 1100, 500);
 	}
 	else
 	{
