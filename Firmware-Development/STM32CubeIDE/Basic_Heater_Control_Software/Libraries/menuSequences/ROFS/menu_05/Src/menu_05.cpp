@@ -54,7 +54,7 @@ bool mainMenuSelection_05(uint32_t argChoice, MenuItem *argMenu)
 	}
 
 	else if (ButtonE.period() > MINIMUM_PRESS && ButtonE.period() < SHORT_PRESS
-			&& !Flags.flagStatus(Status, RESIN_SAVER))
+			&& !Flags.flagStatus(Status, RESIN_SAVER) && !Flags.flagStatus(Status, AUTO_FILL))
 	{
 		menu.changeMenu(&fodOptnsOff05);
 		ButtonE.reset();
