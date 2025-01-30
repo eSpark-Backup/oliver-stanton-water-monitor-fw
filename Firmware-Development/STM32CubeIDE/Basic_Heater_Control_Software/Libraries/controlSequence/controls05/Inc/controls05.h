@@ -130,6 +130,18 @@ typedef union
 	uint16_t all_flags; // Full-width member to reset all flags
 } WarningFlags;
 
+typedef enum
+{
+	TDS1_THRESHOLD,
+	TDS1_TEMPERATURE,
+	TDS2_DYNAMIC_THRESHOLD,
+	TDS2_FIXED_THRESHOLD,
+	TDS2_TEMPERATURE,
+	TDS3_THRESHOLD,
+	TDS3_TEMPERATURE,
+	TDS_SHUTDOWN,
+} SELECT_TDS;
+
 /**
  * Functions that are directly called from MenuList
  * <condition> <Function name>(<choiceselect variable>)
@@ -157,5 +169,6 @@ void controlPeripherals(void);
 extern TdsValues setTDS;
 extern WarningFlags TdsWarn;
 extern WarningFlags isTdsWarningEnable;
+extern WarningFlags tempTdsWarning;
 
 #endif /* INC_CONTROLS05_H_ */

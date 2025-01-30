@@ -56,7 +56,7 @@ bool mainMenuSelection_05(uint32_t argChoice, MenuItem *argMenu)
 	else if (ButtonE.period() > MINIMUM_PRESS && ButtonE.period() < SHORT_PRESS
 			&& !Flags.flagStatus(Status, RESIN_SAVER))
 	{
-		menu.changeMenu(&fodOptnsOff);
+		menu.changeMenu(&fodOptnsOff05);
 		ButtonE.reset();
 	}
 	return false;
@@ -476,19 +476,19 @@ bool haltMenuLoop(uint32_t argChoice, MenuItem *argMenu)
 	else if (ButtonE.state())
 	{
 		if(TdsWarn.Tds1_Thresh) 
-		{isTdsWarningEnable.Tds1_Thresh = false; strncpy(warningTDS,"Mains TDS threshold", sizeof(warningTDS) - 1);}
+		{tempTdsWarning.Tds1_Thresh = false; strncpy(warningTDS,"Mains TDS threshold", sizeof(warningTDS) - 1);}
 		if(TdsWarn.Tds1_Temp)
-		{isTdsWarningEnable.Tds1_Temp = false; strncpy(warningTDS,"Mains Temperature threshold", sizeof(warningTDS) - 1);}
+		{tempTdsWarning.Tds1_Temp = false; strncpy(warningTDS,"Mains Temperature threshold", sizeof(warningTDS) - 1);}
 		if(TdsWarn.Tds2_DynamicThresh)
-		{isTdsWarningEnable.Tds2_DynamicThresh = false; strncpy(warningTDS,"RO rejection", sizeof(warningTDS) - 1);}
+		{tempTdsWarning.Tds2_DynamicThresh = false; strncpy(warningTDS,"RO rejection", sizeof(warningTDS) - 1);}
 		if(TdsWarn.Tds2_FixedThresh)
-		{isTdsWarningEnable.Tds2_FixedThresh = false; strncpy(warningTDS,"RO TDS threshold", sizeof(warningTDS) - 1);}
+		{tempTdsWarning.Tds2_FixedThresh = false; strncpy(warningTDS,"RO TDS threshold", sizeof(warningTDS) - 1);}
 		if(TdsWarn.Tds2_Temp)
-		{isTdsWarningEnable.Tds2_Temp = false; strncpy(warningTDS,"RO Temperature threshold", sizeof(warningTDS) - 1);}
+		{tempTdsWarning.Tds2_Temp = false; strncpy(warningTDS,"RO Temperature threshold", sizeof(warningTDS) - 1);}
 		if(TdsWarn.Tds3_Thresh)
-		{isTdsWarningEnable.Tds3_Thresh = false; strncpy(warningTDS,"DI RESIN TDS threshold", sizeof(warningTDS) - 1);}
+		{tempTdsWarning.Tds3_Thresh = false; strncpy(warningTDS,"DI RESIN TDS threshold", sizeof(warningTDS) - 1);}
 		if(TdsWarn.Tds3_Temp)
-		{isTdsWarningEnable.Tds3_Temp = false; strncpy(warningTDS,"DI Temperature threshold", sizeof(warningTDS) - 1);}
+		{tempTdsWarning.Tds3_Temp = false; strncpy(warningTDS,"DI Temperature threshold", sizeof(warningTDS) - 1);}
 
 		menu.changeMenu(&mainMenu05);
 		TdsWarn.all_flags = 0;
