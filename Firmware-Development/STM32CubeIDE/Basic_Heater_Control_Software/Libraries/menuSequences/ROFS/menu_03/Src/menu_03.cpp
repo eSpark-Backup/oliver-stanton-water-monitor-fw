@@ -552,6 +552,13 @@ bool selectTdsWarningItem(uint32_t argChoice, MenuItem *argMenu)
 	if (ButtonE.state()) configureTdsWarning(argChoice, argMenu);
 }
 
+bool diSaverEnable(bool activateST1)
+{
+	Flags.setFlag(Settings, RESIN_SAVER, activateST1);
+	DEBUG_RTT(LOG_WARNING, "RESIN_SAVER setting Turned %s.", activateST1 ? "On" : "Off");
+	return true;
+}
+
 bool diResinSaverAdjValue(void)
 {
 	static uint8_t resinSaverIntervalVal = 0;
@@ -571,6 +578,7 @@ bool diResinSaverAdjValue(void)
 	else if (ButtonE.state())
 	{
 		setST.diResinSvrIntrvl = resinSaverIntervalVal;
+		diSaverEnable(true);
 		resinSaverIntervalVal = 0;
 		DEBUG_RTT(LOG_WARNING, "Resin Saver Interval set to %d.", setST.diResinSvrIntrvl);
 		return true;
@@ -590,6 +598,7 @@ bool diSaverOptions(uint32_t argChoice, MenuItem *argMenu)
 	else if (ButtonE.state() && argChoice == 1)
 	{
 		setST.diResinSvrIntrvl = DEFAULT_RESIN_SAVER_INTRVL;
+		diSaverEnable(true);
 		DEBUG_RTT(LOG_WARNING, "Resin Saver Interval set to %d.", setST.diResinSvrIntrvl);
 	}
 	else if (ButtonE.state() && argChoice == 2)
@@ -610,7 +619,7 @@ bool diSaverOnOff(uint32_t argChoice, MenuItem *argMenu)
 {
 	if (ButtonE.state() && argChoice < 3)
 	{
-		invokeST1(argChoice == 2 ? true : false);
+		diSaverEnable(argChoice == 2 ? true : false);
 		return true;
 	}
 	else
