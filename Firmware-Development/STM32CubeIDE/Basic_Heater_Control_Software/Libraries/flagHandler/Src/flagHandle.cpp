@@ -66,13 +66,13 @@ void FlagHandle::update(void)
 		if(flagStatus(Status, RESIN_SAVER))
 		{
 			HAL_GPIO_WritePin(RO_SAVER_GPIO_Port, RO_SAVER_Pin, GPIO_PIN_SET);
-			DEBUG_RTT(LOG_WARNING, "RO_Saver_ST1 turned on.");
+			DEBUG_RTT(LOG_WARNING, "Resin_Saver_ST1 turned on.");
 			statusOnFlagTimeStamp[RESIN_SAVER] = HAL_GetTick();
 		}
 		else
 		{
 			HAL_GPIO_WritePin(RO_SAVER_GPIO_Port, RO_SAVER_Pin, GPIO_PIN_RESET);
-			DEBUG_RTT(LOG_WARNING, "RO_Saver_ST1 turned off.");	//}
+			DEBUG_RTT(LOG_WARNING, "Resin_Saver_ST1 turned off.");	//}
 //		if(flagStatus(Status, MEM_SAVER) == false)	{
 			statusFlagTimeStamp[RESIN_SAVER] = HAL_GetTick();
 		}
@@ -140,6 +140,10 @@ bool FlagHandle::checkOnTime(uint8_t sensor, uint32_t elapsedTime)
 	{
 		return true;
 	}
+	if ((sensor == RESIN_SAVER) && (flagStatus(Status, RESIN_SAVER) == true) && elapsed >= elapsedTime)
+	{
+		return true;
+	}
 	if ((sensor == AUTO_FILL) && (flagStatus(Status, AUTO_FILL) == true) && elapsed >= elapsedTime)
 	{
 		return true;
@@ -152,6 +156,19 @@ bool FlagHandle::checkOnTime(uint8_t sensor, uint32_t elapsedTime)
 	{
 		return false;
 	}
+}
+
+uint32_t FlagHandle::getTime(uint8_t sensor, bool cmpStatus)
+{
+	uint32_t timeOnOff = 0;
+	
+	if(cmpStatus)
+		timeOnOff = statusOnFlagTimeStamp[sensor];
+	else
+		timeOnOff = statusFlagTimeStamp[sensor];
+
+	uint32_t gotTime = HAL_GetTick() - timeOnOff;
+	return gotTime/1000;
 }
 
 bool FlagHandle::timeElapsed(uint8_t sensor, uint32_t elapsedTime)
@@ -167,9 +184,6 @@ bool FlagHandle::timeElapsed(uint8_t sensor, uint32_t elapsedTime)
 	if(sensor == MEM_SAVER)// && flagStatus(Settings, MEM_SAVER) != true)
 	{
 		uint32_t elapsed = HAL_GetTick() - statusFlagTimeStamp[sensor];
-//		dispdebug->displayVar(statusFlagTimeStamp[sensor], "statusFlagTimeStamp[sensor]: ");
-//		dispdebug->displayVar(HAL_GetTick(), "HAL_GetTick(): ");
-//		dispdebug->displayVar(elapsed, "mem_Saver elapsed: ");
 		if(elapsed >= elapsedTime)
 		{
 			return true;

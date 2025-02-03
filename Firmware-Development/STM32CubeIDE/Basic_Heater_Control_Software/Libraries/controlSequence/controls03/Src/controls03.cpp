@@ -14,11 +14,13 @@
 #include "masterLog.h"
 
 #define SECONDS_TO_MS(x) 				((x) * 1000) 						//converts seconds to milliseconds
+#define MIN_TO_SEC(x) 					((x) * 60)							//converts minutes to seconds
 #define MIN_TO_MS(x) 					((x) * SECONDS_TO_MS(60))			//converts minutes to milliseconds
 #define FOD_AUTORUN_DELAY_PERIOD		SECONDS_TO_MS(60)					//60secs
 #define MEM_SAVER_PAUSE_TIMEOUT			MIN_TO_MS(15)						//15mins or 900secs
 #define AUTO_FLUSH_TIMEOUT				MIN_TO_MS(20)						//20 mins or 1200secs
-#define AUTO_FLUSH_FINISH_5M			MIN_TO_MS(05)
+#define FINISH_5M						MIN_TO_MS(05)
+#define CUSTOM_INTERVAL(x)				MIN_TO_MS(x)
 
 TdsValues setTDS{
 	DEFAULT_MAINS_TDS_THRESHOLD,
@@ -240,46 +242,29 @@ void invokeST5(bool status)
 bool roSaverST1()
 {
 	Flags.update();
-	if (!Flags.flagStatus(Settings, MEM_SAVER_PAUSE) && Flags.flagStatus(Status, PURE_CYCLE)
-	&& Flags.flagStatus(Settings, RESIN_SAVER) && !Flags.flagStatus(Status, MEM_SAVER) && !Flags.flagStatus(Status, AUTO_FILL))
+	static long lastMsgDisplayed = 0u;
+	if (Flags.flagStatus(Settings, RESIN_SAVER) && Flags.flagStatus(Status, PURE_CYCLE) && Flags.flagStatus(Status, AUTO_FILL)
+		&& !Flags.flagStatus(Status, AUTO_FLUSH) && !Flags.flagStatus(Status, RESIN_SAVER) && Flags.timeElapsed(RESIN_SAVER, FINISH_5M))
 	{
-		if (!isTDSConnected(TDS2)) // Assuming a pulldown resistor [not connected means 0 value]
-		{
-			Flags.setFlag(Status, PURE_CYCLE, false);
-			Buzzzer->setOutputPattern(1, 500, 1000);
-			((RgbDriver *)WLED1)->setRgbColor(RED);
-			WLED1->setOutputPattern(1, 500, 1000);
-			return false;
-		}
-		Disp->display("Completing Purification Cycle - Dosing RO Membrane.");
-		invokeST1(true); 
-		invokeST5(true);
-		Flags.update();
-		return true;
+		DEBUG_RTT(LOG_WARNING, "***first condition***");
+		invokeST1(true);
 	}
-	else if (Flags.flagStatus(Status, PURE_CYCLE) && Flags.flagStatus(Status, RESIN_SAVER) && Flags.flagStatus(Status, AUTO_FILL))
+	else if (Flags.flagStatus(Settings, RESIN_SAVER) && Flags.flagStatus(Status, PURE_CYCLE) && !Flags.flagStatus(Status, AUTO_FILL)
+		&& Flags.getTime(AUTO_FLUSH, false) < 10 && !Flags.flagStatus(Status, RESIN_SAVER))
 	{
-		if(tds2.readTDS() <= setTDS.roFixedThreshold)
-		{
-			Disp->display("Purification Cycle Complete.");
-			tds2.resetTDS(); //for simulation value
-			invokeST1(false);
-			invokeST5(false);
-			Flags.update();
-			Flags.setFlag(Status, PURE_CYCLE, false);
-			mainMenuFunc03();
-			return true;
-		}
+		DEBUG_RTT(LOG_WARNING, "***second condition***");
+		invokeST1(true);
 	}
-	else if(!Flags.flagStatus(Settings, RESIN_SAVER) && Flags.flagStatus(Status, PURE_CYCLE) && Flags.flagStatus(Status, LEVEL_SENSOR))
+	else if (Flags.flagStatus(Status, RESIN_SAVER) && (Flags.checkOnTime(RESIN_SAVER, CUSTOM_INTERVAL(setST.diResinSvrIntrvl)) || !Flags.flagStatus(Settings, RESIN_SAVER)))
 	{
-		Flags.setFlag(Status, PURE_CYCLE, false);
-		Disp->display("Tank Full, System Purification Stopped.");
-		mainMenuFunc03();
-		return true;
+		DEBUG_RTT(LOG_WARNING, "***Third condition***");
+		invokeST1(false);
 	}
-//	else
-		return false;
+	else if (Flags.flagStatus(Status, RESIN_SAVER) && (HAL_GetTick() - lastMsgDisplayed > 10000))
+	{
+		lastMsgDisplayed = HAL_GetTick();
+		menu.Display_Log("Purifying DI Saver Enabled: %d seconds to go", MIN_TO_SEC(setST.diResinSvrIntrvl) - Flags.getTime(RESIN_SAVER, true));
+	}
 }
 
 void stopAutoFillCycle(void)
@@ -375,7 +360,7 @@ bool checkTdsThresholdWarnings(void)
 	{
 		if (isTDSConnected(TDS2) && Flags.flagStatus(Settings, RO_TDS_THRESHOLD))
 		{
-			if (Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_FINISH_5M) && setTDS.roFixedThreshold < tds2.readTDS())
+			if (Flags.timeElapsed(AUTO_FLUSH, FINISH_5M) && setTDS.roFixedThreshold < tds2.readTDS())
 			{
 				if (isWarnActive(TDS2_FIXED_THRESHOLD))
 					menu.Display_Log("RO TDS Too High (\"%d\" ppm) - System Inspection Required", tds2.readTDS());
@@ -426,7 +411,7 @@ void checkTdsShutdownWarnings(void)
 							setTDS.roFixedThreshold, setTDS.roTemperature, tds2.readTDS());
 			TdsWarn.Tds_Shutdown = true;
 		}
-		if (isTDSConnected(TDS3) && Flags.flagStatus(Settings, DI_TDS_THRESHOLD) && Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_FINISH_5M) && Flags.flagStatus(Settings, DI_TDS_SHUTDOWN) && setTDS.diThreshold < tds3.readTDS())
+		if (isTDSConnected(TDS3) && Flags.flagStatus(Settings, DI_TDS_THRESHOLD) && Flags.timeElapsed(AUTO_FLUSH, FINISH_5M) && Flags.flagStatus(Settings, DI_TDS_SHUTDOWN) && setTDS.diThreshold < tds3.readTDS())
 		{
 			menu.Display_Log("Tank Full Purification Stopped - DI RESIN too High");
 			Log.logToMaster("During Auto-Fill, DI TDS & Temperature shutdown triggered. Threshold TDS/Temperature: %d ppm / %d celcius."
