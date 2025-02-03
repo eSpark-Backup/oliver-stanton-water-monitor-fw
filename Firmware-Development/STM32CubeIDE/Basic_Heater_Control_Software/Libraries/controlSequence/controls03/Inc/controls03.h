@@ -142,6 +142,11 @@ typedef enum
 	TDS_SHUTDOWN,
 } SELECT_TDS;
 
+typedef struct
+{
+	uint8_t diResinSvrIntrvl 		= 0;
+}	selectST;
+
 /**
  * Functions that are directly called from MenuList
  * <condition> <Function name>(<choiceselect variable>)
@@ -151,6 +156,7 @@ typedef enum
 
 /*	Support Functions	*/
 void fillOpen(void);
+void invokeST1(bool);
 void invokeST3(bool);
 void invokeST4(bool);
 void invokeST5(bool);
@@ -167,6 +173,7 @@ void calCurrentTdsReading(void);
 void controlPeripherals(void);
 
 extern TdsValues setTDS;
+extern selectST setST;
 extern WarningFlags TdsWarn;
 extern WarningFlags isTdsWarningEnable;
 extern WarningFlags tempTdsWarning;

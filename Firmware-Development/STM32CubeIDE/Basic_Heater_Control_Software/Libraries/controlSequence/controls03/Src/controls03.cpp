@@ -30,9 +30,12 @@ TdsValues setTDS{
 	DEFAULT_TDS_TEMPERATURE
 };
 
+selectST setST{
+	DEFAULT_RESIN_SAVER_INTRVL
+};
 
 //***************************Buzzer*******************************
-EventHandle* Buzzzer = new BuzzerDriver(BUZZER_GPIO_Port, BUZZER_Pin, IndBUZZER);
+EventHandle *Buzzzer = new BuzzerDriver(BUZZER_GPIO_Port, BUZZER_Pin, IndBUZZER);
 EventHandle* WLED1 = new RgbDriver(R_CNTRL_GPIO_Port, R_CNTRL_Pin, G_CNTRL_Pin, B_CNTRL_Pin, IndRGB);
 
 //***************************TDS Sensor*******************************

@@ -83,4 +83,4 @@ mainsTDSShutdown, roTDS, roTDSThreshold, roDynamicTDSThreshold, roFixedTDSThresh
 diTDS, diTDSThreshold, diTDSTemperature, diTDSShutdown, configureWarning, tdsWarningList, SetWarnState, setAutoFlush;
 //-------------------------------------------------------------------------------------
 
-extern struct MenuItem intro03, mainMenu03, fodMenu03, selectTDS, fodOptnsOff03;
+extern struct MenuItem intro03, mainMenu03, fodMenu03, selectTDS, fodOptnsOff03, selectDiSaver, setDiSaverInterval, setDiSaverOnOff;

@@ -26,6 +26,8 @@
 #define MIN_TDS_TEMPERATURE 00
 #define DIFF_TDS_TEMPERATURE 01
 
+#define DEFAULT_RESIN_SAVER_INTRVL 03
+
 
 void introSetup_03(void);
 bool introPageSelection_03(uint32_t argChoice, MenuItem* argMenu);
@@ -48,3 +50,6 @@ bool autoFlushOptions(uint32_t argChoice, MenuItem *argMenu);
 bool autoFlushEnable(bool activateST4);
 bool configureTdsWarning(uint32_t argChoice, MenuItem *argMenu);
 bool selectTdsWarningItem(uint32_t argChoice, MenuItem *argMenu);
+
+bool diSaverOptions(uint32_t argChoice, MenuItem *argMenu);
+bool diSaverOnOff(uint32_t argChoice, MenuItem *argMenu);

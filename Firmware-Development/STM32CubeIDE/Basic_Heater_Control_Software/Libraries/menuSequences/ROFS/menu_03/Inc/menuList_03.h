@@ -29,15 +29,16 @@ MenuItem intro03 = {
 MenuItem mainMenu03 = {
 	mainMenuSetup_03,
 	mainMenuSelection_03,
-	{{"Default LLROFS Home Page", nullptr, nullptr, &fodMenu03, &intro03, 4, 1}},
+	{{"Default LLROFS Home Page", nullptr, nullptr, &fodMenu03, &intro03, 5, 1}},
 };
 MenuItem fodMenu03 = {
 	defaultMenuSetup,
 	nullptr,
-	{{"Fill on Demand (Not Active)", nullptr, nullptr, nullptr, &mainMenu03, 2, 4},
-	 {"Select TDS", nullptr, nullptr, &selectTDS, &mainMenu03, 3, 4},
-	 {"Set Warnings", nullptr, nullptr, &configureWarning, &mainMenu03, 1, 4},
-	 {"Set Auto Flush", nullptr, nullptr, &setAutoFlush, &mainMenu03, 2, 4}}
+	{{"1. Fill on Demand (Not Active)", nullptr, nullptr, nullptr, 				&mainMenu03, 2, 5},
+	 {"2. Select TDS", 					nullptr, nullptr, &selectTDS, 			&mainMenu03, 3, 5},
+	 {"3. Set Warnings", 				nullptr, nullptr, &configureWarning, 	&mainMenu03, 1, 5},
+	 {"4. Set Auto Flush", 				nullptr, nullptr, &setAutoFlush, 		&mainMenu03, 2, 5},
+	 {"5. DI Saver", 					nullptr, nullptr, &selectDiSaver, 		&mainMenu03, 2, 5}}
 };
 MenuItem selectTDS = {
 	defaultMenuSetup,
@@ -165,8 +166,8 @@ MenuItem configureWarning = {
 	defaultMenuSetup,
 	nullptr,
 	{{"Select type to configure warning setting:\n\n"
-	  "TDS",
-	  nullptr, nullptr, &tdsWarningList, &fodMenu03, 7, 1}}};
+	  "TDS", nullptr, nullptr, &tdsWarningList, &fodMenu03, 7, 1}}
+};
 MenuItem tdsWarningList = {
 	defaultMenuSetup,
 	selectTdsWarningItem,
@@ -185,7 +186,7 @@ MenuItem SetWarnState = {
 	 {"Enable"	, nullptr, nullptr, nullptr, &tdsWarningList, 0, 2}}
 };
 
-///-----------------------------TDS END-----------------------------
+///-----------------------------TDS WARNING SETUP END-----------------------------
 
 MenuItem setAutoFlush = {
 	defaultMenuSetup,
@@ -193,6 +194,27 @@ MenuItem setAutoFlush = {
 	{{"Off" , nullptr, nullptr, nullptr, &fodMenu03, 0, 2},
 	 {"On"	, nullptr, nullptr, nullptr, &fodMenu03, 0, 2}}
 };
+MenuItem selectDiSaver = {
+	defaultMenuSetup,
+	nullptr,
+	{{"Di-Saver On/Off" 	, nullptr, nullptr, &setDiSaverOnOff, &fodMenu03, 2, 2},
+	 {"Di-Saver Interval"	, nullptr, nullptr, &setDiSaverInterval, &fodMenu03, 2, 2}}
+};
+MenuItem setDiSaverInterval = {
+	defaultMenuSetup,
+	diSaverOptions,
+	{{"set Di-Saver Interval:\n"
+	  "1. Default to 3 min" , nullptr, nullptr, nullptr, &selectDiSaver, 0, 2},
+	 {"2. Adjustable Upto 10 min"	, nullptr, nullptr, nullptr, &selectDiSaver, 0, 2}}
+};
+MenuItem setDiSaverOnOff = {
+	defaultMenuSetup,
+	diSaverOnOff,
+	{{"Off" , nullptr, nullptr, nullptr, &selectDiSaver, 0, 2},
+	 {"On"	, nullptr, nullptr, nullptr, &selectDiSaver, 0, 2}}
+};
+
+///---------------------------- EXTRA FLUSH & DI SAVER SETUP END-----------------------------
 
 #endif
 

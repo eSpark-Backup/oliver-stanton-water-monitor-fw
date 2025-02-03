@@ -552,4 +552,70 @@ bool selectTdsWarningItem(uint32_t argChoice, MenuItem *argMenu)
 	if (ButtonE.state()) configureTdsWarning(argChoice, argMenu);
 }
 
+bool diResinSaverAdjValue(void)
+{
+	static uint8_t resinSaverIntervalVal = 0;
+
+	if (ButtonD.state())
+	{
+		if (resinSaverIntervalVal > 0)
+			resinSaverIntervalVal--;
+		Disp->display(resinSaverIntervalVal);
+	}
+	else if (ButtonU.state())
+	{
+		if (resinSaverIntervalVal < 10)
+			resinSaverIntervalVal++;
+		Disp->display(resinSaverIntervalVal);
+	}
+	else if (ButtonE.state())
+	{
+		setST.diResinSvrIntrvl = resinSaverIntervalVal;
+		resinSaverIntervalVal = 0;
+		DEBUG_RTT(LOG_WARNING, "Resin Saver Interval set to %d.", setST.diResinSvrIntrvl);
+		return true;
+	}
+	else
+		return false;
+}
+
+bool diSaverOptions(uint32_t argChoice, MenuItem *argMenu)
+{
+	static bool adjResinSvr = false;
+	
+	if(adjResinSvr)
+	{
+		adjResinSvr = !diResinSaverAdjValue();
+	}
+	else if (ButtonE.state() && argChoice == 1)
+	{
+		setST.diResinSvrIntrvl = DEFAULT_RESIN_SAVER_INTRVL;
+		DEBUG_RTT(LOG_WARNING, "Resin Saver Interval set to %d.", setST.diResinSvrIntrvl);
+	}
+	else if (ButtonE.state() && argChoice == 2)
+	{
+		adjResinSvr = true;
+		Disp->display("\nSelect DI Resin Saver Time Interval: 1 to 10 minutes");
+		backAndForthSetup_03();
+		ButtonE.reset();
+	}
+	else
+		return false;
+
+
+	return !adjResinSvr;
+}
+
+bool diSaverOnOff(uint32_t argChoice, MenuItem *argMenu)
+{
+	if (ButtonE.state() && argChoice < 3)
+	{
+		invokeST1(argChoice == 2 ? true : false);
+		return true;
+	}
+	else
+		return false;
+}
+
+
 #endif
