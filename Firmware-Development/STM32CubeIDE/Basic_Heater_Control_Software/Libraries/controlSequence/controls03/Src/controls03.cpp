@@ -247,6 +247,16 @@ void invokeST5(bool status)
 	}
 }
 
+void invokeST10(bool status)
+{
+	// BOOST_PRD_SIG and BOOST_AF_SIG responds to same actuator status but different settings
+	if(Flags.flagStatus(Status, BOOST_PRD_SIG) != status)
+	{
+		Flags.setFlag(Status, BOOST_PRD_SIG, status);
+		menu.Display_Log("ST10 Booster Signal: %s", status ? "Activated" : "Deactivated");
+	}
+}
+
 bool roSaverST1()
 {
 	Flags.update();
@@ -272,6 +282,26 @@ bool roSaverST1()
 	{
 		lastMsgDisplayed = HAL_GetTick();
 		menu.Display_Log("Purifying DI Saver Enabled: %d seconds to go", MIN_TO_SEC(setST.diResinSvrIntrvl) - Flags.getTime(RESIN_SAVER, true));
+	}
+}
+
+void BoosterSignalControl(void)
+{
+	if ((Flags.flagStatus(Settings, BOOST_PRD_SIG) && Flags.flagStatus(Status, AUTO_FILL))
+	|| (Flags.flagStatus(Settings, BOOST_AF_SIG) && Flags.flagStatus(Status, AUTO_FLUSH)))
+	{
+		invokeST10(true);
+	}
+	if (!Flags.flagStatus(Settings, BOOST_PRD_SIG))
+	{
+		if (Flags.flagStatus(Status, AUTO_FLUSH))
+			invokeST10(false);
+		else if (!Flags.flagStatus(Status, AUTO_FLUSH) && Flags.flagStatus(Status, AUTO_FILL))
+			invokeST10(true);
+	}
+	else if(!Flags.flagStatus(Settings, BOOST_PRD_SIG))
+	{
+		invokeST10(false);
 	}
 }
 
@@ -478,6 +508,7 @@ void controlPeripherals(void)
 	memSaverST3();
 	roSaverST1();
 	monitorTdsCycle();
+	BoosterSignalControl();
 }
 
 #endif
