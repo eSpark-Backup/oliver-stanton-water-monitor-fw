@@ -9,11 +9,11 @@
 #define INC_CONTROLSEQUENCE_H_
 
 
-#if MENU_01 == 1
+#if MENU_01
 	#include "controls01/Inc/controls01.h"
-#elif MENU_03 == 1
+#elif (MENU_03 || MENU_04)
 	#include "controls03/Inc/controls03.h"
-#elif MENU_05 == 1
+#elif MENU_05
 	#include "controls05/Inc/controls05.h"
 #else
 

@@ -7,10 +7,18 @@
 
 //#include "mainApp.hpp"
 #include "controls03.h"
+
 #if MENU_03 == 1
+#include "menu_03.h"
+#endif
+#if MENU_04 == 1
+#include "menu_04.h"
+#endif
+
+#if (MENU_03 || MENU_04)
+
 #include "TDS.hpp"
 #include "menu_01.h"
-#include "menu_03.h"
 #include "masterLog.h"
 
 #define SECONDS_TO_MS(x) 				((x) * 1000) 						//converts seconds to milliseconds
@@ -56,10 +64,10 @@ WarningFlags isTdsWarningEnable{.all_flags = 0xFFFF}; // all enabled by default
 WarningFlags tempTdsWarning{.all_flags = 0xFFFF}; // all enabled by default
 
 //--------------------------------Functions definitions-------------------------
-void mainMenuFunc03()
+void mainMenuFunc03_04()
 {
-	currentM = &mainMenu03;
-	menu.displayMenu(&mainMenu03, mainMenu.Items[0].num_items);
+	currentM = &mainMenu04;
+	menu.displayMenu(&mainMenu04, mainMenu.Items[0].num_items);
 }
 
 bool isTDSConnected(tdsSensor sensor)
@@ -187,7 +195,7 @@ void fillOpen()
 	invokeST3(false);
 	invokeST5(false);
 	Log.logToMaster("Float Circuit Open - Unable to commence filling");
-	mainMenuFunc03();
+	mainMenuFunc03_04();
 	//add buzzer/LED warning handler here
 }
 
@@ -281,7 +289,7 @@ void memSaverST3()
 	if(Flags.timeElapsed(MEM_SAVER, MEM_SAVER_PAUSE_TIMEOUT) && Flags.flagStatus(Settings, MEM_SAVER_PAUSE))
 	{
 		stopAutoFillCycle();
-		mainMenuFunc03();
+		mainMenuFunc03_04();
 		DEBUG_RTT(LOG_WARNING, "***MEM_SAVER_PAUSE_TIMEOUT OCCURRED***");
 	}
 	if (Flags.flagStatus(Settings, MEM_SAVER_PAUSE) == false && Flags.flagStatus(Status, LEVEL_SENSOR) != false

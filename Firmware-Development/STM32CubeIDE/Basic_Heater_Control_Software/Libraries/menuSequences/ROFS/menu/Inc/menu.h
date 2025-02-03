@@ -84,3 +84,6 @@ diTDS, diTDSThreshold, diTDSTemperature, diTDSShutdown, configureWarning, tdsWar
 //-------------------------------------------------------------------------------------
 
 extern struct MenuItem intro03, mainMenu03, fodMenu03, selectTDS, fodOptnsOff03, selectDiSaver, setDiSaverInterval, setDiSaverOnOff;
+//-------------------------------------------------------------------------------------
+
+extern struct MenuItem intro04, mainMenu04, fodMenu04, selectTDS, fodOptnsOff04;
