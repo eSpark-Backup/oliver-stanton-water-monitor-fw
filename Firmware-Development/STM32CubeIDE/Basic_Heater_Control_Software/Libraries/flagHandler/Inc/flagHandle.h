@@ -60,6 +60,8 @@ protected:
 	   uint64_t Flow_Meter_3    :1;
 	   uint64_t Pure_CYCLE      :1;
 	   uint64_t Auto_Fill       :1;
+	   uint64_t Boost_Prd_Sig   :1;
+	   uint64_t Boost_Af_Sig    :1;
 	   uint64_t Resin_Saver     :1;
 	   uint64_t Mem_Saver       :1;
 	   uint64_t Level_Sensor    :1;
@@ -88,6 +90,8 @@ protected:
 	   uint64_t Flow_Meter_2    :1;
 	   uint64_t Flow_Meter_3    :1;
 	   uint64_t Auto_Fill       :1;
+	   uint64_t Boost_Prd_Sig   :1;
+	   uint64_t Boost_Af_Sig    :1;
 	   uint64_t Resin_Saver     :1;
 	   uint64_t Mem_Saver_Pause :1;
 	   uint64_t Mem_Saver	    :1;

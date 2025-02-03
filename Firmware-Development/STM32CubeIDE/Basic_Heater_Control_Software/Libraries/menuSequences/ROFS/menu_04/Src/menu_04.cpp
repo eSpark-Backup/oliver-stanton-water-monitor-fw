@@ -626,5 +626,40 @@ bool diSaverOnOff(uint32_t argChoice, MenuItem *argMenu)
 		return false;
 }
 
+/// Booster pump control callback functions
+bool boostPrdSigEnable(bool activateST10)
+{
+	Flags.setFlag(Settings, BOOST_PRD_SIG, activateST10);
+	DEBUG_RTT(LOG_WARNING, "BOOST_PROD_SIGNAL setting Turned %s.", activateST10 ? "On" : "Off");
+	return true;
+}
+
+bool boostAutoFlushSigEnable(bool activateST10)
+{
+	Flags.setFlag(Settings, BOOST_AF_SIG, activateST10);
+	DEBUG_RTT(LOG_WARNING, "BOOST_AUTOFLUSH_SIGNAL setting Turned %s.", activateST10 ? "On" : "Off");
+	return true;
+}
+
+bool boosterProductionOnOff(uint32_t argChoice, MenuItem *argMenu)
+{
+	if (ButtonE.state() && argChoice < 3)
+	{
+		return boostPrdSigEnable(argChoice == 2 ? true : false);
+	}
+	else
+		return false;
+}
+
+bool boosterAutoFlushOnOff(uint32_t argChoice, MenuItem *argMenu)
+{
+	if (ButtonE.state() && argChoice < 3)
+	{
+		return boostAutoFlushSigEnable(argChoice == 2 ? true : false);
+	}
+	else
+		return false;
+}
+
 
 #endif

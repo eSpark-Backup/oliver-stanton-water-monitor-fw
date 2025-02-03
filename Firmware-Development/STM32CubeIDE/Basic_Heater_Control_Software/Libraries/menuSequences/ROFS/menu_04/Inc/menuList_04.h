@@ -29,16 +29,17 @@ MenuItem intro04 = {
 MenuItem mainMenu04 = {
 	mainMenuSetup_04,
 	mainMenuSelection_04,
-	{{"Default LLROFS Home Page", nullptr, nullptr, &fodMenu04, &intro04, 5, 1}},
+	{{"Default LLROFS Home Page", nullptr, nullptr, &fodMenu04, &intro04, 6, 1}},
 };
 MenuItem fodMenu04 = {
 	defaultMenuSetup,
 	nullptr,
-	{{"1. Fill on Demand (Not Active)", nullptr, nullptr, nullptr, 				&mainMenu04, 2, 5},
-	 {"2. Select TDS", 					nullptr, nullptr, &selectTDS, 			&mainMenu04, 3, 5},
-	 {"3. Set Warnings", 				nullptr, nullptr, &configureWarning, 	&mainMenu04, 1, 5},
-	 {"4. Set Auto Flush", 				nullptr, nullptr, &setAutoFlush, 		&mainMenu04, 2, 5},
-	 {"5. DI Saver", 					nullptr, nullptr, &selectDiSaver, 		&mainMenu04, 2, 5}}
+	{{"1. Fill on Demand (Not Active)", nullptr, nullptr, nullptr, 				&mainMenu04, 2, 6},
+	 {"2. Select TDS", 					nullptr, nullptr, &selectTDS, 			&mainMenu04, 3, 6},
+	 {"3. Set Warnings", 				nullptr, nullptr, &configureWarning, 	&mainMenu04, 1, 6},
+	 {"4. Set Auto Flush", 				nullptr, nullptr, &setAutoFlush, 		&mainMenu04, 2, 6},
+	 {"5. DI Saver", 					nullptr, nullptr, &selectDiSaver, 		&mainMenu04, 2, 6},
+	 {"6. Booster Pump Control", 		nullptr, nullptr, &selectBoosterPump, 	&mainMenu04, 2, 6}}
 };
 MenuItem selectTDS = {
 	defaultMenuSetup,
@@ -215,6 +216,26 @@ MenuItem setDiSaverOnOff = {
 };
 
 ///---------------------------- EXTRA FLUSH & DI SAVER SETUP END-----------------------------
+
+MenuItem selectBoosterPump = {
+	defaultMenuSetup,
+	nullptr,
+	{{"Booster Production" 	, nullptr, nullptr, &boostProduction, &fodMenu04, 2, 2},
+	 {"Booster Auto Flush"	, nullptr, nullptr, &boostAutoFlush, &fodMenu04, 2, 2}}
+};
+MenuItem boostProduction = {
+	defaultMenuSetup,
+	boosterProductionOnOff,
+	{{"Off" , nullptr, nullptr, nullptr, &selectBoosterPump, 0, 2},
+	 {"On"	, nullptr, nullptr, nullptr, &selectBoosterPump, 0, 2}}
+};
+MenuItem boostAutoFlush = {
+	defaultMenuSetup,
+	boosterAutoFlushOnOff,
+	{{"Off" , nullptr, nullptr, nullptr, &selectBoosterPump, 0, 2},
+	 {"On"	, nullptr, nullptr, nullptr, &selectBoosterPump, 0, 2}}
+};
+///---------------------------- BOOSTER PUMP SETUP END-----------------------------
 
 #endif
 

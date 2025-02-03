@@ -53,3 +53,6 @@ bool selectTdsWarningItem(uint32_t argChoice, MenuItem *argMenu);
 
 bool diSaverOptions(uint32_t argChoice, MenuItem *argMenu);
 bool diSaverOnOff(uint32_t argChoice, MenuItem *argMenu);
+
+bool boosterProductionOnOff(uint32_t argChoice, MenuItem *argMenu);
+bool boosterAutoFlushOnOff(uint32_t argChoice, MenuItem *argMenu);
