@@ -298,7 +298,8 @@
 #endif /* HAL_WWDG_MODULE_ENABLED */
 
 #define MENU_01                 0
-#define MENU_05                 1
+#define MENU_03                 1
+#define MENU_05                 0
 
 /* Exported macro ------------------------------------------------------------*/
 #ifdef  USE_FULL_ASSERT

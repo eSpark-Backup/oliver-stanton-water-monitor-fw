@@ -3,6 +3,9 @@
 #ifndef INC_MENULIST_05_H_
 #define INC_MENULIST_05_H_
 
+#include "stm32f0xx_hal_conf.h"
+#if MENU_05 == 1
+
 #include "menu.h"
 // #include "mainApp.hpp"
 // #include "controls.h"
@@ -190,5 +193,7 @@ MenuItem setAutoFlush = {
 	{{"Off" , nullptr, nullptr, nullptr, &fodMenu05, 0, 2},
 	 {"On"	, nullptr, nullptr, nullptr, &fodMenu05, 0, 2}}
 };
+
+#endif
 
 #endif /* INC_MENULIST_05_H_ */

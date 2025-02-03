@@ -1,6 +1,7 @@
 #include "menu_05.h"
 #include "controlsequence.h"
 #include "masterLog.h"
+#if MENU_05 == 1
 
 // Helper function to check if the menu label matches the target threshold
 bool isMenuLabelMatch(MenuItem *menu, const MenuItem &targetThreshold, uint8_t index = 0)
@@ -551,3 +552,5 @@ bool selectTdsWarningItem(uint32_t argChoice, MenuItem *argMenu)
 {
 	if (ButtonE.state()) configureTdsWarning(argChoice, argMenu);
 }
+
+#endif

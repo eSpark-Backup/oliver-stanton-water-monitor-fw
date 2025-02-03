@@ -11,6 +11,8 @@
 
 #if MENU_01 == 1
 	#include "controls01/Inc/controls01.h"
+#elif MENU_03 == 1
+	#include "controls03/Inc/controls03.h"
 #elif MENU_05 == 1
 	#include "controls05/Inc/controls05.h"
 #else
