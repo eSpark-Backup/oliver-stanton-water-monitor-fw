@@ -110,6 +110,36 @@ void FlagHandle::update(void)
 			statusFlagTimeStamp[AUTO_FILL] = HAL_GetTick();
 		}
 	}
+	if (HAL_GPIO_ReadPin(PUMPS_Control_GPIO_Port, PUMPS_Control_Pin) != flagStatus(Status, PUMP_2)) //PUMP1 will be added as well
+	{
+		if (flagStatus(Status, PUMP_2)) // PUMP1 will be added as well
+		{
+			HAL_GPIO_WritePin(PUMPS_Control_GPIO_Port, PUMPS_Control_Pin, GPIO_PIN_SET);
+			DEBUG_RTT(LOG_WARNING, "Pump control is Enabled.");
+			statusOnFlagTimeStamp[PUMP_2] = HAL_GetTick();
+		}
+		else
+		{
+			HAL_GPIO_WritePin(PUMPS_Control_GPIO_Port, PUMPS_Control_Pin, GPIO_PIN_RESET);
+			DEBUG_RTT(LOG_WARNING, "Pump control is Disabled.");
+			statusFlagTimeStamp[PUMP_2] = HAL_GetTick();
+		}
+	}
+	if(HAL_GPIO_ReadPin(_PUMP2_GPIO_Port, _PUMP2_Pin) != flagStatus(Status, PUMP_2))
+	{
+		if(flagStatus(Status, PUMP_2))
+		{
+			HAL_GPIO_WritePin(_PUMP2_GPIO_Port, _PUMP2_Pin, GPIO_PIN_SET);
+			DEBUG_RTT(LOG_WARNING, "Pump2_ST6 turned on.");
+			statusOnFlagTimeStamp[PUMP_2] = HAL_GetTick();
+		}
+		else
+		{
+			HAL_GPIO_WritePin(_PUMP2_GPIO_Port, _PUMP2_Pin, GPIO_PIN_RESET);
+			DEBUG_RTT(LOG_WARNING, "Pump2_ST6 turned off.");
+			statusFlagTimeStamp[PUMP_2] = HAL_GetTick();
+		}
+	}
 	///Boost signal gpio read/write to be implemented
 
 //	if(HAL_GPIO_ReadPin(W_LED_CTRL_GPIO_Port, W_LED_CTRL_Pin) != flagStatus(Status, AUTO_FILL))	{
@@ -199,6 +229,14 @@ bool FlagHandle::timeElapsed(uint8_t sensor, uint32_t elapsedTime)
 			return true;
 		}
 	}
+	if ((sensor == RESIN_SAVER) && (flagStatus(Status, RESIN_SAVER) != true))
+	{
+		uint32_t elapsed = HAL_GetTick() - statusFlagTimeStamp[sensor];
+		if (elapsed >= elapsedTime)
+		{
+			return true;
+		}
+	}
 //	if(sensor == PRESSURE_SENSOR && FlagsReg.bits.Pressure_Sensor == false){
 //		uint32_t elapsed = HAL_GetTick()- <insert variable here> ;
 //		if(elapsed >= elapsedTime)
@@ -246,6 +284,7 @@ bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor)
 		else if(sensor == AUTO_FILL)				return FlagsReg.settings.Auto_Fill;
 		else if(sensor == BOOST_PRD_SIG)			return FlagsReg.settings.Boost_Prd_Sig;
 		else if(sensor == BOOST_AF_SIG)				return FlagsReg.settings.Boost_Af_Sig;
+		else if(sensor == PUMP_2)					return FlagsReg.settings.Pump_2;
 		else if(sensor == MAINS_TDS_THRESHOLD)		return FlagsReg.settings.mainsTdsThresh;
 		else if(sensor == RO_TDS_THRESHOLD)			return FlagsReg.settings.roTdsThresh;
 		else if(sensor == DI_TDS_THRESHOLD)			return FlagsReg.settings.diTdsThresh;
@@ -272,6 +311,7 @@ bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor)
 		else if(sensor == AUTO_FILL)			return FlagsReg.status.Auto_Fill;
 		else if(sensor == BOOST_PRD_SIG)		return FlagsReg.status.Boost_Sig;
 		else if(sensor == BOOST_AF_SIG)			return FlagsReg.status.Boost_Sig;
+		else if(sensor == PUMP_2)				return FlagsReg.status.Pump_2;
 		else if(sensor == PURE_CYCLE)			return FlagsReg.status.Pure_CYCLE;
 		else if(sensor == BATTERY_CHARGING_DETECTED) return FlagsReg.status.Battery_charging_detected;
 		else if(sensor == BATTERY_CRITICAL)		return FlagsReg.status.Battery_critical;
@@ -304,6 +344,7 @@ bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state)
 		else if(sensor == AUTO_FILL)				FlagsReg.settings.Auto_Fill = state;
 		else if(sensor == BOOST_PRD_SIG)			FlagsReg.settings.Boost_Prd_Sig = state;
 		else if(sensor == BOOST_AF_SIG)				FlagsReg.settings.Boost_Af_Sig = state;
+		else if(sensor == PUMP_2)					FlagsReg.settings.Pump_2 = state;
 		else if(sensor == MAINS_TDS_THRESHOLD)		FlagsReg.settings.mainsTdsThresh = state;
 		else if(sensor == RO_TDS_THRESHOLD)			FlagsReg.settings.roTdsThresh = state;
 		else if(sensor == DI_TDS_THRESHOLD)			FlagsReg.settings.diTdsThresh = state;
@@ -330,6 +371,7 @@ bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state)
 		else if(sensor == AUTO_FILL)		FlagsReg.status.Auto_Fill = state;
 		else if(sensor == BOOST_PRD_SIG)	FlagsReg.status.Boost_Sig = state;
 		else if(sensor == BOOST_AF_SIG)		FlagsReg.status.Boost_Sig = state;
+		else if(sensor == PUMP_2)			FlagsReg.status.Pump_2 = state;
 		else if(sensor == PURE_CYCLE)		FlagsReg.status.Pure_CYCLE = state;
 		else if(sensor == BATTERY_CHARGING_DETECTED) FlagsReg.status.Battery_charging_detected = state;
 		else if(sensor == BATTERY_CRITICAL)		FlagsReg.status.Battery_critical= state;

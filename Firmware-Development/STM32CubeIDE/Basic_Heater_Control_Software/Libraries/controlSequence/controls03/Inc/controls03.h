@@ -51,6 +51,7 @@ typedef enum
 	AUTO_FILL,
 	BOOST_PRD_SIG,
 	BOOST_AF_SIG,
+	PUMP_2,
 	WLED,
 	RGB,
 	BUZZER,
@@ -148,6 +149,15 @@ typedef struct
 {
 	uint8_t diResinSvrIntrvl 		= 0;
 }	selectST;
+
+typedef union
+{
+	struct
+	{
+		uint16_t diResinSaver 		: 1;
+	};
+	uint16_t all_tempStateFlags; 	// Full-width member to reset all flags
+} tempState;
 
 /**
  * Functions that are directly called from MenuList

@@ -44,6 +44,8 @@ selectST setST{
 	DEFAULT_RESIN_SAVER_INTRVL
 };
 
+tempState perpStatus{.all_tempStateFlags = false};
+
 //***************************Buzzer*******************************
 EventHandle *Buzzzer = new BuzzerDriver(BUZZER_GPIO_Port, BUZZER_Pin, IndBUZZER);
 EventHandle* WLED1 = new RgbDriver(R_CNTRL_GPIO_Port, R_CNTRL_Pin, G_CNTRL_Pin, B_CNTRL_Pin, IndRGB);
@@ -247,13 +249,21 @@ void invokeST5(bool status)
 	}
 }
 
+void invokeST6(bool status)
+{
+	if (Flags.flagStatus(Status, PUMP_2) != status)
+	{
+		Flags.setFlag(Status, PUMP_2, status);
+	}
+}
+
 void invokeST10(bool status)
 {
 	// BOOST_PRD_SIG and BOOST_AF_SIG responds to same actuator status but different settings
 	if(Flags.flagStatus(Status, BOOST_PRD_SIG) != status)
 	{
 		Flags.setFlag(Status, BOOST_PRD_SIG, status);
-		menu.Display_Log("ST10 Booster Signal: %s", status ? "Activated" : "Deactivated");
+		menu.Display_Log("ST10 Booster Signal: %s\n", status ? "Activated" : "Deactivated");
 	}
 }
 
@@ -262,21 +272,21 @@ bool roSaverST1()
 	Flags.update();
 	static long lastMsgDisplayed = 0u;
 	if (Flags.flagStatus(Settings, RESIN_SAVER) && Flags.flagStatus(Status, PURE_CYCLE) && Flags.flagStatus(Status, AUTO_FILL)
-		&& !Flags.flagStatus(Status, AUTO_FLUSH) && !Flags.flagStatus(Status, RESIN_SAVER) && Flags.timeElapsed(RESIN_SAVER, FINISH_5M))
+		&& !Flags.flagStatus(Status, AUTO_FLUSH) && !Flags.flagStatus(Status, RESIN_SAVER))
 	{
-		DEBUG_RTT(LOG_WARNING, "***first condition***");
 		invokeST1(true);
+		invokeST6(true);
 	}
 	else if (Flags.flagStatus(Settings, RESIN_SAVER) && Flags.flagStatus(Status, PURE_CYCLE) && !Flags.flagStatus(Status, AUTO_FILL)
 		&& Flags.getTime(AUTO_FLUSH, false) < 10 && !Flags.flagStatus(Status, RESIN_SAVER))
 	{
-		DEBUG_RTT(LOG_WARNING, "***second condition***");
 		invokeST1(true);
+		invokeST6(true);
 	}
 	else if (Flags.flagStatus(Status, RESIN_SAVER) && (Flags.checkOnTime(RESIN_SAVER, CUSTOM_INTERVAL(setST.diResinSvrIntrvl)) || !Flags.flagStatus(Settings, RESIN_SAVER)))
 	{
-		DEBUG_RTT(LOG_WARNING, "***Third condition***");
 		invokeST1(false);
+		invokeST6(false);
 	}
 	else if (Flags.flagStatus(Status, RESIN_SAVER) && (HAL_GetTick() - lastMsgDisplayed > 10000))
 	{

@@ -565,7 +565,7 @@ bool diResinSaverAdjValue(void)
 
 	if (ButtonD.state())
 	{
-		if (resinSaverIntervalVal > 0)
+		if (resinSaverIntervalVal > 1)
 			resinSaverIntervalVal--;
 		Disp->display(resinSaverIntervalVal);
 	}
