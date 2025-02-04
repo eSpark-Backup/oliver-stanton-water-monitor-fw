@@ -44,7 +44,8 @@ selectST setST{
 	DEFAULT_RESIN_SAVER_INTRVL
 };
 
-tempState perpStatus{.all_tempStateFlags = false};
+tempState perpStatus{
+	.all_tempStateFlags = false};
 
 //***************************Buzzer*******************************
 EventHandle *Buzzzer = new BuzzerDriver(BUZZER_GPIO_Port, BUZZER_Pin, IndBUZZER);
@@ -272,10 +273,11 @@ bool roSaverST1()
 	Flags.update();
 	static long lastMsgDisplayed = 0u;
 	if (Flags.flagStatus(Settings, RESIN_SAVER) && Flags.flagStatus(Status, PURE_CYCLE) && Flags.flagStatus(Status, AUTO_FILL)
-		&& !Flags.flagStatus(Status, AUTO_FLUSH) && !Flags.flagStatus(Status, RESIN_SAVER))
+		&& !Flags.flagStatus(Status, AUTO_FLUSH) && !Flags.flagStatus(Status, RESIN_SAVER) && !perpStatus.diResinSaver)
 	{
 		invokeST1(true);
 		invokeST6(true);
+		perpStatus.diResinSaver = true;
 	}
 	else if (Flags.flagStatus(Settings, RESIN_SAVER) && Flags.flagStatus(Status, PURE_CYCLE) && !Flags.flagStatus(Status, AUTO_FILL)
 		&& Flags.getTime(AUTO_FLUSH, false) < 10 && !Flags.flagStatus(Status, RESIN_SAVER))

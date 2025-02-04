@@ -16,7 +16,8 @@
 #elif MENU_05
 	#include "controls05/Inc/controls05.h"
 #else
-
+	#include "controls01/Inc/controls01.h"
 #endif
 
+extern tempState perpStatus;
 #endif /* INC_CONTROLSEQUENCE_H_ */
