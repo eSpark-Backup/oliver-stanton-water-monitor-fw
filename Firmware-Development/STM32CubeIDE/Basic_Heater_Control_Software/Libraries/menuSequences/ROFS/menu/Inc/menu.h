@@ -87,3 +87,6 @@ extern struct MenuItem intro03, mainMenu03, fodMenu03, selectTDS, fodOptnsOff03,
 //-------------------------------------------------------------------------------------
 
 extern struct MenuItem intro04, mainMenu04, fodMenu04, selectTDS, fodOptnsOff04, selectBoosterPump, boostProduction, boostAutoFlush;
+//-------------------------------------------------------------------------------------
+
+extern struct MenuItem intro02, mainMenu02, fodMenu02, fodOptnsOff02, autoFlushOptns, initialFlushTimer, productionTimer, subsequentFlushTimer;

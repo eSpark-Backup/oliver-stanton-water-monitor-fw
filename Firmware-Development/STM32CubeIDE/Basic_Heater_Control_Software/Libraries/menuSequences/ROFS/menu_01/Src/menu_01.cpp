@@ -297,6 +297,6 @@ bool roSaverOff(uint32_t argChoice, MenuItem *argMenu)
 
 void mainMenuFunc()
 {
-	currentM = &mainMenu04;
-	menu.displayMenu(&mainMenu04, mainMenu.Items[0].num_items);
+	currentM = &mainMenu02;
+	menu.displayMenu(&mainMenu02, mainMenu.Items[0].num_items);
 }

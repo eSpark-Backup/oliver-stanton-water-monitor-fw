@@ -392,8 +392,9 @@ void FlagHandle::flagsInit()								//Implement flashRetrieve() here
 //	flashRetrieve();
 	setFlag(Settings, WLED, true);
 	setFlag(Settings, BUZZER, true);
-	setFlag(Settings, BATTERY_LOW_SHUTDON,true);
-	setFlag(Settings, BATTERY_POWER_MONITOR,true);
+	setFlag(Settings, AUTO_FLUSH, true);
+	setFlag(Settings, BATTERY_LOW_SHUTDON, true);
+	setFlag(Settings, BATTERY_POWER_MONITOR, true);
 	setFlag(Settings, MAINS_TDS_THRESHOLD, true);
 	setFlag(Settings, RO_TDS_THRESHOLD, true);
 	setFlag(Settings, DI_TDS_THRESHOLD, true);

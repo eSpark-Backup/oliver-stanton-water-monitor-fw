@@ -5,6 +5,7 @@
 #include "menu.h"
 #include "menu_01.h"
 #include "menuList_01.h"
+#include "menuList_02.h"
 #include "menuList_03.h"
 #include "menuList_04.h"
 #include "menuList_05.h"
@@ -87,8 +88,8 @@ bool didWork = false;
 
 void MainApp::setup()
 {
-	currentM = &intro04;
-	HAL_Delay(2000);  		menu.displayMenu(currentM, intro04.Items[0].num_items);
+	currentM = &intro02;
+	HAL_Delay(2000);  		menu.displayMenu(currentM, intro02.Items[0].num_items);
 
 	Flags.flagsInit();				//initiate flags from flash
 	DEBUG_LOG(LOG_INFO, "Water Monitor Controller Initialization complete.");

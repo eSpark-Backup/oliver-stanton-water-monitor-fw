@@ -126,7 +126,7 @@ void Menu::navigateMenu(MenuItem* currentMenu, bool checkReturn)
 		{
 			DEBUG_LOG(LOG_INFO, "******* RODI Button *******\n ButtonR.period : %d\n", ButtonR.period());
 
-			if (strcmp(currentMenu->Items[g_csIndex].label, intro04.Items[g_csIndex].label) == 0)
+			if (strcmp(currentMenu->Items[g_csIndex].label, intro02.Items[g_csIndex].label) == 0)
 			{
 				jumpToNextItem_ = true;
 			}

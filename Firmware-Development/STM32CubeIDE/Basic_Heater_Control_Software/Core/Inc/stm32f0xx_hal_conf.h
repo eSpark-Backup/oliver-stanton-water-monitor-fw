@@ -298,8 +298,9 @@
 #endif /* HAL_WWDG_MODULE_ENABLED */
 
 #define MENU_01                 0
+#define MENU_02                 1 /// from 03_04
 #define MENU_03                 0 /// contains TDS 05 logic
-#define MENU_04                 1 /// contains TDS 05 and resin 03 logic
+#define MENU_04                 0 /// contains TDS 05 and resin 03 logic
 #define MENU_05                 0
 
 /* Exported macro ------------------------------------------------------------*/

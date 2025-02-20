@@ -11,6 +11,8 @@
 
 #if MENU_01
 	#include "controls01/Inc/controls01.h"
+#elif MENU_02
+	#include "controls02/Inc/controls02.h"
 #elif (MENU_03 || MENU_04)
 	#include "controls03/Inc/controls03.h"
 #elif MENU_05
