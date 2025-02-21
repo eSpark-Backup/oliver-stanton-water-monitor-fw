@@ -191,6 +191,12 @@ void fillOpen()
 
 	invokeST3(false);
 	invokeST5(false);
+	if(flushTimer.activityStatus == DEACTIVATED && !Flags.flagStatus(Status, AUTO_FLUSH))
+	{
+		invokeST4(true);
+		flushTimer.activityStatus = ACTIVATED;
+		Disp->display("Flushing Membrane for 5 minutes");
+	}
 	Log.logToMaster("Float Circuit Open - Unable to commence filling");
 	mainMenuFunc02();
 	//add buzzer/LED warning handler here
@@ -363,7 +369,6 @@ void autoFlushST4(void)
 	Flags.update();
 	static long lastMsgDisplayed = 0u;
 
-
 	if (Flags.flagStatus(Settings, AUTO_FLUSH) && !Flags.flagStatus(Status, LEVEL_SENSOR) && Flags.flagStatus(Status, PURE_CYCLE))
 	{
 		if(flushTimer.activityStatus == WAIT && Flags.getTime(AUTO_FLUSH, false) > 1 && Flags.getTime(AUTO_FLUSH, false) >= CUSTOM_INTERVAL_SEC(flushTimer.productionTimer))
@@ -388,18 +393,18 @@ void autoFlushST4(void)
 					invokeST4(false);
 					flushTimer.activityStatus = PAUSE;
 					flushTimer.pausedTime =  ((flushTimer.pausedTime) ? flushTimer.pausedTime : CUSTOM_INTERVAL_SEC(curCycleTime)) - flushOnTime;
-					DEBUG_RTT(LOG_INFO, "flushTimer.pausedTime %d : curCycleTime %d : flushOnTime %d***",flushTimer.pausedTime, curCycleTime, flushOnTime);
+					Disp->display("System Flushing Paused");
+					// DEBUG_RTT(LOG_INFO, "flushTimer.pausedTime %d : curCycleTime %d : flushOnTime %d***",flushTimer.pausedTime, curCycleTime, flushOnTime);
 				}
 			}
-			else if (ButtonE.period() > SHORT_PRESS && ButtonE.period() < LONG_LONG_PRESS)
+			else if ((ButtonE.period() > SHORT_PRESS && ButtonE.period() < LONG_LONG_PRESS && Flags.flagStatus(Status, AUTO_FLUSH))
+			|| (flushTimer.activityStatus == PAUSE && (Flags.getTime(AUTO_FLUSH, false) >= CUSTOM_INTERVAL_SEC(30))))
 			{
-				if(Flags.flagStatus(Status, AUTO_FLUSH))
-				{
-					invokeST4(false);
-					flushTimer.cycleCount = 0;
-					flushTimer.pausedTime = 0;
-					flushTimer.activityStatus = DEACTIVATED;
-				}
+				invokeST4(false);
+				flushTimer.cycleCount = 0;
+				flushTimer.pausedTime = 0;
+				flushTimer.activityStatus = DEACTIVATED;
+				Disp->display("System Flushing Deactivated");
 			}
 			Flags.update();
 			if(flushTimer.activityStatus == ACTIVATED)
@@ -414,7 +419,7 @@ void autoFlushST4(void)
 					flushTimer.pausedTime = 0;
 					flushTimer.cycleCount++;
 				}
-				else if(flushTimer.activityStatus != PAUSE && ((flushOnTime>1) && (flushOnTime < (flushTimer.pausedTime) ? flushTimer.pausedTime : curCycleTime)) && (HAL_GetTick() - lastMsgDisplayed > 5000))
+				else if(flushTimer.activityStatus != PAUSE && ((flushOnTime>1) && (flushOnTime < (flushTimer.pausedTime) ? flushTimer.pausedTime : curCycleTime)) && (HAL_GetTick() - lastMsgDisplayed > 10000))
 				{
 					uint32_t timeRemaining = ((flushTimer.pausedTime) ? flushTimer.pausedTime : CUSTOM_INTERVAL_SEC(curCycleTime)) - flushOnTime;
 					// DEBUG_RTT(LOG_ERROR, "***timeRemaining: %d, flushTimer.pausedTime %d : curCycleTime %d : flushOnTime %d***", timeRemaining, flushTimer.pausedTime, CUSTOM_INTERVAL_SEC(curCycleTime), flushOnTime);
@@ -426,24 +431,21 @@ void autoFlushST4(void)
 	}
 	else if (Flags.flagStatus(Settings, AUTO_FLUSH) && Flags.flagStatus(Status, LEVEL_SENSOR))
 	{
-		if(flushTimer.activityStatus == DEACTIVATED && !Flags.flagStatus(Status, AUTO_FLUSH) && ButtonE.state() && ButtonE.period() < SINGLE_PRESS)
-		{
-			invokeST4(true);
-			flushTimer.activityStatus = ACTIVATED;
-			Disp->display("Flushing Membrane for 5 minutes");
-		}
-		if(!Flags.flagStatus(Status, AUTO_FLUSH) && Flags.getTime(AUTO_FLUSH, true) >= FINISH_5M || Flags.flagStatus(Status, AUTO_FLUSH))
+		if(Flags.flagStatus(Status, AUTO_FLUSH) && Flags.getTime(AUTO_FLUSH, true) >= FINISH_5M)
 		{
 			invokeST4(false);
 			flushTimer.activityStatus = DEACTIVATED;
 		}	
 		flushTimer.cycleCount = 0;
+		flushTimer.pausedTime = 0;
 	}
 	else if(!Flags.flagStatus(Settings, AUTO_FLUSH) && Flags.flagStatus(Status, AUTO_FLUSH))
 	{
 		invokeST4(false);
 		flushTimer.activityStatus = DEACTIVATED;
 		flushTimer.cycleCount = 0;
+		flushTimer.pausedTime = 0;
+
 	}	
 }
 
