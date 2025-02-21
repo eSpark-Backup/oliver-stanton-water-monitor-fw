@@ -371,10 +371,20 @@ void autoFlushST4(void)
 
 	if (Flags.flagStatus(Settings, AUTO_FLUSH) && !Flags.flagStatus(Status, LEVEL_SENSOR) && Flags.flagStatus(Status, PURE_CYCLE))
 	{
-		if(flushTimer.activityStatus == WAIT && Flags.getTime(AUTO_FLUSH, false) > 1 && Flags.getTime(AUTO_FLUSH, false) >= CUSTOM_INTERVAL_SEC(flushTimer.productionTimer))
-		{
-			flushTimer.activityStatus = READY;
-			invokeST4(false);
+		if(flushTimer.activityStatus == WAIT)
+		{	
+			if(Flags.getTime(AUTO_FLUSH, false) > 1 && Flags.getTime(AUTO_FLUSH, false) >= CUSTOM_INTERVAL_SEC(flushTimer.productionTimer))
+			{
+				flushTimer.activityStatus = READY;
+				invokeST4(false);
+			}
+			else if((HAL_GetTick() - lastMsgDisplayed > MIN_TO_MS(1)))
+			{
+				uint32_t timeRemaining = flushTimer.productionTimer - (Flags.getTime(AUTO_FLUSH, false)/60);
+				lastMsgDisplayed = HAL_GetTick();
+				menu.Display_Log("Next Auto Flush Cycle in: %d minutes", timeRemaining);
+
+			}
 		}
 		if (flushTimer.activityStatus != WAIT)
 		{
@@ -394,7 +404,6 @@ void autoFlushST4(void)
 					flushTimer.activityStatus = PAUSE;
 					flushTimer.pausedTime =  ((flushTimer.pausedTime) ? flushTimer.pausedTime : CUSTOM_INTERVAL_SEC(curCycleTime)) - flushOnTime;
 					Disp->display("System Flushing Paused");
-					// DEBUG_RTT(LOG_INFO, "flushTimer.pausedTime %d : curCycleTime %d : flushOnTime %d***",flushTimer.pausedTime, curCycleTime, flushOnTime);
 				}
 			}
 			else if ((ButtonE.period() > SHORT_PRESS && ButtonE.period() < LONG_LONG_PRESS && Flags.flagStatus(Status, AUTO_FLUSH))
@@ -412,17 +421,16 @@ void autoFlushST4(void)
 				flushOnTime = Flags.getTime(AUTO_FLUSH, true);
 				curCycleTime = (!flushTimer.cycleCount) ? flushTimer.startUpTimer : flushTimer.subsequentTimer;
 
-				if (flushOnTime >= CUSTOM_INTERVAL_SEC((flushTimer.pausedTime) ? flushTimer.pausedTime: curCycleTime))
+				if (flushOnTime >= ((flushTimer.pausedTime) ? flushTimer.pausedTime : CUSTOM_INTERVAL_SEC(curCycleTime)))
 				{
 					invokeST4(false);
 					flushTimer.activityStatus = WAIT;
 					flushTimer.pausedTime = 0;
 					flushTimer.cycleCount++;
 				}
-				else if(flushTimer.activityStatus != PAUSE && ((flushOnTime>1) && (flushOnTime < (flushTimer.pausedTime) ? flushTimer.pausedTime : curCycleTime)) && (HAL_GetTick() - lastMsgDisplayed > 10000))
+				else if(flushTimer.activityStatus != PAUSE && (flushOnTime>1) && (HAL_GetTick() - lastMsgDisplayed > 10000))
 				{
 					uint32_t timeRemaining = ((flushTimer.pausedTime) ? flushTimer.pausedTime : CUSTOM_INTERVAL_SEC(curCycleTime)) - flushOnTime;
-					// DEBUG_RTT(LOG_ERROR, "***timeRemaining: %d, flushTimer.pausedTime %d : curCycleTime %d : flushOnTime %d***", timeRemaining, flushTimer.pausedTime, CUSTOM_INTERVAL_SEC(curCycleTime), flushOnTime);
 					lastMsgDisplayed = HAL_GetTick();
 					cycleCount(timeRemaining);
 				}
@@ -605,10 +613,10 @@ void monitorTdsCycle(void)
 void controlPeripherals(void)
 {
 	memSaverST3();
+	autoFlushST4();
 	roSaverST1();
 	monitorTdsCycle();
 	// BoosterSignalControl();
-	autoFlushST4();
 }
 
 #endif
