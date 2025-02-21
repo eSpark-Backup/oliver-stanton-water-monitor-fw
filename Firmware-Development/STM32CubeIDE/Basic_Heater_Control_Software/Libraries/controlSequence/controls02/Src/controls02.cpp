@@ -21,6 +21,7 @@
 #define MEM_SAVER_PAUSE_TIMEOUT			MIN_TO_MS(15)						//15mins or 900secs
 #define AUTO_FLUSH_TIMEOUT				MIN_TO_MS(20)						//20 mins or 1200secs
 #define FINISH_5M						MIN_TO_MS(05)
+#define CUSTOM_INTERVAL_SEC(x)			MIN_TO_SEC(x)
 #define CUSTOM_INTERVAL(x)				MIN_TO_MS(x)
 
 TdsValues setTDS{
@@ -365,6 +366,11 @@ void autoFlushST4(void)
 
 	if (Flags.flagStatus(Settings, AUTO_FLUSH) && !Flags.flagStatus(Status, LEVEL_SENSOR) && Flags.flagStatus(Status, PURE_CYCLE))
 	{
+		if(flushTimer.activityStatus == WAIT && Flags.getTime(AUTO_FLUSH, false) > 1 && Flags.getTime(AUTO_FLUSH, false) >= CUSTOM_INTERVAL_SEC(flushTimer.productionTimer))
+		{
+			flushTimer.activityStatus = READY;
+			invokeST4(false);
+		}
 		if (flushTimer.activityStatus != WAIT)
 		{
 			uint32_t flushOnTime = Flags.getTime(AUTO_FLUSH, true);
@@ -381,11 +387,9 @@ void autoFlushST4(void)
 				{
 					invokeST4(false);
 					flushTimer.activityStatus = PAUSE;
-					flushTimer.pausedTime =  ((flushTimer.pausedTime) ? flushTimer.pausedTime : CUSTOM_INTERVAL(curCycleTime)) - flushOnTime;
+					flushTimer.pausedTime =  ((flushTimer.pausedTime) ? flushTimer.pausedTime : CUSTOM_INTERVAL_SEC(curCycleTime)) - flushOnTime;
 					DEBUG_RTT(LOG_INFO, "flushTimer.pausedTime %d : curCycleTime %d : flushOnTime %d***",flushTimer.pausedTime, curCycleTime, flushOnTime);
 				}
-				// if(flushTimer.activityStatus == DEACTIVATED)
-				// flushTimer.activityStatus = WAIT;
 			}
 			else if (ButtonE.period() > SHORT_PRESS && ButtonE.period() < LONG_LONG_PRESS)
 			{
@@ -393,6 +397,7 @@ void autoFlushST4(void)
 				{
 					invokeST4(false);
 					flushTimer.cycleCount = 0;
+					flushTimer.pausedTime = 0;
 					flushTimer.activityStatus = DEACTIVATED;
 				}
 			}
@@ -402,7 +407,7 @@ void autoFlushST4(void)
 				flushOnTime = Flags.getTime(AUTO_FLUSH, true);
 				curCycleTime = (!flushTimer.cycleCount) ? flushTimer.startUpTimer : flushTimer.subsequentTimer;
 
-				if (flushOnTime >= CUSTOM_INTERVAL((flushTimer.pausedTime) ? flushTimer.pausedTime: curCycleTime))
+				if (flushOnTime >= CUSTOM_INTERVAL_SEC((flushTimer.pausedTime) ? flushTimer.pausedTime: curCycleTime))
 				{
 					invokeST4(false);
 					flushTimer.activityStatus = WAIT;
@@ -411,17 +416,12 @@ void autoFlushST4(void)
 				}
 				else if(flushTimer.activityStatus != PAUSE && ((flushOnTime>1) && (flushOnTime < (flushTimer.pausedTime) ? flushTimer.pausedTime : curCycleTime)) && (HAL_GetTick() - lastMsgDisplayed > 5000))
 				{
-					uint32_t timeRemaining = ((flushTimer.pausedTime) ? flushTimer.pausedTime : CUSTOM_INTERVAL(curCycleTime)) - flushOnTime;
-					DEBUG_RTT(LOG_ERROR, "***timeRemaining: %d, flushTimer.pausedTime %d : curCycleTime %d : flushOnTime %d***", timeRemaining, flushTimer.pausedTime, curCycleTime, flushOnTime);
+					uint32_t timeRemaining = ((flushTimer.pausedTime) ? flushTimer.pausedTime : CUSTOM_INTERVAL_SEC(curCycleTime)) - flushOnTime;
+					// DEBUG_RTT(LOG_ERROR, "***timeRemaining: %d, flushTimer.pausedTime %d : curCycleTime %d : flushOnTime %d***", timeRemaining, flushTimer.pausedTime, CUSTOM_INTERVAL_SEC(curCycleTime), flushOnTime);
 					lastMsgDisplayed = HAL_GetTick();
 					cycleCount(timeRemaining);
 				}
 			}
-		}
-		if(flushTimer.activityStatus == WAIT && Flags.getTime(AUTO_FLUSH, false) >= CUSTOM_INTERVAL(flushTimer.productionTimer))
-		{
-			flushTimer.activityStatus = READY;
-			invokeST4(false);
 		}
 	}
 	else if (Flags.flagStatus(Settings, AUTO_FLUSH) && Flags.flagStatus(Status, LEVEL_SENSOR))
@@ -432,7 +432,7 @@ void autoFlushST4(void)
 			flushTimer.activityStatus = ACTIVATED;
 			Disp->display("Flushing Membrane for 5 minutes");
 		}
-		if(!Flags.flagStatus(Status, AUTO_FLUSH) && Flags.getTime(AUTO_FLUSH, true) >= FINISH_5M)
+		if(!Flags.flagStatus(Status, AUTO_FLUSH) && Flags.getTime(AUTO_FLUSH, true) >= FINISH_5M || Flags.flagStatus(Status, AUTO_FLUSH))
 		{
 			invokeST4(false);
 			flushTimer.activityStatus = DEACTIVATED;
