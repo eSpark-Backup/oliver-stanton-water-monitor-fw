@@ -194,10 +194,13 @@ uint32_t FlagHandle::getTime(uint8_t sensor, bool cmpStatus)
 {
 	uint32_t timeOnOff = 0;
 	
-	if(cmpStatus)
-		timeOnOff = statusOnFlagTimeStamp[sensor];
-	else
-		timeOnOff = statusFlagTimeStamp[sensor];
+	if(flagStatus(Status, sensor) == cmpStatus)
+	{
+		if(cmpStatus)
+			timeOnOff = statusOnFlagTimeStamp[sensor];
+		else
+			timeOnOff = statusFlagTimeStamp[sensor];
+	}
 
 	uint32_t gotTime = HAL_GetTick() - timeOnOff;
 	return gotTime/1000;
@@ -393,14 +396,14 @@ void FlagHandle::flagsInit()								//Implement flashRetrieve() here
 	setFlag(Settings, WLED, true);
 	setFlag(Settings, BUZZER, true);
 	setFlag(Settings, AUTO_FLUSH, true);
-	setFlag(Settings, BATTERY_LOW_SHUTDON, true);
-	setFlag(Settings, BATTERY_POWER_MONITOR, true);
-	setFlag(Settings, MAINS_TDS_THRESHOLD, true);
-	setFlag(Settings, RO_TDS_THRESHOLD, true);
-	setFlag(Settings, DI_TDS_THRESHOLD, true);
-	setFlag(Settings, MAINS_TDS_TEMPERATURE, true);
-	setFlag(Settings, RO_TDS_TEMPERATURE, true);
-	setFlag(Settings, DI_TDS_TEMPERATURE, true);
+// 	setFlag(Settings, BATTERY_LOW_SHUTDON, true);
+// 	setFlag(Settings, BATTERY_POWER_MONITOR, true);
+// 	setFlag(Settings, MAINS_TDS_THRESHOLD, true);
+// 	setFlag(Settings, RO_TDS_THRESHOLD, true);
+// 	setFlag(Settings, DI_TDS_THRESHOLD, true);
+// 	setFlag(Settings, MAINS_TDS_TEMPERATURE, true);
+// 	setFlag(Settings, RO_TDS_TEMPERATURE, true);
+// 	setFlag(Settings, DI_TDS_TEMPERATURE, true);
 }
 
 //void flagHandle::(){

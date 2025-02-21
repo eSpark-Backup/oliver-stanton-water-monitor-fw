@@ -103,10 +103,7 @@ bool fodOFF_02(uint32_t argChoice, MenuItem *argMenu)
 			Disp->display("System Purification stopped.");
 			Flags.setFlag(Settings, MEM_SAVER, false);
 			Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
-			flushTimer.cycleCount = 0;
-			flushTimer.activityStatus = DEACTIVATED;
 			invokeST3(false);
-			invokeST4(false);
 			invokeST5(false);
 //			mainMenuFunc02();
 		}
@@ -121,32 +118,18 @@ bool fodOFF_02(uint32_t argChoice, MenuItem *argMenu)
 			else if (!Flags.flagStatus(Settings, MEM_SAVER))
 			{
 				invokeST3(true);
-				invokeST4(true);
 				invokeST5(true);
-				calCurrentTdsReading();
+				// calCurrentTdsReading();
 				perpStatus.diResinSaver = false;
-				flushTimer.activityStatus = ACTIVATED;
 			}
 			else
 			{
 				Flags.setFlag(Settings, MEM_SAVER, false);
 				Flags.setFlag(Settings, MEM_SAVER_PAUSE, true);
-				flushTimer.activityStatus = PAUSE;
 				Disp->display("System Purification paused.");
 				invokeST3(false);
-				invokeST4(false);
 				invokeST5(false);
 
-				if (flushTimer.cycleCount == 0)
-				{
-					flushTimer.pausedTime = flushTimer.startUpTimer - Flags.getTime(AUTO_FLUSH, true);
-					flushTimer.cycleCount++;
-				}
-				else if (flushTimer.cycleCount >= 1)
-				{
-					flushTimer.pausedTime = flushTimer.subsequentTimer - Flags.getTime(AUTO_FLUSH, true);
-					flushTimer.cycleCount++;
-				}
 			}
 		}
 		return true;

@@ -350,46 +350,101 @@ void memSaverST3()
 	}
 }
 
-void cycleCount()
+void cycleCount(uint32_t timeLeft)
 {
-	uint8_t flushCycleCount = 0;
+	bool cycleSubsequent = flushTimer.cycleCount > 5;
 	const char *cycle[] = {"First", "Second", "Third", "Fourth", "Fifth", "Subsequent (5+)"};
-	flushTimer.cycleCount > 5 ? flushCycleCount = 0 : flushCycleCount = flushTimer.cycleCount;
-	uint32_t timeLeft = HAL_GetTick() - (flushTimer.cycleCount == 1 ? flushTimer.startUpTimer : flushTimer.subsequentTimer);
-	menu.Display_Log("Purifying - %s Auto Flush Cycle - Flush time left: ", cycle[flushCycleCount], timeLeft);
+	menu.Display_Log("Purifying - %s Auto Flush Cycle - Flush time left: %d seconds", cycle[!cycleSubsequent ? flushTimer.cycleCount: 5], timeLeft);
 }
 
 void autoFlushST4(void)
 {
 	Flags.update();
-	static uint8_t curCycleCount = 0;
 	static long lastMsgDisplayed = 0u;
 
-	if (!lastMsgDisplayed && HAL_GetTick() - lastMsgDisplayed < 500)
-		return;
 
-	if ((Flags.flagStatus(Status, LEVEL_SENSOR) && Flags.timeElapsed(AUTO_FLUSH, FINISH_5M)) || Flags.timeElapsed(AUTO_FLUSH, AUTO_FLUSH_TIMEOUT) 
-	&& Flags.flagStatus(Status, AUTO_FLUSH) && flushTimer.activityStatus == TDS_ACTIVATION || !Flags.flagStatus(Status, LEVEL_SENSOR)
-	&& flushTimer.activityStatus == PAUSE && Flags.timeElapsed(AUTO_FLUSH, flushTimer.pausedTime) && Flags.flagStatus(Status, AUTO_FLUSH))
+	if (Flags.flagStatus(Settings, AUTO_FLUSH) && !Flags.flagStatus(Status, LEVEL_SENSOR) && Flags.flagStatus(Status, PURE_CYCLE))
+	{
+		if (flushTimer.activityStatus != WAIT)
+		{
+			uint32_t flushOnTime = Flags.getTime(AUTO_FLUSH, true);
+			uint32_t curCycleTime = (!flushTimer.cycleCount) ? flushTimer.startUpTimer : flushTimer.subsequentTimer;
+			
+			if(ButtonE.state() && ButtonE.period() < SINGLE_PRESS || flushTimer.activityStatus == READY)
+			{
+				if(!Flags.flagStatus(Status, AUTO_FLUSH))
+				{
+					invokeST4(true);
+					flushTimer.activityStatus = ACTIVATED;
+				}
+				else if(Flags.flagStatus(Status, AUTO_FLUSH))
+				{
+					invokeST4(false);
+					flushTimer.activityStatus = PAUSE;
+					flushTimer.pausedTime =  ((flushTimer.pausedTime) ? flushTimer.pausedTime : CUSTOM_INTERVAL(curCycleTime)) - flushOnTime;
+					DEBUG_RTT(LOG_INFO, "flushTimer.pausedTime %d : curCycleTime %d : flushOnTime %d***",flushTimer.pausedTime, curCycleTime, flushOnTime);
+				}
+				// if(flushTimer.activityStatus == DEACTIVATED)
+				// flushTimer.activityStatus = WAIT;
+			}
+			else if (ButtonE.period() > SHORT_PRESS && ButtonE.period() < LONG_LONG_PRESS)
+			{
+				if(Flags.flagStatus(Status, AUTO_FLUSH))
+				{
+					invokeST4(false);
+					flushTimer.cycleCount = 0;
+					flushTimer.activityStatus = DEACTIVATED;
+				}
+			}
+			Flags.update();
+			if(flushTimer.activityStatus == ACTIVATED)
+			{					
+				flushOnTime = Flags.getTime(AUTO_FLUSH, true);
+				curCycleTime = (!flushTimer.cycleCount) ? flushTimer.startUpTimer : flushTimer.subsequentTimer;
+
+				if (flushOnTime >= CUSTOM_INTERVAL((flushTimer.pausedTime) ? flushTimer.pausedTime: curCycleTime))
+				{
+					invokeST4(false);
+					flushTimer.activityStatus = WAIT;
+					flushTimer.pausedTime = 0;
+					flushTimer.cycleCount++;
+				}
+				else if(flushTimer.activityStatus != PAUSE && ((flushOnTime>1) && (flushOnTime < (flushTimer.pausedTime) ? flushTimer.pausedTime : curCycleTime)) && (HAL_GetTick() - lastMsgDisplayed > 5000))
+				{
+					uint32_t timeRemaining = ((flushTimer.pausedTime) ? flushTimer.pausedTime : CUSTOM_INTERVAL(curCycleTime)) - flushOnTime;
+					DEBUG_RTT(LOG_ERROR, "***timeRemaining: %d, flushTimer.pausedTime %d : curCycleTime %d : flushOnTime %d***", timeRemaining, flushTimer.pausedTime, curCycleTime, flushOnTime);
+					lastMsgDisplayed = HAL_GetTick();
+					cycleCount(timeRemaining);
+				}
+			}
+		}
+		if(flushTimer.activityStatus == WAIT && Flags.getTime(AUTO_FLUSH, false) >= CUSTOM_INTERVAL(flushTimer.productionTimer))
+		{
+			flushTimer.activityStatus = READY;
+			invokeST4(false);
+		}
+	}
+	else if (Flags.flagStatus(Settings, AUTO_FLUSH) && Flags.flagStatus(Status, LEVEL_SENSOR))
+	{
+		if(flushTimer.activityStatus == DEACTIVATED && !Flags.flagStatus(Status, AUTO_FLUSH) && ButtonE.state() && ButtonE.period() < SINGLE_PRESS)
+		{
+			invokeST4(true);
+			flushTimer.activityStatus = ACTIVATED;
+			Disp->display("Flushing Membrane for 5 minutes");
+		}
+		if(!Flags.flagStatus(Status, AUTO_FLUSH) && Flags.getTime(AUTO_FLUSH, true) >= FINISH_5M)
+		{
+			invokeST4(false);
+			flushTimer.activityStatus = DEACTIVATED;
+		}	
+		flushTimer.cycleCount = 0;
+	}
+	else if(!Flags.flagStatus(Settings, AUTO_FLUSH) && Flags.flagStatus(Status, AUTO_FLUSH))
 	{
 		invokeST4(false);
-		if (flushTimer.activityStatus == PAUSE)
-			flushTimer.pausedTime = 0;
-		if (Flags.flagStatus(Status, LEVEL_SENSOR) && curCycleCount > 0)
-			curCycleCount = 0;
-		flushTimer.activityStatus = WAIT;
-		DEBUG_RTT(LOG_WARNING, "***AUTO_FLUSH_CYCLE_STOPPED***");
-	}
-	else if (flushTimer.activityStatus == WAIT && Flags.checkOnTime(AUTO_FLUSH, flushTimer.productionTimer) || flushTimer.activityStatus == DEACTIVATED
-	&& Flags.flagStatus(Status, PURE_CYCLE) && Flags.flagStatus(Settings, AUTO_FLUSH) && !Flags.flagStatus(Status, LEVEL_SENSOR))
-	{
-		if (!Flags.flagStatus(Status, AUTO_FLUSH) && Flags.flagStatus(Settings, AUTO_FLUSH))
-			curCycleCount++;
-		flushTimer.activityStatus = ACTIVATED;
-		cycleCount();
-		lastMsgDisplayed = HAL_GetTick();
-		invokeST4(true);
-	}
+		flushTimer.activityStatus = DEACTIVATED;
+		flushTimer.cycleCount = 0;
+	}	
 }
 
 bool isWarnActive(SELECT_TDS bit)
@@ -522,11 +577,6 @@ void monitorTdsCycle(void)
 	if (HAL_GetTick() - lastMsgDisplayed < 1000)
 		return;
 
-	if (Flags.checkOnTime(AUTO_FLUSH, AUTO_FLUSH_TIMEOUT) && Flags.flagStatus(Settings, AUTO_FLUSH))
-	{
-		invokeST4(false);
-		DEBUG_RTT(LOG_WARNING, "***AUTO_FLUSH_TIMEOUT OCCURRED***");
-	}
 
 	if (Flags.flagStatus(Status, BATTERY_HIGH) || Flags.flagStatus(Status, BATTERY_CHARGING_DETECTED))
 		isShowWarnMsg = checkTdsTemperatureWarnings();
@@ -555,7 +605,8 @@ void controlPeripherals(void)
 	memSaverST3();
 	roSaverST1();
 	monitorTdsCycle();
-	BoosterSignalControl();
+	// BoosterSignalControl();
+	autoFlushST4();
 }
 
 #endif

@@ -42,6 +42,7 @@ typedef enum
     TDS_ACTIVATION,
     DEACTIVATED,
     ACTIVATED,
+    READY,
     PAUSE,
     WAIT
 } autoflushStatusType;
@@ -50,11 +51,11 @@ typedef struct
 {
     flushTimerType selectTimer = NO_TIMER;
     autoflushStatusType activityStatus = DEACTIVATED;
-    uint8_t cycleCount = 1;
+    uint8_t cycleCount = 0;
     uint8_t startUpTimer = 10;
     uint8_t productionTimer = 50;
     uint8_t subsequentTimer = 10;
-    uint8_t pausedTime = 0;
+    uint32_t pausedTime = 0;
 } autoFlushTimers;
 
 extern autoFlushTimers flushTimer;

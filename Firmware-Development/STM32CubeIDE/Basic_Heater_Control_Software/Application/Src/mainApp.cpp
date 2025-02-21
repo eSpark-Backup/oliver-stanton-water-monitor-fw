@@ -100,9 +100,8 @@ void MainApp::setup()
 void MainApp::loop()
 {
 	didWork = invokeMenu();
-	menu.navigateMenu(currentM, didWork);	
-	Flags.update();
 	controlPeripherals();
+	menu.navigateMenu(currentM, didWork);	
 	Buzzzer->Run();
 	WLED1->Run();
 	Battery.powerManager();
