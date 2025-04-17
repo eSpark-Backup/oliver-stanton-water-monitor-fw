@@ -49,6 +49,9 @@ typedef enum
 	RESIN_SAVER,
 	PURE_CYCLE,
 	AUTO_FILL,
+	BOOST_PRD_SIG,
+	BOOST_AF_SIG,
+	PUMP_2,
 	WLED,
 	RGB,
 	BUZZER,
@@ -130,6 +133,15 @@ typedef union
 	uint16_t all_flags; // Full-width member to reset all flags
 } WarningFlags;
 
+typedef union
+{
+	struct
+	{
+		uint16_t diResinSaver 		: 1;
+	};
+	uint16_t all_tempStateFlags; 	// Full-width member to reset all flags
+} tempState;
+
 /**
  * Functions that are directly called from MenuList
  * <condition> <Function name>(<choiceselect variable>)
@@ -156,5 +168,6 @@ void controlPeripherals(void);
 
 extern TdsValues setTDS;
 extern WarningFlags TdsWarn;
+extern tempState perpStatus;
 
 #endif /* INC_CONTROLS01_H_ */

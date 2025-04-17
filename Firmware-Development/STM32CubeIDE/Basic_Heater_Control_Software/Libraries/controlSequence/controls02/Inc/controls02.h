@@ -189,5 +189,6 @@ extern selectST setST;
 extern WarningFlags TdsWarn;
 extern WarningFlags isTdsWarningEnable;
 extern WarningFlags tempTdsWarning;
+extern tempState perpStatus;
 
 #endif /* INC_CONTROLS02_H_ */

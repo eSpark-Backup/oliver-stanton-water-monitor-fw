@@ -21,5 +21,4 @@
 	#include "controls01/Inc/controls01.h"
 #endif
 
-extern tempState perpStatus;
 #endif /* INC_CONTROLSEQUENCE_H_ */
