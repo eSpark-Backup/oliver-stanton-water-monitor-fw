@@ -17,6 +17,8 @@
 	#include "controls03/Inc/controls03.h"
 #elif MENU_05
 	#include "controls05/Inc/controls05.h"
+#elif LLTDS_MENU_08
+	#include "tdsControls08/Inc/tdsControls08.h"
 #else
 	#include "controls01/Inc/controls01.h"
 #endif

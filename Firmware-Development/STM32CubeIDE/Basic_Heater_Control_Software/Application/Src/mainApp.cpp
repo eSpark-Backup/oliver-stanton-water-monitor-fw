@@ -9,6 +9,7 @@
 #include "menuList_03.h"
 #include "menuList_04.h"
 #include "menuList_05.h"
+#include "tdsMenuList_08.h"
 #include "motorDriver.h"
 #include "Battery.hpp"
 //#include "flash.h"

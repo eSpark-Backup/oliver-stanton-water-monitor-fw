@@ -298,13 +298,14 @@
 #endif /* HAL_WWDG_MODULE_ENABLED */
 
 #define MENU_01                 0
-#define MENU_02                 1 /// from 03_04
+#define MENU_02                 0 /// from 03_04
 #define MENU_03                 0 /// contains TDS 05 logic
 #define MENU_04                 0 /// contains TDS 05 and resin 03 logic
 #define MENU_05                 0
+#define LLTDS_MENU_08           1
 
 /* Exported macro ------------------------------------------------------------*/
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  The assert_param macro is used for function's parameters check.
   * @param  expr If expr is false, it calls assert_failed function
