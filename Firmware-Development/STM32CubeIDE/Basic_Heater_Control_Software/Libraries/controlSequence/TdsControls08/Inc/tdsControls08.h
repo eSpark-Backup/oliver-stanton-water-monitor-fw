@@ -56,6 +56,7 @@ typedef enum
 	RGB,
 	BUZZER,
 	FoD,
+	WASTE_RATIO,
 	MAINS_TDS_THRESHOLD,
 	RO_TDS_THRESHOLD,
 	DI_TDS_THRESHOLD,
@@ -97,6 +98,12 @@ extern MenuItem *currentM;			//pointer to the menu item we are currently at
 extern short choiceSelect;		//next menu item choice item we want to jump to, we can also pass this variable to functions where we need to set a certain value(whole number) as setting
 extern short g_csIndex;
 //extern short ro_saver_thresh_set_value;
+
+typedef struct
+{
+	uint8_t wastePer 	= 40;
+	uint8_t purePer 	= 60;
+}	wasteValues;
 
 typedef struct
 {
@@ -184,6 +191,7 @@ bool isTDSConnected(tdsSensor);
 void calCurrentTdsReading(void);
 void controlPeripherals(void);
 
+extern wasteValues setWasteParam;
 extern TdsValues setTDS;
 extern selectST setST;
 extern WarningFlags TdsWarn;

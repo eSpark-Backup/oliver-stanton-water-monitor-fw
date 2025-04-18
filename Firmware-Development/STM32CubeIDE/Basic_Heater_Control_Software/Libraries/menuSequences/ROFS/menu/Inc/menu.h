@@ -90,3 +90,6 @@ extern struct MenuItem intro04, mainMenu04, fodMenu04, selectTDS, fodOptnsOff04,
 //-------------------------------------------------------------------------------------
 
 extern struct MenuItem intro02, mainMenu02, fodMenu02, fodOptnsOff02, autoFlushOptns, initialFlushTimer, productionTimer, subsequentFlushTimer;
+//-------------------------------------------------------------------------------------
+
+extern struct MenuItem llTds_intro08, llTds_mainMenu08, llTds_purificationMenu08, ctrlWasteRatio, wasteOptnsOff08, dynamicWasteRatioMenu;

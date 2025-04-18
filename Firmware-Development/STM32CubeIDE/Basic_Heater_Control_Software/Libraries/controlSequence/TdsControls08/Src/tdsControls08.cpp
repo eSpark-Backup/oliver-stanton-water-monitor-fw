@@ -24,6 +24,8 @@
 #define CUSTOM_INTERVAL_SEC(x)			MIN_TO_SEC(x)
 #define CUSTOM_INTERVAL(x)				MIN_TO_MS(x)
 
+wasteValues setWasteParam;
+
 TdsValues setTDS{
 	DEFAULT_MAINS_TDS_THRESHOLD,
 	DEFAULT_TDS_TEMPERATURE,
@@ -63,8 +65,8 @@ WarningFlags tempTdsWarning{.all_flags = 0xFFFF}; // all enabled by default
 //--------------------------------Functions definitions-------------------------
 void mainMenuFunc02()
 {
-	currentM = &mainMenu02;
-	menu.displayMenu(&mainMenu02, mainMenu.Items[0].num_items);
+	currentM = &llTds_mainMenu08;
+	menu.displayMenu(&llTds_mainMenu08, mainMenu.Items[0].num_items);
 }
 
 bool isTDSConnected(tdsSensor sensor)
@@ -340,7 +342,7 @@ void memSaverST3()
 		invokeST3(false);
 		invokeST5(false);
 		//			Flags.setFlag(Settings, MEM_SAVER, false);
-		roSaverST1();
+		// roSaverST1();
 	}
 	else if(Flags.timeElapsed(LEVEL_SENSOR, FOD_AUTORUN_DELAY_PERIOD) &&
 			Flags.flagStatus(Settings, FoD) == true &&
@@ -613,9 +615,9 @@ void monitorTdsCycle(void)
 void controlPeripherals(void)
 {
 	memSaverST3();
-	autoFlushST4();
-	roSaverST1();
-	monitorTdsCycle();
+	// autoFlushST4();
+	// roSaverST1();
+	// monitorTdsCycle();
 	// BoosterSignalControl();
 }
 

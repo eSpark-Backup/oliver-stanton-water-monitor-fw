@@ -4,6 +4,10 @@
 #include "menu.h"
 
 
+#define MAX_WASTE_PER  100
+#define MIN_WASTE_PER  40
+#define DIFF_WASTE_PER 10
+
 #define MAX_MAINS_TDS_THRESHOLD 600
 #define DEFAULT_MAINS_TDS_THRESHOLD 500
 #define MIN_MAINS_TDS_THRESHOLD 50
@@ -61,32 +65,17 @@ typedef struct
 extern autoFlushTimers flushTimer;
 
 
-void introSetup_02(void);
-bool introPageSelection_02(uint32_t argChoice, MenuItem* argMenu);
-void mainMenuSetup_02(void);
-bool mainMenuSelection_02(uint32_t argChoice, MenuItem *argMenu);
-void fodMenuSetup_02(void);
-void fodOffSetup_02(void);
-void roSaverSetup_02(void);
-bool fodOFF_02(uint32_t argChoice, MenuItem *argMenu);
-void backAndForthSetup_02(void);
-bool TdsSettingsOff(uint32_t argChoice, MenuItem *argMenu);
-void navigationTrue(void);
-bool TDSThresholdAdjustedValue(MenuItem *argMenu);
-bool TDSThresholdLoop(uint32_t argChoice, MenuItem *argMenu);
-bool TDSTemperatureLoop(uint32_t argChoice, MenuItem *argMenu);
-bool TdsShutdown(uint32_t argChoice, MenuItem *argMenu);
-bool setRoTdsThreshold(uint32_t argChoice, MenuItem *argMenu);
-bool haltMenuLoop(uint32_t argChoice, MenuItem *argMenu);
+void llTds_introSetup_08(void);
+bool llTds_introPageSelection_08(uint32_t argChoice, MenuItem* argMenu);
+void llTds_mainMenuSetup_08(void);
+bool llTds_mainMenuSelection_08(uint32_t argChoice, MenuItem *argMenu);
+void llTds_fodMenuSetup_08(void);
+bool llTds_fodOFF_08(uint32_t argChoice, MenuItem *argMenu);
+void llTds_backAndForthSetup_08(void);
+void llTds_navigationTrue(void);
 
-bool autoFlushOptions(uint32_t argChoice, MenuItem *argMenu);
-bool autoFlushEnable(bool activateST4);
-bool configureTdsWarning(uint32_t argChoice, MenuItem *argMenu);
-bool selectTdsWarningItem(uint32_t argChoice, MenuItem *argMenu);
-
-bool diSaverOptions(uint32_t argChoice, MenuItem *argMenu);
-bool diSaverOnOff(uint32_t argChoice, MenuItem *argMenu);
-
-bool autoFlushLoop(uint32_t argChoice, MenuItem *argMenu);
-bool autoFlushTimerLoop(uint32_t argChoice, MenuItem *argMenu);
-bool productionTimerLoop(uint32_t argChoice, MenuItem *argMenu);
+bool llTdsWasteSelOpt(uint32_t argChoice, MenuItem *argMenu);
+bool setWasteRatio(uint32_t argChoice, MenuItem *argMenu);
+bool setDynamicWasteRatio(uint32_t argChoice, MenuItem *argMenu);
+bool autoFlushOptions08(uint32_t argChoice, MenuItem *argMenu);
+bool autoFlushEnable08(bool activateST4);
