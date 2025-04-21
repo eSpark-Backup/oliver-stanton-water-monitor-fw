@@ -23,6 +23,12 @@ bool fodOFF(uint32_t argChoice, MenuItem *argMenu);
 void fodMenuSetup(void);
 bool fodON(uint32_t argChoice, MenuItem *argMenu);
 
+bool autoFlushOptions(uint32_t argChoice, MenuItem *argMenu);
+bool autoFlushEnable(bool activateST4);
+
+bool autoFillOptions(uint32_t argChoice, MenuItem *argMenu);
+bool autoFillEnable(bool activateST4);
+
 void batConsumptionTableSetup(void);
 bool BatLowMenuOption(uint32_t argChoice, MenuItem *argMenu);
 bool BatLowShutdown(uint32_t argChoice, MenuItem *argMenu);

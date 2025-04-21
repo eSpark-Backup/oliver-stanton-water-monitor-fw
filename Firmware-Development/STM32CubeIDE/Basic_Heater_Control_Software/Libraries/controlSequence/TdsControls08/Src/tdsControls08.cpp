@@ -618,13 +618,26 @@ void checkPureWasteRatio(void)
     static uint32_t lastCheckTime = 0u;
     static uint32_t last_count = 0u;
 
-    if (HAL_GetTick() - lastCheckTime >= 1000) // 1 second interval
+    if (HAL_GetTick() - lastCheckTime >= 60000) // 1 minute interval
     {
         lastCheckTime = HAL_GetTick();
-
-        if (Flags.flagStatus(Settings, AUTO_FILL) || !Flags.flagStatus(Settings, AUTO_FLUSH))
+		Flags.update();
+        if (Flags.flagStatus(Settings, AUTO_FILL) && !Flags.flagStatus(Settings, AUTO_FLUSH))
         {
-            menu.Display_Log("pure to pure flow rate: %d L/hr %d pure pulses \n waste flow rate: %d L/hr %d waste pulses", pureFlow_rate_Lhr, curPulse, wasteFlow_rate_Lhr, curWastePulse);
+			
+			float ratio = pureFlow_rate_Lhr/wasteFlow_rate_Lhr;
+			float setRatio = setWasteParam.purePer/setWasteParam.wastePer;
+			
+			menu.Display_Log("pure to waste flow rate: %d %% in L/hr", ratio*100);
+
+			if(ratio > setRatio)
+			{
+				invokeST4(true);
+			}
+			else
+			{
+				invokeST4(false);
+			}
         }
     }
 }
@@ -656,7 +669,8 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 void controlPeripherals(void)
 {
 	// memSaverST3();
-	checkPureWasteRatio();
+	if(Flags.flagStatus(Settings, WASTE_RATIO)) checkPureWasteRatio();
+	else {DEBUG_RTT(LOG_INFO, "WASTE_RATIO is disabled");}
 	// autoFlushST4();
 	// roSaverST1();
 	// monitorTdsCycle();

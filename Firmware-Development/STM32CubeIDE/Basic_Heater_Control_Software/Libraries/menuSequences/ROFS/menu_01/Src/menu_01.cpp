@@ -215,7 +215,7 @@ bool fodON(uint32_t argChoice, MenuItem *argMenu)
 {
 	if (argChoice == 2 && ButtonE.state())
 	{
-		DEBUG_RTT(LOG_ERROR, "fodON");
+		DEBUG_RTT(LOG_INFO, "fodON");
 
 		Flags.setFlag(Settings, FoD, true);
 		Flags.setFlag(Settings, MEM_SAVER, true);
@@ -299,4 +299,38 @@ void mainMenuFunc()
 {
 	currentM = &llTds_mainMenu08;
 	menu.displayMenu(&llTds_mainMenu08, mainMenu.Items[0].num_items);
+}
+
+bool autoFlushOptions(uint32_t argChoice, MenuItem *argMenu)
+{
+	if (argChoice < 3 && ButtonE.state())
+	{
+		autoFlushEnable(argChoice == 1 ? false : true);
+	}
+	else
+		return false;
+}
+
+bool autoFlushEnable(bool activateST4)
+{
+	Flags.setFlag(Settings, AUTO_FLUSH, activateST4);
+	DEBUG_RTT(LOG_WARNING, "AUTO_FLUSH setting Turned %s.", activateST4 ? "On" : "Off");
+	return true;
+}
+
+bool autoFillOptions(uint32_t argChoice, MenuItem *argMenu)
+{
+	if (argChoice < 3 && ButtonE.state())
+	{
+		autoFillEnable(argChoice == 1 ? false : true);
+	}
+	else
+		return false;
+}
+
+bool autoFillEnable(bool activateST1)
+{
+	Flags.setFlag(Settings, AUTO_FILL, activateST1);
+	DEBUG_RTT(LOG_WARNING, "AUTO_FILL setting Turned %s.", activateST1 ? "On" : "Off");
+	return true;
 }

@@ -34,13 +34,28 @@ MenuItem llTds_mainMenu08 = {
 MenuItem llTds_purificationMenu08 = {
 	defaultMenuSetup,
 	nullptr,
-	{{"1. Fill on Demand (Not Active)", nullptr, nullptr, nullptr, 			&llTds_mainMenu08, 0, 6},
-	 {"2. Select TDS (Not Active)",		nullptr, nullptr, nullptr, 			&llTds_mainMenu08, 0, 6},
-	 {"3. Set Warnings (Not Active)",	nullptr, nullptr, nullptr, 			&llTds_mainMenu08, 0, 6},
-	 {"4. Auto Flush (Not Active)", 	nullptr, nullptr, nullptr, 			&llTds_mainMenu08, 0, 6},
-	 {"5. DI Saver (Not Active)", 		nullptr, nullptr, nullptr, 			&llTds_mainMenu08, 0, 6},
-	 {"6. Dynamic Waste Ratio Control", nullptr, nullptr, &ctrlWasteRatio,  &llTds_mainMenu08, 4, 6}}
+	{{"1. Fill on Demand (Not Active)", nullptr, nullptr, nullptr,				&llTds_mainMenu08, 2, 6},
+	 {"2. Select TDS (Not Active)",		nullptr, nullptr, nullptr, 				&llTds_mainMenu08, 0, 6},
+	 {"3. Set Warnings (Not Active)",	nullptr, nullptr, nullptr, 				&llTds_mainMenu08, 0, 6},
+	 {"4. Auto Flush (Not Active)", 	nullptr, nullptr, nullptr, 				&llTds_mainMenu08, 2, 6},
+	 {"5. DI Saver (Not Active)", 		nullptr, nullptr, nullptr, 				&llTds_mainMenu08, 0, 6},
+	 {"6. Dynamic Waste Ratio Control", nullptr, nullptr, &ctrlWasteRatio,  	&llTds_mainMenu08, 4, 6}}
 };
+
+MenuItem llTds_fodOptnsOff08 = {
+	defaultMenuSetup,
+	autoFillOptions,
+	{{"Off", nullptr, nullptr, nullptr, &llTds_purificationMenu08, 0, 2},
+	 {"On", nullptr, nullptr, nullptr,  &llTds_purificationMenu08, 0, 2}}
+};
+
+MenuItem llTds_setAutoFlush08 = {
+	defaultMenuSetup,
+	autoFlushOptions,
+	{{"Off" , nullptr, nullptr, nullptr, &llTds_purificationMenu08, 0, 2},
+	 {"On"	, nullptr, nullptr, nullptr, &llTds_purificationMenu08, 0, 2}}
+};
+
 MenuItem ctrlWasteRatio = {
 	defaultMenuSetup,
 	setWasteRatio,
