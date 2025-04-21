@@ -77,7 +77,10 @@ uint32_t buttonPressTime;
 MenuItem *previousMenuItem = nullptr;
 bool didWork = false;
 
-
+volatile uint32_t waste_pulse_count = 0;
+volatile uint32_t wasteFlow_rate_Lhr = 0;
+volatile uint32_t pure_pulse_count = 0;
+volatile uint32_t pureFlow_rate_Lhr = 0;
 
 //bool ONflag=true;
 //TIM_HandleTypeDef htim1;
@@ -96,6 +99,7 @@ void MainApp::setup()
 	DEBUG_LOG(LOG_INFO, "Water Monitor Controller Initialization complete.");
 
 	WLED1->setupInit();
+	controlSetup();
 }
 
 void MainApp::loop()
@@ -148,6 +152,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			DOWN_BUTTON_FLAG=true;
 		}
 	}
+	if (GPIO_Pin == PURE_FLOW_DT4_Pin)
+    {
+        pure_pulse_count++; // Increment on each pulse
+    }
 }
 
 

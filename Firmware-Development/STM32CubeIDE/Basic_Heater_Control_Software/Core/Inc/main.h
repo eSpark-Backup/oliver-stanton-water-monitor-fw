@@ -38,7 +38,9 @@ extern "C" {
 /* USER CODE BEGIN ET */
 extern ADC_HandleTypeDef hadc;
 extern TIM_HandleTypeDef htim1;
-extern TIM_HandleTypeDef htim6;
+extern TIM_HandleTypeDef htim2;
+extern TIM_HandleTypeDef htim3;
+extern TIM_HandleTypeDef htim16;
 //static TIM_HandleTypeDef htim2;
 //static TIM_HandleTypeDef htim17;
 
@@ -70,6 +72,8 @@ void Error_Handler(void);
 #define TDS3_T1_GPIO_Port GPIOE
 #define TDS3_T2_Pin GPIO_PIN_3
 #define TDS3_T2_GPIO_Port GPIOE
+#define WASTE_FLOW_DT5_Pin GPIO_PIN_4
+#define WASTE_FLOW_DT5_GPIO_Port GPIOE
 #define LED1_Pin GPIO_PIN_13
 #define LED1_GPIO_Port GPIOC
 #define TDS1_AN1_Pin GPIO_PIN_0
@@ -114,6 +118,9 @@ void Error_Handler(void);
 #define SW7_EXTI_IRQn EXTI4_15_IRQn
 #define AuxHeater_Pin GPIO_PIN_9
 #define AuxHeater_GPIO_Port GPIOD
+#define PURE_FLOW_DT4_Pin GPIO_PIN_10
+#define PURE_FLOW_DT4_GPIO_Port GPIOD
+#define PURE_FLOW_DT4_EXTI_IRQn EXTI4_15_IRQn
 #define TDS1_T1_Pin GPIO_PIN_14
 #define TDS1_T1_GPIO_Port GPIOD
 #define TDS1_T2_Pin GPIO_PIN_15

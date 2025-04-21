@@ -190,6 +190,7 @@ void monitorTdsCycle(void);
 bool isTDSConnected(tdsSensor);
 void calCurrentTdsReading(void);
 void controlPeripherals(void);
+void controlSetup(void);
 
 extern wasteValues setWasteParam;
 extern TdsValues setTDS;

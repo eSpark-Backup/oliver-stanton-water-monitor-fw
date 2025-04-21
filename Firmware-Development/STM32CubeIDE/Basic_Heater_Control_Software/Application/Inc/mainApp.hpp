@@ -52,4 +52,7 @@ private:
 };
 
 
-
+extern volatile uint32_t waste_pulse_count;
+extern volatile uint32_t wasteFlow_rate_Lhr;
+extern volatile uint32_t pure_pulse_count;
+extern volatile uint32_t pureFlow_rate_Lhr;

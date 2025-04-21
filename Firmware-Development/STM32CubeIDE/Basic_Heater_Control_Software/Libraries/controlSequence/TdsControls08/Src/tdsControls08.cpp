@@ -611,14 +611,70 @@ void monitorTdsCycle(void)
 	}
 }
 
+uint32_t curPulse = 0;
+uint32_t curWastePulse = 0;
+void checkPureWasteRatio(void)
+{
+    static uint32_t lastCheckTime = 0u;
+    static uint32_t last_count = 0u;
+
+    if (HAL_GetTick() - lastCheckTime >= 1000) // 1 second interval
+    {
+        lastCheckTime = HAL_GetTick();
+
+        if (Flags.flagStatus(Settings, AUTO_FILL) || !Flags.flagStatus(Settings, AUTO_FLUSH))
+        {
+            menu.Display_Log("pure to pure flow rate: %d L/hr %d pure pulses \n waste flow rate: %d L/hr %d waste pulses", pureFlow_rate_Lhr, curPulse, wasteFlow_rate_Lhr, curWastePulse);
+        }
+    }
+}
+
+void flowSensorCallback(TIM_HandleTypeDef *htim)
+{
+	if (htim->Instance == TIM16)
+    {
+		//(Pulse Counted per second / Pulses per litre) * into minute * into hour;
+		pureFlow_rate_Lhr = (pure_pulse_count / 1000.0f) * 60.0f * 60.0f; //1000 for 1500 lph (#49)
+		curPulse = pure_pulse_count;
+        pure_pulse_count = 0;
+		
+		wasteFlow_rate_Lhr = (waste_pulse_count / 1000.0f) * 60.0f * 60.0f;
+		curWastePulse = waste_pulse_count;
+        waste_pulse_count = 0;
+    }
+}
+
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
+{
+    if (htim->Instance == TIM3 && htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2)
+    {
+        waste_pulse_count++;
+    }
+}
+
 
 void controlPeripherals(void)
 {
-	memSaverST3();
+	// memSaverST3();
+	checkPureWasteRatio();
 	// autoFlushST4();
 	// roSaverST1();
 	// monitorTdsCycle();
 	// BoosterSignalControl();
+}
+
+void controlSetup(void)
+{
+	if (HAL_TIM_RegisterCallback(&htim16, HAL_TIM_PERIOD_ELAPSED_CB_ID, flowSensorCallback) != HAL_OK)
+	{
+		DEBUG_RTT(LOG_ERROR, "Period Elapsed Callback for Tim16 (flowSensorCallback) not registered");
+	}
+	else {
+		DEBUG_RTT(LOG_INFO, "Period Elapsed Callback for Tim16 (flowSensorCallback) Registered");
+		HAL_TIM_Base_Start_IT(&htim16);
+		HAL_TIM_IC_Start_IT(&htim3, TIM_CHANNEL_2);
+
+	}
 }
 
 #endif

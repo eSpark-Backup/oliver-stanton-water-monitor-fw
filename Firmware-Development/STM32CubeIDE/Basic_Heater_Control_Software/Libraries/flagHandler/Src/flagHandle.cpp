@@ -288,6 +288,7 @@ bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor)
 		else if(sensor == BOOST_PRD_SIG)			return FlagsReg.settings.Boost_Prd_Sig;
 		else if(sensor == BOOST_AF_SIG)				return FlagsReg.settings.Boost_Af_Sig;
 		else if(sensor == PUMP_2)					return FlagsReg.settings.Pump_2;
+		else if(sensor == WASTE_RATIO)				return FlagsReg.settings.wasteRatio;
 		else if(sensor == MAINS_TDS_THRESHOLD)		return FlagsReg.settings.mainsTdsThresh;
 		else if(sensor == RO_TDS_THRESHOLD)			return FlagsReg.settings.roTdsThresh;
 		else if(sensor == DI_TDS_THRESHOLD)			return FlagsReg.settings.diTdsThresh;
@@ -312,6 +313,7 @@ bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor)
 		else if(sensor == MEM_SAVER)			return FlagsReg.status.Mem_Saver;
 		else if(sensor == AUTO_FLUSH)			return FlagsReg.status.Auto_Flush;
 		else if(sensor == AUTO_FILL)			return FlagsReg.status.Auto_Fill;
+		else if(sensor == WASTE_RATIO)			return FlagsReg.status.wasteRatio;
 		else if(sensor == BOOST_PRD_SIG)		return FlagsReg.status.Boost_Sig;
 		else if(sensor == BOOST_AF_SIG)			return FlagsReg.status.Boost_Sig;
 		else if(sensor == PUMP_2)				return FlagsReg.status.Pump_2;
@@ -395,7 +397,11 @@ void FlagHandle::flagsInit()								//Implement flashRetrieve() here
 //	flashRetrieve();
 	setFlag(Settings, WLED, true);
 	setFlag(Settings, BUZZER, true);
-	setFlag(Settings, AUTO_FLUSH, true);
+	setFlag(Status,   AUTO_FILL, true);
+	setFlag(Settings, AUTO_FILL, true);
+	setFlag(Status,   AUTO_FLUSH, false);
+	setFlag(Settings, AUTO_FLUSH, false);
+	setFlag(Settings, WASTE_RATIO, true);
 // 	setFlag(Settings, BATTERY_LOW_SHUTDON, true);
 // 	setFlag(Settings, BATTERY_POWER_MONITOR, true);
 // 	setFlag(Settings, MAINS_TDS_THRESHOLD, true);

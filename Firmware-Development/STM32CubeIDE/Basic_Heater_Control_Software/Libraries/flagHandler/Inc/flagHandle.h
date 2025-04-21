@@ -66,6 +66,7 @@ protected:
 	   uint64_t Level_Sensor    :1;
 	   uint64_t Buzzer          :1;
 	   uint64_t WLED          	:1;
+	   uint64_t wasteRatio     	:1;
 	   uint64_t Battery_charging_detected       :1;
 	   uint64_t Battery_critical       :1;
 	   uint64_t Battery_low            :1;
@@ -98,6 +99,7 @@ protected:
 	   uint64_t Buzzer          :1;
 	   uint64_t WLED			:1;
 	   uint64_t RGB			    :1;
+	   uint64_t wasteRatio	    :1;
 	   uint64_t mainsTdsThresh  :1;
 	   uint64_t roTdsThresh	    :1;
 	   uint64_t diTdsThresh	    :1;
