@@ -110,6 +110,7 @@ void FlagHandle::update(void)
 			statusFlagTimeStamp[AUTO_FILL] = HAL_GetTick();
 		}
 	}
+#ifndef MENU_07
 	if (HAL_GPIO_ReadPin(PUMPS_Control_GPIO_Port, PUMPS_Control_Pin) != flagStatus(Status, PUMP_2)) //PUMP1 will be added as well
 	{
 		if (flagStatus(Status, PUMP_2)) // PUMP1 will be added as well
@@ -140,6 +141,7 @@ void FlagHandle::update(void)
 			statusFlagTimeStamp[PUMP_2] = HAL_GetTick();
 		}
 	}
+#endif
 	///Boost signal gpio read/write to be implemented
 
 //	if(HAL_GPIO_ReadPin(W_LED_CTRL_GPIO_Port, W_LED_CTRL_Pin) != flagStatus(Status, AUTO_FILL))	{
@@ -285,10 +287,12 @@ bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor)
 		else if(sensor == RESIN_SAVER)				return FlagsReg.settings.Resin_Saver;
 		else if(sensor == AUTO_FLUSH)				return FlagsReg.settings.Auto_Flush;
 		else if(sensor == AUTO_FILL)				return FlagsReg.settings.Auto_Fill;
+#ifndef MENU_07
 		else if(sensor == BOOST_PRD_SIG)			return FlagsReg.settings.Boost_Prd_Sig;
 		else if(sensor == BOOST_AF_SIG)				return FlagsReg.settings.Boost_Af_Sig;
 		else if(sensor == PUMP_2)					return FlagsReg.settings.Pump_2;
 		else if(sensor == WASTE_RATIO)				return FlagsReg.settings.wasteRatio;
+#endif
 		else if(sensor == MAINS_TDS_THRESHOLD)		return FlagsReg.settings.mainsTdsThresh;
 		else if(sensor == RO_TDS_THRESHOLD)			return FlagsReg.settings.roTdsThresh;
 		else if(sensor == DI_TDS_THRESHOLD)			return FlagsReg.settings.diTdsThresh;
@@ -313,10 +317,12 @@ bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor)
 		else if(sensor == MEM_SAVER)			return FlagsReg.status.Mem_Saver;
 		else if(sensor == AUTO_FLUSH)			return FlagsReg.status.Auto_Flush;
 		else if(sensor == AUTO_FILL)			return FlagsReg.status.Auto_Fill;
+#ifndef MENU_07
 		else if(sensor == WASTE_RATIO)			return FlagsReg.status.wasteRatio;
 		else if(sensor == BOOST_PRD_SIG)		return FlagsReg.status.Boost_Sig;
 		else if(sensor == BOOST_AF_SIG)			return FlagsReg.status.Boost_Sig;
 		else if(sensor == PUMP_2)				return FlagsReg.status.Pump_2;
+#endif
 		else if(sensor == PURE_CYCLE)			return FlagsReg.status.Pure_CYCLE;
 		else if(sensor == BATTERY_CHARGING_DETECTED) return FlagsReg.status.Battery_charging_detected;
 		else if(sensor == BATTERY_CRITICAL)		return FlagsReg.status.Battery_critical;
@@ -347,10 +353,12 @@ bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state)
 		else if(sensor == MEM_SAVER_PAUSE)			FlagsReg.settings.Mem_Saver_Pause = state;
 		else if(sensor == AUTO_FLUSH)				FlagsReg.settings.Auto_Flush = state;
 		else if(sensor == AUTO_FILL)				FlagsReg.settings.Auto_Fill = state;
+#ifndef MENU_07
 		else if(sensor == BOOST_PRD_SIG)			FlagsReg.settings.Boost_Prd_Sig = state;
 		else if(sensor == BOOST_AF_SIG)				FlagsReg.settings.Boost_Af_Sig = state;
 		else if(sensor == PUMP_2)					FlagsReg.settings.Pump_2 = state;
 		else if(sensor == WASTE_RATIO)				FlagsReg.settings.wasteRatio = state;
+#endif
 		else if(sensor == MAINS_TDS_THRESHOLD)		FlagsReg.settings.mainsTdsThresh = state;
 		else if(sensor == RO_TDS_THRESHOLD)			FlagsReg.settings.roTdsThresh = state;
 		else if(sensor == DI_TDS_THRESHOLD)			FlagsReg.settings.diTdsThresh = state;
@@ -375,10 +383,12 @@ bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state)
 		else if(sensor == MEM_SAVER)		FlagsReg.status.Mem_Saver = state;
 		else if(sensor == AUTO_FLUSH)		FlagsReg.status.Auto_Flush = state;
 		else if(sensor == AUTO_FILL)		FlagsReg.status.Auto_Fill = state;
+#ifndef MENU_07
 		else if(sensor == WASTE_RATIO)		FlagsReg.status.wasteRatio = state;
 		else if(sensor == BOOST_PRD_SIG)	FlagsReg.status.Boost_Sig = state;
 		else if(sensor == BOOST_AF_SIG)		FlagsReg.status.Boost_Sig = state;
 		else if(sensor == PUMP_2)			FlagsReg.status.Pump_2 = state;
+#endif
 		else if(sensor == PURE_CYCLE)		FlagsReg.status.Pure_CYCLE = state;
 		else if(sensor == BATTERY_CHARGING_DETECTED) FlagsReg.status.Battery_charging_detected = state;
 		else if(sensor == BATTERY_CRITICAL)		FlagsReg.status.Battery_critical= state;
@@ -403,8 +413,10 @@ void FlagHandle::flagsInit()								//Implement flashRetrieve() here
 	setFlag(Settings, AUTO_FILL, true);
 	setFlag(Status,   AUTO_FLUSH, false);
 	setFlag(Settings, AUTO_FLUSH, false);
+#ifndef MENU_07
 	setFlag(Status, WASTE_RATIO, true);
 	setFlag(Settings, WASTE_RATIO, true);
+#endif
 // 	setFlag(Settings, BATTERY_LOW_SHUTDON, true);
 // 	setFlag(Settings, BATTERY_POWER_MONITOR, true);
 // 	setFlag(Settings, MAINS_TDS_THRESHOLD, true);

@@ -302,7 +302,8 @@
 #define MENU_03                 0 /// contains TDS 05 logic
 #define MENU_04                 0 /// contains TDS 05 and resin 03 logic
 #define MENU_05                 0
-#define LLTDS_MENU_08           1
+#define MENU_07                 1
+#define LLTDS_MENU_08           0
 
 /* Exported macro ------------------------------------------------------------*/
 #ifdef USE_FULL_ASSERT

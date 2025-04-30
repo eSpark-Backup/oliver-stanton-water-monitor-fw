@@ -9,6 +9,7 @@
 #include "menuList_03.h"
 #include "menuList_04.h"
 #include "menuList_05.h"
+#include "menuList_07.h"
 #include "tdsMenuList_08.h"
 #include "motorDriver.h"
 #include "Battery.hpp"
@@ -92,8 +93,8 @@ volatile uint32_t pureFlow_rate_Lhr = 0;
 
 void MainApp::setup()
 {
-	currentM = &llTds_intro08;
-	HAL_Delay(2000);  		menu.displayMenu(currentM, llTds_intro08.Items[0].num_items);
+	currentM = &intro07;
+	HAL_Delay(2000);  		menu.displayMenu(currentM, intro07.Items[0].num_items);
 
 	Flags.flagsInit();				//initiate flags from flash
 	DEBUG_LOG(LOG_INFO, "Water Monitor Controller Initialization complete.");

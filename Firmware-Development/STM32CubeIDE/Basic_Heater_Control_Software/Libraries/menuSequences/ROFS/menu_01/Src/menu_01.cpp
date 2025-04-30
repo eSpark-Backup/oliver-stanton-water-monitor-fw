@@ -127,7 +127,9 @@ bool fodOFF(uint32_t argChoice, MenuItem *argMenu)
 				invokeST3(true);
 				invokeST5(true);
 				calCurrentTdsReading();
-				perpStatus.diResinSaver = false;
+				#ifndef MENU_07
+				perpStatus.diResinSaver = false; //exists in menu 01, 02 and 08
+				#endif
 			}
 			else
 			{
@@ -297,8 +299,8 @@ bool roSaverOff(uint32_t argChoice, MenuItem *argMenu)
 
 void mainMenuFunc()
 {
-	currentM = &llTds_mainMenu08;
-	menu.displayMenu(&llTds_mainMenu08, mainMenu.Items[0].num_items);
+	currentM = &mainMenu07;
+	menu.displayMenu(&mainMenu07, mainMenu.Items[0].num_items);
 }
 
 bool autoFlushOptions(uint32_t argChoice, MenuItem *argMenu)
