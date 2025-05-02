@@ -29,13 +29,14 @@ MenuItem intro07 = {
 MenuItem mainMenu07 = {
 	mainMenuSetup_07,
 	mainMenuSelection_07,
-	{{"Default LLROFS Home Page", nullptr, nullptr, &fodMenu07, &intro07, 4, 1}},
+	{{"Default LLROFS Home Page", nullptr, nullptr, &fodMenu07, &intro07, 3, 1}},
 };
 MenuItem fodMenu07 = {
 	defaultMenuSetup,
-	nullptr,
-	{{"Fill on Demand (Not Active)", nullptr, nullptr, nullptr, &mainMenu07, 0, 2},
-	 {"Select Pressure Setting", nullptr, nullptr, &selectPressureSetting, &mainMenu07, 2, 2}}
+	calibratePressure,
+	{{"Fill on Demand (Not Active)", nullptr, nullptr, nullptr, &mainMenu07, 0, 3},
+	 {"Select Pressure Setting", nullptr, nullptr, &selectPressureSetting, &mainMenu07, 2, 3},
+	 {"Pressure Calibrate Mode", nullptr, nullptr, nullptr, &mainMenu07, 0, 3}}
 };
 MenuItem selectPressureSetting = {
 	defaultMenuSetup,

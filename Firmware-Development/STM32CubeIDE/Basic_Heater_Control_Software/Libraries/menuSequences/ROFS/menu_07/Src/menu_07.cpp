@@ -119,5 +119,78 @@ bool presSystemTypeOpt(uint32_t argChoice, MenuItem *argMenu)
 	return true;
 }
 
+void calibrationAlgo()
+{
+	if (ButtonE.period() > MINIMUM_PRESS && ButtonE.period() < SHORT_PRESS)
+	{
+		// ST6 and ST7 remains 
+		Disp->display("Pressure Sensor Calibrating - Checking Standby Pressure");
+		invokeST1(false); invokeST2(false);	invokeST3(false); invokeST4(false); invokeST5(false);
+		dt3_ps.standby = readSens(PRESSURE_SENSOR);
+		
+		Disp->display("Pressure Sensor Calibrating - Checking Filling - Non Boosted Autoflush Pressure");
+		invokeST1(false); invokeST2(true);	invokeST3(true); invokeST4(true); invokeST5(false);
+		dt3_ps.autoflushNoBoost = readSens(PRESSURE_SENSOR);
+		
+		Disp->display("Pressure Sensor Calibrating - Checking Filling - Boosted Autoflush Pressure");
+		invokeST1(false); invokeST2(false);	invokeST3(true); invokeST4(true); invokeST5(false);
+		dt3_ps.autoflushBoost = readSens(PRESSURE_SENSOR);
+		
+		Disp->display("Pressure Sensor Calibrating - Checking Non-Boosted Filling Pressure");
+		invokeST1(false); invokeST2(false);	invokeST3(true); invokeST4(false); invokeST5(false);
+		dt3_ps.fillingNoBoost = readSens(PRESSURE_SENSOR);
+		
+		Disp->display("Pressure Sensor Calibrating - Checking Boosted Filling Pressure");
+		invokeST1(false); invokeST2(true);	invokeST3(true); invokeST4(false); invokeST5(false);
+		dt3_ps.fillingBoost = readSens(PRESSURE_SENSOR);
+		
+		Disp->display("Pressure Sensor Calibration Complete");
+	}
+}
+
+bool calibratePressure(uint32_t argChoice, MenuItem *argMenu)
+{
+	static bool firstUse = true;
+	static bool commenceCalibration = false;
+	static long lastCycle = 0u;
+	static MenuItem * previousMenu = nullptr;
+
+	if (HAL_GetTick() - lastCycle < 5000)
+		return false;
+
+	if (!Flags.flagStatus(Status, LEVEL_SENSOR) && firstUse && !commenceCalibration) // closed
+	{
+		if(isMenuMatch(currentM, fodMenu07) && previousMenu != currentM) //callibrate mode
+		{
+			Disp->display("Pressure Sensor Calibration Required, press ENTER to start");
+			
+			if (ButtonE.period() > MINIMUM_PRESS && ButtonE.period() < SHORT_PRESS)
+			{
+				Disp->display("!!! ENSURE WATER INLET, WASTE OUTLET, and ELECTRIC MAINS HOOKUP IS CONNECTED AND TURNED ON !!!");
+				commenceCalibration = true;
+				ButtonE.reset();
+			}
+			else if (ButtonB.period() > MINIMUM_PRESS && ButtonB.period() < SHORT_PRESS)
+			{
+				firstUse = true;
+				commenceCalibration = false;
+			}
+			previousMenu = currentM;
+		}
+
+		firstUse = false;
+	}
+	else if(commenceCalibration)
+	{
+		Disp->display("Press ENTER to start Calibration");
+		calibrationAlgo();
+		commenceCalibration = false;
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}
 
 #endif

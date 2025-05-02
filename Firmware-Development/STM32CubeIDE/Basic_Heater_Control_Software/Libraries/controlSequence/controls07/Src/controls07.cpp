@@ -48,6 +48,7 @@ TDS tds4 = TDS(tds4PinConfig);
 //***************************Pressure Sensor*******************************
 psGPIOConfig pSensConfig  = {PS_AN0_GPIO_Port, ADC_CHANNEL_0, PS_AN0_Pin};
 PS pSens = PS(pSensConfig);
+psValues dt3_ps;
 //*******************************************************************
 Menu menu;
 PRESSURE_SYSTEM_TYPE presSysType = STATIC;
@@ -157,6 +158,14 @@ void invokeST1(bool status)
 	}
 }
 
+void invokeST2(bool status)
+{
+	if(Flags.flagStatus(Status, PROP_MIXER) != status)
+	{
+		Flags.setFlag(Status, PROP_MIXER, status);
+	}
+}
+
 void invokeST4(bool status)
 {
 	if (Flags.flagStatus(Status, AUTO_FLUSH) != status)
@@ -261,6 +270,7 @@ void memSaverST3()
 void checkPressureSensor(void)
 {
 	static long lastCycle = 0u;
+	static bool firstUse = true;
 
 	if (HAL_GetTick() - lastCycle < 1000)
 		return;
@@ -270,6 +280,19 @@ void checkPressureSensor(void)
 		DEBUG_RTT(LOG_INFO, "***Pressure Sensor : %d psi***", readSens(PRESSURE_SENSOR));
 	}
 
+	if (Flags.flagStatus(Status, LEVEL_SENSOR))
+	{
+		if (presSysType == STATIC && Flags.flagStatus(Status, AUTO_FILL))
+		{
+			
+		}
+	}
+	else
+	{
+
+		
+	}
+
 	lastCycle = HAL_GetTick();
 }
 
@@ -277,7 +300,8 @@ void controlPeripherals(void)
 {
 	memSaverST3();
 	roSaverST1();
-	checkPressureSensor();
+	if(Flags.flagStatus(Settings, PRESSURE_SENSOR)){
+		checkPressureSensor();	}
 }
 
 void controlSetup(void)

@@ -41,6 +41,7 @@ typedef enum
 	LEVEL_SENSOR,
 	PRESSURE_SENSOR,
 	AUTO_FLUSH,
+	PROP_MIXER,
 	FLOW_METER_1,
 	FLOW_METER_2,
 	FLOW_METER_3,
@@ -136,6 +137,16 @@ typedef enum
 	STATIC
 } PRESSURE_SYSTEM_TYPE;
 
+typedef struct
+{
+	uint8_t standby 		 = 0;
+	uint8_t autoflushBoost 	 = 0;
+	uint8_t autoflushNoBoost = 0;
+	uint8_t fillingBoost 	 = 0;
+	uint8_t fillingNoBoost 	 = 0;
+
+}	psValues;
+
 /**
  * Functions that are directly called from MenuList
  * <condition> <Function name>(<choiceselect variable>)
@@ -145,6 +156,8 @@ typedef enum
 
 /*	Support Functions	*/
 void fillOpen(void);
+void invokeST1(bool);
+void invokeST2(bool);
 void invokeST3(bool);
 void invokeST4(bool);
 void invokeST5(bool);
@@ -153,6 +166,7 @@ void invokeST5(bool);
 void memSaverST3(void);
 bool roSaverST1(void);
 bool isTDSConnected(tdsSensor);
+int readSens(uint8_t sensor);
 void controlPeripherals(void);
 void controlSetup(void);
 
@@ -161,5 +175,5 @@ extern TdsValues setTDS;
 extern WarningFlags TdsWarn;
 extern WarningFlags isTdsWarningEnable;
 extern PRESSURE_SYSTEM_TYPE presSysType;
-
+extern psValues dt3_ps;
 #endif /* INC_CONTROLS07_H_ */

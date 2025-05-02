@@ -20,5 +20,6 @@ void fodOffSetup_07(void);
 void roSaverSetup_07(void);
 void backAndForthSetup_07(void);
 void navigationTrue(void);
+bool calibratePressure(uint32_t argChoice, MenuItem *argMenu);
 bool presCtrlOpt(uint32_t argChoice, MenuItem *argMenu);
 bool presSystemTypeOpt(uint32_t argChoice, MenuItem *argMenu);

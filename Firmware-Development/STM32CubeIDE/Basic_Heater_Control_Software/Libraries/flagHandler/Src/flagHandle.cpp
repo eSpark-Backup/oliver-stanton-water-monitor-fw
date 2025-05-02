@@ -287,6 +287,7 @@ bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor)
 		else if(sensor == RESIN_SAVER)				return FlagsReg.settings.Resin_Saver;
 		else if(sensor == AUTO_FLUSH)				return FlagsReg.settings.Auto_Flush;
 		else if(sensor == AUTO_FILL)				return FlagsReg.settings.Auto_Fill;
+		else if(sensor == PROP_MIXER)				return FlagsReg.settings.Prop_Mixing;
 #ifndef MENU_07
 		else if(sensor == BOOST_PRD_SIG)			return FlagsReg.settings.Boost_Prd_Sig;
 		else if(sensor == BOOST_AF_SIG)				return FlagsReg.settings.Boost_Af_Sig;
@@ -317,6 +318,7 @@ bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor)
 		else if(sensor == MEM_SAVER)			return FlagsReg.status.Mem_Saver;
 		else if(sensor == AUTO_FLUSH)			return FlagsReg.status.Auto_Flush;
 		else if(sensor == AUTO_FILL)			return FlagsReg.status.Auto_Fill;
+		else if(sensor == PROP_MIXER)			return FlagsReg.status.Prop_Mixing;
 #ifndef MENU_07
 		else if(sensor == WASTE_RATIO)			return FlagsReg.status.wasteRatio;
 		else if(sensor == BOOST_PRD_SIG)		return FlagsReg.status.Boost_Sig;
@@ -353,6 +355,7 @@ bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state)
 		else if(sensor == MEM_SAVER_PAUSE)			FlagsReg.settings.Mem_Saver_Pause = state;
 		else if(sensor == AUTO_FLUSH)				FlagsReg.settings.Auto_Flush = state;
 		else if(sensor == AUTO_FILL)				FlagsReg.settings.Auto_Fill = state;
+		else if(sensor == PROP_MIXER)				FlagsReg.settings.Prop_Mixing = state;
 #ifndef MENU_07
 		else if(sensor == BOOST_PRD_SIG)			FlagsReg.settings.Boost_Prd_Sig = state;
 		else if(sensor == BOOST_AF_SIG)				FlagsReg.settings.Boost_Af_Sig = state;
@@ -383,6 +386,7 @@ bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state)
 		else if(sensor == MEM_SAVER)		FlagsReg.status.Mem_Saver = state;
 		else if(sensor == AUTO_FLUSH)		FlagsReg.status.Auto_Flush = state;
 		else if(sensor == AUTO_FILL)		FlagsReg.status.Auto_Fill = state;
+		else if(sensor == PROP_MIXER)		FlagsReg.status.Prop_Mixing = state;
 #ifndef MENU_07
 		else if(sensor == WASTE_RATIO)		FlagsReg.status.wasteRatio = state;
 		else if(sensor == BOOST_PRD_SIG)	FlagsReg.status.Boost_Sig = state;
