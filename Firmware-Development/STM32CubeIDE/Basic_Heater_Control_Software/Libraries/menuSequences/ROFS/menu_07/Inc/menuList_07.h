@@ -29,20 +29,23 @@ MenuItem intro07 = {
 MenuItem mainMenu07 = {
 	mainMenuSetup_07,
 	mainMenuSelection_07,
-	{{"Default LLROFS Home Page", nullptr, nullptr, &fodMenu07, &intro07, 3, 1}},
+	{{"Default LLROFS Home Page", nullptr, nullptr, &fodMenu07, &intro07, 4, 1}},
 };
 MenuItem fodMenu07 = {
 	defaultMenuSetup,
 	calibratePressure,
 	{{"Fill on Demand (Not Active)", nullptr, nullptr, nullptr, &mainMenu07, 0, 3},
-	 {"Select Pressure Setting", nullptr, nullptr, &selectPressureSetting, &mainMenu07, 2, 3},
-	 {"Pressure Calibrate Mode", nullptr, nullptr, nullptr, &mainMenu07, 0, 3}}
+	 {"Select Pressure Setting", nullptr, nullptr, &selectPressureSetting, &mainMenu07, 3, 3},
+	 {"Pressure Sensor Calibration", nullptr, nullptr, nullptr, &mainMenu07, 0, 3}}
 };
 MenuItem selectPressureSetting = {
 	defaultMenuSetup,
 	nullptr,
-	{{"Set Pressure Control On/Off", nullptr, nullptr, &presCtrlOptns, &fodMenu07, 2, 2},
-	 {"Set System Type", 			nullptr, nullptr, &presSystemTypeOptns, &fodMenu07, 2, 2}}
+	{{"Set Pressure Control On/Off",       nullptr, nullptr, &presCtrlOptns, &fodMenu07, 2, 5},
+	 {"Pressure Sensor Alerts & Shutdown", nullptr, nullptr, &presAlertOptns, &fodMenu07, 3, 5},
+	 {"Boosted Filling Production On/Off", nullptr, nullptr, &pFillingProdOptns, &fodMenu07, 2, 5},
+	 {"Boosted autoflush On/Off", 		   nullptr, nullptr, &pFlushProdOptns, &fodMenu07, 2, 5},
+	 {"Set System Type", 			  nullptr, nullptr, &presSystemTypeOptns, &fodMenu07, 2, 5}}
 };
 MenuItem fodOptnsOff07 = {
 	fodOffSetup_07,
@@ -52,13 +55,31 @@ MenuItem fodOptnsOff07 = {
 
 ///-----------------------------PRESSURE SETTINGS START-----------------------------
 
+MenuItem presAlertOptns = {
+	defaultMenuSetup,
+	presAlertOpt,
+	{{"ON - Alerts Only", 	nullptr, nullptr, nullptr, &selectPressureSetting, 0, 2},
+	 {"ON - Alerts & Shutdown", nullptr, nullptr, nullptr, &selectPressureSetting, 0, 2},
+	 {"OFF", 	nullptr, nullptr, nullptr, &selectPressureSetting, 0, 2}}
+};
+MenuItem pFillingProdOptns = {
+	defaultMenuSetup,
+	boostedFillingOpt,
+	{{"Disable" , 	nullptr, nullptr, nullptr, &selectPressureSetting, 0, 2},
+	 {"Enable"	, 	nullptr, nullptr, nullptr, &selectPressureSetting, 0, 2}}
+};
+MenuItem pFlushProdOptns = {
+	defaultMenuSetup,
+	boostedFlushOpt,
+	{{"Disable" , 	nullptr, nullptr, nullptr, &selectPressureSetting, 0, 2},
+	 {"Enable"	, 	nullptr, nullptr, nullptr, &selectPressureSetting, 0, 2}}
+};
 MenuItem presCtrlOptns = {
 	defaultMenuSetup,
 	presCtrlOpt,
 	{{"Disable" , 	nullptr, nullptr, nullptr, &selectPressureSetting, 0, 2},
 	 {"Enable"	, 	nullptr, nullptr, nullptr, &selectPressureSetting, 0, 2}}
 };
-
 MenuItem presSystemTypeOptns = {
 	defaultMenuSetup,
 	presSystemTypeOpt,

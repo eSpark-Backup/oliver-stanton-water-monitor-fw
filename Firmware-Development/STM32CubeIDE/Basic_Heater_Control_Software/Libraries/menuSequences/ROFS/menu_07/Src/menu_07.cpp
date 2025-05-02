@@ -119,6 +119,48 @@ bool presSystemTypeOpt(uint32_t argChoice, MenuItem *argMenu)
 	return true;
 }
 
+bool boostedFillingOpt(uint32_t argChoice, MenuItem *argMenu)
+{
+	if (ButtonE.state())
+	{
+	 	isboostedFillingEnable = argChoice == 2 ? true : false;
+		DEBUG_RTT(LOG_INFO, "Pressure Boosted Filling Production Enable: %d", isboostedFillingEnable);
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}
+
+bool boostedFlushOpt(uint32_t argChoice, MenuItem *argMenu)
+{
+	if (ButtonE.state())
+	{
+	 	isboostedFlushEnable = argChoice == 2 ? true : false;
+		DEBUG_RTT(LOG_INFO, "Pressure Boosted autoflush  Enable: %d", isboostedFlushEnable);
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}
+
+bool presAlertOpt(uint32_t argChoice, MenuItem *argMenu)
+{
+	if (ButtonE.state() && argChoice > 0 && argChoice < 4)
+	{
+	 	presAlertType = (PRESSURE_ALERT_TYPE)argChoice;
+		DEBUG_RTT(LOG_INFO, "Pressure Alert Type: %d", presAlertType);
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}
+
 void calibrationAlgo()
 {
 	if (ButtonE.period() > MINIMUM_PRESS && ButtonE.period() < SHORT_PRESS)
@@ -186,6 +228,11 @@ bool calibratePressure(uint32_t argChoice, MenuItem *argMenu)
 		calibrationAlgo();
 		commenceCalibration = false;
 	}
+	// else if(firstUse)
+	// {
+	// 	Disp->display("Are you sure you want to re-calibrate the pressure sensor?");
+		
+	// }
 	else
 	{
 		return false;

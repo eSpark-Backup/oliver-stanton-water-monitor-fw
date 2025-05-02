@@ -49,9 +49,12 @@ TDS tds4 = TDS(tds4PinConfig);
 psGPIOConfig pSensConfig  = {PS_AN0_GPIO_Port, ADC_CHANNEL_0, PS_AN0_Pin};
 PS pSens = PS(pSensConfig);
 psValues dt3_ps;
+bool isboostedFillingEnable = false;
+bool isboostedFlushEnable = false;
 //*******************************************************************
 Menu menu;
 PRESSURE_SYSTEM_TYPE presSysType = STATIC;
+PRESSURE_ALERT_TYPE presAlertType = ALERTS_ONLY;
 //--------------------------------Functions definitions-------------------------
 
 bool isTDSConnected(tdsSensor sensor)
@@ -115,7 +118,7 @@ int readSens(uint8_t sensor)
 
 void fillOpen()
 {
-	Disp->display("Tank Full - System not Filling");
+	menu.Display_Log("Tank Full - System not Filling");
 	Buzzzer->setOutputPattern(1, 500, 1000);
 	((RgbDriver*)WLED1)->setRgbColor(RED);
 	WLED1->setOutputPattern(1, 1000, 1000);
@@ -135,7 +138,7 @@ void invokeST3(bool status)
 	}
 	if(status)
 	{
-		Disp->display("Starting Purification - System Filling.");
+		menu.Display_Log("Starting Purification - System Filling.");
 		Flags.setFlag(Settings, MEM_SAVER, status);
 		Flags.setFlag(Status, PURE_CYCLE, status);
 		Log.logToMaster("Float Circuit Closed - System filling commenced");
@@ -196,7 +199,7 @@ bool roSaverST1()
 			WLED1->setOutputPattern(1, 500, 1000);
 			return false;
 		}
-		Disp->display("Completing Purification Cycle - Dosing RO Membrane.");
+		menu.Display_Log("Completing Purification Cycle - Dosing RO Membrane.");
 		invokeST1(true); 
 		invokeST5(true);
 		Flags.update();
@@ -206,7 +209,7 @@ bool roSaverST1()
 	{
 		if(tds2.readTDS() <= setTDS.roFixedThreshold)
 		{
-			Disp->display("Purification Cycle Complete.");
+			menu.Display_Log("Purification Cycle Complete.");
 			tds2.resetTDS(); //for simulation value
 			invokeST1(false);
 			invokeST5(false);
@@ -219,7 +222,7 @@ bool roSaverST1()
 	else if(!Flags.flagStatus(Settings, RESIN_SAVER) && Flags.flagStatus(Status, PURE_CYCLE) && Flags.flagStatus(Status, LEVEL_SENSOR))
 	{
 		Flags.setFlag(Status, PURE_CYCLE, false);
-		Disp->display("Tank Full, System Purification Stopped.");
+		menu.Display_Log("Tank Full, System Purification Stopped.");
 		mainMenuFunc();
 		return true;
 	}
@@ -257,7 +260,7 @@ void memSaverST3()
 			Flags.flagStatus(Status, LEVEL_SENSOR) != true
 			&& Flags.flagStatus(Status, MEM_SAVER) != true)
 	{
-		//				Disp->display("Starting Purification - System Filling.");
+		//				menu.Display_Log("Starting Purification - System Filling.");
 		//				Flags.setFlag(Settings, MEM_SAVER, true);
 		//				Flags.setFlag(Status, PURE_CYCLE, true);
 		//				DEBUG_RTT("W", "SAVE LOG TO FILE HERE.");			//perform logging to file here
@@ -271,26 +274,72 @@ void checkPressureSensor(void)
 {
 	static long lastCycle = 0u;
 	static bool firstUse = true;
+	int cur_pSens = 0;
 
 	if (HAL_GetTick() - lastCycle < 1000)
 		return;
 
 	if (isSensConnected(PRESSURE_SENSOR))
 	{
+		cur_pSens = readSens(PRESSURE_SENSOR);
 		DEBUG_RTT(LOG_INFO, "***Pressure Sensor : %d psi***", readSens(PRESSURE_SENSOR));
 	}
 
 	if (Flags.flagStatus(Status, LEVEL_SENSOR))
 	{
-		if (presSysType == STATIC && Flags.flagStatus(Status, AUTO_FILL))
+		if (presSysType == STATIC && !Flags.flagStatus(Status, AUTO_FILL))
 		{
-			
+			static bool firstTime = true;
+			if(firstTime)
+			{
+				dt3_ps.open = cur_pSens;
+				firstTime = false;
+			}
+			else
+			{
+				if(cur_pSens > dt3_ps.open + 50)
+				{
+					menu.Display_Log("Suspected Leak Detected - Turn Mains Water Supply Off");
+				}
+				else if(cur_pSens > dt3_ps.open + 10)
+				{
+					menu.Display_Log("Pressure Drop on Mains supply - current pressure %d psi", cur_pSens);
+				}
+			}
 		}
 	}
-	else
+	else if(!Flags.flagStatus(Status, LEVEL_SENSOR) && Flags.flagStatus(Status, AUTO_FILL))
 	{
+		bool dispMsg = false;
 
-		
+		if (!Flags.flagStatus(Status, AUTO_FLUSH) && Flags.timeElapsed(AUTO_FLUSH, FOD_AUTORUN_DELAY_PERIOD))
+		{
+			if(isboostedFillingEnable && (cur_pSens > dt3_ps.fillingBoost + 20))
+				dispMsg = true;
+				
+			if(!isboostedFillingEnable && (cur_pSens > dt3_ps.fillingNoBoost + 20))
+				dispMsg = true;	
+		}
+		else if(Flags.flagStatus(Status, AUTO_FLUSH))
+		{
+			if(isboostedFlushEnable && (cur_pSens > dt3_ps.autoflushBoost + 20))
+				dispMsg = true;
+				
+			if(!isboostedFlushEnable && (cur_pSens > dt3_ps.autoflushNoBoost + 20))
+				dispMsg = true;	
+		}
+
+		if(dispMsg)
+		{
+			menu.Display_Log("Pressure Drop on System - current pressure %d psi", cur_pSens);
+			if(presAlertType == ALERTS_ONLY)
+				menu.Display_Log("Pressure Drop on System - suspected leaks or main supply issue");
+			if(presAlertType == ALERTS_SHUTDOWN)
+			{
+				menu.Display_Log("FILLING STOPPED - Pressure Drop on System - suspected leaks or main supply issue");
+				invokeST5(false);
+			}
+		}		
 	}
 
 	lastCycle = HAL_GetTick();

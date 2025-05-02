@@ -137,13 +137,21 @@ typedef enum
 	STATIC
 } PRESSURE_SYSTEM_TYPE;
 
+typedef enum
+{
+	ALERTS_ONLY,
+	ALERTS_SHUTDOWN,
+	OFF
+} PRESSURE_ALERT_TYPE;
+
 typedef struct
 {
-	uint8_t standby 		 = 0;
-	uint8_t autoflushBoost 	 = 0;
-	uint8_t autoflushNoBoost = 0;
-	uint8_t fillingBoost 	 = 0;
-	uint8_t fillingNoBoost 	 = 0;
+	uint8_t standby 		 = 50;
+	uint8_t autoflushBoost 	 = 50;
+	uint8_t autoflushNoBoost = 50;
+	uint8_t fillingBoost 	 = 50;
+	uint8_t fillingNoBoost 	 = 50;
+	uint8_t open		 	 = 50;
 
 }	psValues;
 
@@ -175,5 +183,8 @@ extern TdsValues setTDS;
 extern WarningFlags TdsWarn;
 extern WarningFlags isTdsWarningEnable;
 extern PRESSURE_SYSTEM_TYPE presSysType;
+extern PRESSURE_ALERT_TYPE presAlertType;
 extern psValues dt3_ps;
+extern bool isboostedFillingEnable;
+extern bool isboostedFlushEnable;
 #endif /* INC_CONTROLS07_H_ */

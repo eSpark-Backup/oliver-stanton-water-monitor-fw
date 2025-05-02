@@ -95,4 +95,4 @@ extern struct MenuItem intro02, mainMenu02, fodMenu02, fodOptnsOff02, autoFlushO
 extern struct MenuItem llTds_intro08, llTds_mainMenu08, llTds_purificationMenu08, llTds_fodOptnsOff08, llTds_setAutoFlush08, ctrlWasteRatio, wasteOptnsOff08, dynamicWasteRatioMenu;
 //-------------------------------------------------------------------------------------
 
-extern struct MenuItem intro07, mainMenu07, fodMenu07, selectPressureSetting, fodOptnsOff07, presCtrlOptns, presSystemTypeOptns;
+extern struct MenuItem intro07, mainMenu07, fodMenu07, selectPressureSetting, fodOptnsOff07, presAlertOptns, presCtrlOptns, presSystemTypeOptns, presAlertOptns, pFillingProdOptns, pFlushProdOptns;

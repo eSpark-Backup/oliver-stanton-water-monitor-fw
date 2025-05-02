@@ -23,3 +23,6 @@ void navigationTrue(void);
 bool calibratePressure(uint32_t argChoice, MenuItem *argMenu);
 bool presCtrlOpt(uint32_t argChoice, MenuItem *argMenu);
 bool presSystemTypeOpt(uint32_t argChoice, MenuItem *argMenu);
+bool presAlertOpt(uint32_t argChoice, MenuItem *argMenu);
+bool boostedFillingOpt(uint32_t argChoice, MenuItem *argMenu);
+bool boostedFlushOpt(uint32_t argChoice, MenuItem *argMenu);
