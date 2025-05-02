@@ -9,6 +9,7 @@
 #include "controls07.h"
 #if MENU_07 == 1
 #include "TDS.hpp"
+#include "PS.hpp"
 #include "menu_01.h"
 #include "menu_07.h"
 #include "masterLog.h"
@@ -44,6 +45,9 @@ TDS tds1 = TDS(tds1PinConfig);
 TDS tds2 = TDS(tds2PinConfig);
 TDS tds3 = TDS(tds3PinConfig);
 TDS tds4 = TDS(tds4PinConfig);
+//***************************Pressure Sensor*******************************
+psGPIOConfig pSensConfig  = {PS_AN0_GPIO_Port, ADC_CHANNEL_0, PS_AN0_Pin};
+PS pSens = PS(pSensConfig);
 //*******************************************************************
 Menu menu;
 PRESSURE_SYSTEM_TYPE presSysType = STATIC;
@@ -73,7 +77,40 @@ bool isTDSConnected(tdsSensor sensor)
 	return false;
 }
 
+//***********************Pressure Sensor**************************
+
+bool isSensConnected(uint8_t sensor)
+{
+	switch (sensor)
+	{
+		case PRESSURE_SENSOR:
+		{
+			if(pSens.readPS()) return true;
+			break;
+		}
+		default:
+			return false;
+	}
+	return false;
+}
+
 //***********************Purification Cycle**************************
+
+int readSens(uint8_t sensor)
+{
+	switch (sensor)
+	{
+		case PRESSURE_SENSOR:
+		{
+			if(isSensConnected(sensor))
+				return pSens.readPS();
+			break;
+		}
+		default:
+			DEBUG_RTT(LOG_WARNING, "*** SENSOR NOT FOUND ***");
+	}
+}
+
 
 void fillOpen()
 {
@@ -221,10 +258,26 @@ void memSaverST3()
 	}
 }
 
+void checkPressureSensor(void)
+{
+	static long lastCycle = 0u;
+
+	if (HAL_GetTick() - lastCycle < 1000)
+		return;
+
+	if (isSensConnected(PRESSURE_SENSOR))
+	{
+		DEBUG_RTT(LOG_INFO, "***Pressure Sensor : %d psi***", readSens(PRESSURE_SENSOR));
+	}
+
+	lastCycle = HAL_GetTick();
+}
+
 void controlPeripherals(void)
 {
 	memSaverST3();
 	roSaverST1();
+	checkPressureSensor();
 }
 
 void controlSetup(void)
