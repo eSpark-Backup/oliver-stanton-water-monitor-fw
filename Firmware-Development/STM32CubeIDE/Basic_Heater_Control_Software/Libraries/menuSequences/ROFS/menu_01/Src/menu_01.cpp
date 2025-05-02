@@ -126,8 +126,8 @@ bool fodOFF(uint32_t argChoice, MenuItem *argMenu)
 			{
 				invokeST3(true);
 				invokeST5(true);
-				calCurrentTdsReading();
 				#ifndef MENU_07
+				calCurrentTdsReading();
 				perpStatus.diResinSaver = false; //exists in menu 01, 02 and 08
 				#endif
 			}

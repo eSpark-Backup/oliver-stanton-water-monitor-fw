@@ -132,15 +132,9 @@ typedef union
 
 typedef enum
 {
-	TDS1_THRESHOLD,
-	TDS1_TEMPERATURE,
-	TDS2_DYNAMIC_THRESHOLD,
-	TDS2_FIXED_THRESHOLD,
-	TDS2_TEMPERATURE,
-	TDS3_THRESHOLD,
-	TDS3_TEMPERATURE,
-	TDS_SHUTDOWN,
-} SELECT_TDS;
+	VEHICLE,
+	STATIC
+} PRESSURE_SYSTEM_TYPE;
 
 /**
  * Functions that are directly called from MenuList
@@ -158,12 +152,7 @@ void invokeST5(bool);
 /*  Main Output Control functions  */
 void memSaverST3(void);
 bool roSaverST1(void);
-bool checkTdsTemperatureWarnings(void);
-bool checkTdsThresholdWarnings(void);
-void checkTdsShutdownWarnings(void);
-void monitorTdsCycle(void);
 bool isTDSConnected(tdsSensor);
-void calCurrentTdsReading(void);
 void controlPeripherals(void);
 void controlSetup(void);
 
@@ -171,6 +160,6 @@ void controlSetup(void);
 extern TdsValues setTDS;
 extern WarningFlags TdsWarn;
 extern WarningFlags isTdsWarningEnable;
-extern WarningFlags tempTdsWarning;
+extern PRESSURE_SYSTEM_TYPE presSysType;
 
 #endif /* INC_CONTROLS07_H_ */

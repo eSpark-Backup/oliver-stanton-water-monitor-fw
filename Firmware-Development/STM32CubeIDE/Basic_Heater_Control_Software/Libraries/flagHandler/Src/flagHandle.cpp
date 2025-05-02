@@ -409,11 +409,11 @@ void FlagHandle::flagsInit()								//Implement flashRetrieve() here
 //	flashRetrieve();
 	setFlag(Settings, WLED, true);
 	setFlag(Settings, BUZZER, true);
+#ifndef MENU_07
 	setFlag(Status,   AUTO_FILL, true);
 	setFlag(Settings, AUTO_FILL, true);
 	setFlag(Status,   AUTO_FLUSH, false);
 	setFlag(Settings, AUTO_FLUSH, false);
-#ifndef MENU_07
 	setFlag(Status, WASTE_RATIO, true);
 	setFlag(Settings, WASTE_RATIO, true);
 #endif
