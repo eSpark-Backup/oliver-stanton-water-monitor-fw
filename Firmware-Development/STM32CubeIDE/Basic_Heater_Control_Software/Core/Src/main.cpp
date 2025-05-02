@@ -210,9 +210,17 @@ static void MX_ADC_Init(void)
 
   /** Configure for the selected ADC regular channel to be converted.
   */
-  sConfig.Channel = ADC_CHANNEL_1;
+  sConfig.Channel = ADC_CHANNEL_0;
   sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
   sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel to be converted.
+  */
+  sConfig.Channel = ADC_CHANNEL_1;
   if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -579,17 +587,6 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
-  // /*Configure GPIO pin Output Level */
-  // HAL_GPIO_WritePin(GPIOE, TDS3_T1_Pin|TDS3_T2_Pin|LED3_Pin|MEM_SAVER_Pin
-  //                         |PWM_CNTRL_Pin|TDS2_T1_Pin|TDS2_T2_Pin, GPIO_PIN_RESET);
-
-  // /*Configure GPIO pin Output Level */
-  // HAL_GPIO_WritePin(GPIOC, LED1_Pin|SHDN_shutdown_Pin|AUTO_FILL_Pin|MainHeater_Pin
-  //                         |PUMPS_Control_Pin, GPIO_PIN_RESET);
-
-  // /*Configure GPIO pin Output Level */
-  // HAL_GPIO_WritePin(GPIOA, TDS4_T1_Pin|TDS4_T2_Pin|LED2_Pin, GPIO_PIN_RESET);
-
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, SHDN_shutdown_Pin|AUTO_FILL_Pin|MainHeater_Pin|PUMPS_Control_Pin, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(GPIOC, LED1_Pin, GPIO_PIN_SET);
@@ -647,8 +644,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(SW7_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : AuxHeater_Pin TDS1_T1_Pin TDS1_T2_Pin RO_SAVER_Pin
-                           W_LED_CTRL_Pin R_CNTRL_Pin G_CNTRL_Pin B_CNTRL_Pin */
   GPIO_InitStruct.Pin = AuxHeater_Pin|TDS1_T1_Pin|TDS1_T2_Pin|RO_SAVER_Pin|AUTO_FLUSH_Pin
                           |W_LED_CTRL_Pin|R_CNTRL_Pin|G_CNTRL_Pin|B_CNTRL_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -691,7 +686,6 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
 }
-
 
 /* USER CODE BEGIN 4 */
 

@@ -84,6 +84,8 @@ void Error_Handler(void);
 #define TDS3_AN1_GPIO_Port GPIOC
 #define TDS3_AN2_Pin GPIO_PIN_3
 #define TDS3_AN2_GPIO_Port GPIOC
+#define PS_AN0_Pin GPIO_PIN_0
+#define PS_AN0_GPIO_Port GPIOA
 #define TDS4_AN1_Pin GPIO_PIN_1
 #define TDS4_AN1_GPIO_Port GPIOA
 #define TDS4_AN2_Pin GPIO_PIN_2
