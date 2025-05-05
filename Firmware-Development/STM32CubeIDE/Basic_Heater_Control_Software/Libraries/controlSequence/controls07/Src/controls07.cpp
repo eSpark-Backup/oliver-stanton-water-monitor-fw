@@ -89,7 +89,7 @@ bool isSensConnected(uint8_t sensor)
 	{
 		case PRESSURE_SENSOR:
 		{
-			if(pSens.readPS()) return true;
+			if(pSens.readPS() > 0) return true;
 			break;
 		}
 		default:
@@ -273,18 +273,23 @@ void memSaverST3()
 void checkPressureSensor(void)
 {
 	static long lastCycle = 0u;
-	static bool firstUse = true;
+	static bool subsequentUse = false;
 	int cur_pSens = 0;
 
-	if (HAL_GetTick() - lastCycle < 1000)
+	if (HAL_GetTick() - lastCycle < 1000 || !(Flags.flagStatus(Status, MEM_SAVER) && Flags.flagStatus(Status, AUTO_FILL)))
 		return;
 
 	if (isSensConnected(PRESSURE_SENSOR))
 	{
 		cur_pSens = readSens(PRESSURE_SENSOR);
-		DEBUG_RTT(LOG_INFO, "***Pressure Sensor : %d psi***", readSens(PRESSURE_SENSOR));
 	}
-
+	else
+	{
+		menu.Display_Log("Pressure Sensor is not connected");
+		lastCycle = HAL_GetTick();
+		return;
+	}
+	
 	if (Flags.flagStatus(Status, LEVEL_SENSOR))
 	{
 		if (presSysType == STATIC && !Flags.flagStatus(Status, AUTO_FILL))
@@ -308,8 +313,17 @@ void checkPressureSensor(void)
 			}
 		}
 	}
-	else if(!Flags.flagStatus(Status, LEVEL_SENSOR) && Flags.flagStatus(Status, AUTO_FILL))
+	else if(!Flags.flagStatus(Status, LEVEL_SENSOR))
 	{
+		if(!subsequentUse)
+		{
+			recalibratePressure(&subsequentUse);
+			lastCycle = HAL_GetTick();
+			return;
+		}
+		if(!Flags.flagStatus(Status, AUTO_FILL) || !Flags.flagStatus(Status, MEM_SAVER_PAUSE))
+			return;
+
 		bool dispMsg = false;
 
 		if (!Flags.flagStatus(Status, AUTO_FLUSH) && Flags.timeElapsed(AUTO_FLUSH, FOD_AUTORUN_DELAY_PERIOD))
@@ -349,7 +363,7 @@ void controlPeripherals(void)
 {
 	memSaverST3();
 	roSaverST1();
-	if(Flags.flagStatus(Settings, PRESSURE_SENSOR)){
+	if(Flags.flagStatus(Settings, PRESSURE_SENSOR)) {
 		checkPressureSensor();	}
 }
 

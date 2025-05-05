@@ -80,7 +80,7 @@ protected:
 	   struct {
 	   uint64_t 		        :32;
 	   uint64_t Prop_Mixing     :1;
-	   uint64_t        			:1;
+	   uint64_t Pressure_Sensor	:1;
 	   uint64_t Auto_Flush      :1;
 	   uint64_t Pump_1          :1;
 	   uint64_t Pump_2          :1;

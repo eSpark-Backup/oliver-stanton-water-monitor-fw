@@ -9,7 +9,7 @@ bool isMenuLabelMatch(MenuItem *menu, const MenuItem &targetThreshold, uint8_t i
 	return strcmp(menu->Items[index].label, targetThreshold.Items[index].label) == 0;
 }
 
-bool isMenuMatch(MenuItem *menu1, const MenuItem &menu2, uint8_t index = 0)
+bool isMenuMatch(MenuItem *menu1, const MenuItem &menu2, uint8_t index)
 {
 	return menu1->Items[index].prev == menu2.Items[index].prev &&
 		   menu1->Items[index].next == menu2.Items[index].next &&
@@ -161,7 +161,7 @@ bool presAlertOpt(uint32_t argChoice, MenuItem *argMenu)
 	return true;
 }
 
-void calibrationAlgo()
+bool calibrationAlgo()
 {
 	if (ButtonE.period() > MINIMUM_PRESS && ButtonE.period() < SHORT_PRESS)
 	{
@@ -186,53 +186,93 @@ void calibrationAlgo()
 		invokeST1(false); invokeST2(true);	invokeST3(true); invokeST4(false); invokeST5(false);
 		dt3_ps.fillingBoost = readSens(PRESSURE_SENSOR);
 		
-		Disp->display("Pressure Sensor Calibration Complete");
+		Disp->display("Pressure Sensor Calibration Complete\n");
+		return true;
 	}
+	return false;
 }
 
-bool calibratePressure(uint32_t argChoice, MenuItem *argMenu)
+bool recalibratePressure(bool *recalibrate)
 {
+	
 	static bool firstUse = true;
-	static bool commenceCalibration = false;
+	static bool cycleCommenced = false;
 	static long lastCycle = 0u;
 	static MenuItem * previousMenu = nullptr;
-
-	if (HAL_GetTick() - lastCycle < 5000)
-		return false;
-
-	if (!Flags.flagStatus(Status, LEVEL_SENSOR) && firstUse && !commenceCalibration) // closed
+	bool localCalibrate = *recalibrate;
+	
+	// if (HAL_GetTick() - lastCycle < 1000)
+	// 	return false;
+	
+	if (!Flags.flagStatus(Status, LEVEL_SENSOR) && firstUse && !cycleCommenced) // closed
 	{
-		if(isMenuMatch(currentM, fodMenu07) && previousMenu != currentM) //callibrate mode
+		if(previousMenu != currentM) //callibrate mode
 		{
-			Disp->display("Pressure Sensor Calibration Required, press ENTER to start");
-			
-			if (ButtonE.period() > MINIMUM_PRESS && ButtonE.period() < SHORT_PRESS)
-			{
-				Disp->display("!!! ENSURE WATER INLET, WASTE OUTLET, and ELECTRIC MAINS HOOKUP IS CONNECTED AND TURNED ON !!!");
-				commenceCalibration = true;
-				ButtonE.reset();
-			}
-			else if (ButtonB.period() > MINIMUM_PRESS && ButtonB.period() < SHORT_PRESS)
-			{
-				firstUse = true;
-				commenceCalibration = false;
-			}
+			Disp->display("Pressure Sensor Calibration Required, press ENTER to start\n");
+			cycleCommenced = true;
 			previousMenu = currentM;
 		}
-
-		firstUse = false;
 	}
-	else if(commenceCalibration)
+	else if(cycleCommenced)
 	{
-		Disp->display("Press ENTER to start Calibration");
-		calibrationAlgo();
-		commenceCalibration = false;
+		if (ButtonE.period() > MINIMUM_PRESS && ButtonE.period() < SHORT_PRESS)
+		{
+			Disp->display("!!! ENSURE WATER INLET, WASTE OUTLET, and ELECTRIC MAINS HOOKUP IS CONNECTED AND TURNED ON !!!\n");
+			*recalibrate = true;
+			firstUse = false;
+			cycleCommenced = false;
+			ButtonE.reset();
+		}
+		else if (ButtonB.period() > MINIMUM_PRESS && ButtonB.period() < SHORT_PRESS)
+		{
+			*recalibrate = false;
+			firstUse = true;
+		}
 	}
-	// else if(firstUse)
-	// {
-	// 	Disp->display("Are you sure you want to re-calibrate the pressure sensor?");
-		
-	// }
+	// menu.Display_Log("*recalibrate: %d\n",*recalibrate);
+	if(!cycleCommenced && !firstUse)
+	{
+		Disp->display("Press ENTER to start calibration\n");
+		*recalibrate = calibrationAlgo();
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}
+
+bool pressureSnsrcalibration(uint32_t argChoice, MenuItem *argMenu)
+{
+	static bool calibratedOnce = false;
+	if (ButtonE.state())
+	{
+		if (!calibratedOnce)
+		{
+			backAndForthSetup_07();
+			recalibratePressure(&calibratedOnce);
+			if(!calibratedOnce) ButtonE.reset();
+		}
+		else if (argChoice == 1)
+		{
+			menu.Display_Log("dts_ps_standby: %d\n"
+							 "dts_ps_autoflush_boost: %d\n"
+							 "dts_ps_autoflush_noboost: %d\n"
+							 "dts_ps_filling_noboost: %d\n"
+							 "dts_ps_filling_boost: %d\n",
+							 dt3_ps.standby,
+							 dt3_ps.autoflushBoost,
+							 dt3_ps.autoflushNoBoost,
+							 dt3_ps.fillingNoBoost,
+							 dt3_ps.fillingBoost);
+		}
+		else if (argChoice == 2)
+		{
+			Disp->display("Are you sure you want to re-calibrate the pressure sensor?\n");
+			calibratedOnce = false;
+			ButtonE.reset();
+		}
+	}
 	else
 	{
 		return false;

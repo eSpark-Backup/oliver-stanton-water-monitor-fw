@@ -30,7 +30,7 @@ void PS::calculatePS(void)
     if (this->analogValueAN0 > adcMax) this->analogValueAN0 = adcMax;
 
     this->psValue = ((float)(this->analogValueAN0 - adcMin) / (adcMax - adcMin)) * MAX_PS_PPM;
-	// DEBUG_RTT(LOG_INFO, "Pressure Sensor : analog %f psi***", analogValueAN0);
+	// DEBUG_RTT(LOG_INFO, "Pressure Sensor : psValue: %d analog %f psi***", (int)psValue, analogValueAN0);
 }
 
 void PS::psADCSelectCH(uint32_t CH)
