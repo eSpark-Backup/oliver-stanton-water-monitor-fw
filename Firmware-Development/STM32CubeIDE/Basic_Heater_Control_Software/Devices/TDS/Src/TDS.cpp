@@ -14,8 +14,11 @@ int TDS::readTDS()
 {
 	getTDSValue();
 	calculateTDS();
-	if (fmod(tdsValue, 1000.0) == 0.0 || tdsValue < TDS_DUMMY_VALUE)
-		return (int)this->tdsValue;
+	if (fmod(tdsValue, 100.0) == 0.0 || tdsValue < TDS_DUMMY_VALUE)
+	return (int)this->tdsValue;
+	// {
+	// 	DEBUG_RTT(LOG_ERROR, "tdsValue : %d", tdsValue);
+	// }
 }
 
 int TDS::readTemp()

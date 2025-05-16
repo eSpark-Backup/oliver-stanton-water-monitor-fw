@@ -97,3 +97,7 @@ extern struct MenuItem llTds_intro08, llTds_mainMenu08, llTds_purificationMenu08
 
 extern struct MenuItem intro07, mainMenu07, fodMenu07, selectPressureSetting, fodOptnsOff07, presAlertOptns, presCtrlOptns,
 					   presSystemTypeOptns, presAlertOptns, pFillingProdOptns, pFlushProdOptns, presCalibrateOptns, setAutoFill;
+//-------------------------------------------------------------------------------------
+
+extern struct MenuItem pdsTds_intro, pdsTds_mainMenu, pdsTds_Menu, pdsTds_haltMenu, pdsTds_delTDS, pdsTds_delTDSThreshold,
+					   pdsTds_delTDSTemperature, pdsTds_delTDSShutdown, pdsTds_delTempShutdown, pdsTds_coldWeatherDynamics, pumpCntrlOptns;

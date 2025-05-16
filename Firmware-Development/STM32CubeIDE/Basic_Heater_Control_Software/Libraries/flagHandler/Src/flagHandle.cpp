@@ -110,22 +110,23 @@ void FlagHandle::update(void)
 			statusFlagTimeStamp[AUTO_FILL] = HAL_GetTick();
 		}
 	}
-#ifndef MENU_07
-	if (HAL_GPIO_ReadPin(PUMPS_Control_GPIO_Port, PUMPS_Control_Pin) != flagStatus(Status, PUMP_2)) //PUMP1 will be added as well
+
+	if (HAL_GPIO_ReadPin(PUMPS_Control_GPIO_Port, PUMPS_Control_Pin) != flagStatus(Status, PUMP_1)) //PUMP1 will be added as well
 	{
-		if (flagStatus(Status, PUMP_2)) // PUMP1 will be added as well
+		if (flagStatus(Status, PUMP_1)) // PUMP1 will be added as well
 		{
 			HAL_GPIO_WritePin(PUMPS_Control_GPIO_Port, PUMPS_Control_Pin, GPIO_PIN_SET);
 			DEBUG_RTT(LOG_WARNING, "Pump control is Enabled.");
-			statusOnFlagTimeStamp[PUMP_2] = HAL_GetTick();
+			statusOnFlagTimeStamp[PUMP_1] = HAL_GetTick();
 		}
 		else
 		{
 			HAL_GPIO_WritePin(PUMPS_Control_GPIO_Port, PUMPS_Control_Pin, GPIO_PIN_RESET);
 			DEBUG_RTT(LOG_WARNING, "Pump control is Disabled.");
-			statusFlagTimeStamp[PUMP_2] = HAL_GetTick();
+			statusFlagTimeStamp[PUMP_1] = HAL_GetTick();
 		}
 	}
+#ifndef MENU_07
 	if(HAL_GPIO_ReadPin(_PUMP2_GPIO_Port, _PUMP2_Pin) != flagStatus(Status, PUMP_2))
 	{
 		if(flagStatus(Status, PUMP_2))
@@ -142,6 +143,21 @@ void FlagHandle::update(void)
 		}
 	}
 #endif
+	if(HAL_GPIO_ReadPin(_PUMP1_GPIO_Port, _PUMP1_Pin) != flagStatus(Status, PUMP_1))
+	{
+		if(flagStatus(Status, PUMP_1))
+		{
+			HAL_GPIO_WritePin(_PUMP1_GPIO_Port, _PUMP1_Pin, GPIO_PIN_SET);
+			DEBUG_RTT(LOG_WARNING, "Pump1_ST7 turned on.");
+			statusOnFlagTimeStamp[PUMP_1] = HAL_GetTick();
+		}
+		else
+		{
+			HAL_GPIO_WritePin(_PUMP1_GPIO_Port, _PUMP1_Pin, GPIO_PIN_RESET);
+			DEBUG_RTT(LOG_WARNING, "Pump1_ST7 turned off.");
+			statusFlagTimeStamp[PUMP_1] = HAL_GetTick();
+		}
+	}
 	///Boost signal gpio read/write to be implemented
 
 //	if(HAL_GPIO_ReadPin(W_LED_CTRL_GPIO_Port, W_LED_CTRL_Pin) != flagStatus(Status, AUTO_FILL))	{
@@ -288,22 +304,29 @@ bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor)
 		else if(sensor == AUTO_FLUSH)				return FlagsReg.settings.Auto_Flush;
 		else if(sensor == AUTO_FILL)				return FlagsReg.settings.Auto_Fill;
 		else if(sensor == PRESSURE_SENSOR)			return FlagsReg.settings.Pressure_Sensor;
+#if MENU_07 == 1
 		else if(sensor == PROP_MIXER)				return FlagsReg.settings.Prop_Mixing;
+#endif
 #ifndef MENU_07
 		else if(sensor == BOOST_PRD_SIG)			return FlagsReg.settings.Boost_Prd_Sig;
 		else if(sensor == BOOST_AF_SIG)				return FlagsReg.settings.Boost_Af_Sig;
 		else if(sensor == PUMP_2)					return FlagsReg.settings.Pump_2;
 		else if(sensor == WASTE_RATIO)				return FlagsReg.settings.wasteRatio;
 #endif
+		else if(sensor == PUMP_1)					return FlagsReg.settings.Pump_1;
 		else if(sensor == MAINS_TDS_THRESHOLD)		return FlagsReg.settings.mainsTdsThresh;
 		else if(sensor == RO_TDS_THRESHOLD)			return FlagsReg.settings.roTdsThresh;
 		else if(sensor == DI_TDS_THRESHOLD)			return FlagsReg.settings.diTdsThresh;
+		else if(sensor == DEL_TDS_THRESHOLD)		return FlagsReg.settings.delTdsThresh;
 		else if(sensor == MAINS_TDS_TEMPERATURE)	return FlagsReg.settings.mainsTdsTemp;
 		else if(sensor == RO_TDS_TEMPERATURE)		return FlagsReg.settings.roTdsTemp;
 		else if(sensor == DI_TDS_TEMPERATURE)		return FlagsReg.settings.diTdsTemp;
+		else if(sensor == DEL_TDS_TEMPERATURE)		return FlagsReg.settings.delTdsTemp;
 		else if(sensor == MAINS_TDS_SHUTDOWN)		return FlagsReg.settings.mainsTdsShutdown;
 		else if(sensor == RO_TDS_SHUTDOWN)			return FlagsReg.settings.roTdsShutdown;
 		else if(sensor == DI_TDS_SHUTDOWN)			return FlagsReg.settings.diTdsShutdown;
+		else if(sensor == DEL_TDS_SHUTDOWN)			return FlagsReg.settings.delTdsShutdown;
+		else if(sensor == DEL_COLD_DYNAMICS)		return FlagsReg.settings.delColdDynamics;
 		else if(sensor == BATTERY_LOW_SHUTDON)		return FlagsReg.settings.Battery_low_shutdown;
 		else if(sensor == BATTERY_POWER_MONITOR)	return FlagsReg.settings.Battery_power_monitor;
 	}
@@ -319,13 +342,16 @@ bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor)
 		else if(sensor == MEM_SAVER)			return FlagsReg.status.Mem_Saver;
 		else if(sensor == AUTO_FLUSH)			return FlagsReg.status.Auto_Flush;
 		else if(sensor == AUTO_FILL)			return FlagsReg.status.Auto_Fill;
+#if MENU_07 == 1
 		else if(sensor == PROP_MIXER)			return FlagsReg.status.Prop_Mixing;
+#endif
 #ifndef MENU_07
 		else if(sensor == WASTE_RATIO)			return FlagsReg.status.wasteRatio;
 		else if(sensor == BOOST_PRD_SIG)		return FlagsReg.status.Boost_Sig;
 		else if(sensor == BOOST_AF_SIG)			return FlagsReg.status.Boost_Sig;
 		else if(sensor == PUMP_2)				return FlagsReg.status.Pump_2;
 #endif
+		else if(sensor == PUMP_1)				return FlagsReg.status.Pump_1;
 		else if(sensor == PURE_CYCLE)			return FlagsReg.status.Pure_CYCLE;
 		else if(sensor == BATTERY_CHARGING_DETECTED) return FlagsReg.status.Battery_charging_detected;
 		else if(sensor == BATTERY_CRITICAL)		return FlagsReg.status.Battery_critical;
@@ -357,22 +383,29 @@ bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state)
 		else if(sensor == AUTO_FLUSH)				FlagsReg.settings.Auto_Flush = state;
 		else if(sensor == AUTO_FILL)				FlagsReg.settings.Auto_Fill = state;
 		else if(sensor == PRESSURE_SENSOR)			FlagsReg.settings.Pressure_Sensor = state;
+#if MENU_07 == 1
 		else if(sensor == PROP_MIXER)				FlagsReg.settings.Prop_Mixing = state;
+#endif
 #ifndef MENU_07
 		else if(sensor == BOOST_PRD_SIG)			FlagsReg.settings.Boost_Prd_Sig = state;
 		else if(sensor == BOOST_AF_SIG)				FlagsReg.settings.Boost_Af_Sig = state;
 		else if(sensor == PUMP_2)					FlagsReg.settings.Pump_2 = state;
 		else if(sensor == WASTE_RATIO)				FlagsReg.settings.wasteRatio = state;
 #endif
+		else if(sensor == PUMP_1)					FlagsReg.settings.Pump_1 = state;
 		else if(sensor == MAINS_TDS_THRESHOLD)		FlagsReg.settings.mainsTdsThresh = state;
 		else if(sensor == RO_TDS_THRESHOLD)			FlagsReg.settings.roTdsThresh = state;
 		else if(sensor == DI_TDS_THRESHOLD)			FlagsReg.settings.diTdsThresh = state;
+		else if(sensor == DEL_TDS_THRESHOLD)		FlagsReg.settings.delTdsThresh = state;
 		else if(sensor == MAINS_TDS_TEMPERATURE)	FlagsReg.settings.mainsTdsTemp = state;
 		else if(sensor == RO_TDS_TEMPERATURE)		FlagsReg.settings.roTdsTemp = state;
 		else if(sensor == DI_TDS_TEMPERATURE)		FlagsReg.settings.diTdsTemp = state;
+		else if(sensor == DEL_TDS_TEMPERATURE)		FlagsReg.settings.delTdsTemp = state;
 		else if(sensor == MAINS_TDS_SHUTDOWN)		FlagsReg.settings.mainsTdsShutdown = state;
 		else if(sensor == RO_TDS_SHUTDOWN)			FlagsReg.settings.roTdsShutdown = state;
 		else if(sensor == DI_TDS_SHUTDOWN)			FlagsReg.settings.diTdsShutdown = state;
+		else if(sensor == DEL_TDS_SHUTDOWN)			FlagsReg.settings.delTdsShutdown = state;
+		else if(sensor == DEL_COLD_DYNAMICS)		FlagsReg.settings.delColdDynamics = state;
 		else if(sensor == BATTERY_LOW_SHUTDON)		FlagsReg.settings.Battery_low_shutdown = state;
 		else if(sensor == BATTERY_POWER_MONITOR)	FlagsReg.settings.Battery_power_monitor = state;
 	}
@@ -388,13 +421,16 @@ bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state)
 		else if(sensor == MEM_SAVER)		FlagsReg.status.Mem_Saver = state;
 		else if(sensor == AUTO_FLUSH)		FlagsReg.status.Auto_Flush = state;
 		else if(sensor == AUTO_FILL)		FlagsReg.status.Auto_Fill = state;
+#if MENU_07 == 1
 		else if(sensor == PROP_MIXER)		FlagsReg.status.Prop_Mixing = state;
+#endif
 #ifndef MENU_07
 		else if(sensor == WASTE_RATIO)		FlagsReg.status.wasteRatio = state;
 		else if(sensor == BOOST_PRD_SIG)	FlagsReg.status.Boost_Sig = state;
 		else if(sensor == BOOST_AF_SIG)		FlagsReg.status.Boost_Sig = state;
 		else if(sensor == PUMP_2)			FlagsReg.status.Pump_2 = state;
 #endif
+		else if(sensor == PUMP_1)			FlagsReg.status.Pump_1 = state;
 		else if(sensor == PURE_CYCLE)		FlagsReg.status.Pure_CYCLE = state;
 		else if(sensor == BATTERY_CHARGING_DETECTED) FlagsReg.status.Battery_charging_detected = state;
 		else if(sensor == BATTERY_CRITICAL)		FlagsReg.status.Battery_critical= state;
@@ -404,7 +440,7 @@ bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state)
 		else if(sensor == BATTERY_FLAT_SHUTDOWN)		FlagsReg.status.Battery_flat_shutdown = state;
 		else if(sensor == BATTERY_WARNING_SPIKES)		FlagsReg.status.Battery_warning_spikes = state;
 		else if(sensor == BATTERY_PUMP_IGNORE_WARNING)		FlagsReg.status.Battery_Pump_Ignore = state;
-		else if(sensor == TRIGGER_WARNING) FlagsReg.status.Battery_warning = state;
+		else if(sensor == TRIGGER_WARNING)	 FlagsReg.status.Battery_warning = state;
 	}
 	// DEBUG_RTT(LOG_INFO, "Exiting setFlag.");
 	return false;
@@ -415,7 +451,7 @@ void FlagHandle::flagsInit()								//Implement flashRetrieve() here
 //	flashRetrieve();
 	setFlag(Settings, WLED, true);
 	setFlag(Settings, BUZZER, true);
-	setFlag(Settings, PRESSURE_SENSOR, true);
+	// setFlag(Settings, PRESSURE_SENSOR, true);
 #ifndef MENU_07
 	setFlag(Status,   AUTO_FILL, true);
 	setFlag(Settings, AUTO_FILL, true);
@@ -424,6 +460,13 @@ void FlagHandle::flagsInit()								//Implement flashRetrieve() here
 	setFlag(Status, WASTE_RATIO, true);
 	setFlag(Settings, WASTE_RATIO, true);
 #endif
+
+	setFlag(Settings, PUMP_1, true);
+	setFlag(Settings, DEL_TDS_SHUTDOWN, false);
+	setFlag(Settings, DEL_TEMP_SHUTDOWN, false);
+	setFlag(Settings, DEL_COLD_DYNAMICS, false);
+	setFlag(Settings, DEL_TDS_THRESHOLD, true);
+	setFlag(Settings, DEL_TDS_TEMPERATURE, true);
 // 	setFlag(Settings, BATTERY_LOW_SHUTDON, true);
 // 	setFlag(Settings, BATTERY_POWER_MONITOR, true);
 // 	setFlag(Settings, MAINS_TDS_THRESHOLD, true);

@@ -19,6 +19,8 @@
 	#include "controls05/Inc/controls05.h"
 #elif MENU_07
 	#include "controls07/Inc/controls07.h"
+#elif LLPDS_TDS_MENU
+	#include "pdsTdsControls/Inc/pdsTdsControls.h"
 #elif LLTDS_MENU_08
 	#include "tdsControls08/Inc/tdsControls08.h"
 #else

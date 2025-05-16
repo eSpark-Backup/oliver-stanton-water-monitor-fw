@@ -97,7 +97,7 @@ void BatteryMonitor::powerManager(void)
 	BatteryVoltage = 13.2;
 #endif
 
-	if ((Monitor.isActivityDetected == false && (HAL_GetTick() - lastStandByMessageDisplayed) > 1000) 
+	if ((Monitor.isActivityDetected == false && (HAL_GetTick() - lastStandByMessageDisplayed) > 5000) 
 	&& (strcmp(Menu->Items[g_csIndex].label, DeviceStandByScreen.Items[0].label) != 0 && (strcmp(Menu->Items[g_csIndex].label, DeviceShutDown.Items[0].label) != 0)))
 	{
 
@@ -138,7 +138,7 @@ else
 	if((strcmp(Menu->Items[g_csIndex].label,Battery_Index.Items[g_csIndex].label)==0) || (strcmp(Menu->Items[g_csIndex].label,DeviceStandByScreen.Items[0].label)==0))
 	{
 
-		if (BatteryVoltage > BATTERY_CRITICAL_VOLTAGE 
+		if (((HAL_GetTick()-lastMessageDisplayed) > 5000) && BatteryVoltage > BATTERY_CRITICAL_VOLTAGE 
 			&& ((BatteryVoltage - LastBatteryVoltage) > CHANGE_IN_BATTERY_VOLTAGE || (LastBatteryVoltage - BatteryVoltage) > CHANGE_IN_BATTERY_VOLTAGE))
 		{
 			menu.Display_Log("Updated Battery Voltage: %.2f v\r\n"
@@ -259,7 +259,7 @@ else
 		//		Flags.setFlag(Status, BATTERY_HIGH, false);
 		//	}
 
-		if ((HAL_GetTick()-lastMessageDisplayed)>1000 )
+		if ((HAL_GetTick()-lastMessageDisplayed)>5000 )
 		{
 			if(Flags.flagStatus(Status, BATTERY_LOW))
 			{

@@ -6,14 +6,14 @@ void EventHandle::toggleInfinite()
     uint32_t currentTime = HAL_GetTick();
     if (state_ && (currentTime - lastToggleTime_) >= onPeriodms_[0] )  	//This will turn off the state of object
     {
-    	DEBUG_RTT(LOG_ERROR, "toggleInfinite: OFF STATE -> on_period_ms_[%d] is %d", 0, onPeriodms_[0]);//i, params[i]);
+    	// DEBUG_RTT(LOG_ERROR, "toggleInfinite: OFF STATE -> on_period_ms_[%d] is %d", 0, onPeriodms_[0]);//i, params[i]);
 		stopOutput();
 		state_ = false;
 		lastToggleTime_ = currentTime;
 	}
     else if (!state_ && (((currentTime - lastToggleTime_) >= offPeriodms_) || blinkCount_ == 0))
     {
-    	DEBUG_RTT(LOG_ERROR, "toggleInfinite: ON STATE -> off_period_ms_ is %d", offPeriodms_);//i, params[i]);
+    	// DEBUG_RTT(LOG_ERROR, "toggleInfinite: ON STATE -> off_period_ms_ is %d", offPeriodms_);//i, params[i]);
 		setOutput();
 		state_ = true;
 		lastToggleTime_ = currentTime;
@@ -30,7 +30,7 @@ void EventHandle::toggle()
 	uint32_t currentTime = HAL_GetTick();
 	if (state_ && (currentTime - lastToggleTime_) >= onPeriodms_[(blinkCount_)-1] )		//This will turn off the state of object
 	{
-		DEBUG_RTT(LOG_ERROR, "OFF STATE -> on_period_ms_[%d] is %d", blinkCount_-1, onPeriodms_[(blinkCount_)-1]);//i, params[i]);
+		// DEBUG_RTT(LOG_ERROR, "OFF STATE -> on_period_ms_[%d] is %d", blinkCount_-1, onPeriodms_[(blinkCount_)-1]);//i, params[i]);
 		stopOutput();
 		state_ = false;
 		lastToggleTime_ = currentTime;
@@ -102,20 +102,20 @@ void EventHandle::setOutputPattern(int8_t numBlinks, uint16_t timePeriod, ...)
 	blinkCount_ = 0;
 	va_start(paramList, timePeriod);
 
-	DEBUG_RTT(LOG_ERROR, "num_blinks_ is %d", numBlinks_);
-	DEBUG_RTT(LOG_ERROR, "off_period_ms_ is %d", offPeriodms_);
+	// DEBUG_RTT(LOG_ERROR, "num_blinks_ is %d", numBlinks_);
+	// DEBUG_RTT(LOG_ERROR, "off_period_ms_ is %d", offPeriodms_);
 	if(numBlinks_ > 0)
 	{
 		for(uint16_t i = 0; i < numBlinks_; i++)
 		{
 			onPeriodms_[i] = va_arg(paramList, uint32_t);
-			DEBUG_RTT(LOG_ERROR, "IF::on_period_ms_[%d] is %d", i, onPeriodms_[i]);//i, params[i]);
+			// DEBUG_RTT(LOG_ERROR, "IF::on_period_ms_[%d] is %d", i, onPeriodms_[i]);//i, params[i]);
 		}
 	}
 	else
 	{
 		onPeriodms_[0] = va_arg(paramList, uint32_t);
-		DEBUG_RTT(LOG_ERROR, "ELSE::on_period_ms_[%d] is %d", 0, onPeriodms_[0]);//i, params[i]);
+		// DEBUG_RTT(LOG_ERROR, "ELSE::on_period_ms_[%d] is %d", 0, onPeriodms_[0]);//i, params[i]);
 		blinkCount_ = 1;
 	}
 

@@ -299,8 +299,8 @@ bool roSaverOff(uint32_t argChoice, MenuItem *argMenu)
 
 void mainMenuFunc()
 {
-	currentM = &mainMenu07;
-	menu.displayMenu(&mainMenu07, mainMenu.Items[0].num_items);
+	currentM = &pdsTds_mainMenu;
+	menu.displayMenu(&pdsTds_mainMenu, mainMenu.Items[0].num_items);
 }
 
 bool autoFlushOptions(uint32_t argChoice, MenuItem *argMenu)

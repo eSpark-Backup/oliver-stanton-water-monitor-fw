@@ -13,10 +13,10 @@
 #include "Adc_select.h"
 #include "mainApp.hpp"
 
-#define TDS_DUMMY_VALUE 1000
-#define MAX_TDS_PPM 999
-#define TEMP_DUMMY_VALUE 100
-#define MAX_TEMP_C 99
+#define TDS_DUMMY_VALUE 100
+#define MAX_TDS_PPM 99
+#define TEMP_DUMMY_VALUE 50
+#define MAX_TEMP_C 50
 
 /* The Physical header of TDS probes are mentioned below
  *
