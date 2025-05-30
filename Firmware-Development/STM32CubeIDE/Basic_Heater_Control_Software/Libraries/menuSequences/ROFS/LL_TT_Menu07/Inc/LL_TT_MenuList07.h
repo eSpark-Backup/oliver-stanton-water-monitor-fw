@@ -29,7 +29,7 @@ MenuItem remote_TT_intro07 = {
 MenuItem remote_TT_mainMenu07 = {
 	remote_TT_mainMenuSetup07,
 	remote_TT_mainMenuSelection07,
-	{{"Remote Fob Menu", nullptr, nullptr, nullptr, &intro, 0, 1}}
+	{{"Remote Fob Menu", nullptr, nullptr, nullptr, &remote_TT_intro07, 0, 1}}
 };
 
 #endif

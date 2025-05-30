@@ -310,6 +310,22 @@ void monitorTdsDel(void)
 	lastMsgDisplayed = HAL_GetTick();
 }
 
+void remoteFobSequence(void)
+{
+	static HexColor colorStatus = STATUS_BLUE;
+	if(colorStatus == STATUS_BLUE)
+	{
+		((RgbDriver*)WLED1)->setRgbColor(STATUS_BLUE);
+		WLED1->setOutputPattern(1, 100, 1000);
+		colorStatus = GREEN;
+	}
+	else if(colorStatus == GREEN)
+	{
+		((RgbDriver*)WLED1)->setRgbColor(colorStatus);
+		WLED1->setOutputPattern(1, 100, 1000);
+	}
+}
+
 void controlPeripherals(void)
 {
 

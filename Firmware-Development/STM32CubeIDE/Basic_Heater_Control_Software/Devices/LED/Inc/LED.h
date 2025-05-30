@@ -20,7 +20,9 @@ typedef enum
     MAGENTA = 0xFF00FF,
 	PURPLE  = 0x800080,
     WHITE   = 0xFFFFFF,
-    BLACK   = 0x000000
+    BLACK   = 0x000000,
+
+	STATUS_BLUE = 0x0FA6D1
 }	HexColor;
 
 class RgbDriver : public EventHandle{

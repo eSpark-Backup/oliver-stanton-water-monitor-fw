@@ -24,7 +24,7 @@ void remote_TT_introSetup07(void)
 
 bool remote_TT_introPageSelection07(uint32_t argChoice, MenuItem* argMenu)
 {
-	if (ButtonU.state() && argMenu->Items[choiceSelect].prev == nullptr)
+	if (ButtonE.period() >= LONG_PRESS)
 	{
 		menu.jumpToNextItem_ = true;
 		return true;
@@ -39,7 +39,7 @@ void remote_TT_mainMenuSetup07(void)
 
 bool remote_TT_mainMenuSelection07(uint32_t argChoice, MenuItem *argMenu)
 {
-	if (ButtonE.period() > MINIMUM_PRESS && ButtonE.period() < SHORT_PRESS)
+	if (ButtonE.period() >= LONG_PRESS)
 	{
 		menu.jumpToNextItem_ = true;
 		return true;
