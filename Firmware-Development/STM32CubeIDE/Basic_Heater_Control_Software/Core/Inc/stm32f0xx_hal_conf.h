@@ -303,8 +303,9 @@
 #define MENU_04                 0 /// contains TDS 05 and resin 03 logic
 #define MENU_05                 0
 #define MENU_07                 0
-#define LLPDS_TDS_MENU          1
+#define LLPDS_TDS_MENU          0
 #define LLTDS_MENU_08           0
+#define LL_TT_MENU_07           1 ///Remote Fob
 
 /* Exported macro ------------------------------------------------------------*/
 #ifdef USE_FULL_ASSERT

@@ -9,10 +9,6 @@ void introSetup(void)
 
 bool introPageSelection(uint32_t argChoice, MenuItem* argMenu)
 {
-	uint8_t numChild = argMenu->Items[choiceSelect].num_childmenus;
-	uint8_t numItems = argMenu->Items[choiceSelect].num_items;
-	uint8_t choice = choiceSelect;
-
 	if (ButtonU.state() && argMenu->Items[choiceSelect].prev == nullptr)
 	{
 		currentM = &Battery_Index;
@@ -85,9 +81,6 @@ void batIndexSetup(void)
 
 bool batIndexSelection(uint32_t argChoice, MenuItem *argMenu)
 {
-	uint8_t numChild = argMenu->Items[choiceSelect].num_childmenus;
-	uint8_t numItems = argMenu->Items[choiceSelect].num_items;
-	uint8_t choice = choiceSelect;
 	return false;
 }
 
@@ -248,8 +241,8 @@ bool roSaverThreshAdj(uint32_t argChoice, MenuItem *argMenu)
 		DEBUG_RTT(LOG_WARNING, "RO_Saver threshold value set to %d.", setTDS.roFixedThreshold);
 		return true;
 	}
-	else
-		return false;
+
+	return false;
 }
 
 bool setRoSaverThresh(uint32_t argChoice, MenuItem *argMenu)
@@ -257,6 +250,7 @@ bool setRoSaverThresh(uint32_t argChoice, MenuItem *argMenu)
 	if (argChoice == 1 && ButtonE.state())
 	{
 		roSaverThreshDefault(argChoice, argMenu);
+		return true;
 	}
 	else
 		return false;
@@ -281,6 +275,8 @@ bool roSaverOptions(uint32_t argChoice, MenuItem *argMenu)
 	}
 	else
 		return false;
+	
+	return true;
 }
 
 bool roSaverOn(uint32_t argChoice, MenuItem *argMenu)
@@ -299,8 +295,8 @@ bool roSaverOff(uint32_t argChoice, MenuItem *argMenu)
 
 void mainMenuFunc()
 {
-	currentM = &pdsTds_mainMenu;
-	menu.displayMenu(&pdsTds_mainMenu, mainMenu.Items[0].num_items);
+	currentM = &remote_TT_mainMenu07;
+	menu.displayMenu(&remote_TT_mainMenu07, remote_TT_mainMenu07.Items[0].num_items);
 }
 
 bool autoFlushOptions(uint32_t argChoice, MenuItem *argMenu)
@@ -308,6 +304,7 @@ bool autoFlushOptions(uint32_t argChoice, MenuItem *argMenu)
 	if (argChoice < 3 && ButtonE.state())
 	{
 		autoFlushEnable(argChoice == 1 ? false : true);
+		return true;
 	}
 	else
 		return false;
@@ -325,6 +322,7 @@ bool autoFillOptions(uint32_t argChoice, MenuItem *argMenu)
 	if (argChoice < 3 && ButtonE.state())
 	{
 		autoFillEnable(argChoice == 1 ? false : true);
+		return true;
 	}
 	else
 		return false;

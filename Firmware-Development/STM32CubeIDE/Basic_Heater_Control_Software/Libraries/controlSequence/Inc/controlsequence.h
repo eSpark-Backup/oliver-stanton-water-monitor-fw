@@ -23,6 +23,8 @@
 	#include "pdsTdsControls/Inc/pdsTdsControls.h"
 #elif LLTDS_MENU_08
 	#include "tdsControls08/Inc/tdsControls08.h"
+#elif LL_TT_MENU_07
+	#include "controls_LL_TT_07/Inc/controls_LL_TT_07.h"
 #else
 	#include "controls01/Inc/controls01.h"
 #endif

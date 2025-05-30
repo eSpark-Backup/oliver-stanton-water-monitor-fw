@@ -101,3 +101,6 @@ extern struct MenuItem intro07, mainMenu07, fodMenu07, selectPressureSetting, fo
 
 extern struct MenuItem pdsTds_intro, pdsTds_mainMenu, pdsTds_Menu, pdsTds_haltMenu, pdsTds_delTDS, pdsTds_delTDSThreshold,
 					   pdsTds_delTDSTemperature, pdsTds_delTDSShutdown, pdsTds_delTempShutdown, pdsTds_coldWeatherDynamics, pumpCntrlOptns;
+//-------------------------------------------------------------------------------------
+
+extern struct MenuItem remote_TT_intro07, remote_TT_mainMenu07;
