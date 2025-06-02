@@ -38,3 +38,5 @@ void remote_TT_introSetup07(void);
 bool remote_TT_introPageSelection07(uint32_t argChoice, MenuItem* argMenu);
 void remote_TT_mainMenuSetup07(void);
 bool remote_TT_mainMenuSelection07(uint32_t argChoice, MenuItem *argMenu);
+bool remote_TT_isMenuLabelMatch(MenuItem *menu, const MenuItem &targetThreshold, uint8_t index = 0);
+bool remote_TT_isMenuMatch(MenuItem *menu1, const MenuItem &menu2, uint8_t index = 0);

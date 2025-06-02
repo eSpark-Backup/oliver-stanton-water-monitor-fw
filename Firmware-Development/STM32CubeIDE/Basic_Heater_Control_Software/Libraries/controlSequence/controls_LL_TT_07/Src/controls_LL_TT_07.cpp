@@ -10,7 +10,7 @@
 #if LL_TT_MENU_07 == 1
 #include "TDS.hpp"
 #include "menu_01.h"
-#include "pdsTdsMenu.h"
+#include "LL_TT_Menu07.h"
 #include "masterLog.h"
 #include "Battery.hpp"
 
@@ -331,7 +331,7 @@ void remoteFobSequence(void)
 	{
 		DEBUG_RTT(LOG_INFO, "2. Battery: %.2f", Battery.readBattery());
 		((RgbDriver*)WLED1)->setRgbColor(colorStatus);
-		WLED1->setOutputPattern(1, 100, onTime);
+		WLED1->setOutputPattern(-1, 0, onTime);
 		colorStatus = WHITE;
 	}
 	else if(colorStatus == WHITE)
@@ -346,7 +346,7 @@ void remoteFobSequence(void)
 
 void controlPeripherals(void)
 {
-	if(!Flags.flagStatus(Status, BATTERY_LOW))
+	if(!Flags.flagStatus(Status, BATTERY_LOW) && !remote_TT_isMenuLabelMatch(currentM, remote_TT_intro07))
 	{
 		remoteFobSequence();
 	}

@@ -9,7 +9,7 @@ bool remote_TT_isMenuLabelMatch(MenuItem *menu, const MenuItem &targetThreshold,
 	return strcmp(menu->Items[index].label, targetThreshold.Items[index].label) == 0;
 }
 
-bool remote_TT_isMenuMatch(MenuItem *menu1, const MenuItem &menu2, uint8_t index = 0)
+bool remote_TT_isMenuMatch(MenuItem *menu1, const MenuItem &menu2, uint8_t index)
 {
 	return menu1->Items[index].prev == menu2.Items[index].prev &&
 		   menu1->Items[index].next == menu2.Items[index].next &&
