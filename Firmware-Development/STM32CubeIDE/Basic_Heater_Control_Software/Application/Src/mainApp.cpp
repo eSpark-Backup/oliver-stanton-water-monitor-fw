@@ -37,6 +37,7 @@ Switches ButtonB;			//Back Button obj
 Switches ButtonU;			//UP Button obj
 Switches ButtonD;			//Down Button obj
 Switches ButtonR;			//RODI Button obj
+Switches ButtonDel;			//Del Button obj
 
 // generating struct for storing GPIO_Port and GPIO_Pins for TDS sensors
 //GPIOConfig TDS1;// = {TDS1_T2_GPIO_Port, TDS1_T1_GPIO_Port, ADC_CHANNEL_10, TDS1_T2_Pin, TDS1_T1_Pin, ADC_CHANNEL_11};
@@ -133,7 +134,13 @@ bool MainApp::invokeMenu()
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-	if(GPIO_Pin==RODI_BUTTON && !ButtonR.timeStamped)
+	if(GPIO_Pin==DEL_BUTTON && !ButtonDel.timeStamped)
+	{
+		DEL_BUTTON_FLAG=true;
+		ButtonDel.saveTime();
+		DEBUG_LOG(LOG_INFO, "--DEL--");
+	}
+	else if(GPIO_Pin==RODI_BUTTON && !ButtonR.timeStamped)
 	{
 		RODI_BUTTON_FLAG=true;
 		ButtonR.saveTime();

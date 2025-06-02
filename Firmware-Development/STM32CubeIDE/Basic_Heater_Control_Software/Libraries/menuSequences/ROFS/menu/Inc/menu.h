@@ -71,6 +71,7 @@ extern Switches ButtonB;			//Back button obj
 extern Switches ButtonU;			//UP button obj
 extern Switches ButtonD;			//Down button obj
 extern Switches ButtonR;			//RODI button obj
+extern Switches ButtonDel;			//Del button obj
 
 //-----------declare MenuItem Structs defined in menuList.h down below ----------------
 extern struct MenuItem intro, mainMenu, fodMenu, fodOptns, roSaver, fodOptnsOff, roSaverOptns, roSaverThresh,

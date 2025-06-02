@@ -13,6 +13,9 @@
 
 /* Private defines -----------------------------------------------------------*/
 
+#define DEL_BUTTON			SW2_Pin
+#define DEL_BUTTON_PORT		SW2_GPIO_Port
+#define DEL_BUTTON_FLAG		sw2Flag
 #define RODI_BUTTON			SW3_Pin
 #define RODI_BUTTON_PORT	SW3_GPIO_Port
 #define RODI_BUTTON_FLAG	sw3Flag

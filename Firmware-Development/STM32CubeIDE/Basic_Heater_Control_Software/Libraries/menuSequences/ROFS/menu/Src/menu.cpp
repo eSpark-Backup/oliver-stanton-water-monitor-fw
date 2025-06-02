@@ -105,6 +105,13 @@ void Menu::navigateMenu(MenuItem* currentMenu, bool checkReturn)
 			ButtonD.reset();
 		}
 
+		// when DEL button is pressed
+		if (ButtonDel.isButtonEnabled() && ButtonDel.state())
+		{
+			DEBUG_LOG(LOG_INFO, "******* DEL Button *******\n ButtonDel.period : %d\n", ButtonDel.period());
+			ButtonDel.reset();
+		}
+
 		// when BACK button is pressed
 		if (ButtonB.isButtonEnabled() && ButtonB.state() && currentMenu->Items[g_csIndex].prev != nullptr)
 		{
@@ -191,6 +198,7 @@ void setButtonStates(std::initializer_list<SWITCHES> buttons, bool enableSelecte
 	ButtonU.enableButton(!enableSelected);
 	ButtonD.enableButton(!enableSelected);
 	ButtonR.enableButton(!enableSelected);
+	ButtonDel.enableButton(!enableSelected);
 
 	bool hasValidButton = false;
 
@@ -218,6 +226,10 @@ void setButtonStates(std::initializer_list<SWITCHES> buttons, bool enableSelecte
 			ButtonR.enableButton(enableSelected);
 			hasValidButton = true;
 			break;
+		case DEL:
+			ButtonDel.enableButton(enableSelected);
+			hasValidButton = true;
+			break;
 		case NONE:
 			hasValidButton = true;
 			break;
@@ -233,6 +245,7 @@ void setButtonStates(std::initializer_list<SWITCHES> buttons, bool enableSelecte
 		ButtonU.enableButton(true);
 		ButtonD.enableButton(true);
 		ButtonR.enableButton(true);
+		ButtonDel.enableButton(true);
 	}
 }
 
@@ -243,6 +256,7 @@ void getButtonStates()
 	ButtonU.getState(UP);
 	ButtonD.getState(DOWN);
 	ButtonR.getState(RODI);
+	ButtonDel.getState(DEL);
 }
 
 void resetButtonStates()
@@ -252,6 +266,7 @@ void resetButtonStates()
 	ButtonU.reset();
 	ButtonD.reset();
 	ButtonR.reset();
+	ButtonDel.reset();
 }
 
 void defaultMenuSetup(void)

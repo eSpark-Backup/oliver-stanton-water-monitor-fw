@@ -68,9 +68,9 @@ bool Switches::isButtonPressed(SWITCHES SW)
 		case RODI:
 			return RODI_BUTTON_FLAG;
 			break;
-//		case DEL:
-//			return DEL_Flag;
-//			break;
+		case DEL:
+			return DEL_BUTTON_FLAG;
+			break;
 		default:
 			return false;
 			break;
@@ -95,9 +95,9 @@ bool Switches::isButtonStillPressed(SWITCHES SW)
 		case RODI:
 			return HAL_GPIO_ReadPin(RODI_BUTTON_PORT, RODI_BUTTON);
 			break;
-//		case DEL:
-//				return HAL_GPIO_ReadPin(DELBUTTONPORT, DELBUTTON);
-//				break;
+		case DEL:
+			return HAL_GPIO_ReadPin(DEL_BUTTON_PORT, DEL_BUTTON);
+			break;
 		default:
 			return false;
 			break;
@@ -122,9 +122,9 @@ void Switches::resetButtonState(SWITCHES SW)
 			case RODI:
 				RODI_BUTTON_FLAG = false;
 				break;
-//			case DEL:
-//				DEL_Flag = false;
-//				break;
+			case DEL:
+				DEL_BUTTON_FLAG = false;
+				break;
 			default:
 				break;
 		}
