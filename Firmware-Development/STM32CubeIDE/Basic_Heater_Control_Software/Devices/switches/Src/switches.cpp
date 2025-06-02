@@ -136,7 +136,7 @@ void Switches::reset()
 	Button = {0, false, Button.enabled};
 }
 
-void saveTime()
+void Switches::saveTime()
 {
 	buttonPressTime = HAL_GetTick();
 	timeStamped = true;

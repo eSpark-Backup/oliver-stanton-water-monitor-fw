@@ -12,6 +12,7 @@
 #include "menu_01.h"
 #include "pdsTdsMenu.h"
 #include "masterLog.h"
+#include "Battery.hpp"
 
 #define SECONDS_TO_MS(x) 				((x) * 1000) 						//converts seconds to milliseconds
 #define MIN_TO_MS(x) 					((x) * SECONDS_TO_MS(60))			//converts minutes to milliseconds
@@ -312,23 +313,43 @@ void monitorTdsDel(void)
 
 void remoteFobSequence(void)
 {
-	static HexColor colorStatus = STATUS_BLUE;
-	if(colorStatus == STATUS_BLUE)
+	static HexColor colorStatus = BLUE;
+	static long lastMsgDisplayed = 0u;
+	static long onTime = 1000;
+
+	if (HAL_GetTick() - lastMsgDisplayed < onTime*1.5)
+		return;
+
+	if(colorStatus == BLUE)
 	{
-		((RgbDriver*)WLED1)->setRgbColor(STATUS_BLUE);
-		WLED1->setOutputPattern(1, 100, 1000);
+		DEBUG_RTT(LOG_INFO, "1. Battery: %.2f", Battery.readBattery());
+		((RgbDriver*)WLED1)->setRgbColor(colorStatus);
+		WLED1->setOutputPattern(1, 100, onTime);
 		colorStatus = GREEN;
 	}
 	else if(colorStatus == GREEN)
 	{
+		DEBUG_RTT(LOG_INFO, "2. Battery: %.2f", Battery.readBattery());
 		((RgbDriver*)WLED1)->setRgbColor(colorStatus);
-		WLED1->setOutputPattern(1, 100, 1000);
+		WLED1->setOutputPattern(1, 100, onTime);
+		colorStatus = WHITE;
 	}
+	else if(colorStatus == WHITE)
+	{
+		menu.Display_Log("Controller Switched on by Remote Control");
+		Log.logToMaster("Controller Switched on by Remote Control");
+		colorStatus = BLACK;
+	}
+
+	lastMsgDisplayed = HAL_GetTick();	
 }
 
 void controlPeripherals(void)
 {
-
+	if(!Flags.flagStatus(Status, BATTERY_LOW))
+	{
+		remoteFobSequence();
+	}
 }
 
 void controlSetup(void)

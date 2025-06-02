@@ -33,8 +33,6 @@ extern bool sw7Flag;
 extern bool timeStamped;			//flag for the time being saved
 
 
-extern uint32_t buttonPressTime;
-
 class Switches {
 public:
 	void getState(SWITCHES SW);
@@ -45,7 +43,11 @@ public:
 	bool isButtonPressed(SWITCHES SW);
 	bool isButtonStillPressed(SWITCHES SW);
 	void resetButtonState(SWITCHES SW);
+	void saveTime();
 	void reset(void);
+	bool timeStamped = false;
+	uint32_t buttonPressTime = 0;
+
 private:
 	struct BUTTON{
 		uint16_t period;
@@ -54,4 +56,3 @@ private:
 	}Button;
 };
 
-void saveTime(void);

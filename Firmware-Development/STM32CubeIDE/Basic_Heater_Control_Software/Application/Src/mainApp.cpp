@@ -75,8 +75,6 @@ bool sw4Flag = false;
 bool sw5Flag = false;
 bool sw6Flag = false;
 bool sw7Flag = false;
-bool timeStamped = false;
-uint32_t buttonPressTime;
 MenuItem *previousMenuItem = nullptr;
 bool didWork = false;
 
@@ -135,24 +133,35 @@ bool MainApp::invokeMenu()
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-	if(!timeStamped)	{
-		saveTime();
-
-	if(GPIO_Pin==RODI_BUTTON)			{
-			RODI_BUTTON_FLAG=true;
-		}
-	else if(GPIO_Pin==UP_BUTTON)		{
-			UP_BUTTON_FLAG=true;
-		}
-	else if(GPIO_Pin==ENTER_BUTTON)		{
-			ENTER_BUTTON_FLAG=true;
-		}
-	else if(GPIO_Pin==BACK_BUTTON)		{
-			BACK_BUTTON_FLAG=true;
-		}
-	else if(GPIO_Pin==DOWN_BUTTON)		{
-			DOWN_BUTTON_FLAG=true;
-		}
+	if(GPIO_Pin==RODI_BUTTON && !ButtonR.timeStamped)
+	{
+		RODI_BUTTON_FLAG=true;
+		ButtonR.saveTime();
+		DEBUG_LOG(LOG_INFO, "--RODI--");
+	}
+	else if(GPIO_Pin==UP_BUTTON && !ButtonU.timeStamped)
+	{
+		UP_BUTTON_FLAG=true;
+		ButtonU.saveTime();
+		DEBUG_LOG(LOG_INFO, "--UP--");
+	}
+	else if(GPIO_Pin==ENTER_BUTTON && !ButtonE.timeStamped)
+	{
+		ENTER_BUTTON_FLAG=true;
+		ButtonE.saveTime();
+		DEBUG_LOG(LOG_INFO, "--ENTER--");
+	}
+	else if(GPIO_Pin==BACK_BUTTON && !ButtonB.timeStamped)
+	{
+		BACK_BUTTON_FLAG=true;
+		ButtonB.saveTime();
+		DEBUG_LOG(LOG_INFO, "--BACK--");
+	}
+	else if(GPIO_Pin==DOWN_BUTTON && !ButtonD.timeStamped)
+	{
+		DOWN_BUTTON_FLAG=true;
+		ButtonD.saveTime();
+		DEBUG_LOG(LOG_INFO, "--DOWN--");
 	}
 	if (GPIO_Pin == PURE_FLOW_DT4_Pin)
     {
