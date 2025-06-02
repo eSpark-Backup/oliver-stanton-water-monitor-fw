@@ -63,5 +63,8 @@ protected:
 };
 
 
+extern EventHandle* Buzzzer;
+extern EventHandle* WLED1;
+
 
 #endif /* _EVENTHANDLE_HPP_ */

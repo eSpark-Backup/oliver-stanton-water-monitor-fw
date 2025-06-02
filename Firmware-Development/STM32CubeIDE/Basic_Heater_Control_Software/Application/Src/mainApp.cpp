@@ -50,10 +50,6 @@ extern TDS tds2; //= TDS(TDS2);
 extern TDS tds3; //= TDS(TDS3);
 extern TDS tds4; //= TDS(TDS4);
 
-extern EventHandle* Buzzzer;
-extern EventHandle* WLED1;
-
-
 //motionCallback motionPtr;
 //extern ADC_HandleTypeDef hadc;
 //extern TIM_HandleTypeDef htim17;
