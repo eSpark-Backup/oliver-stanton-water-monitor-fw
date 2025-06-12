@@ -305,7 +305,8 @@
 #define MENU_07                 0
 #define LLPDS_TDS_MENU          0
 #define LLTDS_MENU_08           0
-#define LL_TT_MENU_07           1 ///Remote Fob
+#define LL_TT_MENU_07           0 ///Remote Fob
+#define LL_TCHS_MENU           1 ///Remote Fob
 
 /* Exported macro ------------------------------------------------------------*/
 #ifdef USE_FULL_ASSERT

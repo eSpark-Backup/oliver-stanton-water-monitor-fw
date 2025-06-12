@@ -13,6 +13,7 @@
 #include "pdsTdsMenuList.h"
 #include "tdsMenuList_08.h"
 #include "LL_TT_MenuList07.h"
+#include "LL_TCHS_MenuList.h"
 #include "motorDriver.h"
 #include "Battery.hpp"
 //#include "flash.h"
@@ -90,20 +91,22 @@ volatile uint32_t pureFlow_rate_Lhr = 0;
 
 void MainApp::setup()
 {
-	currentM = &remote_TT_intro07;
-	HAL_Delay(2000);  		menu.displayMenu(currentM, remote_TT_intro07.Items[0].num_items);
+	// currentM = &remote_TT_intro07;
+	currentM = &heaterIntro;
+	HAL_Delay(2000);  		
+	menu.displayMenu(currentM, heaterIntro.Items[0].num_items);
 
 	Flags.flagsInit();				//initiate flags from flash
-	DEBUG_LOG(LOG_INFO, "Water Monitor Controller Initialization complete.");
+	DEBUG_LOG(LOG_INFO, "Heater Controller Initialization Complete");
 
 	WLED1->setupInit();
-	controlSetup();
+	// controlSetup();
 }
 
 void MainApp::loop()
 {
 	didWork = invokeMenu();
-	controlPeripherals();
+	// controlPeripherals();
 	menu.navigateMenu(currentM, didWork);	
 	Buzzzer->Run();
 	WLED1->Run();

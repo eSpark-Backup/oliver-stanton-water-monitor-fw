@@ -105,7 +105,7 @@ bool fodOFF(uint32_t argChoice, MenuItem *argMenu)
 			Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
 			invokeST3(false);
 			invokeST5(false);
-			mainMenuFunc();
+			// mainMenuFunc();
 		}
 		else if (ButtonE.period() < SINGLE_PRESS)
 		{

@@ -25,6 +25,9 @@
 	#include "tdsControls08/Inc/tdsControls08.h"
 #elif LL_TT_MENU_07
 	#include "controls_LL_TT_07/Inc/controls_LL_TT_07.h"
+#elif LL_TCHS_MENU
+	#include "controls_LL_TCHS/Inc/controls_LL_TCHS.h"
+
 #else
 	#include "controls01/Inc/controls01.h"
 #endif
