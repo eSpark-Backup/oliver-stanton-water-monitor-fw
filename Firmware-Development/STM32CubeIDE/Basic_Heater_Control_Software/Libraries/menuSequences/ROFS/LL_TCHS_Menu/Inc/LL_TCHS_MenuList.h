@@ -1,3 +1,10 @@
+/*
+ * LL_TCHS_MenuList.h
+ *
+ *  Created on: June 12, 2025
+ *      Author: Abdul Ahad
+ */
+
 #pragma once
 
 #ifndef _LL_TCHS_H_
@@ -36,7 +43,7 @@ MenuItem heaterSettingsOptns = {
 MenuItem heaterToggle = {
 	heaterTogg,
 	nullptr,
-	{{"Heater On", nullptr, nullptr, &deliveryHome, nullptr, 1, 2},
+	{{"Heater On", nullptr, nullptr, &deliveryHome, &heaterSettingsOptns, 1, 2},
 	{"Heater Off", nullptr, nullptr, &heaterOff, &heaterSettingsOptns, 1, 2}}
 };
 
@@ -44,14 +51,14 @@ MenuItem heaterToggle = {
 MenuItem heaterOff = {
 	heaterOf,
 	heaterOfLoop,
-	{{"Heater Turned OFF", nullptr, nullptr, &deliveryHome, &heaterToggle, 1, 1}}
+	{{"Heater Turned OFF", nullptr, nullptr, nullptr, &heaterToggle, 1, 1}}
 };
 
 
 MenuItem deliveryHome = {
     deliveryHomeSetup,
     deliveryHomeLoop,
-    {{"Delivery Home Screen ", nullptr, nullptr, nullptr, nullptr, 1, 2}}
+    {{"Delivery Home Screen ", nullptr, nullptr, nullptr, &heaterToggle, 1, 1}}
 };
 
 MenuItem frostPreventToggle = {

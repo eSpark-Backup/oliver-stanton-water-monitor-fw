@@ -106,7 +106,7 @@ void MainApp::setup()
 void MainApp::loop()
 {
 	didWork = invokeMenu();
-	// controlPeripherals();
+	controlPeripherals();
 	menu.navigateMenu(currentM, didWork);	
 	Buzzzer->Run();
 	WLED1->Run();

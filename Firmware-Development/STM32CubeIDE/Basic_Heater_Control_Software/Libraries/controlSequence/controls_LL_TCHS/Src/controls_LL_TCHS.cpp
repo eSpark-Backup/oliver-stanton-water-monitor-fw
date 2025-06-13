@@ -1,3 +1,10 @@
+/*
+ * controls_LL_TCHS.cpp
+ *
+ *  Created on: June 12, 2025
+ *      Author: Abdul Ahad
+ */
+
 #include "controls_LL_TCHS.h"
 
 #if LL_TCHS_MENU == 1
@@ -46,7 +53,8 @@ WarningFlags TdsWarn = {.all_flags = 0};			  // all disabled by default
 WarningFlags isTdsWarningEnable{.all_flags = 0xFFFF}; // all enabled by default
 WarningFlags tempTdsWarning{.all_flags = 0xFFFF}; // all enabled by default
 
-
+uint32_t lastTick = 0;
+uint32_t delayTime = 5000; // Delay time in milliseconds
 
 
 void fillOpen()
@@ -118,6 +126,55 @@ void invokeST7(bool status)
 		Flags.setFlag(Status, PUMP_1, status);
 	}
 }
+
+
+void mainHeaterOn()
+{
+
+	Flags.update();
+
+	if (Flags.flagStatus(Status, MAIN_HEATER) ==  true)
+	{
+		if(Flags.flagStatus(Status, PUMP1) ==  true)
+		{
+			Disp->display("(Flashing ! Icon) Heater ON Water not heating reconnect reel hose");
+			Flags.setFlag(Status, MAIN_HEATER, false);
+		}
+		else if(Flags.flagStatus(Status, PUMP1) ==  false)
+		{
+			if(HAL_GetTick() - lastTick < delayTime) // delay define on the start of file
+			{
+			    lastTick = HAL_GetTick();
+			    Disp->display("(Flashing Flame Icon) Preheating");
+			}
+			else
+			{
+				Disp->display("(Flame Icon) Heater ON");
+			}
+		}
+	}
+
+}
+
+void controlPeripherals(void)
+{
+	mainHeaterOn();
+}
+
+
+    //     if(!pumpState)
+    //     {
+    //         Disp->display("(Flashing ! Icon) Heater ON Water not heating reconnect reel hose");
+    //     }
+    //     else if(HAL_GetTick() - lastTick < delayTime)
+    //     {
+    //         lastTick = HAL_GetTick();
+    //         Disp->display("(Flashing Flame Icon) Preheating");
+    //     }
+    //     else
+    //     {
+    //         Disp->display("(Flame Icon) Heater ON");
+    //     }
 
 
 

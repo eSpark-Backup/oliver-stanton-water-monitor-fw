@@ -49,6 +49,7 @@ bool Switches::isButtonEnabled()
 	return Button.enabled;
 }
 
+
 bool Switches::isButtonPressed(SWITCHES SW)
 {
 		switch (SW)

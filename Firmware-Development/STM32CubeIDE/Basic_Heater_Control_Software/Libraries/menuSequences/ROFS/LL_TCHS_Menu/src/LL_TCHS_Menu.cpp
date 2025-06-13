@@ -1,3 +1,11 @@
+/*
+ * LL_TCHS_Menu.cpp
+ *
+ *  Created on: June 12, 2025
+ *      Author: Abdul Ahad
+ */
+
+
 #include "LL_TCHS_Menu.h"
 #include "controlsequence.h"
 
@@ -22,7 +30,7 @@ void heaterTogg()
 
 void heaterOf()
 {
-    setButtonStates({BACK , DEL}, true);
+    setButtonStates({BACK}, true);
 }
 
 
@@ -39,38 +47,27 @@ bool heaterOfLoop(uint32_t argChoice, MenuItem *argMenu)
 
 void deliveryHomeSetup()
 {
-    setButtonStates({ENTER_OK , DEL}, true);
+    setButtonStates({ BACK}, true);
 }
 
 
 bool deliveryHomeLoop(uint32_t argChoice, MenuItem *argMenu)
-{
-    bool pumpState = true; /*will be changed later with actual pump state*/
-    uint32_t lastTick = 0;
-    uint32_t delayTime = 5000; // Delay time in milliseconds
+{           
 
     if (ButtonE.state())
 	{
-		DEBUG_RTT(LOG_INFO, "Main Heater Power ON");
-        if(!pumpState)
-        {
-            Disp->display("(Flashing ! Icon) Heater ON Water not heating reconnect reel hose");
-        }
-        // else if(HAL_GetTick() - lastTick < delayTime)
-        // {
-        //     lastTick = HAL_GetTick();
-        //     Disp->display("(Flashing Flame Icon) Preheating");
-        // }
-        else
-        {
-            Disp->display("(Flame Icon) Heater ON");
-        }
+        DEBUG_RTT(LOG_INFO, "Main Heater Power OFF");
+	    Flags.setFlag(Settings, MAIN_HEATER, false);
 	}
 	else if (ButtonDel.state())
-	{
-        DEBUG_RTT(LOG_INFO, "Main Heater Power OFF");
+	{   
+        DEBUG_RTT(LOG_INFO, "Main Heater Power ON");
+	    Flags.setFlag(Settings, MAIN_HEATER, true);
 	}
- 
+    else{return false;}
+
+    return true;
+    
 }
 
 void mainMenuFuncHeater()

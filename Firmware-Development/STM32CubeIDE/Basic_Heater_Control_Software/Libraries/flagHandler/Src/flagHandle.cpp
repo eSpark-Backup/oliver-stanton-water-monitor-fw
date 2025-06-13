@@ -304,6 +304,8 @@ bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor)
 		else if(sensor == AUTO_FLUSH)				return FlagsReg.settings.Auto_Flush;
 		else if(sensor == AUTO_FILL)				return FlagsReg.settings.Auto_Fill;
 		else if(sensor == PRESSURE_SENSOR)			return FlagsReg.settings.Pressure_Sensor;
+		else if(sensor == MAIN_HEATER)				return FlagsReg.settings.Main_Heater;
+
 #if MENU_07 == 1
 		else if(sensor == PROP_MIXER)				return FlagsReg.settings.Prop_Mixing;
 #endif
@@ -362,6 +364,8 @@ bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor)
 		else if(sensor == BATTERY_WARNING_SPIKES)		return FlagsReg.status.Battery_warning_spikes;
 		else if(sensor == BATTERY_PUMP_IGNORE_WARNING)		return FlagsReg.status.Battery_Pump_Ignore;
 		else if(sensor == TRIGGER_WARNING) return FlagsReg.status.Battery_warning;
+		else if(sensor == MAIN_HEATER)				return FlagsReg.settings.Main_Heater;
+		
 	}
 //	else
 		return false;
@@ -383,6 +387,7 @@ bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state)
 		else if(sensor == AUTO_FLUSH)				FlagsReg.settings.Auto_Flush = state;
 		else if(sensor == AUTO_FILL)				FlagsReg.settings.Auto_Fill = state;
 		else if(sensor == PRESSURE_SENSOR)			FlagsReg.settings.Pressure_Sensor = state;
+		else if(sensor == MAIN_HEATER)				FlagsReg.settings.Main_Heater = state;
 #if MENU_07 == 1
 		else if(sensor == PROP_MIXER)				FlagsReg.settings.Prop_Mixing = state;
 #endif
@@ -441,6 +446,8 @@ bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state)
 		else if(sensor == BATTERY_WARNING_SPIKES)		FlagsReg.status.Battery_warning_spikes = state;
 		else if(sensor == BATTERY_PUMP_IGNORE_WARNING)		FlagsReg.status.Battery_Pump_Ignore = state;
 		else if(sensor == TRIGGER_WARNING)	 FlagsReg.status.Battery_warning = state;
+		else if(sensor == MAIN_HEATER)				FlagsReg.status.Main_Heater = state;
+
 	}
 	// DEBUG_RTT(LOG_INFO, "Exiting setFlag.");
 	return false;

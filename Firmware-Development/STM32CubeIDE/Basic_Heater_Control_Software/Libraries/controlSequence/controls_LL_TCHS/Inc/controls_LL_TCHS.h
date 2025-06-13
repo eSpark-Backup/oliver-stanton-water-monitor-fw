@@ -1,3 +1,10 @@
+/*
+ * controls_LL_TCHS.h
+ *
+ *  Created on: June 12, 2025
+ *      Author: Abdul Ahad
+ */
+
 #pragma once
 
 #ifndef _CONTROLS_LLTCHS_
@@ -77,6 +84,7 @@ typedef enum
 	BATTERY_PUMP_IGNORE_WARNING, // Status
 	LOG_TO_MASTER,
 	TRIGGER_WARNING,
+	MAIN_HEATER,
 	_sensors_ // placeholder for the max number of sensors declared
 } Sensors;
 
@@ -169,7 +177,8 @@ extern WarningFlags tempTdsWarning;
 
 
 
-
+void mainHeaterOn();
+void controlPeripherals(void);
 
 
 
