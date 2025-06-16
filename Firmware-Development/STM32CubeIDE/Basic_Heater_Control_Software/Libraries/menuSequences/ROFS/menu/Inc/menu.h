@@ -66,6 +66,7 @@ void setButtonStates(std::initializer_list<SWITCHES> buttons, bool enableSelecte
 void defaultMenuSetup(void);
 
 
+
 extern Switches ButtonE;		// Enter/OK button obj
 extern Switches ButtonB;			//Back button obj
 extern Switches ButtonU;			//UP button obj

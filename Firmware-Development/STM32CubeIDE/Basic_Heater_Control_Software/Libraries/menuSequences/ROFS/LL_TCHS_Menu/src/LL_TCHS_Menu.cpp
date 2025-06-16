@@ -13,6 +13,7 @@
 #if LL_TCHS_MENU == 1
 
 
+
 void heaterIntroSetup()
 {
     setButtonStates({ENTER_OK}, true);
@@ -23,10 +24,15 @@ void heaterSettOptns()
 	setButtonStates({ENTER_OK,UP,DOWN,BACK}, true);
 }
 
+
+
 void heaterTogg()
 {
+	lastTick=0;
+	menuSwitched=true;
     setButtonStates({ENTER_OK,UP,DOWN,BACK}, true);
 }
+
 
 void heaterOf()
 {
@@ -39,7 +45,8 @@ bool heaterOfLoop(uint32_t argChoice, MenuItem *argMenu)
     if (ButtonDel.state())
 	{
 		Disp->display("(Flame Icon Crossed Out)");
-        return true;
+		menu.changeMenu(argMenu);
+        return true;        
 	}
     return false;
     
@@ -47,6 +54,7 @@ bool heaterOfLoop(uint32_t argChoice, MenuItem *argMenu)
 
 void deliveryHomeSetup()
 {
+	menuSwitched=false;
     setButtonStates({ BACK}, true);
 }
 
@@ -56,13 +64,14 @@ bool deliveryHomeLoop(uint32_t argChoice, MenuItem *argMenu)
 
     if (ButtonE.state())
 	{
-        DEBUG_RTT(LOG_INFO, "Main Heater Power OFF");
+        // DEBUG_RTT(LOG_INFO, "Main Heater Power OFF");
 	    Flags.setFlag(Settings, MAIN_HEATER, false);
 	}
 	else if (ButtonDel.state())
 	{   
-        DEBUG_RTT(LOG_INFO, "Main Heater Power ON");
+		// DEBUG_RTT(LOG_INFO, "Main Heater Power ON");
 	    Flags.setFlag(Settings, MAIN_HEATER, true);
+		menu.changeMenu(argMenu);
 	}
     else{return false;}
 

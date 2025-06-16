@@ -80,12 +80,12 @@ protected:
 	   struct {
 	   uint64_t 		        :32;
 	   uint64_t Prop_Mixing     :1;
-	   uint64_t Pressure_Sensor	:1;
 	   uint64_t Auto_Flush      :1;
 	   uint64_t Pump_1          :1;
 	   uint64_t Pump_2          :1;
 	   uint64_t Main_Heater     :1;
 	   uint64_t Aux_Heater      :1;
+	   uint64_t Pressure_Sensor	:1;
 	   uint64_t Flow_Meter_1    :1;
 	   uint64_t Flow_Meter_2    :1;
 	   uint64_t Flow_Meter_3    :1;

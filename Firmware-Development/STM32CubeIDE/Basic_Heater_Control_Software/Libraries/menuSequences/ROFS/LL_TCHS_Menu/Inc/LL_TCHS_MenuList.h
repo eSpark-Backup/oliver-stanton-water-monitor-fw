@@ -58,7 +58,7 @@ MenuItem heaterOff = {
 MenuItem deliveryHome = {
     deliveryHomeSetup,
     deliveryHomeLoop,
-    {{"Delivery Home Screen ", nullptr, nullptr, nullptr, &heaterToggle, 1, 1}}
+    {{"Delivery Home Screen ", nullptr, nullptr, nullptr, &deliveryHome, 1, 1}}
 };
 
 MenuItem frostPreventToggle = {

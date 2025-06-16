@@ -126,6 +126,22 @@ void FlagHandle::update(void)
 			statusFlagTimeStamp[PUMP_1] = HAL_GetTick();
 		}
 	}
+	
+	if (HAL_GPIO_ReadPin(MainHeater_GPIO_Port, MainHeater_Pin) != flagStatus(Status, MAIN_HEATER)) //PUMP1 will be added as well
+	{
+		if (flagStatus(Status, MAIN_HEATER)) // PUMP1 will be added as well
+		{
+			HAL_GPIO_WritePin(MainHeater_GPIO_Port, MainHeater_Pin, GPIO_PIN_SET);
+			DEBUG_RTT(LOG_WARNING, "Main Heater is Enabled.");
+			statusOnFlagTimeStamp[MAIN_HEATER] = HAL_GetTick();
+		}
+		else
+		{
+			HAL_GPIO_WritePin(MainHeater_GPIO_Port, MainHeater_Pin, GPIO_PIN_RESET);
+			DEBUG_RTT(LOG_WARNING, "Main Heater is Disabled.");
+			statusFlagTimeStamp[MAIN_HEATER] = HAL_GetTick();
+		}
+	}
 #ifndef MENU_07
 	if(HAL_GPIO_ReadPin(_PUMP2_GPIO_Port, _PUMP2_Pin) != flagStatus(Status, PUMP_2))
 	{

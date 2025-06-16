@@ -40,6 +40,8 @@ extern Switches ButtonD;			//Down button obj
 extern Switches ButtonR;			//RODI button obj
 extern Switches ButtonDel;			//Del button obj
 
+extern uint32_t lastTick;
+extern bool menuSwitched;
 typedef enum
 {
 	LEVEL_SENSOR,
@@ -106,6 +108,8 @@ extern short choiceSelect;		//next menu item choice item we want to jump to, we 
 extern short g_csIndex;
 //extern short ro_saver_thresh_set_value;
 
+
+
 typedef struct
 {
 	uint16_t mainsThreshold 	= 0;
@@ -168,6 +172,7 @@ void invokeST2(bool);
 void invokeST3(bool);
 void invokeST4(bool);
 void invokeST5(bool);
+void invokeDT1(bool);
 
 
 extern TdsValues setTDS;

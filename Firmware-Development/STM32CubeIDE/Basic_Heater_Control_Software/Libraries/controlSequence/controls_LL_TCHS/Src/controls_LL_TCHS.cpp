@@ -33,6 +33,9 @@ TdsValues setTDS{
 	DEFAULT_TDS_TEMPERATURE
 };
 
+uint32_t lastTick=0;
+uint32_t delayTime = 3000; // Delay time in milliseconds
+bool menuSwitched = false;
 
 //***************************Buzzer*******************************
 EventHandle* Buzzzer = new BuzzerDriver(BUZZER_GPIO_Port, BUZZER_Pin, IndBUZZER);
@@ -53,8 +56,8 @@ WarningFlags TdsWarn = {.all_flags = 0};			  // all disabled by default
 WarningFlags isTdsWarningEnable{.all_flags = 0xFFFF}; // all enabled by default
 WarningFlags tempTdsWarning{.all_flags = 0xFFFF}; // all enabled by default
 
-uint32_t lastTick = 0;
-uint32_t delayTime = 5000; // Delay time in milliseconds
+
+
 
 
 void fillOpen()
@@ -127,33 +130,81 @@ void invokeST7(bool status)
 	}
 }
 
+void invokeDT1(bool status)
+{
+	if(Flags.flagStatus(Status, MAIN_HEATER) != status)
+	{
+		Flags.setFlag(Status, MAIN_HEATER, status);
+	}
+}
+
 
 void mainHeaterOn()
 {
 
 	Flags.update();
 
-	if (Flags.flagStatus(Status, MAIN_HEATER) ==  true)
-	{
-		if(Flags.flagStatus(Status, PUMP1) ==  true)
+	if (Flags.flagStatus(Settings, MAIN_HEATER))
+	{	
+		invokeDT1(false);
+		invokeST7(false);
+		/*heater logic*/
+		// DEBUG_RTT(LOG_INFO, " MAIN HEATER STATUS FLAG %d" , Flags.flagStatus(Status, MAIN_HEATER));
+		if(Flags.flagStatus(Status, MAIN_HEATER) == false)
 		{
-			Disp->display("(Flashing ! Icon) Heater ON Water not heating reconnect reel hose");
-			Flags.setFlag(Status, MAIN_HEATER, false);
-		}
-		else if(Flags.flagStatus(Status, PUMP1) ==  false)
-		{
-			if(HAL_GetTick() - lastTick < delayTime) // delay define on the start of file
+			DEBUG_RTT(LOG_INFO, "Main Heater Turned ON");
+			bool heaterInterface= false;
+			if(heaterInterface) /*turn on or initialize heater*/
 			{
-			    lastTick = HAL_GetTick();
-			    Disp->display("(Flashing Flame Icon) Preheating");
+		        DEBUG_RTT(LOG_INFO, "Main Heater Turned ON");
+				Log.logToMaster("Main Heater Turned ON");
+				Flags.setFlag(Status, MAIN_HEATER , true);
 			}
 			else
 			{
-				Disp->display("(Flame Icon) Heater ON");
+		        DEBUG_RTT(LOG_INFO, "Main Heater Failed to Turn ON");
+				Log.logToMaster("Main Heater Failed to Turn ON");
 			}
 		}
-	}
 
+		else if(Flags.flagStatus(Status, MAIN_HEATER) == true)
+		{
+			if(Flags.flagStatus(Status, PUMP_1) ==  true) //disconnected pump
+			{
+					/*RGB LED LOGIC*/
+					Disp->display("(Flashing ! Icon) Heater ON Water not heating reconnect reel hose");
+			}
+			else if (Flags.flagStatus(Status, PUMP_1) == false && !menuSwitched) // connected pump
+			{
+				if (lastTick == 0) 
+				{
+    				lastTick = HAL_GetTick();  // start time in ms
+				}
+
+				if (HAL_GetTick() - lastTick >= delayTime) /* 10 min delay*/
+				{
+					/*RGB LED LOGIC*/		
+					Disp->display("(Flame Icon) Heater ON");
+				}
+				else
+				{
+					Disp->display("(Flashing Flame Icon) Preheating");
+				}
+			}
+		}
+		
+	}
+	else if(Flags.flagStatus(Settings, MAIN_HEATER) == false)
+	{
+		invokeDT1(true);
+		if(Flags.flagStatus(Status, MAIN_HEATER) ==  true)
+		{
+			/* turn off heater*/
+			DEBUG_RTT(LOG_INFO, "Main Heater powered off");
+			Flags.setFlag(Status, MAIN_HEATER , false);
+			Log.logToMaster("Main Heater powered off");
+		}
+	}
 }
 
 void controlPeripherals(void)
