@@ -45,6 +45,7 @@ bool heaterOfLoop(uint32_t argChoice, MenuItem *argMenu)
     if (ButtonDel.state())
 	{
 		Disp->display("(Flame Icon Crossed Out)");
+    	DEBUG_RTT(LOG_INFO, "Heater OFF");	
 		menu.changeMenu(argMenu);
         return true;        
 	}
@@ -64,7 +65,6 @@ bool deliveryHomeLoop(uint32_t argChoice, MenuItem *argMenu)
 
     if (ButtonE.state())
 	{
-        // DEBUG_RTT(LOG_INFO, "Main Heater Power OFF");
 	    Flags.setFlag(Settings, MAIN_HEATER, false);
 	}
 	else if (ButtonDel.state())
@@ -77,6 +77,34 @@ bool deliveryHomeLoop(uint32_t argChoice, MenuItem *argMenu)
 
     return true;
     
+}
+void frostPreventToggleSetup()
+{
+    setButtonStates({ENTER_OK,UP,DOWN,BACK}, true);
+}
+
+void frostPreventOffSetup()
+{
+	setButtonStates({ BACK}, true);
+}
+
+bool frostPreventOffLoop(uint32_t argChoice, MenuItem *argMenu)
+{
+	if (ButtonDel.state())
+	{   
+		Disp->display("(Frost Icon Crossed Out)");
+    	DEBUG_RTT(LOG_INFO, "Heater OFF");	
+		menu.changeMenu(argMenu);
+        return true; 
+	}
+    else{return false;}
+
+    return true;
+}
+
+void frostPreventTempThreshSetup()
+{
+    setButtonStates({ ENTER_OK , BACK}, true);
 }
 
 void mainMenuFuncHeater()

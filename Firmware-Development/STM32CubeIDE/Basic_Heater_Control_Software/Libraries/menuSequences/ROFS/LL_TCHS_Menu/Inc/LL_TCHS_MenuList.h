@@ -58,14 +58,27 @@ MenuItem heaterOff = {
 MenuItem deliveryHome = {
     deliveryHomeSetup,
     deliveryHomeLoop,
-    {{"Delivery Home Screen ", nullptr, nullptr, nullptr, &deliveryHome, 1, 1}}
+    {{"Delivery Home Screen ", nullptr, nullptr, nullptr, &heaterToggle, 1, 1}}
 };
 
 MenuItem frostPreventToggle = {
+    frostPreventToggleSetup,
     nullptr,
+    {{"frost Prevent On", nullptr, nullptr, &frostPreventTempThresh, &heaterSettingsOptns, 1, 2},
+    {"frost Prevent Off", nullptr, nullptr, &frostPreventOff, &heaterSettingsOptns, 1, 2}}
+};
+
+
+MenuItem frostPreventOff= {
+    frostPreventOffSetup,
+    frostPreventOffLoop,
+    {{"frost Prevent Off", nullptr, nullptr, nullptr, &frostPreventToggle, 1, 1}}
+};
+
+MenuItem frostPreventTempThresh = {
+    frostPreventTempThreshSetup,
     nullptr,
-    {{"frost Prevent On", nullptr, nullptr, nullptr, nullptr, 1, 2},
-    {"frost Prevent Off", nullptr, nullptr, nullptr, nullptr, 1, 2}}
+    {{" Frost Prevention Temperature Threshold", nullptr, nullptr, nullptr, &frostPreventToggle, 1, 1}}
 };
 
 

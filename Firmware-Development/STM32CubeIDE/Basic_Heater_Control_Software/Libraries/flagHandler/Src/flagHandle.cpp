@@ -126,7 +126,7 @@ void FlagHandle::update(void)
 			statusFlagTimeStamp[PUMP_1] = HAL_GetTick();
 		}
 	}
-	
+
 	if (HAL_GPIO_ReadPin(MainHeater_GPIO_Port, MainHeater_Pin) != flagStatus(Status, MAIN_HEATER)) //PUMP1 will be added as well
 	{
 		if (flagStatus(Status, MAIN_HEATER)) // PUMP1 will be added as well
@@ -380,7 +380,7 @@ bool FlagHandle::flagStatus(uint8_t op, uint8_t sensor)
 		else if(sensor == BATTERY_WARNING_SPIKES)		return FlagsReg.status.Battery_warning_spikes;
 		else if(sensor == BATTERY_PUMP_IGNORE_WARNING)		return FlagsReg.status.Battery_Pump_Ignore;
 		else if(sensor == TRIGGER_WARNING) return FlagsReg.status.Battery_warning;
-		else if(sensor == MAIN_HEATER)				return FlagsReg.settings.Main_Heater;
+		else if(sensor == MAIN_HEATER)				return FlagsReg.status.Main_Heater;
 		
 	}
 //	else
@@ -468,7 +468,6 @@ bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state)
 	// DEBUG_RTT(LOG_INFO, "Exiting setFlag.");
 	return false;
 }
-
 void FlagHandle::flagsInit()								//Implement flashRetrieve() here
 {
 //	flashRetrieve();
@@ -484,12 +483,17 @@ void FlagHandle::flagsInit()								//Implement flashRetrieve() here
 	setFlag(Settings, WASTE_RATIO, true);
 #endif
 
+    setFlag(Status, PUMP_1, false);
+    setFlag(Status, MAIN_HEATER ,false);
+
 	setFlag(Settings, PUMP_1, true);
 	setFlag(Settings, DEL_TDS_SHUTDOWN, false);
 	setFlag(Settings, DEL_TEMP_SHUTDOWN, false);
 	setFlag(Settings, DEL_COLD_DYNAMICS, false);
 	setFlag(Settings, DEL_TDS_THRESHOLD, true);
 	setFlag(Settings, DEL_TDS_TEMPERATURE, true);
+
+
 // 	setFlag(Settings, BATTERY_LOW_SHUTDON, true);
 // 	setFlag(Settings, BATTERY_POWER_MONITOR, true);
 // 	setFlag(Settings, MAINS_TDS_THRESHOLD, true);

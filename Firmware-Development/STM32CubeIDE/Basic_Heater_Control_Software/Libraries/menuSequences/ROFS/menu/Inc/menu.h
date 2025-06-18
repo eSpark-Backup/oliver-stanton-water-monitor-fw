@@ -107,4 +107,4 @@ extern struct MenuItem pdsTds_intro, pdsTds_mainMenu, pdsTds_Menu, pdsTds_haltMe
 
 extern struct MenuItem remote_TT_intro07, remote_TT_mainMenu07;
 
-extern struct MenuItem heaterIntro, heaterSettingsOptns ,heaterToggle ,heaterOff, deliveryHome , frostPreventToggle;
+extern struct MenuItem heaterIntro, heaterSettingsOptns ,heaterToggle ,heaterOff, deliveryHome , frostPreventToggle , frostPreventOff , frostPreventTempThresh;

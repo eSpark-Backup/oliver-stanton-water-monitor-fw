@@ -146,14 +146,14 @@ void mainHeaterOn()
 
 	if (Flags.flagStatus(Settings, MAIN_HEATER))
 	{	
-		invokeDT1(false);
-		invokeST7(false);
+		// invokeDT1(false);
+		// invokeST7(true);
 		/*heater logic*/
 		// DEBUG_RTT(LOG_INFO, " MAIN HEATER STATUS FLAG %d" , Flags.flagStatus(Status, MAIN_HEATER));
 		if(Flags.flagStatus(Status, MAIN_HEATER) == false)
 		{
-			DEBUG_RTT(LOG_INFO, "Main Heater Turned ON");
-			bool heaterInterface= false;
+			// DEBUG_RTT(LOG_INFO, "Main Heater Turned ON");
+			bool heaterInterface= true;
 			if(heaterInterface) /*turn on or initialize heater*/
 			{
 		        DEBUG_RTT(LOG_INFO, "Main Heater Turned ON");
@@ -162,11 +162,11 @@ void mainHeaterOn()
 			}
 			else
 			{
-		        DEBUG_RTT(LOG_INFO, "Main Heater Failed to Turn ON");
+				DEBUG_RTT(LOG_INFO, "Main Heater Failed to Turn ON");
 				Log.logToMaster("Main Heater Failed to Turn ON");
 			}
 		}
-
+		
 		else if(Flags.flagStatus(Status, MAIN_HEATER) == true)
 		{
 			if(Flags.flagStatus(Status, PUMP_1) ==  true) //disconnected pump

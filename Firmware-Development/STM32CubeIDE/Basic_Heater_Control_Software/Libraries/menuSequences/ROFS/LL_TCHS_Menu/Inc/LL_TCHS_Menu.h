@@ -47,6 +47,10 @@ void heaterOf();
 bool heaterOfLoop(uint32_t argChoice, MenuItem *argMenu);
 void deliveryHomeSetup(void);
 bool deliveryHomeLoop(uint32_t argChoice, MenuItem *argMenu);
+void frostPreventToggleSetup();
+void frostPreventOffSetup();
+bool frostPreventOffLoop(uint32_t argChoice, MenuItem *argMenu);
+void frostPreventTempThreshSetup();
 
 
 void mainMenuFuncHeater();
