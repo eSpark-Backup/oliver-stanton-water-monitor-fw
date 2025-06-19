@@ -40,8 +40,8 @@ extern Switches ButtonD;			//Down button obj
 extern Switches ButtonR;			//RODI button obj
 extern Switches ButtonDel;			//Del button obj
 
-extern uint32_t lastTick;
-extern bool menuSwitched;
+
+
 typedef enum
 {
 	LEVEL_SENSOR,
@@ -108,6 +108,16 @@ extern short choiceSelect;		//next menu item choice item we want to jump to, we 
 extern short g_csIndex;
 //extern short ro_saver_thresh_set_value;
 
+extern uint32_t lastTick;
+extern bool menuSwitched;
+
+typedef struct
+{
+	uint32_t preHeatingTime;
+	uint32_t frostPreventTime;
+	uint8_t frostPreventTempThresh;
+	bool tempFormat;	
+} FrostPreventParams;
 
 
 typedef struct
@@ -174,7 +184,7 @@ void invokeST4(bool);
 void invokeST5(bool);
 void invokeDT1(bool);
 
-
+extern FrostPreventParams frostParam;
 extern TdsValues setTDS;
 extern WarningFlags TdsWarn;
 extern WarningFlags isTdsWarningEnable;

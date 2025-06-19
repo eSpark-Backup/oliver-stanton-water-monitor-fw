@@ -43,6 +43,7 @@ private:
 	}
 
 protected:
+
 	typedef union							//register BitField
 	{
 		uint64_t controlFlags;

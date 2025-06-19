@@ -19,7 +19,7 @@ void CDC_Serial::itemsToDisplay(int elements){
 }
 
 void CDC_Serial::display(const char* strng)
-{
+{   
 	char buffer[256] = {0};
 	int len = sprintf(buffer, "%s\r\n", strng);					//------  %s\r\n  -----
 

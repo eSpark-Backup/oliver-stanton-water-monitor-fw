@@ -10,6 +10,7 @@
 #include "controlsequence.h"
 
 
+
 #if LL_TCHS_MENU == 1
 
 
@@ -98,13 +99,122 @@ bool frostPreventOffLoop(uint32_t argChoice, MenuItem *argMenu)
         return true; 
 	}
     else{return false;}
+	
+    return true;
+}
+
+void frostPreventOnSetup()
+{
+    setButtonStates({ENTER_OK,UP,DOWN,BACK}, true);
+}
+
+void frostPreventTimerSetup()
+{
+	Disp->display((frostParam.frostPreventTime/1000)/60,"Current Timer (minutes):");
+	setButtonStates({BACK}, true);
+	
+}
+
+bool frostPreventTimerLoop(uint32_t argChoice, MenuItem *argMenu)
+{
+	if (ButtonU.state())
+	{
+		if(frostParam.frostPreventTime < FROST_PREVENT_MAX_TIME)
+		{
+			frostParam.frostPreventTime=frostParam.frostPreventTime + FROST_PREVENT_TIME_STEP; /*increase by 1 min*/
+			Disp->display((frostParam.frostPreventTime/1000)/60,"Current Timer (minutes):");
+			DEBUG_RTT(LOG_INFO, "Timer Increased by 1 minute");
+		}
+	}
+	else if (ButtonD.state())
+	{   
+		if(frostParam.frostPreventTime > DEFAULT_FROST_PREVENT_TIME)
+		{
+			frostParam.frostPreventTime= frostParam.frostPreventTime - FROST_PREVENT_TIME_STEP; /*increase by 1 min*/
+			Disp->display((frostParam.frostPreventTime/1000)/60,"Current Timer (minutes):");
+			DEBUG_RTT(LOG_INFO, "Timer Decreased by 1 minute");
+		}
+		DEBUG_RTT(LOG_INFO, "Timer Decreased by 1 minute");
+	}
+    else{return false;}
 
     return true;
+
 }
 
 void frostPreventTempThreshSetup()
 {
+	if(frostParam.tempFormat)
+	{
+		Disp->display(frostParam.frostPreventTempThresh,"Frost Prevent Temperature Threshold (Celsius): ");
+	}
+	else if(!frostParam.tempFormat)
+	{
+		Disp->display(frostParam.frostPreventTempThresh,"Frost Prevent Temperature Threshold (Fahrenheit): ");
+	}
     setButtonStates({ ENTER_OK , BACK}, true);
+}
+
+bool frostPreventTempThreshLoop(uint32_t argChoice, MenuItem *argMenu)
+{
+	if (ButtonU.state() && frostParam.tempFormat)
+	{
+		if(frostParam.frostPreventTempThresh < FROST_PREV_MAX_TEMP_THRESH_C)
+		{
+			frostParam.frostPreventTempThresh = frostParam.frostPreventTempThresh + FROST_PREV_TEMP_THRESH_STEP; /*increase by 1 min*/
+			Disp->display(frostParam.frostPreventTempThresh,"Frost Prevent Temperature Threshold (Celsius): ");
+			DEBUG_RTT(LOG_INFO, "Frost Prevent Temperature Threshold Increased by 1 Degree");
+		}
+	}
+	else if (ButtonD.state() && frostParam.tempFormat)
+	{   
+		if(frostParam.frostPreventTempThresh > DEFAULT_PREV_TEMP_THRESH_C)
+		{
+			frostParam.frostPreventTempThresh = frostParam.frostPreventTempThresh - FROST_PREV_TEMP_THRESH_STEP; /*increase by 1 min*/
+			Disp->display(frostParam.frostPreventTempThresh,"Frost Prevent Temperature Threshold (Celsius): ");
+			DEBUG_RTT(LOG_INFO, "Frost Prevent Temperature Threshold Decreased by 1 Degree");
+		}
+	}
+	else if (ButtonU.state() && !frostParam.tempFormat)
+	{   
+		if(frostParam.frostPreventTempThresh < FROST_PREV_MAX_TEMP_THRESH_F)
+		{
+			frostParam.frostPreventTempThresh = frostParam.frostPreventTempThresh + FROST_PREV_TEMP_THRESH_STEP; /*increase by 1 min*/
+			Disp->display(frostParam.frostPreventTempThresh,"Frost Prevent Temperature Threshold (Fahrenheit): ");
+			DEBUG_RTT(LOG_INFO, "Frost Prevent Temperature Threshold Decreased by 1 Degree");
+		}
+	}
+	else if (ButtonD.state() && !frostParam.tempFormat)
+	{   
+		if(frostParam.frostPreventTempThresh > DEFAULT_PREV_TEMP_THRESH_F)
+		{
+			frostParam.frostPreventTempThresh = frostParam.frostPreventTempThresh - FROST_PREV_TEMP_THRESH_STEP; /*increase by 1 min*/
+			Disp->display(frostParam.frostPreventTempThresh,"Frost Prevent Temperature Threshold (Fahrenheit): ");
+			DEBUG_RTT(LOG_INFO, "Frost Prevent Temperature Threshold Decreased by 1 Degree");
+		}
+	}
+    else{return false;}
+
+    return true;	
+}
+
+void TempFormatSetup()
+{
+    setButtonStates({ENTER_OK,UP,DOWN,BACK}, true);
+}
+
+void celsiusSetup()
+{
+	frostParam.frostPreventTempThresh = DEFAULT_PREV_TEMP_THRESH_C;
+	frostParam.tempFormat = true;
+	Disp->display("Temperature Format Set to Celsius");
+}
+
+void fahrenheitSetup()
+{	
+	frostParam.frostPreventTempThresh = DEFAULT_PREV_TEMP_THRESH_F;
+	frostParam.tempFormat = false;
+	Disp->display("Temperature Format Set to Fahrenheit");
 }
 
 void mainMenuFuncHeater()

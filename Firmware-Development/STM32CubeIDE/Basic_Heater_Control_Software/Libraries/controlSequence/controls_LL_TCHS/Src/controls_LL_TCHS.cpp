@@ -21,6 +21,8 @@
 #define AUTO_FLUSH_TIMEOUT				MIN_TO_MS(20)						//20 mins or 1200secs
 #define AUTO_FLUSH_FINISH_5M			MIN_TO_MS(05)
 
+
+
 TdsValues setTDS{
 	DEFAULT_MAINS_TDS_THRESHOLD,
 	DEFAULT_TDS_TEMPERATURE,
@@ -31,12 +33,18 @@ TdsValues setTDS{
 	DEFAULT_TDS_TEMPERATURE,
 	DEFAULT_DEL_TDS_THRESHOLD,
 	DEFAULT_TDS_TEMPERATURE
+	
+};
+FrostPreventParams frostParam{
+	PREHEATING_TIME,
+	DEFAULT_FROST_PREVENT_TIME,
+	DEFAULT_PREV_TEMP_THRESH_C,
+	DEFAULT_TEMP_FORMAT
 };
 
-uint32_t lastTick=0;
-uint32_t delayTime = 3000; // Delay time in milliseconds
-bool menuSwitched = false;
 
+uint32_t lastTick=0;
+bool menuSwitched = false;
 //***************************Buzzer*******************************
 EventHandle* Buzzzer = new BuzzerDriver(BUZZER_GPIO_Port, BUZZER_Pin, IndBUZZER);
 EventHandle* WLED1 = new RgbDriver(R_CNTRL_GPIO_Port, R_CNTRL_Pin, G_CNTRL_Pin, B_CNTRL_Pin, IndRGB);
@@ -141,7 +149,6 @@ void invokeDT1(bool status)
 
 void mainHeaterOn()
 {
-
 	Flags.update();
 
 	if (Flags.flagStatus(Settings, MAIN_HEATER))
@@ -181,7 +188,7 @@ void mainHeaterOn()
     				lastTick = HAL_GetTick();  // start time in ms
 				}
 
-				if (HAL_GetTick() - lastTick >= delayTime) /* 10 min delay*/
+				if (HAL_GetTick() - lastTick >= frostParam.preHeatingTime) /* 10 min delay*/
 				{
 					/*RGB LED LOGIC*/		
 					Disp->display("(Flame Icon) Heater ON");

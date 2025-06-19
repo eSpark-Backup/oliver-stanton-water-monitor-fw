@@ -157,6 +157,10 @@ void Menu::navigateMenu(MenuItem* currentMenu, bool checkReturn)
 
 				if (currentMenu->Items[choice_ == 0 ? 0 : choice_ - 1].next == nullptr)
 				{
+					if(currentMenu->Items[choice_ == 0 ? 0 : choice_ - 1].setup != nullptr )
+					{
+						currentMenu->Items[choice_ == 0 ? 0 : choice_ - 1].setup();	
+					}
 					g_csIndex = 0;
 					choiceSelect = 0;
 					currentMenu = (MenuItem *)currentMenu->Items[g_csIndex].prev;
@@ -176,6 +180,10 @@ void Menu::navigateMenu(MenuItem* currentMenu, bool checkReturn)
 	if (jumpToNextItem_)
 	{
 		numChild_ = currentMenu->Items[choice_ == 0 ? 0 : choice_ - 1].num_childmenus;
+		if(currentMenu->Items[choice_ == 0 ? 0 : choice_ - 1].setup != nullptr )
+		{
+			currentMenu->Items[choice_ == 0 ? 0 : choice_ - 1].setup();	
+		}
 		currentMenu = (MenuItem *)currentMenu->Items[choice_ == 0 ? 0 : choice_ - 1].next;
 		displayMenu(currentMenu, numChild_);
 		currentM = currentMenu;

@@ -64,7 +64,7 @@ MenuItem deliveryHome = {
 MenuItem frostPreventToggle = {
     frostPreventToggleSetup,
     nullptr,
-    {{"frost Prevent On", nullptr, nullptr, &frostPreventTempThresh, &heaterSettingsOptns, 1, 2},
+    {{"frost Prevent On", nullptr, nullptr, &frostPreventOn, &heaterSettingsOptns, 3, 2},
     {"frost Prevent Off", nullptr, nullptr, &frostPreventOff, &heaterSettingsOptns, 1, 2}}
 };
 
@@ -75,11 +75,33 @@ MenuItem frostPreventOff= {
     {{"frost Prevent Off", nullptr, nullptr, nullptr, &frostPreventToggle, 1, 1}}
 };
 
+MenuItem frostPreventOn= {
+    frostPreventOnSetup,
+    nullptr,
+    {{"Set Frost Prevention Temperature Threshold", nullptr, nullptr, &frostPreventTempThresh, &frostPreventToggle, 1, 3},
+    {"Set Frost Prevention Temperature Timer", nullptr, nullptr, &frostPreventTimer, &frostPreventToggle, 1, 3},
+    {"Set Temperature Format", nullptr, nullptr, &TempFormat, &frostPreventToggle, 2, 3 }}
+};
+
+MenuItem frostPreventTimer = {
+    frostPreventTimerSetup,
+    frostPreventTimerLoop,
+    {{"UP and Down keys to increase/decrease time", nullptr, nullptr, nullptr, &frostPreventOn, 1, 1}}
+};
+
+MenuItem TempFormat = {
+    TempFormatSetup,
+    nullptr,
+    {{"Celsius (°C)", celsiusSetup, nullptr, nullptr, &frostPreventOn, 1, 2},
+    {"Fahrenheit (°F)", fahrenheitSetup, nullptr, nullptr, &frostPreventOn, 1, 2}}
+};
 MenuItem frostPreventTempThresh = {
     frostPreventTempThreshSetup,
-    nullptr,
-    {{" Frost Prevention Temperature Threshold", nullptr, nullptr, nullptr, &frostPreventToggle, 1, 1}}
+    frostPreventTempThreshLoop,
+    {{"UP and Down keys to increase/decrease Temperature Threshold", nullptr, nullptr, nullptr, &frostPreventOn, 1, 1}}
 };
+
+
 
 
 
