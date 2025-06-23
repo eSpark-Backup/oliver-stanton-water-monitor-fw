@@ -80,4 +80,3 @@ void fahrenheitSetup();
 
 
 
-void mainMenuFuncHeater();

@@ -18,6 +18,7 @@
 void heaterIntroSetup()
 {
     setButtonStates({ENTER_OK}, true);
+	frostParam.tempFormat=true;	/*Celsius by Default*/
 }
 
 void heaterSettOptns()
@@ -86,6 +87,7 @@ void frostPreventToggleSetup()
 
 void frostPreventOffSetup()
 {
+    Flags.setFlag(Settings, FROST_PREVENT ,false);
 	setButtonStates({ BACK}, true);
 }
 
@@ -98,6 +100,17 @@ bool frostPreventOffLoop(uint32_t argChoice, MenuItem *argMenu)
 		menu.changeMenu(argMenu);
         return true; 
 	}
+	else if(ButtonE.state())
+	{
+		DEBUG_RTT(LOG_INFO, "***FROST PREVENTION ON***");	
+		Flags.setFlag(Settings , FROST_PREVENT , true);
+		menu.changeMenu(&frostPreventOn);
+	}
+	else if(ButtonB.state())
+	{
+		DEBUG_RTT(LOG_INFO, "***WARNING IGNORED***");	
+		menu.changeMenu(&heaterIntro);
+	}
     else{return false;}
 	
     return true;
@@ -105,6 +118,7 @@ bool frostPreventOffLoop(uint32_t argChoice, MenuItem *argMenu)
 
 void frostPreventOnSetup()
 {
+    Flags.setFlag(Settings, FROST_PREVENT ,true);
     setButtonStates({ENTER_OK,UP,DOWN,BACK}, true);
 }
 
@@ -217,11 +231,7 @@ void fahrenheitSetup()
 	Disp->display("Temperature Format Set to Fahrenheit");
 }
 
-void mainMenuFuncHeater()
-{
-	currentM = &heaterIntro;
-	menu.displayMenu(&heaterIntro, heaterIntro.Items[0].num_items);
-}
+
 
 
 

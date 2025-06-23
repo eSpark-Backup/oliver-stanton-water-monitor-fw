@@ -87,6 +87,7 @@ typedef enum
 	LOG_TO_MASTER,
 	TRIGGER_WARNING,
 	MAIN_HEATER,
+	FROST_PREVENT,
 	_sensors_ // placeholder for the max number of sensors declared
 } Sensors;
 
@@ -116,9 +117,21 @@ typedef struct
 	uint32_t preHeatingTime;
 	uint32_t frostPreventTime;
 	uint8_t frostPreventTempThresh;
-	bool tempFormat;	
+	bool tempFormat;
+	
+	int16_t celsiusToFahrenheit(int16_t celsius) {
+    	return (int16_t)((celsius * 9) / 5 + 32);
+	}
+
 } FrostPreventParams;
 
+typedef struct 
+{
+	int16_t tds1Temp;	/*Celsius All from API*/
+	int16_t tds2Temp;	
+	int16_t tds3Temp;	
+	int16_t tds4Temp;	
+}TempValues;
 
 typedef struct
 {
@@ -173,6 +186,28 @@ typedef enum
 	TDS_SHUTDOWN,
 } SELECT_TDS;
 
+typedef struct
+{
+	uint8_t diResinSvrIntrvl 		= 0;
+}	selectST;
+
+typedef union
+{
+	struct
+	{
+		uint16_t diResinSaver 		: 1;
+	};
+	uint16_t all_tempStateFlags; 	// Full-width member to reset all flags
+} tempState;
+
+
+
+/**
+ * Functions that are directly called from MenuList
+ * <condition> <Function name>(<choiceselect variable>)
+ *
+ * return condition is if we want the function to jump back to previous menuItem or not
+ */
 
 
 /*	Support Functions	*/
@@ -184,6 +219,11 @@ void invokeST4(bool);
 void invokeST5(bool);
 void invokeDT1(bool);
 
+/*  Main Output Control functions  */
+void mainHeaterOn();
+void controlPeripherals(void);
+void mainMenuFuncHeater();
+
 extern FrostPreventParams frostParam;
 extern TdsValues setTDS;
 extern WarningFlags TdsWarn;
@@ -192,8 +232,6 @@ extern WarningFlags tempTdsWarning;
 
 
 
-void mainHeaterOn();
-void controlPeripherals(void);
 
 
 
