@@ -64,7 +64,7 @@ MenuItem deliveryHome = {
 MenuItem frostPreventToggle = {
     frostPreventToggleSetup,
     nullptr,
-    {{"frost Prevent On", nullptr, nullptr, &frostPreventOn, &heaterSettingsOptns, 3, 2},
+    {{"frost Prevent On", nullptr, nullptr, &frostPreventOn, &heaterSettingsOptns, 4, 2},
     {"frost Prevent Off", nullptr, nullptr, &frostPreventOff, &heaterSettingsOptns, 1, 2}}
 };
 
@@ -78,15 +78,16 @@ MenuItem frostPreventOff= {
 MenuItem frostPreventOn= {
     frostPreventOnSetup,
     nullptr,
-    {{"Set Frost Prevention Temperature Threshold", nullptr, nullptr, &frostPreventTempThresh, &frostPreventToggle, 1, 3},
-    {"Set Frost Prevention Temperature Timer", nullptr, nullptr, &frostPreventTimer, &frostPreventToggle, 1, 3},
-    {"Set Temperature Format", nullptr, nullptr, &TempFormat, &frostPreventToggle, 2, 3 }}
+    {{"Set Frost Prevention Temperature Threshold", nullptr, nullptr, &frostPreventTempThresh, &frostPreventToggle, 1, 4},
+    {"Set Frost Prevention Temperature Timer", nullptr, nullptr, &frostPreventTimer, &frostPreventToggle, 1, 4},
+    {"Set Temperature Format", nullptr, nullptr, &TempFormat, &frostPreventToggle, 2, 4 },
+    {"Set Frost Prevention Pump Circulation Speed", nullptr, nullptr, &frostPreventPumpCircuSpeed, &frostPreventToggle, 1, 4 }}
 };
 
 MenuItem frostPreventTimer = {
     frostPreventTimerSetup,
     frostPreventTimerLoop,
-    {{"UP and Down keys to increase/decrease time", nullptr, nullptr, nullptr, &frostPreventOn, 1, 1}}
+    {{"UP and Down keys to increase/decrease Frost Prevention Temperature Timer by 1 min", nullptr, nullptr, nullptr, &frostPreventOn, 1, 1}}
 };
 
 MenuItem TempFormat = {
@@ -95,11 +96,20 @@ MenuItem TempFormat = {
     {{"Celsius (°C)", celsiusSetup, nullptr, nullptr, &frostPreventOn, 1, 2},
     {"Fahrenheit (°F)", fahrenheitSetup, nullptr, nullptr, &frostPreventOn, 1, 2}}
 };
+
 MenuItem frostPreventTempThresh = {
     frostPreventTempThreshSetup,
     frostPreventTempThreshLoop,
-    {{"UP and Down keys to increase/decrease Temperature Threshold", nullptr, nullptr, nullptr, &frostPreventOn, 1, 1}}
+    {{"UP and Down keys to increase/decrease Frost Prevention Temperature Threshold by 1*C", nullptr, nullptr, nullptr, &frostPreventOn, 1, 1}}
 };
+
+MenuItem frostPreventPumpCircuSpeed = {
+    TempFormatSetup,
+    frostPreventPumpCircuSpeedLoop,
+    {{"UP and Down keys to increase/decrease Frost Prevention Pump Circulation Speed", nullptr, nullptr, nullptr, &frostPreventOn, 1, 1}}
+};
+
+
 
 
 

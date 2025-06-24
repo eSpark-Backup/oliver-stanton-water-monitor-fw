@@ -111,12 +111,16 @@ extern short g_csIndex;
 
 extern uint32_t lastTick;
 extern bool menuSwitched;
+extern bool menuShifted;
+
+
 
 typedef struct
 {
 	uint32_t preHeatingTime;
 	uint32_t frostPreventTime;
 	uint8_t frostPreventTempThresh;
+	uint8_t frostPreventPumpCircuSpeed;
 	bool tempFormat;
 	
 	int16_t celsiusToFahrenheit(int16_t celsius) {
@@ -220,7 +224,7 @@ void invokeST5(bool);
 void invokeDT1(bool);
 
 /*  Main Output Control functions  */
-void mainHeaterOn();
+void heaterControl();
 void controlPeripherals(void);
 void mainMenuFuncHeater();
 

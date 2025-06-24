@@ -37,6 +37,7 @@ void CDC_Serial::display(const char* strng)
     }
 }
 
+
 void CDC_Serial::display(short ch)
 {
 	char buffer[20];  // Adjust the buffer size accordingly

@@ -41,19 +41,21 @@
 
 #define SECONDS_TO_MS(x) 				((x) * 1000) 						//converts seconds to milliseconds
 #define MIN_TO_MS(x) 					((x) * SECONDS_TO_MS(60))			//converts minutes to milliseconds
-#define DEFAULT_FROST_PREVENT_TIME		MIN_TO_MS(10)					//10 MIN 
+// #define DEFAULT_FROST_PREVENT_TIME		MIN_TO_MS(10)					//10 MIN 
+#define DEFAULT_FROST_PREVENT_TIME		50000					//10 MIN 
 #define FROST_PREVENT_TIME_STEP		    MIN_TO_MS(01)					//1 MIN 
 #define FROST_PREVENT_MAX_TIME		    MIN_TO_MS(20)					//1 MIN 
 #define PREHEATING_TIME		            MIN_TO_MS(10)					//10 MIN 
-
 #define DEFAULT_TEMP_FORMAT             true    /*Default Celsius(true)/Fahrenheit(false)*/
 #define FROST_PREV_MAX_TEMP_THRESH_C    05      /*Celsius*/
 #define DEFAULT_PREV_TEMP_THRESH_C      00 
 #define FROST_PREV_MAX_TEMP_THRESH_F    41      /*Fahrenheit*/
 #define DEFAULT_PREV_TEMP_THRESH_F      31 
 #define FROST_PREV_TEMP_THRESH_STEP     01 
-
-
+#define FROST_PREVENT_DISPLAY_CYCLE_STEP          5000
+#define DEFAULT_FROST_PREVENT_PUMP_SPEED       10
+#define FROST_PREVENT_PUMP_SPEED_MAX       100
+#define FROST_PREVENT_PUMP_SPEED_STEP      5
 
 
 
@@ -76,6 +78,8 @@ bool frostPreventTempThreshLoop(uint32_t argChoice, MenuItem *argMenu);
 void TempFormatSetup();
 void celsiusSetup();
 void fahrenheitSetup();
+bool frostPreventPumpCircuSpeedLoop(uint32_t argChoice, MenuItem *argMenu);
+
 
 
 

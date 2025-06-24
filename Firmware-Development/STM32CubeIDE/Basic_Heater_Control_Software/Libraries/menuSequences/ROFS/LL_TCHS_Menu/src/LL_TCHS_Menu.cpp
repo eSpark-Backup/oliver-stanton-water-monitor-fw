@@ -100,17 +100,17 @@ bool frostPreventOffLoop(uint32_t argChoice, MenuItem *argMenu)
 		menu.changeMenu(argMenu);
         return true; 
 	}
-	else if(ButtonE.state())
-	{
-		DEBUG_RTT(LOG_INFO, "***FROST PREVENTION ON***");	
-		Flags.setFlag(Settings , FROST_PREVENT , true);
-		menu.changeMenu(&frostPreventOn);
-	}
-	else if(ButtonB.state())
-	{
-		DEBUG_RTT(LOG_INFO, "***WARNING IGNORED***");	
-		menu.changeMenu(&heaterIntro);
-	}
+	// else if(ButtonE.state())
+	// {
+	// 	DEBUG_RTT(LOG_INFO, "***FROST PREVENTION ON***");	
+	// 	Flags.setFlag(Settings , FROST_PREVENT , true);
+	// 	menu.changeMenu(&frostPreventOn);
+	// }
+	// else if(ButtonB.state())
+	// {
+	// 	DEBUG_RTT(LOG_INFO, "***WARNING IGNORED***");	
+	// 	menu.changeMenu(&heaterIntro);
+	// }
     else{return false;}
 	
     return true;
@@ -229,6 +229,33 @@ void fahrenheitSetup()
 	frostParam.frostPreventTempThresh = DEFAULT_PREV_TEMP_THRESH_F;
 	frostParam.tempFormat = false;
 	Disp->display("Temperature Format Set to Fahrenheit");
+}
+
+
+bool frostPreventPumpCircuSpeedLoop(uint32_t argChoice, MenuItem *argMenu)
+{
+	if (ButtonU.state())
+	{
+		if(frostParam.frostPreventPumpCircuSpeed < FROST_PREVENT_PUMP_SPEED_MAX)
+		{
+			frostParam.frostPreventPumpCircuSpeed = frostParam.frostPreventPumpCircuSpeed + FROST_PREVENT_PUMP_SPEED_STEP; /*increase by 1 min*/
+			Disp->display(frostParam.frostPreventPumpCircuSpeed,"Frost Prevent Pump Circultaion Speed : ");
+			DEBUG_RTT(LOG_INFO, "Frost Prevent Pump Circultaion Speed Increased by 5");
+		}
+	}
+	else if (ButtonD.state())
+	{   
+		if(frostParam.frostPreventPumpCircuSpeed > DEFAULT_FROST_PREVENT_PUMP_SPEED)
+		{
+			frostParam.frostPreventPumpCircuSpeed = frostParam.frostPreventPumpCircuSpeed - FROST_PREVENT_PUMP_SPEED_STEP; /*increase by 1 min*/
+			Disp->display(frostParam.frostPreventPumpCircuSpeed,"Frost Prevent Pump Circultaion Speed : ");
+			DEBUG_RTT(LOG_INFO, "Frost Prevent Pump Circultaion Speed Decreased by 5");
+		}
+	}
+	else{return false;}
+
+    return true;
+
 }
 
 

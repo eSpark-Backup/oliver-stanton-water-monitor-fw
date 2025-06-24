@@ -127,7 +127,7 @@ void FlagHandle::update(void)
 		}
 	}
 
-	if (HAL_GPIO_ReadPin(MainHeater_GPIO_Port, MainHeater_Pin) != flagStatus(Status, MAIN_HEATER)) //PUMP1 will be added as well
+	if (HAL_GPIO_ReadPin(MainHeater_GPIO_Port, MainHeater_Pin) != flagStatus(Status, MAIN_HEATER)) 
 	{
 		if (flagStatus(Status, MAIN_HEATER)) // PUMP1 will be added as well
 		{
