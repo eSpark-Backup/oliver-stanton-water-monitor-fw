@@ -25,17 +25,20 @@
 
 
 uint32_t lastTick=0;
-uint32_t frostPreventSeqStartTime = 0;
-uint64_t printStep= 0;
+static uint32_t frostPreventSeqStartTime = 0;
+static uint64_t printStep= 0;
+static uint32_t mins,sec ;
 bool menuSwitched = false;
 bool menuShifted=false;
-bool warningIgnored=false;
-bool frostPreventON =false;
+static bool warningIgnored=false;
+static bool frostPreventON =false;
+static bool frostPrevented = false;
 
 
 FrostPreventParams frostParam{
 	PREHEATING_TIME,
 	DEFAULT_FROST_PREVENT_TIME,
+	DEFAULT_PREV_TEMP_THRESH_C ,     
 	DEFAULT_FROST_PREVENT_PUMP_SPEED,
 	DEFAULT_TEMP_FORMAT
 };
@@ -132,7 +135,7 @@ void invokeDT1(bool status)
 
 bool startHeater()
 {
-	bool heaterInterface= true;
+	bool heaterInterface= false;
 	if(heaterInterface) /*turn on or initialize heater fucntion in the condition*/
 	{
 		invokeDT1(true);
@@ -179,7 +182,7 @@ void readTDSTempValues()
 	// currTempVal.tds2Temp = tds2.readTemp();
 	// currTempVal.tds3Temp = tds3.readTemp();
 	// currTempVal.tds4Temp = tds4.readTemp();
-	currTempVal.tds1Temp = -5;
+	currTempVal.tds1Temp = -1;
 	currTempVal.tds2Temp = 30;
 	currTempVal.tds4Temp = 30;
 
@@ -439,100 +442,115 @@ void frostActivationDecision()
 
 }
 
+void frostPreventEndingSeq()
+{
+	frostPrevented=false;
+	readTDSTempValues();
+	if((currTempVal.tds1Temp  > frostParam.frostPreventTempThresh) && (currTempVal.tds2Temp  > frostParam.frostPreventTempThresh) && (currTempVal.tds4Temp  > frostParam.frostPreventTempThresh))
+	{
+			DEBUG_RTT(LOG_INFO, "***FROST PREVENTION SEQUENCE ENDED***");
+			if(frostParam.tempFormat)
+			{
+				menu.Display_Log("Frost Prevention Cycle Complete , Time left: %lu min %lu sec\n TDS1 TEMP = %d , TDS2 TEMP = %d ,TDS4 TEMP = %d" ,mins,sec ,currTempVal.tds1Temp,currTempVal.tds2Temp,currTempVal.tds4Temp);
+			}	
+			else if(!frostParam.tempFormat)
+			{
+				menu.Display_Log("Frost Prevention Cycle Complete , Time left: %lu min %lu sec\n TDS1 TEMP = %d , TDS2 TEMP = %d ,TDS4 TEMP = %d" ,
+					mins,sec,frostParam.celsiusToFahrenheit(currTempVal.tds1Temp),frostParam.celsiusToFahrenheit(currTempVal.tds2Temp),frostParam.celsiusToFahrenheit(currTempVal.tds4Temp));
+			}	
+			/*RGB-LED off*/			
+			/*LCD-Display off (back to standby mode)*/
+			Flags.setFlag(Status , FROST_PREVENT , false);
+			invokeST7(false);
+			invokeDT1(false);
+			Flags.update();
+			frostPreventON=false;
+			menuShifted=false;
+	}
+	else	/*didnt cross thresh yet*/
+	{
+		frostPreventSeqStartTime = HAL_GetTick(); // Reset reference tick
+		printStep = FROST_PREVENT_DISPLAY_CYCLE_STEP;                             // Reset periodic print timer (if needed)
+		DEBUG_RTT(LOG_WARNING, "***FROST PREVENTION SEQUENCE RESTARTING***");
+	}
+}
 
 void frostPreventionSequence()
 {
 	Flags.update();
-	Flags.setFlag(Status , FROST_PREVENT , true);
 	menuShifted=false;
+
 	/*WAKE LCD SCREEN*/
-	Disp->display("Load Flash Screen");
+	if(!Flags.flagStatus(Status , FROST_PREVENT))
+	{
+		DEBUG_RTT(LOG_WARNING, "***STARTING FROST PREVENTION SEQUENCE***");
+		Disp->display("Load Flash Screen");
+		if(frostParam.tempFormat)
+		{
+			menu.Display_Log("Frost Prevention Activated \n TDS1 TEMP = %d , TDS2 TEMP = %d ,TDS4 TEMP = %d" ,currTempVal.tds1Temp,currTempVal.tds2Temp,currTempVal.tds4Temp);
+		}	
+		else if(!frostParam.tempFormat)
+		{
+			menu.Display_Log("Frost Prevention Activated \n TDS1 TEMP = %d , TDS2 TEMP = %d ,TDS4 TEMP = %d" ,
+				frostParam.celsiusToFahrenheit(currTempVal.tds1Temp),frostParam.celsiusToFahrenheit(currTempVal.tds2Temp),frostParam.celsiusToFahrenheit(currTempVal.tds4Temp));
+		}
+		menu.Display_Log("Alert to Mobile App/Send Text to Alert User"); /*Alert sent on APP*/	
 
-	if(frostParam.tempFormat)
-	{
-		menu.Display_Log("Frost Prevention Activated \n TDS1 TEMP = %d , TDS2 TEMP = %d ,TDS4 TEMP = %d" ,currTempVal.tds1Temp,currTempVal.tds2Temp,currTempVal.tds4Temp);
-	}	
-	else if(!frostParam.tempFormat)
-	{
-		menu.Display_Log("Frost Prevention Activated \n TDS1 TEMP = %d , TDS2 TEMP = %d ,TDS4 TEMP = %d" ,
-			frostParam.celsiusToFahrenheit(currTempVal.tds1Temp),frostParam.celsiusToFahrenheit(currTempVal.tds2Temp),frostParam.celsiusToFahrenheit(currTempVal.tds4Temp));
+		invokeST7(false);
+		Flags.setFlag(Settings , MAIN_HEATER , true);
+		startHeater() == true ?  invokeDT1(true) : invokeDT1(false) ;
+		Log.logToMaster("Main Heater and Pump Turned ON");
+		Flags.update();
 	}
-
-	menu.Display_Log("Alert to Mobile App/Send Text to Alert User"); /*Alert sent on APP*/					
-	Flags.setFlag(Settings , PUMP_1 , true);
-	invokeST7(true);
-	Flags.setFlag(Settings , MAIN_HEATER , true);
-
-	if(startHeater())
-	{
-		invokeDT1(true);
-	}
-	else
-	{
-		invokeDT1(false);
-	}
-	Log.logToMaster("Main Heater and Pump Turned ON");
+	Flags.setFlag(Status , FROST_PREVENT , true);
 
 
-	if ((HAL_GetTick() - frostPreventSeqStartTime) < frostParam.frostPreventTime) /*Timer 10 mins*/
+	uint64_t currentTime = HAL_GetTick() - frostPreventSeqStartTime;
+	uint64_t timeInSec = (frostParam.frostPreventTime - currentTime)/1000 ;
+	mins = timeInSec /60;
+	sec = timeInSec %60;
+
+	if (currentTime < frostParam.frostPreventTime && !Flags.flagStatus(Status, PUMP_1)) /*Timer 10 mins*/ /*pump1 conn*/
 	{	
 		readTDSTempValues();
-		/*RGB SNOW DROP EFFECT*/
-		if(HAL_GetTick() - frostPreventSeqStartTime > printStep )
+		if((currTempVal.tds1Temp  > frostParam.frostPreventTempThresh) && (currTempVal.tds2Temp  > frostParam.frostPreventTempThresh) && (currTempVal.tds4Temp  > frostParam.frostPreventTempThresh))
 		{
-			if(!Flags.flagStatus(Status, PUMP_1)) // Connected
-			{
-				if(frostParam.tempFormat)
-				{
-					menu.Display_Log("Frost Prevention In Progress , Time left: %d min\n TDS1 TEMP = %d , TDS2 TEMP = %d ,TDS4 TEMP = %d" ,(((HAL_GetTick() - frostPreventSeqStartTime) - frostParam.frostPreventTime)/1000)/60 ,currTempVal.tds1Temp,currTempVal.tds2Temp,currTempVal.tds4Temp);
-				}	
-				else if(!frostParam.tempFormat)
-				{
-					menu.Display_Log("Frost Prevention In Progress , Time left: %d min\n TDS1 TEMP = %d , TDS2 TEMP = %d ,TDS4 TEMP = %d" ,
-						(((HAL_GetTick() - frostPreventSeqStartTime) - frostParam.frostPreventTime)/1000)/60 ,frostParam.celsiusToFahrenheit(currTempVal.tds1Temp),frostParam.celsiusToFahrenheit(currTempVal.tds2Temp),frostParam.celsiusToFahrenheit(currTempVal.tds4Temp));
-
-					}
-				/* RGB-LED  light strip illuminates on time with time left on timer (i.e if 5 minutes, only light half the RGB-LED)*/
-			}
-			else
-			{
-					menu.Display_Log("(Flashing ! Icon) Frost Prevention Error reconnect reel hose");
-					/*RGB-LED ERROR State*/
-					menu.Display_Log("Alert to Mobile App/Send Text to Alert User"); /*Alert sent on APP*/					
-				}
-				
-				menu.Display_Log("Frost Prevention Running");
-				
-				printStep += FROST_PREVENT_DISPLAY_CYCLE_STEP;
+			frostPrevented=true;
 		}
-		// Do something after 10 seconds
+		/*RGB SNOW DROP EFFECT*/
+		if( currentTime > printStep )
+		{
+			DEBUG_RTT(LOG_WARNING, "***FROST PREVENTION SEQUENCE RUNNING***");
+			if(frostParam.tempFormat)
+			{	
+				menu.Display_Log("Frost Prevention In Progress , Time left: %d min %d sec\n TDS1 TEMP = %d , TDS2 TEMP = %d ,TDS4 TEMP = %d" ,
+					 (mins) ,(sec),(currTempVal.tds1Temp),(currTempVal.tds2Temp),(currTempVal.tds4Temp));
+			}	
+			else if(!frostParam.tempFormat)
+			{
+				menu.Display_Log("Frost Prevention In Progress , Time left: %d min %d sec\n TDS1 TEMP = %d , TDS2 TEMP = %d ,TDS4 TEMP = %d" ,
+					mins,sec ,frostParam.celsiusToFahrenheit(currTempVal.tds1Temp),frostParam.celsiusToFahrenheit(currTempVal.tds2Temp),frostParam.celsiusToFahrenheit(currTempVal.tds4Temp));
+			}
+			/* RGB-LED  light strip illuminates on time with time left on timer (i.e if 5 minutes, only light half the RGB-LED)*/
+			printStep += FROST_PREVENT_DISPLAY_CYCLE_STEP;
+		}
+	}
+
+	else if(Flags.flagStatus(Status, PUMP_1)) /*pump1 discon*/
+	{
+		menu.Display_Log("(Flashing ! Icon) Frost Prevention Error reconnect reel hose");
+		/*RGB-LED ERROR State*/
+		menu.Display_Log("Alert to Mobile App/Send Text to Alert User"); /*Alert sent on APP*/	
 	}
 	else
 	{
-		readTDSTempValues();
-		if(currTempVal.tds1Temp  > frostParam.frostPreventTempThresh && currTempVal.tds2Temp  > frostParam.frostPreventTempThresh && currTempVal.tds4Temp  > frostParam.frostPreventTempThresh)
-		{
-				if(frostParam.tempFormat)
-				{
-					menu.Display_Log("Frost Prevention Cycle Complete , Time left: %d min\n TDS1 TEMP = %d , TDS2 TEMP = %d ,TDS4 TEMP = %d" ,(((HAL_GetTick() - frostPreventSeqStartTime) - frostParam.frostPreventTime)/1000)/60 ,currTempVal.tds1Temp,currTempVal.tds2Temp,currTempVal.tds4Temp);
-				}	
-				else if(!frostParam.tempFormat)
-				{
-					menu.Display_Log("Frost Prevention Cycle Complete , Time left: %d min\n TDS1 TEMP = %d , TDS2 TEMP = %d ,TDS4 TEMP = %d" ,
-						(((HAL_GetTick() - frostPreventSeqStartTime) - frostParam.frostPreventTime)/1000)/60 ,frostParam.celsiusToFahrenheit(currTempVal.tds1Temp),frostParam.celsiusToFahrenheit(currTempVal.tds2Temp),frostParam.celsiusToFahrenheit(currTempVal.tds4Temp));
-				}	
-				/*RGB-LED off*/			
-				/*LCD-Display off (back to standby mode)*/
-				Flags.setFlag(Status , FROST_PREVENT , false);
-				frostPreventON=false;
-				menuShifted=false;
-		}
-		else	/*didnt cross thresh yet*/
-		{
-			frostPreventSeqStartTime=0; /*timer restart*/
-		}
+		frostPreventEndingSeq();
 	}
 
+	if(frostPrevented)
+	{
+		frostPreventEndingSeq();
+	}
 
 }
 
@@ -596,8 +614,8 @@ void heaterControl()
 			}
 			else
 			{
-				DEBUG_RTT(LOG_INFO, "Main Heater Failed to Turn ON");
-				Log.logToMaster("Main Heater Failed to Turn ON");
+				// DEBUG_RTT(LOG_INFO, "Main Heater Failed to Turn ON");
+				// Log.logToMaster("Main Heater Failed to Turn ON");
 			}
 		}
 		
@@ -652,8 +670,6 @@ void controlPeripherals(void)
 
 	if(frostPreventON && Flags.flagStatus(Settings , FROST_PREVENT))
 	{
-		Flags.setFlag(Status , FROST_PREVENT ,true);
-		DEBUG_RTT(LOG_WARNING, "***STARTING FROST PREVENTION SEQUENCE***");
 		frostPreventionSequence();
 	}
 }

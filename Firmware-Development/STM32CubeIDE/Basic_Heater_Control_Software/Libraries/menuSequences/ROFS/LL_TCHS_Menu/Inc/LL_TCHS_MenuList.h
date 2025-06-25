@@ -104,7 +104,7 @@ MenuItem frostPreventTempThresh = {
 };
 
 MenuItem frostPreventPumpCircuSpeed = {
-    TempFormatSetup,
+    frostPreventPumpCircuSpeedSetup,
     frostPreventPumpCircuSpeedLoop,
     {{"UP and Down keys to increase/decrease Frost Prevention Pump Circulation Speed", nullptr, nullptr, nullptr, &frostPreventOn, 1, 1}}
 };

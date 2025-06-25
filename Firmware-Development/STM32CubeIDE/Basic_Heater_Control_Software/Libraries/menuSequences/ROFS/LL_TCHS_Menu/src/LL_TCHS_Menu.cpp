@@ -232,6 +232,12 @@ void fahrenheitSetup()
 }
 
 
+void frostPreventPumpCircuSpeedSetup()
+{
+    setButtonStates({  BACK}, true);
+	Disp->display(frostParam.frostPreventPumpCircuSpeed,"Frost Prevent Pump Circultaion Speed :  ");
+}
+
 bool frostPreventPumpCircuSpeedLoop(uint32_t argChoice, MenuItem *argMenu)
 {
 	if (ButtonU.state())

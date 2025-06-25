@@ -119,7 +119,7 @@ typedef struct
 {
 	uint32_t preHeatingTime;
 	uint32_t frostPreventTime;
-	uint8_t frostPreventTempThresh;
+	int8_t frostPreventTempThresh;
 	uint8_t frostPreventPumpCircuSpeed;
 	bool tempFormat;
 	
