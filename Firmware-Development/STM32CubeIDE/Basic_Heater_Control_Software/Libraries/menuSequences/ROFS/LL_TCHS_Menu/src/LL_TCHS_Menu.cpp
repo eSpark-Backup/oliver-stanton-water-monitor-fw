@@ -14,6 +14,16 @@
 #if LL_TCHS_MENU == 1
 
 
+void pumpOff()
+{
+	Flags.setFlag(Status, PUMP_1, true);
+	
+}
+void pumpOn()
+{
+	Flags.setFlag(Status, PUMP_1, false );
+
+}
 
 void heaterIntroSetup()
 {

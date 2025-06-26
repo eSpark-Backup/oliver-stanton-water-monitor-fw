@@ -29,14 +29,21 @@
 MenuItem heaterIntro = {
 	heaterIntroSetup,
 	nullptr,
-	{{"Heater Settings", nullptr, nullptr, &heaterSettingsOptns, nullptr, 2, 1}}
+	{{"Heater Settings", nullptr, nullptr, &heaterSettingsOptns, nullptr, 3, 1}}
 };
 
 MenuItem heaterSettingsOptns = {
 	heaterSettOptns,
 	nullptr,
-	{{"Heater", nullptr, nullptr, &heaterToggle, &heaterSettingsOptns, 2, 2},
-	{"Frost Prevention", nullptr, nullptr, &frostPreventToggle, &heaterToggle, 2, 2}}
+	{{"Heater", nullptr, nullptr, &heaterToggle, &heaterSettingsOptns, 2, 3},
+	{"Frost Prevention", nullptr, nullptr, &frostPreventToggle, &heaterToggle, 2, 3},
+	{"PUMP 1 Status toggle for Sequence Test", nullptr, nullptr, &pumpToggleForTest, &heaterSettingsOptns, 2, 3}}
+};
+MenuItem pumpToggleForTest = {
+	heaterSettOptns,
+	nullptr,
+	{{"PUMP 1 Status On", pumpOff, nullptr, nullptr, &heaterSettingsOptns, 1, 2},
+	{"PUMP 1 Status Off", pumpOn, nullptr, nullptr, &heaterSettingsOptns, 1, 2}}
 };
 
 

@@ -60,6 +60,8 @@
 #define FROST_PREVENT_PUMP_SPEED_STEP      05
 
 
+void pumpOff();
+void pumpOn();
 
 
 void heaterIntroSetup();

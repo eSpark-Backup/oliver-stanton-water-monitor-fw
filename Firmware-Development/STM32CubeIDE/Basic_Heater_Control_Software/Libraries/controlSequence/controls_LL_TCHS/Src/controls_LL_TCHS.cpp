@@ -93,6 +93,20 @@ void mainMenuFuncHeater()
 	menu.displayMenu(&heaterIntro, heaterIntro.Items[0].num_items);
 }
 
+void fillOpen()
+{
+	Disp->display("Tank Full - System not Filling");
+	Buzzzer->setOutputPattern(1, 500, 1000);
+	((RgbDriver*)WLED1)->setRgbColor(RED);
+	WLED1->setOutputPattern(1, 1000, 1000);
+
+	invokeST3(false);
+	invokeST5(false);
+	Log.logToMaster("Float Circuit Open - Unable to commence filling");
+	mainMenuFuncHeater();
+	//add buzzer/LED warning handler here
+}
+
 void invokeST1(bool status)
 {
 	if(Flags.flagStatus(Status, RESIN_SAVER) != status)
@@ -117,6 +131,32 @@ void invokeST5(bool status)
 	}
 }
 
+
+
+void invokeST3(bool status)
+{
+	if(Flags.flagStatus(Status, MEM_SAVER) != status)
+	{
+		Flags.setFlag(Status, MEM_SAVER, status);
+	}
+	if(status)
+	{
+		Disp->display("Starting Purification - System Filling.");
+		Flags.setFlag(Settings, MEM_SAVER, status);
+		Flags.setFlag(Status, PURE_CYCLE, status);
+		Log.logToMaster("Float Circuit Closed - System filling commenced");
+		tempTdsWarning.all_flags = 0xFFFF;
+		Buzzzer->setOutputPattern(2, 500, 500, 500);
+		((RgbDriver *)WLED1)->setRgbColor(BLUE);
+		WLED1->setOutputPattern(2, 500, 500, 500);					// -1 to run infinitely
+	}
+	else
+	{
+		Flags.setFlag(Settings, MEM_SAVER, false);
+		// WLED1->turnOff();
+	}
+}
+
 void invokeST7(bool status)
 {
 	if(Flags.flagStatus(Status, PUMP_1) != status)
@@ -135,7 +175,7 @@ void invokeDT1(bool status)
 
 bool startHeater()
 {
-	bool heaterInterface= false;
+	bool heaterInterface= true;
 	if(heaterInterface) /*turn on or initialize heater fucntion in the condition*/
 	{
 		invokeDT1(true);
@@ -178,22 +218,20 @@ bool isWarnActive(SELECT_TDS bit)
 
 void readTDSTempValues()
 {
-	// currTempVal.tds1Temp = tds1.readTemp();
-	// currTempVal.tds2Temp = tds2.readTemp();
-	// currTempVal.tds3Temp = tds3.readTemp();
-	// currTempVal.tds4Temp = tds4.readTemp();
-	currTempVal.tds1Temp = -1;
-	currTempVal.tds2Temp = 30;
-	currTempVal.tds4Temp = 30;
+	currTempVal.tds1Temp = tds1.readTemp();
+	currTempVal.tds2Temp = tds2.readTemp();
+	currTempVal.tds3Temp = tds3.readTemp();
+	currTempVal.tds4Temp = tds4.readTemp();
+	// currTempVal.tds1Temp = -1;
+	// currTempVal.tds2Temp = 30;
+	// currTempVal.tds4Temp = 30;
 
 }
 
 bool checkTdsTemperatureWarnings(void)
 {
 	readTDSTempValues(); 
-	// if (isTDSConnected(TDS1) && Flags.flagStatus(Settings, MAINS_TDS_TEMPERATURE) && currTempVal.tds1Temp  <= frostParam.frostPreventTempThresh )
-	// if (currTempVal.tds1Temp  <= frostParam.frostPreventTempThresh && !isWarnActive(TDS1_TEMPERATURE))
-	if (currTempVal.tds1Temp  <= frostParam.frostPreventTempThresh )
+	if (isTDSConnected(TDS1) && Flags.flagStatus(Settings, MAINS_TDS_TEMPERATURE) && currTempVal.tds1Temp  <= frostParam.frostPreventTempThresh )
 	{
 		if (isWarnActive(TDS1_TEMPERATURE))
 			menu.Display_Log("Mains Water Temperature too low \"%d\"*C- system at danger of freezing.", currTempVal.tds1Temp);
@@ -202,7 +240,7 @@ bool checkTdsTemperatureWarnings(void)
 		return TdsWarn.Tds1_Temp = isWarnActive(TDS1_TEMPERATURE);
 	}
 	
-	if (isTDSConnected(TDS2) && Flags.flagStatus(Settings, RO_TDS_TEMPERATURE) && currTempVal.tds2Temp  <= frostParam.frostPreventTempThresh && TdsWarn.Tds2_Temp)
+	if (isTDSConnected(TDS2) && Flags.flagStatus(Settings, RO_TDS_TEMPERATURE) && currTempVal.tds2Temp  <= frostParam.frostPreventTempThresh )
 	{
 		if (isWarnActive(TDS2_TEMPERATURE))
 			menu.Display_Log("RO Membranes Temperature too low \"%d\"*C- system at danger of freezing.", currTempVal.tds2Temp);
@@ -212,8 +250,7 @@ bool checkTdsTemperatureWarnings(void)
 	}
 #if LL_TCHS_MENU == 1
 
-	// if (isTDSConnected(TDS2) && Flags.flagStatus(Settings, DEL_TDS_TEMPERATURE) && currTempVal.tds4Temp  <= frostParam.frostPreventTempThresh)
-	if (currTempVal.tds4Temp  <= frostParam.frostPreventTempThresh && TdsWarn.Tds4_Temp)
+	if (isTDSConnected(TDS2) && Flags.flagStatus(Settings, DEL_TDS_TEMPERATURE) && currTempVal.tds4Temp  <= frostParam.frostPreventTempThresh)
 	{
 		if (isWarnActive(TDS4_TEMPERATURE))
 			menu.Display_Log("DEL Temperature too low \"%d\"*C- system at danger of freezing.", currTempVal.tds4Temp );
@@ -222,8 +259,7 @@ bool checkTdsTemperatureWarnings(void)
 		return TdsWarn.Tds4_Temp = isWarnActive(TDS4_TEMPERATURE);
 	}
 #else
-	currTempVal.tds3Temp = tds3.readTemp();
-	if (isTDSConnected(TDS2) && Flags.flagStatus(Settings, DI_TDS_TEMPERATURE) && currTempVal.tds3Temp  <= frostParam.frostPreventTempThresh &&TdsWarn.Tds3_Temp)
+	if (isTDSConnected(TDS2) && Flags.flagStatus(Settings, DI_TDS_TEMPERATURE) && currTempVal.tds3Temp  <= frostParam.frostPreventTempThresh )
 	{
 		if (isWarnActive(TDS3_TEMPERATURE))
 			menu.Display_Log("DI RESIN Temperature too low \"%d\"*C- system at danger of freezing.", currTempVal.tds3Temp);
@@ -361,8 +397,7 @@ void monitorTdsCycle(void)
 		DEBUG_RTT(LOG_WARNING, "******");
 	}
 	
-	// if (Flags.flagStatus(Status, BATTERY_HIGH) || Flags.flagStatus(Status, BATTERY_CHARGING_DETECTED))	
-	if (!menuShifted && !Flags.flagStatus(Status , FROST_PREVENT))
+	if (Flags.flagStatus(Status, BATTERY_HIGH) || Flags.flagStatus(Status, BATTERY_CHARGING_DETECTED) && !menuShifted && !Flags.flagStatus(Status , FROST_PREVENT))	
 	{
 		isShowWarnMsg = checkTdsTemperatureWarnings();
 	}	
@@ -457,8 +492,8 @@ void frostPreventEndingSeq()
 			{
 				menu.Display_Log("Frost Prevention Cycle Complete , Time left: %lu min %lu sec\n TDS1 TEMP = %d , TDS2 TEMP = %d ,TDS4 TEMP = %d" ,
 					mins,sec,frostParam.celsiusToFahrenheit(currTempVal.tds1Temp),frostParam.celsiusToFahrenheit(currTempVal.tds2Temp),frostParam.celsiusToFahrenheit(currTempVal.tds4Temp));
-			}	
-			/*RGB-LED off*/			
+			}			
+			WLED1->turnOff(); /*RGB-LED off*/
 			/*LCD-Display off (back to standby mode)*/
 			Flags.setFlag(Status , FROST_PREVENT , false);
 			invokeST7(false);
@@ -484,6 +519,14 @@ void frostPreventionSequence()
 	if(!Flags.flagStatus(Status , FROST_PREVENT))
 	{
 		DEBUG_RTT(LOG_WARNING, "***STARTING FROST PREVENTION SEQUENCE***");
+		((RgbDriver *)WLED1)->setRgbColor(BLUE);	/*RGB SNOW DROP EFFECT*/
+		WLED1->setOutputPattern(1, 500 ,500);		// -1 to run infinitely
+		((RgbDriver *)WLED1)->setRgbColor(WHITE);	
+		WLED1->setOutputPattern(1, 500 ,500);					
+		((RgbDriver *)WLED1)->setRgbColor(BLUE);	
+		WLED1->setOutputPattern(1, 500 ,500);					
+		((RgbDriver *)WLED1)->setRgbColor(WHITE);	
+		WLED1->setOutputPattern(1, 500 ,500);
 		Disp->display("Load Flash Screen");
 		if(frostParam.tempFormat)
 		{
@@ -513,11 +556,12 @@ void frostPreventionSequence()
 	if (currentTime < frostParam.frostPreventTime && !Flags.flagStatus(Status, PUMP_1)) /*Timer 10 mins*/ /*pump1 conn*/
 	{	
 		readTDSTempValues();
+		((RgbDriver *)WLED1)->setRgbColor(BLUE);	/* RGB-LED  light strip illuminates on time with time left on timer (i.e if 5 minutes, only light half the RGB-LED)*/
+		WLED1->setOutputPattern(1, mins *100 ,mins*100);
 		if((currTempVal.tds1Temp  > frostParam.frostPreventTempThresh) && (currTempVal.tds2Temp  > frostParam.frostPreventTempThresh) && (currTempVal.tds4Temp  > frostParam.frostPreventTempThresh))
 		{
 			frostPrevented=true;
 		}
-		/*RGB SNOW DROP EFFECT*/
 		if( currentTime > printStep )
 		{
 			DEBUG_RTT(LOG_WARNING, "***FROST PREVENTION SEQUENCE RUNNING***");
@@ -531,7 +575,7 @@ void frostPreventionSequence()
 				menu.Display_Log("Frost Prevention In Progress , Time left: %d min %d sec\n TDS1 TEMP = %d , TDS2 TEMP = %d ,TDS4 TEMP = %d" ,
 					mins,sec ,frostParam.celsiusToFahrenheit(currTempVal.tds1Temp),frostParam.celsiusToFahrenheit(currTempVal.tds2Temp),frostParam.celsiusToFahrenheit(currTempVal.tds4Temp));
 			}
-			/* RGB-LED  light strip illuminates on time with time left on timer (i.e if 5 minutes, only light half the RGB-LED)*/
+
 			printStep += FROST_PREVENT_DISPLAY_CYCLE_STEP;
 		}
 	}
@@ -539,7 +583,8 @@ void frostPreventionSequence()
 	else if(Flags.flagStatus(Status, PUMP_1)) /*pump1 discon*/
 	{
 		menu.Display_Log("(Flashing ! Icon) Frost Prevention Error reconnect reel hose");
-		/*RGB-LED ERROR State*/
+		((RgbDriver*)WLED1)->setRgbColor(RED); 		/*RGB-LED ERROR State*/
+		WLED1->setOutputPattern(1, 1000, 1000);
 		menu.Display_Log("Alert to Mobile App/Send Text to Alert User"); /*Alert sent on APP*/	
 	}
 	else
@@ -553,45 +598,6 @@ void frostPreventionSequence()
 	}
 
 }
-
-void fillOpen()
-{
-	Disp->display("Tank Full - System not Filling");
-	Buzzzer->setOutputPattern(1, 500, 1000);
-	((RgbDriver*)WLED1)->setRgbColor(RED);
-	WLED1->setOutputPattern(1, 1000, 1000);
-
-	invokeST3(false);
-	invokeST5(false);
-	Log.logToMaster("Float Circuit Open - Unable to commence filling");
-	mainMenuFuncHeater();
-	//add buzzer/LED warning handler here
-}
-
-void invokeST3(bool status)
-{
-	if(Flags.flagStatus(Status, MEM_SAVER) != status)
-	{
-		Flags.setFlag(Status, MEM_SAVER, status);
-	}
-	if(status)
-	{
-		Disp->display("Starting Purification - System Filling.");
-		Flags.setFlag(Settings, MEM_SAVER, status);
-		Flags.setFlag(Status, PURE_CYCLE, status);
-		Log.logToMaster("Float Circuit Closed - System filling commenced");
-		tempTdsWarning.all_flags = 0xFFFF;
-		Buzzzer->setOutputPattern(2, 500, 500, 500);
-		((RgbDriver *)WLED1)->setRgbColor(BLUE);
-		WLED1->setOutputPattern(2, 500, 500, 500);					// -1 to run infinitely
-	}
-	else
-	{
-		Flags.setFlag(Settings, MEM_SAVER, false);
-		// WLED1->turnOff();
-	}
-}
-
 
 
 void heaterControl()
@@ -614,8 +620,8 @@ void heaterControl()
 			}
 			else
 			{
-				// DEBUG_RTT(LOG_INFO, "Main Heater Failed to Turn ON");
-				// Log.logToMaster("Main Heater Failed to Turn ON");
+				DEBUG_RTT(LOG_INFO, "Main Heater Failed to Turn ON");
+				Log.logToMaster("Main Heater Failed to Turn ON");
 			}
 		}
 		
@@ -623,7 +629,8 @@ void heaterControl()
 		{
 			if(Flags.flagStatus(Status, PUMP_1) ==  true) //disconnected pump
 			{
-					/*RGB LED LOGIC*/
+					((RgbDriver*)WLED1)->setRgbColor(YELLOW); 		/*RGB-LED WARNING State*/
+					WLED1->setOutputPattern(1, 1000, 1000);
 					Disp->display("(Flashing ! Icon) Heater ON Water not heating reconnect reel hose");
 			}
 			else if (Flags.flagStatus(Status, PUMP_1) == false && !menuSwitched) // connected pump
@@ -635,11 +642,23 @@ void heaterControl()
 
 				if (HAL_GetTick() - lastTick >= frostParam.preHeatingTime) /* 10 min delay*/
 				{
-					/*RGB LED LOGIC*/		
+					WLED1->turnOff();
 					Disp->display("(Flame Icon) Heater ON");
 				}
 				else
 				{
+					((RgbDriver*)WLED1)->setRgbColor(ORANGE); 		/*RGB-LED FLAME EFFECT*/
+					WLED1->setOutputPattern(1, 500 ,500);							
+					((RgbDriver*)WLED1)->setRgbColor(RED); 		
+					WLED1->setOutputPattern(1, 500 ,500);							
+					((RgbDriver*)WLED1)->setRgbColor(YELLOW); 		
+					WLED1->setOutputPattern(1, 500,500);							
+					((RgbDriver*)WLED1)->setRgbColor(ORANGE); 		
+					WLED1->setOutputPattern(1, 500,500);							
+					((RgbDriver*)WLED1)->setRgbColor(RED); 		
+					WLED1->setOutputPattern(1, 500,500);							
+					((RgbDriver*)WLED1)->setRgbColor(YELLOW); 		
+					WLED1->setOutputPattern(1, 500,500);	
 					Disp->display("(Flashing Flame Icon) Preheating");
 				}
 			}
@@ -673,6 +692,7 @@ void controlPeripherals(void)
 		frostPreventionSequence();
 	}
 }
+
 
 
     //     if(!pumpState)
