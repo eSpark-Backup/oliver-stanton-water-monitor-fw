@@ -218,13 +218,13 @@ bool isWarnActive(SELECT_TDS bit)
 
 void readTDSTempValues()
 {
-	currTempVal.tds1Temp = tds1.readTemp();
-	currTempVal.tds2Temp = tds2.readTemp();
-	currTempVal.tds3Temp = tds3.readTemp();
-	currTempVal.tds4Temp = tds4.readTemp();
-	// currTempVal.tds1Temp = -1;
-	// currTempVal.tds2Temp = 30;
-	// currTempVal.tds4Temp = 30;
+	// currTempVal.tds1Temp = tds1.readTemp();
+	// currTempVal.tds2Temp = tds2.readTemp();
+	// currTempVal.tds3Temp = tds3.readTemp();
+	// currTempVal.tds4Temp = tds4.readTemp();
+	currTempVal.tds1Temp = -1;
+	currTempVal.tds2Temp = 30;
+	currTempVal.tds4Temp = 30;
 
 }
 
@@ -398,6 +398,7 @@ void monitorTdsCycle(void)
 	}
 	
 	if (Flags.flagStatus(Status, BATTERY_HIGH) || Flags.flagStatus(Status, BATTERY_CHARGING_DETECTED) && !menuShifted && !Flags.flagStatus(Status , FROST_PREVENT))	
+	// if ( !menuShifted && !Flags.flagStatus(Status , FROST_PREVENT))	
 	{
 		isShowWarnMsg = checkTdsTemperatureWarnings();
 	}	
@@ -625,15 +626,15 @@ void heaterControl()
 			}
 		}
 		
-		else if(Flags.flagStatus(Status, MAIN_HEATER) == true)
+		else if(Flags.flagStatus(Status, MAIN_HEATER))
 		{
-			if(Flags.flagStatus(Status, PUMP_1) ==  true) //disconnected pump
+			if(Flags.flagStatus(Status, PUMP_1) ) //disconnected pump
 			{
 					((RgbDriver*)WLED1)->setRgbColor(YELLOW); 		/*RGB-LED WARNING State*/
 					WLED1->setOutputPattern(1, 1000, 1000);
 					Disp->display("(Flashing ! Icon) Heater ON Water not heating reconnect reel hose");
 			}
-			else if (Flags.flagStatus(Status, PUMP_1) == false && !menuSwitched) // connected pump
+			else if (!Flags.flagStatus(Status, PUMP_1)  && !menuSwitched ) // connected pump
 			{
 				if (lastTick == 0) 
 				{
@@ -665,9 +666,9 @@ void heaterControl()
 		}
 		
 	}
-	else if(Flags.flagStatus(Settings, MAIN_HEATER) == false)
+	else if(!Flags.flagStatus(Settings, MAIN_HEATER))
 	{
-		if(Flags.flagStatus(Status, MAIN_HEATER) ==  true)
+		if(Flags.flagStatus(Status, MAIN_HEATER) )
 		{
 			/* turn off heater*/
 			DEBUG_RTT(LOG_INFO, "Main Heater powered off");

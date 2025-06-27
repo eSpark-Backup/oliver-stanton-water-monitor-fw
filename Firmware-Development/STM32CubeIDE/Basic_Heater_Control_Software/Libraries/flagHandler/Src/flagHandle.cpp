@@ -489,10 +489,13 @@ void FlagHandle::flagsInit()								//Implement flashRetrieve() here
 	setFlag(Settings, WASTE_RATIO, true);
 #endif
 
-	
+	setFlag(Settings, MAINS_TDS_TEMPERATURE,true);
     setFlag(Settings, FROST_PREVENT ,false);
     setFlag(Settings, MAIN_HEATER ,false);
-	setFlag(Settings, PUMP_1, true);
+    setFlag(Status, MAIN_HEATER ,false);
+	setFlag(Status, PUMP_1, false);
+
+	// setFlag(Settings, PUMP_1, true);
 	setFlag(Settings, DEL_TDS_SHUTDOWN, false);
 	setFlag(Settings, DEL_TEMP_SHUTDOWN, false);
 	setFlag(Settings, DEL_COLD_DYNAMICS, false);
