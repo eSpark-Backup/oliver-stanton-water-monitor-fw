@@ -135,12 +135,54 @@ void llTds_navigationTrue(void)
 	setButtonStates({ENTER_OK, RODI}, false);
 }
 
+
+
+void ctrlWasteRatioToggleSetup(void)
+{
+	setButtonStates({ENTER_OK,BACK ,UP,DOWN}, false);
+	
+}
+
+void wasteRatioAlertsSetup(void)
+{
+	setButtonStates({ENTER_OK,BACK ,UP,DOWN}, false);
+	Flags.setFlag(Settings, WASTE_RATIO_CONTROLS, true);
+}
+
+
+void wasteRatioOffSetup(void)
+{
+	Flags.setFlag(Settings, WASTE_RATIO_CONTROLS, false);
+}
+
+void enableAlerts(void)
+{
+	alertFlag.alerts =true;
+	alertFlag.alertAndShutdown =false;
+}
+
+void disableAlerts(void)
+{
+	alertFlag.alerts =false;
+}
+
+void enableAlertsAndShutDown(void)
+{
+	alertFlag.alertAndShutdown =true;
+	alertFlag.alerts =false;
+}
+void disableAlertsAndShutDown(void)
+{
+	alertFlag.alertAndShutdown =false;
+
+}
+
 bool llTdsWasteSelOpt(uint32_t argChoice, MenuItem *argMenu)
 {
 	if (ButtonE.state())
 	{
 	 	bool isWasteRatioEnable = argChoice == 2 ? true : false;
-		Flags.setFlag(Settings, WASTE_RATIO, isWasteRatioEnable);
+		Flags.setFlag(Settings, DYNAMIC_WASTE_RATIO, isWasteRatioEnable);
 		DEBUG_RTT(LOG_INFO, "Waste Ratio Settings Enable: %d",isWasteRatioEnable);
 	}
 	else
@@ -171,7 +213,7 @@ bool setDynamicWasteRatio(uint32_t argChoice, MenuItem *argMenu)
 
 	if (ButtonE.state())
 	{
-		Flags.setFlag(Settings, WASTE_RATIO, true);
+		Flags.setFlag(Settings, DYNAMIC_WASTE_RATIO, true);
 		setWasteParam.wastePer = wasteVal;
 		setWasteParam.purePer = MAX_WASTE_PER - wasteVal;
 		DEBUG_RTT(LOG_WARNING, "Set %d Pure / %d Waste", setWasteParam.purePer, setWasteParam.wastePer);
@@ -198,7 +240,7 @@ bool setWasteRatio(uint32_t argChoice, MenuItem *argMenu)
 		return false;
 	}
 	
-	Flags.setFlag(Settings, WASTE_RATIO, true);
+	Flags.setFlag(Settings, DYNAMIC_WASTE_RATIO, true);
 	setWasteParam.wastePer = wasteValue;
 	setWasteParam.purePer = MAX_WASTE_PER - wasteValue;
 	DEBUG_RTT(LOG_WARNING, "Set %d Pure / %d Waste", setWasteParam.purePer, setWasteParam.wastePer);

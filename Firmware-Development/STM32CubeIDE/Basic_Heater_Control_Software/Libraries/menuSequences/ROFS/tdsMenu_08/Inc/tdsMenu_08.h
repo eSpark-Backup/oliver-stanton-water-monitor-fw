@@ -73,6 +73,17 @@ void llTds_fodMenuSetup_08(void);
 bool llTds_fodOFF_08(uint32_t argChoice, MenuItem *argMenu);
 void llTds_backAndForthSetup_08(void);
 void llTds_navigationTrue(void);
+void ctrlWasteRatioToggleSetup(void);
+void wasteRatioOffSetup(void);
+void wasteRatioAlertsSetup(void);
+void enableAlerts(void);
+void disableAlerts(void);
+void enableAlertsAndShutDown(void);
+void disableAlertsAndShutDown(void);
+
+
+
+
 
 bool llTdsWasteSelOpt(uint32_t argChoice, MenuItem *argMenu);
 bool setWasteRatio(uint32_t argChoice, MenuItem *argMenu);

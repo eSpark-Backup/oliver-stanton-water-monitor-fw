@@ -66,11 +66,13 @@ void setButtonStates(std::initializer_list<SWITCHES> buttons, bool enableSelecte
 void defaultMenuSetup(void);
 
 
+
 extern Switches ButtonE;		// Enter/OK button obj
 extern Switches ButtonB;			//Back button obj
 extern Switches ButtonU;			//UP button obj
 extern Switches ButtonD;			//Down button obj
 extern Switches ButtonR;			//RODI button obj
+extern Switches ButtonDel;			//Del button obj
 
 //-----------declare MenuItem Structs defined in menuList.h down below ----------------
 extern struct MenuItem intro, mainMenu, fodMenu, fodOptns, roSaver, fodOptnsOff, roSaverOptns, roSaverThresh,
@@ -92,4 +94,18 @@ extern struct MenuItem intro04, mainMenu04, fodMenu04, selectTDS, fodOptnsOff04,
 extern struct MenuItem intro02, mainMenu02, fodMenu02, fodOptnsOff02, autoFlushOptns, initialFlushTimer, productionTimer, subsequentFlushTimer;
 //-------------------------------------------------------------------------------------
 
-extern struct MenuItem llTds_intro08, llTds_mainMenu08, llTds_purificationMenu08, llTds_fodOptnsOff08, llTds_setAutoFlush08, ctrlWasteRatio, wasteOptnsOff08, dynamicWasteRatioMenu;
+extern struct MenuItem llTds_intro08, llTds_mainMenu08, llTds_purificationMenu08, llTds_fodOptnsOff08, llTds_setAutoFlush08 ,
+ctrlWasteRatioToggle , wasteRatioAlerts, alertsToggle ,alertsAndShutdownToggle ,wasteRatioOff, ctrlDynamicWasteRatio , dynamicWasteOptnsOff08, dynamicWasteRatioMenu;
+//-------------------------------------------------------------------------------------
+
+extern struct MenuItem intro07, mainMenu07, fodMenu07, selectPressureSetting, fodOptnsOff07, presAlertOptns, presCtrlOptns,
+					   presSystemTypeOptns, presAlertOptns, pFillingProdOptns, pFlushProdOptns, presCalibrateOptns, setAutoFill;
+//-------------------------------------------------------------------------------------
+
+extern struct MenuItem pdsTds_intro, pdsTds_mainMenu, pdsTds_Menu, pdsTds_haltMenu, pdsTds_delTDS, pdsTds_delTDSThreshold,
+					   pdsTds_delTDSTemperature, pdsTds_delTDSShutdown, pdsTds_delTempShutdown, pdsTds_coldWeatherDynamics, pumpCntrlOptns;
+//-------------------------------------------------------------------------------------
+
+extern struct MenuItem remote_TT_intro07, remote_TT_mainMenu07;
+
+extern struct MenuItem heaterIntro, heaterSettingsOptns ,heaterToggle ,heaterOff, deliveryHome , frostPreventToggle , frostPreventOff , frostPreventOn, frostPreventTempThresh ,frostPreventTimer , TempFormat ,frostPreventPumpCircuSpeed ,pumpToggleForTest;

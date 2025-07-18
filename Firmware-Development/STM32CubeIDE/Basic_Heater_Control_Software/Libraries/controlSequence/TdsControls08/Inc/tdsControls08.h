@@ -56,7 +56,8 @@ typedef enum
 	RGB,
 	BUZZER,
 	FoD,
-	WASTE_RATIO,
+	WASTE_RATIO_CONTROLS,
+	DYNAMIC_WASTE_RATIO,
 	MAINS_TDS_THRESHOLD,
 	RO_TDS_THRESHOLD,
 	DI_TDS_THRESHOLD,
@@ -166,6 +167,18 @@ typedef union
 	uint16_t all_tempStateFlags; 	// Full-width member to reset all flags
 } tempState;
 
+
+typedef union 
+{
+	struct 
+	{
+		uint8_t alerts				: 1;
+		uint8_t alertAndShutdown	: 1;	
+	};
+	uint8_t alertAllflags;
+}alertFlags;
+
+
 /**
  * Functions that are directly called from MenuList
  * <condition> <Function name>(<choiceselect variable>)
@@ -199,5 +212,6 @@ extern WarningFlags TdsWarn;
 extern WarningFlags isTdsWarningEnable;
 extern WarningFlags tempTdsWarning;
 extern tempState perpStatus;
+extern alertFlags alertFlag;
 
 #endif /* INC_CONTROLS02_H_ */

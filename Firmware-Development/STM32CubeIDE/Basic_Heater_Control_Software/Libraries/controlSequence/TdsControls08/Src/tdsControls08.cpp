@@ -25,6 +25,7 @@
 #define CUSTOM_INTERVAL(x)				MIN_TO_MS(x)
 
 wasteValues setWasteParam;
+alertFlags alertFlag;
 
 TdsValues setTDS{
 	DEFAULT_MAINS_TDS_THRESHOLD,
@@ -62,6 +63,7 @@ WarningFlags TdsWarn = {.all_flags = 0};			  // all disabled by default
 WarningFlags isTdsWarningEnable{.all_flags = 0xFFFF}; // all enabled by default
 WarningFlags tempTdsWarning{.all_flags = 0xFFFF}; // all enabled by default
 
+float ratio ;
 //--------------------------------Functions definitions-------------------------
 void mainMenuFunc02()
 {
@@ -611,8 +613,39 @@ void monitorTdsCycle(void)
 	}
 }
 
+void sendAlerts(void)
+{
+	if(Flags.flagStatus(Settings, WASTE_RATIO_CONTROLS) && alertFlag.alerts)
+	{
+		DEBUG_RTT(LOG_INFO, "Sending Alerts");
+		if(ratio > 1)
+		{
+			menu.Display_Log("The system is producing more pure than waste . Adjust the waste ratio valve to allow more waste to exit the system");
+		}
+		else if(ratio < 1)
+		{
+			menu.Display_Log("The system is producing more waste than pure. Adjust the waste ratio valve to produce more pure");
+		}
+	}
+	else if(Flags.flagStatus(Settings, WASTE_RATIO_CONTROLS) && alertFlag.alertAndShutdown)
+	{
+		DEBUG_RTT(LOG_INFO, "Sending Alerts and ShutingDown");
+		if(ratio > 1)
+		{
+			menu.Display_Log("Filling Paused - system is producing more pure than waste. Adjust the waste ratio valve to produce the minimum required Waste. Press Enter to commence filling again, or press down to ignore this warning and fill without flow monitoring");
+		}
+		else if(ratio < 1)
+		{
+			menu.Display_Log("Filling Paused - system is producing more waste than pure. Adjust the waste ratio valve to produce more pure.  Press Enter to commence filling again, or press down to ignore this warning and fill without flow monitoring");
+		}
+	}
+	else{}
+}
+
+
 uint32_t curPulse = 0;
 uint32_t curWastePulse = 0;
+
 void checkPureWasteRatio(void)
 {
     static uint32_t lastCheckTime = 0u;
@@ -625,7 +658,7 @@ void checkPureWasteRatio(void)
         if (Flags.flagStatus(Settings, AUTO_FILL) && !Flags.flagStatus(Settings, AUTO_FLUSH))
         {
 			
-			float ratio = pureFlow_rate_Lhr/wasteFlow_rate_Lhr;
+			ratio = pureFlow_rate_Lhr/wasteFlow_rate_Lhr;
 			float setRatio = setWasteParam.purePer/setWasteParam.wastePer;
 			
 			menu.Display_Log("pure to waste flow rate: %d %% in L/hr", ratio*100);
@@ -669,8 +702,10 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 void controlPeripherals(void)
 {
 	// memSaverST3();
-	if(Flags.flagStatus(Settings, WASTE_RATIO)) checkPureWasteRatio();
-	else {DEBUG_RTT(LOG_INFO, "WASTE_RATIO is disabled");}
+	if(Flags.flagStatus(Settings, DYNAMIC_WASTE_RATIO)) checkPureWasteRatio();
+	else {DEBUG_RTT(LOG_INFO, "DYNAMIC_WASTE_RATIO is disabled");}
+
+	sendAlerts();
 	// autoFlushST4();
 	// roSaverST1();
 	// monitorTdsCycle();

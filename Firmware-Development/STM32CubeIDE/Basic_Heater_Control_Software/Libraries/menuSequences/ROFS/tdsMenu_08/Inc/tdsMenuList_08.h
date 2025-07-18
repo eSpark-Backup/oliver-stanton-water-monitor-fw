@@ -34,12 +34,13 @@ MenuItem llTds_mainMenu08 = {
 MenuItem llTds_purificationMenu08 = {
 	defaultMenuSetup,
 	nullptr,
-	{{"1. Fill on Demand (Not Active)", nullptr, nullptr, nullptr,				&llTds_mainMenu08, 2, 6},
-	 {"2. Select TDS (Not Active)",		nullptr, nullptr, nullptr, 				&llTds_mainMenu08, 0, 6},
-	 {"3. Set Warnings (Not Active)",	nullptr, nullptr, nullptr, 				&llTds_mainMenu08, 0, 6},
-	 {"4. Auto Flush (Not Active)", 	nullptr, nullptr, nullptr, 				&llTds_mainMenu08, 2, 6},
-	 {"5. DI Saver (Not Active)", 		nullptr, nullptr, nullptr, 				&llTds_mainMenu08, 0, 6},
-	 {"6. Dynamic Waste Ratio Control", nullptr, nullptr, &ctrlWasteRatio,  	&llTds_mainMenu08, 4, 6}}
+	{{"1. Fill on Demand (Not Active)", nullptr, nullptr, nullptr,					&llTds_mainMenu08, 2, 7},
+	 {"2. Select TDS (Not Active)",		nullptr, nullptr, nullptr, 					&llTds_mainMenu08, 0, 7},
+	 {"3. Set Warnings (Not Active)",	nullptr, nullptr, nullptr, 					&llTds_mainMenu08, 0, 7},
+	 {"4. Auto Flush (Not Active)", 	nullptr, nullptr, nullptr, 					&llTds_mainMenu08, 2, 7},
+	 {"5. DI Saver (Not Active)", 		nullptr, nullptr, nullptr, 					&llTds_mainMenu08, 0, 7},
+	 {"6. Dynamic Waste Ratio Control", nullptr, nullptr, &ctrlDynamicWasteRatio,  	&llTds_mainMenu08, 4, 7},
+	 {"7. Waste Ratio Control",			nullptr, nullptr, &ctrlWasteRatioToggle,  	&llTds_mainMenu08, 2, 7}}
 };
 
 MenuItem llTds_fodOptnsOff08 = {
@@ -56,26 +57,62 @@ MenuItem llTds_setAutoFlush08 = {
 	 {"On"	, nullptr, nullptr, nullptr, &llTds_purificationMenu08, 0, 2}}
 };
 
-MenuItem ctrlWasteRatio = {
-	defaultMenuSetup,
-	setWasteRatio,
-	{{"Set Waste Control On/Off", 	nullptr, nullptr, &wasteOptnsOff08,		  &llTds_purificationMenu08, 2, 4},
-	 {"Set 60 pure/40 waste", 		nullptr, nullptr, nullptr,			 	  &llTds_purificationMenu08, 0, 4},
-	 {"Set 50 pure/50 waste", 		nullptr, nullptr, nullptr,			 	  &llTds_purificationMenu08, 0, 4},
-	 {"Set Dynamic Ratio", 			nullptr, nullptr, &dynamicWasteRatioMenu, &llTds_purificationMenu08, 1, 4}}
+
+MenuItem ctrlWasteRatioToggle = {
+	ctrlWasteRatioToggleSetup,
+	nullptr,
+	{{"On" , 	nullptr, nullptr, &wasteRatioAlerts, &llTds_purificationMenu08, 2, 2},
+	 {"Off"	, 	nullptr, nullptr, &wasteRatioOff, &llTds_purificationMenu08, 1, 2}}
 };
 
-MenuItem wasteOptnsOff08 = {
+MenuItem wasteRatioAlerts= {
+	wasteRatioAlertsSetup,
+	nullptr,
+	{{"1. Set Alerts" , nullptr, nullptr, &alertsToggle, &ctrlWasteRatioToggle, 2, 2},
+	 {"2. Set Alerts and Shutdown", nullptr, nullptr, &alertsAndShutdownToggle, &ctrlWasteRatioToggle, 2, 2}}
+};
+
+MenuItem alertsToggle = {
+	ctrlWasteRatioToggleSetup,
+	nullptr,
+	{{"Enable Alerts" , 	enableAlerts, nullptr, nullptr, &wasteRatioAlerts, 0, 2},
+	 {"Disable Alerts"	, 	disableAlerts , nullptr, nullptr, &wasteRatioAlerts, 0, 2}}
+};
+
+MenuItem alertsAndShutdownToggle = {
+	ctrlWasteRatioToggleSetup,
+	nullptr,
+	{{"Enable Alerts and Shutdown" , 	enableAlertsAndShutDown, nullptr, nullptr, &wasteRatioAlerts, 0, 2},
+	 {"Disable Alerts and Shutdown"	, 	disableAlertsAndShutDown, nullptr, nullptr, &wasteRatioAlerts, 0, 2}}
+};
+
+MenuItem wasteRatioOff = {
+	wasteRatioOffSetup,
+	nullptr,
+	{{"Waste Ratio Control Turned Off (No notifciations/alerts will be dislayed)" , 	nullptr, nullptr, nullptr, &ctrlWasteRatioToggle, 0, 2}}
+};
+
+
+MenuItem ctrlDynamicWasteRatio = {
+	defaultMenuSetup,
+	setWasteRatio,
+	{{"Set Dynamic Waste Control On/Off", 	nullptr, nullptr, &dynamicWasteOptnsOff08,	&llTds_purificationMenu08, 2, 4},
+	 {"Set 60 pure/40 waste", 				nullptr, nullptr, nullptr,			 	  	&llTds_purificationMenu08, 0, 4},
+	 {"Set 50 pure/50 waste", 				nullptr, nullptr, nullptr,			 	  	&llTds_purificationMenu08, 0, 4},
+	 {"Set Dynamic Ratio", 					nullptr, nullptr, &dynamicWasteRatioMenu, 	&llTds_purificationMenu08, 1, 4}}
+};
+
+MenuItem dynamicWasteOptnsOff08 = {
 	defaultMenuSetup,
 	llTdsWasteSelOpt,
-	{{"Disable" , 	nullptr, nullptr, nullptr, &ctrlWasteRatio, 0, 2},
-	 {"Enable"	, 	nullptr, nullptr, nullptr, &ctrlWasteRatio, 0, 2}}
+	{{"Disable" , 	nullptr, nullptr, nullptr, &ctrlDynamicWasteRatio, 0, 2},
+	 {"Enable"	, 	nullptr, nullptr, nullptr, &ctrlDynamicWasteRatio, 0, 2}}
 };
 
 MenuItem dynamicWasteRatioMenu = {
 	llTds_backAndForthSetup_08,
 	setDynamicWasteRatio,
-	{{"Select Waste ratio (above 40%)", nullptr, nullptr, nullptr, &ctrlWasteRatio, 0, 1}}
+	{{"Select Waste ratio (above 40%)", nullptr, nullptr, nullptr, &ctrlDynamicWasteRatio, 0, 1}}
 };
 
 #endif
