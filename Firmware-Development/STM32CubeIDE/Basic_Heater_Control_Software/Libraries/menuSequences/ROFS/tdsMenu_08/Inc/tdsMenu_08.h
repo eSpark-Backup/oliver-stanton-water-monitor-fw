@@ -80,6 +80,13 @@ void enableAlerts(void);
 void disableAlerts(void);
 void enableAlertsAndShutDown(void);
 void disableAlertsAndShutDown(void);
+void flowMeterMenuSetup(void);
+void mainsInputSetup(void);
+void pureOutputSetup(void);
+void wasteOutputSetup(void);
+bool liveFlowLoop(uint32_t argChoice, MenuItem *argMenu);
+bool overAllFlowSinceServiceLoop(uint32_t argChoice, MenuItem *argMenu);
+bool overAllFlowSinceNewLoop(uint32_t argChoice, MenuItem *argMenu);
 
 
 

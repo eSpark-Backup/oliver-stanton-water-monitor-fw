@@ -74,6 +74,8 @@ void Error_Handler(void);
 #define TDS3_T2_GPIO_Port GPIOE
 #define WASTE_FLOW_DT5_Pin GPIO_PIN_4
 #define WASTE_FLOW_DT5_GPIO_Port GPIOE
+#define MAIN_FLOW_DT6_Pin GPIO_PIN_5
+#define MAIN_FLOW_DT6_GPIO_Port GPIOE
 #define LED1_Pin GPIO_PIN_13
 #define LED1_GPIO_Port GPIOC
 #define TDS1_AN1_Pin GPIO_PIN_0

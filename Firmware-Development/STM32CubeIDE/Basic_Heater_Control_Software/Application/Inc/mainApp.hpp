@@ -51,8 +51,19 @@ private:
 	bool invokeMenu();
 };
 
-
+extern volatile uint32_t main_pulse_count ;
+extern volatile uint32_t mainFlow_rate_Lhr ;
+extern volatile uint32_t mainFlow_rate_LMin ;
+extern volatile uint32_t mainFlow_rate_LMin_since_service;
+extern volatile uint32_t mainFlow_rate_LMin_since_new ;
 extern volatile uint32_t waste_pulse_count;
 extern volatile uint32_t wasteFlow_rate_Lhr;
+extern volatile uint32_t wasteFlow_rate_LMin ;
+extern volatile uint32_t wasteFlow_rate_LMin_since_service;
+extern volatile uint32_t wasteFlow_rate_LMin_since_new;
 extern volatile uint32_t pure_pulse_count;
 extern volatile uint32_t pureFlow_rate_Lhr;
+extern volatile uint32_t pureFlow_rate_LMin;
+extern volatile uint32_t pureFlow_rate_LMin_since_service;
+extern volatile uint32_t pureFlow_rate_LMin_since_new;
+

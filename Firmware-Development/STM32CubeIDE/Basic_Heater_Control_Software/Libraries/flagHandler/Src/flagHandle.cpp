@@ -353,7 +353,7 @@ bool FlagHandle::setFlag(uint8_t op, uint8_t sensor, uint8_t state)
 		else if(sensor == BOOST_PRD_SIG)			FlagsReg.settings.Boost_Prd_Sig = state;
 		else if(sensor == BOOST_AF_SIG)				FlagsReg.settings.Boost_Af_Sig = state;
 		else if(sensor == PUMP_2)					FlagsReg.settings.Pump_2 = state;
-		else if(sensor == DYNAMIC_WASTE_RATIO)				FlagsReg.settings.dynamicWasteRatio = state;
+		else if(sensor == DYNAMIC_WASTE_RATIO)		FlagsReg.settings.dynamicWasteRatio = state;
 		else if(sensor == MAINS_TDS_THRESHOLD)		FlagsReg.settings.mainsTdsThresh = state;
 		else if(sensor == RO_TDS_THRESHOLD)			FlagsReg.settings.roTdsThresh = state;
 		else if(sensor == DI_TDS_THRESHOLD)			FlagsReg.settings.diTdsThresh = state;
@@ -413,7 +413,6 @@ void FlagHandle::flagsInit()								//Implement flashRetrieve() here
 	setFlag(Status, DYNAMIC_WASTE_RATIO, true);
 	setFlag(Settings, DYNAMIC_WASTE_RATIO, true);
 	setFlag(Settings, WASTE_RATIO_CONTROLS, true);
-	alertFlag.alerts = true;
 // 	setFlag(Settings, BATTERY_LOW_SHUTDON, true);
 // 	setFlag(Settings, BATTERY_POWER_MONITOR, true);
 // 	setFlag(Settings, MAINS_TDS_THRESHOLD, true);

@@ -29,10 +29,69 @@ MenuItem llTds_intro08 = {
 MenuItem llTds_mainMenu08 = {
 	llTds_mainMenuSetup_08,
 	llTds_mainMenuSelection_08,
-	{{"Default LLROFS Home Page", nullptr, nullptr, &llTds_purificationMenu08, &llTds_intro08, 5, 1}},
+	{{"Default LLROFS Home Page", nullptr, nullptr, &tdsChoice, &llTds_intro08, 2, 1}}
 };
+
+MenuItem tdsChoice = {
+	ctrlWasteRatioToggleSetup,
+	nullptr,
+	{{"Settings", nullptr, nullptr, &llTds_purificationMenu08, &llTds_mainMenu08, 7, 2},
+	 {"Flow Meter Menu", nullptr, nullptr, &flowMeterMenu,  &llTds_mainMenu08, 3, 2}}
+};
+
+
+MenuItem flowMeterMenu ={
+	flowMeterMenuSetup,
+	nullptr,
+	{{"Mains Input Flow", nullptr, nullptr, &mainsInputFlow, &tdsChoice, 3, 3},
+	 {"Pure Output Flow", nullptr, nullptr, &pureOutputFlow,  &tdsChoice, 3, 3},
+	 {"Waste Output Flow", nullptr, nullptr, &wasteOutputFlow,  &tdsChoice, 3, 3}}
+};
+
+MenuItem mainsInputFlow = {
+	mainsInputSetup,
+	nullptr,
+	{{"Live Flow", nullptr, nullptr, &liveFlow, &flowMeterMenu, 1, 3},
+	{"Overall Flow (since service)", nullptr, nullptr, &overAllFlowSinceService,  &flowMeterMenu, 1, 3},
+	{"Overall Flow (since new)", nullptr, nullptr, &overAllFlowSinceNew,  &flowMeterMenu, 1, 3}}
+};
+
+MenuItem pureOutputFlow = {
+	pureOutputSetup,
+	nullptr,
+	{{"Live Flow", nullptr, nullptr, &liveFlow, &flowMeterMenu, 1, 3},
+	{"Overall Flow (since service)", nullptr, nullptr, &overAllFlowSinceService,  &flowMeterMenu, 1, 3},
+	{"Overall Flow (since new)", nullptr, nullptr, &overAllFlowSinceNew,  &flowMeterMenu, 1, 3}}
+};
+
+MenuItem wasteOutputFlow = {
+	wasteOutputSetup,
+	nullptr,
+	{{"Live Flow", nullptr, nullptr, &liveFlow, &flowMeterMenu, 1, 3},
+	{"Overall Flow (since service)", nullptr, nullptr, &overAllFlowSinceService,  &flowMeterMenu, 1, 3},
+	{"Overall Flow (since new)", nullptr, nullptr, &overAllFlowSinceNew,  &flowMeterMenu, 1, 3}}
+};
+
+MenuItem liveFlow = {
+	llTds_mainMenuSetup_08,
+	liveFlowLoop,
+	{{"", nullptr, nullptr, nullptr, &flowMeterMenu, 0, 1}}
+};
+MenuItem overAllFlowSinceService = {
+	llTds_mainMenuSetup_08,
+	overAllFlowSinceServiceLoop,
+	{{"", nullptr, nullptr, nullptr, &flowMeterMenu, 0, 1}}
+};
+MenuItem overAllFlowSinceNew = {
+	llTds_mainMenuSetup_08,
+	overAllFlowSinceNewLoop,
+	{{"", nullptr, nullptr, nullptr, &flowMeterMenu, 0, 1}}
+};
+
+
+
 MenuItem llTds_purificationMenu08 = {
-	defaultMenuSetup,
+	defaultMenuSetup, 
 	nullptr,
 	{{"1. Fill on Demand (Not Active)", nullptr, nullptr, nullptr,					&llTds_mainMenu08, 2, 7},
 	 {"2. Select TDS (Not Active)",		nullptr, nullptr, nullptr, 					&llTds_mainMenu08, 0, 7},

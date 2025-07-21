@@ -174,8 +174,82 @@ void enableAlertsAndShutDown(void)
 void disableAlertsAndShutDown(void)
 {
 	alertFlag.alertAndShutdown =false;
+}
+
+void flowMeterMenuSetup(void)
+{
+	setButtonStates({ENTER_OK,BACK ,UP,DOWN}, false);
+	FlowDisplayFlag.flowDisplayAllFlags= false;
+}
+
+void mainsInputSetup(void)
+{
+	setButtonStates({ENTER_OK,BACK ,UP,DOWN}, false);
+	FlowDisplayFlag.mainsInput= true;
+}
+void pureOutputSetup(void)
+{
+	setButtonStates({ENTER_OK,BACK ,UP,DOWN}, false);
+	FlowDisplayFlag.pureOutput= true;
 
 }
+void wasteOutputSetup(void)
+{
+	setButtonStates({ENTER_OK,BACK ,UP,DOWN}, false);
+	FlowDisplayFlag.wasteOutput= true;
+}
+
+
+bool liveFlowLoop(uint32_t argChoice, MenuItem *argMenu)
+{
+	if(FlowDisplayFlag.mainsInput && Flags.flagStatus(Settings, AUTO_FILL))
+	{
+		menu.Display_Log("Main Input Flow Rate (LMin) : %ld " ,mainFlow_rate_LMin);		
+	}
+	else if(FlowDisplayFlag.pureOutput && Flags.flagStatus(Settings, AUTO_FILL) )
+	{
+		menu.Display_Log("Pure Output Flow Rate (LMin) : %ld " ,pureFlow_rate_LMin);		
+	}
+	else if(FlowDisplayFlag.wasteOutput && Flags.flagStatus(Settings, AUTO_FILL) )
+	{
+		menu.Display_Log("Waste Output Flow Rate (LMin) :%ld ", wasteFlow_rate_LMin);		
+	}
+	else{}
+}
+bool overAllFlowSinceServiceLoop(uint32_t argChoice, MenuItem *argMenu)
+{
+	if(FlowDisplayFlag.mainsInput )
+	{
+		menu.Display_Log("Main Input Flow Rate (LMin) Since Service: %ld " ,mainFlow_rate_LMin_since_service);		
+	}
+	else if(FlowDisplayFlag.pureOutput)
+	{
+		menu.Display_Log("Pure Output Flow Rate (LMin) Since Service: %ld " ,pureFlow_rate_LMin_since_service);		
+	}
+	else if(FlowDisplayFlag.wasteOutput)
+	{
+		menu.Display_Log("Pure Output Flow Rate (LMin) Since Service: %ld " ,wasteFlow_rate_LMin_since_service);		
+	}
+	else{}
+}
+bool overAllFlowSinceNewLoop(uint32_t argChoice, MenuItem *argMenu)
+{
+	if(FlowDisplayFlag.mainsInput )
+	{
+		menu.Display_Log("Main Input Flow Rate (LMin) Since New: %ld " ,mainFlow_rate_LMin_since_new);		
+	}
+	else if(FlowDisplayFlag.pureOutput)
+	{
+		menu.Display_Log("Pure Output Flow Rate (LMin) Since New: %ld " ,pureFlow_rate_LMin_since_new);		
+	}
+	else if(FlowDisplayFlag.wasteOutput)
+	{
+		menu.Display_Log("Pure Output Flow Rate (LMin) Since New: %ld " ,wasteFlow_rate_LMin_since_new);		
+	}
+	else{}
+}
+
+
 
 bool llTdsWasteSelOpt(uint32_t argChoice, MenuItem *argMenu)
 {

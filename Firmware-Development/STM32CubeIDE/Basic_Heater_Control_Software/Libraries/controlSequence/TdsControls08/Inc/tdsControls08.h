@@ -176,7 +176,18 @@ typedef union
 		uint8_t alertAndShutdown	: 1;	
 	};
 	uint8_t alertAllflags;
-}alertFlags;
+}AlertFlags;
+
+typedef union 
+{
+	struct 
+	{
+		uint8_t	mainsInput 			: 1;
+		uint8_t	pureOutput			: 1;
+		uint8_t	wasteOutput 		: 1;
+	};
+	uint8_t flowDisplayAllFlags;
+}FlowDisplay;
 
 
 /**
@@ -204,6 +215,7 @@ bool isTDSConnected(tdsSensor);
 void calCurrentTdsReading(void);
 void controlPeripherals(void);
 void controlSetup(void);
+void resetFlowRateNew(void);
 
 extern wasteValues setWasteParam;
 extern TdsValues setTDS;
@@ -212,6 +224,7 @@ extern WarningFlags TdsWarn;
 extern WarningFlags isTdsWarningEnable;
 extern WarningFlags tempTdsWarning;
 extern tempState perpStatus;
-extern alertFlags alertFlag;
+extern AlertFlags alertFlag;
+extern FlowDisplay FlowDisplayFlag;
 
 #endif /* INC_CONTROLS02_H_ */

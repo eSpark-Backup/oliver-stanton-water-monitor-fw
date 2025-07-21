@@ -305,7 +305,7 @@
 #define LLTDS_MENU_08           1
 
 /* Exported macro ------------------------------------------------------------*/
-#ifdef USE_FULL_ASSERT
+#ifdef  USE_FULL_ASSERT
 /**
   * @brief  The assert_param macro is used for function's parameters check.
   * @param  expr If expr is false, it calls assert_failed function

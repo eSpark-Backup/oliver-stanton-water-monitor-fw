@@ -77,10 +77,25 @@ uint32_t buttonPressTime;
 MenuItem *previousMenuItem = nullptr;
 bool didWork = false;
 
+
+volatile uint32_t main_pulse_count = 0;
+volatile uint32_t mainFlow_rate_Lhr = 0;
+volatile uint32_t mainFlow_rate_LMin = 0;
+volatile uint32_t mainFlow_rate_LMin_since_service= 0;
+volatile uint32_t mainFlow_rate_LMin_since_new = 0;
+
+
 volatile uint32_t waste_pulse_count = 0;
 volatile uint32_t wasteFlow_rate_Lhr = 0;
+volatile uint32_t wasteFlow_rate_LMin = 0;
+volatile uint32_t wasteFlow_rate_LMin_since_service= 0;
+volatile uint32_t wasteFlow_rate_LMin_since_new = 0;
+
 volatile uint32_t pure_pulse_count = 0;
 volatile uint32_t pureFlow_rate_Lhr = 0;
+volatile uint32_t pureFlow_rate_LMin = 0;
+volatile uint32_t pureFlow_rate_LMin_since_service = 0;
+volatile uint32_t pureFlow_rate_LMin_since_new = 0;
 
 //bool ONflag=true;
 //TIM_HandleTypeDef htim1;
@@ -93,7 +108,8 @@ volatile uint32_t pureFlow_rate_Lhr = 0;
 void MainApp::setup()
 {
 	currentM = &llTds_intro08;
-	HAL_Delay(2000);  		menu.displayMenu(currentM, llTds_intro08.Items[0].num_items);
+	HAL_Delay(2000);  		
+	menu.displayMenu(currentM, llTds_intro08.Items[0].num_items);
 
 	Flags.flagsInit();				//initiate flags from flash
 	DEBUG_LOG(LOG_INFO, "Water Monitor Controller Initialization complete.");

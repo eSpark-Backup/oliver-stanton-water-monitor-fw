@@ -25,7 +25,9 @@
 #define CUSTOM_INTERVAL(x)				MIN_TO_MS(x)
 
 wasteValues setWasteParam;
-alertFlags alertFlag;
+AlertFlags alertFlag = { .alerts = true , .alertAndShutdown = false};
+FlowDisplay FlowDisplayFlag = { .flowDisplayAllFlags = false };
+
 
 TdsValues setTDS{
 	DEFAULT_MAINS_TDS_THRESHOLD,
@@ -195,6 +197,8 @@ void fillOpen()
 
 	invokeST3(false);
 	invokeST5(false);
+	resetFlowRateNew();
+	
 	if(flushTimer.activityStatus == DEACTIVATED && !Flags.flagStatus(Status, AUTO_FLUSH))
 	{
 		invokeST4(true);
@@ -327,6 +331,7 @@ void stopAutoFillCycle(void)
 	Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
 	invokeST3(false);
 	invokeST5(false);
+	resetFlowRateNew();
 }
 
 void memSaverST3()
@@ -343,6 +348,7 @@ void memSaverST3()
 	{
 		invokeST3(false);
 		invokeST5(false);
+		resetFlowRateNew();
 		//			Flags.setFlag(Settings, MEM_SAVER, false);
 		// roSaverST1();
 	}
@@ -643,6 +649,7 @@ void sendAlerts(void)
 }
 
 
+uint32_t curMainPulse = 0;
 uint32_t curPulse = 0;
 uint32_t curWastePulse = 0;
 
@@ -663,7 +670,7 @@ void checkPureWasteRatio(void)
 			
 			menu.Display_Log("pure to waste flow rate: %d %% in L/hr", ratio*100);
 			sendAlerts();
-			
+
 			if(ratio > setRatio)
 			{
 				invokeST4(true);
@@ -676,16 +683,57 @@ void checkPureWasteRatio(void)
     }
 }
 
+uint32_t flowRateAverageSumService = 0;
+uint32_t flowRateAverageCountService = 0;
+
+uint32_t flowRateAverageService(uint32_t currentFlowRate) 
+{
+    flowRateAverageSumService += currentFlowRate;
+    flowRateAverageCountService++;
+	return (flowRateAverageSumService / flowRateAverageCountService);
+}
+
+uint32_t flowRateAverageSumNew = 0;
+uint32_t flowRateAverageCountNew = 0;
+
+uint32_t flowRateAverageNew(uint32_t currentFlowRate) 
+{
+    flowRateAverageSumNew += currentFlowRate;
+    flowRateAverageCountNew++;
+	return (flowRateAverageSumNew / flowRateAverageCountNew);
+}
+
+void resetFlowRateNew()
+{
+	flowRateAverageSumNew = 0;
+	flowRateAverageCountNew = 0;
+}
 void flowSensorCallback(TIM_HandleTypeDef *htim)
 {
 	if (htim->Instance == TIM16)
     {
 		//(Pulse Counted per second / Pulses per litre) * into minute * into hour;
-		pureFlow_rate_Lhr = (pure_pulse_count / 1000.0f) * 60.0f * 60.0f; //1000 for 1500 lph (#49)
+		mainFlow_rate_LMin = (main_pulse_count / 1000.0f) * 60.0f; 
+		mainFlow_rate_Lhr = mainFlow_rate_LMin * 60.0f; //1000 for 1500 lph (#49)
+		mainFlow_rate_LMin_since_service = flowRateAverageService(mainFlow_rate_LMin); /*flow rate value since service(keeps updating since start of flow)*/
+		mainFlow_rate_LMin_since_new = flowRateAverageNew(mainFlow_rate_LMin);	/*flow rate value since new filling cycle is started(resets when filling is restarted)*/
+		
+		curMainPulse = main_pulse_count;
+        main_pulse_count = 0;
+
+		pureFlow_rate_LMin = (pure_pulse_count / 1000.0f) * 60.0f; 
+		pureFlow_rate_Lhr = pureFlow_rate_LMin * 60.0f; //1000 for 1500 lph (#49)
+		pureFlow_rate_LMin_since_service = flowRateAverageService(pureFlow_rate_LMin); /*flow rate value since service(keeps updating since start of flow)*/
+		pureFlow_rate_LMin_since_new = flowRateAverageNew(pureFlow_rate_LMin);	/*flow rate value since new filling cycle is started(resets when filling is restarted)*/
+		
 		curPulse = pure_pulse_count;
         pure_pulse_count = 0;
 		
-		wasteFlow_rate_Lhr = (waste_pulse_count / 1000.0f) * 60.0f * 60.0f;
+		wasteFlow_rate_LMin = (waste_pulse_count / 1000.0f) * 60.0f;
+		wasteFlow_rate_Lhr = wasteFlow_rate_LMin * 60.0f;
+		wasteFlow_rate_LMin_since_service = flowRateAverageService(wasteFlow_rate_LMin); 
+		wasteFlow_rate_LMin_since_new = flowRateAverageNew(wasteFlow_rate_LMin);
+
 		curWastePulse = waste_pulse_count;
         waste_pulse_count = 0;
     }
@@ -697,7 +745,12 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
     {
         waste_pulse_count++;
     }
+	else if (htim->Instance == TIM3 && htim->Channel == HAL_TIM_ACTIVE_CHANNEL_3)
+    {
+		main_pulse_count++;
+    }
 }
+
 
 
 void controlPeripherals(void)
