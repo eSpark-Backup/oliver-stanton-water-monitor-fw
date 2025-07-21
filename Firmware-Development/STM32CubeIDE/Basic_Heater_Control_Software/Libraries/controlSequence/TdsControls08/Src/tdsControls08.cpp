@@ -662,7 +662,8 @@ void checkPureWasteRatio(void)
 			float setRatio = setWasteParam.purePer/setWasteParam.wastePer;
 			
 			menu.Display_Log("pure to waste flow rate: %d %% in L/hr", ratio*100);
-
+			sendAlerts();
+			
 			if(ratio > setRatio)
 			{
 				invokeST4(true);
@@ -705,7 +706,6 @@ void controlPeripherals(void)
 	if(Flags.flagStatus(Settings, DYNAMIC_WASTE_RATIO)) checkPureWasteRatio();
 	else {DEBUG_RTT(LOG_INFO, "DYNAMIC_WASTE_RATIO is disabled");}
 
-	sendAlerts();
 	// autoFlushST4();
 	// roSaverST1();
 	// monitorTdsCycle();
