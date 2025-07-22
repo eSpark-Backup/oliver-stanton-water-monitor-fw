@@ -15,10 +15,14 @@
 
 #define SECONDS_TO_MS(x) 				((x) * 1000) 						//converts seconds to milliseconds
 #define MIN_TO_MS(x) 					((x) * SECONDS_TO_MS(60))			//converts minutes to milliseconds
+#define MIN_TO_SEC(x) 					((x) * 60)							//converts minutes to seconds
 #define FOD_AUTORUN_DELAY_PERIOD		SECONDS_TO_MS(60)					//60secs
 #define MEM_SAVER_PAUSE_TIMEOUT			MIN_TO_MS(15)						//15mins or 900secs
 #define AUTO_FLUSH_TIMEOUT				MIN_TO_MS(20)						//20 mins or 1200secs
 #define AUTO_FLUSH_FINISH_5M			MIN_TO_MS(05)
+#define FINISH_5M						MIN_TO_MS(05)
+#define CUSTOM_INTERVAL_SEC(x)			MIN_TO_SEC(x)
+#define CUSTOM_INTERVAL(x)				MIN_TO_MS(x)
 
 TdsValues setTDS{
 	DEFAULT_MAINS_TDS_THRESHOLD,
@@ -52,7 +56,15 @@ WarningFlags TdsWarn = {.all_flags = 0};			  // all disabled by default
 WarningFlags isTdsWarningEnable{.all_flags = 0xFFFF}; // all enabled by default
 WarningFlags tempTdsWarning{.all_flags = 0xFFFF}; // all enabled by default
 
+tempState perpStatus{
+	.all_tempStateFlags = false};
 //--------------------------------Functions definitions-------------------------
+
+void mainMenuFunc02()
+{
+	currentM = &pdsTds_mainMenu;
+	menu.displayMenu(&pdsTds_mainMenu, mainMenu.Items[0].num_items);
+}
 
 bool isTDSConnected(tdsSensor sensor)
 {
@@ -142,20 +154,6 @@ void warningIndication(HexColor ledColor)
 }
 
 //***********************Purification Cycle**************************
-
-void fillOpen()
-{
-	Disp->display("Tank Full - System not Filling");
-	Buzzzer->setOutputPattern(1, 500, 1000);
-	((RgbDriver*)WLED1)->setRgbColor(RED);
-	WLED1->setOutputPattern(1, 1000, 1000);
-
-	invokeST3(false);
-	invokeST5(false);
-	Log.logToMaster("Float Circuit Open - Unable to commence filling");
-	mainMenuFunc();
-	//add buzzer/LED warning handler here
-}
 
 void invokeST3(bool status)
 {
@@ -310,15 +308,149 @@ void monitorTdsDel(void)
 	lastMsgDisplayed = HAL_GetTick();
 }
 
+void fillOpen()
+{
+	Disp->display("Tank Full - System not Filling");
+	Buzzzer->setOutputPattern(1, 500, 1000);
+	((RgbDriver*)WLED1)->setRgbColor(RED);
+	WLED1->setOutputPattern(1, 1000, 1000);
+
+	invokeST3(false);
+	invokeST5(false);
+	if(flushTimer.activityStatus == DEACTIVATED && !Flags.flagStatus(Status, AUTO_FLUSH))
+	{
+		invokeST4(true);
+		flushTimer.activityStatus = ACTIVATED;
+		Flags.setFlag(Settings, DEL_TDS_THRESHOLD , false); 
+		Disp->display("Flushing Membrane for 5 minutes");
+	}
+	Log.logToMaster("Float Circuit Open - Unable to commence filling");
+	mainMenuFunc02();
+	//add buzzer/LED warning handler here
+}
+
+
+void cycleCount(uint32_t timeLeft)
+{
+	bool cycleSubsequent = flushTimer.cycleCount > 5;
+	const char *cycle[] = {"First", "Second", "Third", "Fourth", "Fifth", "Subsequent (5+)"};
+	menu.Display_Log("Purifying - %s Auto Flush Cycle - Flush time left: %d seconds", cycle[!cycleSubsequent ? flushTimer.cycleCount: 5], timeLeft);
+}
+
+
+void autoFlushST4(void)
+{
+	Flags.update();
+	static long lastMsgDisplayed = 0u;
+
+	if (Flags.flagStatus(Settings, AUTO_FLUSH) && !Flags.flagStatus(Status, LEVEL_SENSOR) && Flags.flagStatus(Status, PURE_CYCLE))
+	{
+		if(flushTimer.activityStatus == WAIT)
+		{	
+			if(Flags.getTime(AUTO_FLUSH, false) > 1 && Flags.getTime(AUTO_FLUSH, false) >= CUSTOM_INTERVAL_SEC(flushTimer.productionTimer))
+			{
+				flushTimer.activityStatus = READY;
+				invokeST4(false);
+			}
+			else if((HAL_GetTick() - lastMsgDisplayed > MIN_TO_MS(1)))
+			{
+				uint32_t timeRemaining = flushTimer.productionTimer - (Flags.getTime(AUTO_FLUSH, false)/60);
+				lastMsgDisplayed = HAL_GetTick();
+				menu.Display_Log("Next Auto Flush Cycle in: %d minutes", timeRemaining);
+
+			}
+		}
+		if (flushTimer.activityStatus != WAIT)
+		{
+			uint32_t flushOnTime = Flags.getTime(AUTO_FLUSH, true);
+			uint32_t curCycleTime = (!flushTimer.cycleCount) ? flushTimer.startUpTimer : flushTimer.subsequentTimer;
+			
+			if(ButtonE.state() && ButtonE.period() < SINGLE_PRESS || flushTimer.activityStatus == READY)
+			{
+				if(!Flags.flagStatus(Status, AUTO_FLUSH))
+				{
+					invokeST4(true);
+					Flags.setFlag(Settings, DEL_TDS_THRESHOLD , false); /*Exception state ,(disables delivery tds threshold)*/
+					flushTimer.activityStatus = ACTIVATED;
+				}
+				else if(Flags.flagStatus(Status, AUTO_FLUSH))
+				{
+					invokeST4(false);
+					flushTimer.activityStatus = PAUSE;
+					flushTimer.pausedTime =  ((flushTimer.pausedTime) ? flushTimer.pausedTime : CUSTOM_INTERVAL_SEC(curCycleTime)) - flushOnTime;
+					Disp->display("System Flushing Paused");
+				}
+			}
+			else if ((ButtonE.period() > SHORT_PRESS && ButtonE.period() < LONG_LONG_PRESS && Flags.flagStatus(Status, AUTO_FLUSH))
+			|| (flushTimer.activityStatus == PAUSE && (Flags.getTime(AUTO_FLUSH, false) >= CUSTOM_INTERVAL_SEC(30))))
+			{
+				invokeST4(false);
+				Flags.setFlag(Settings, DEL_TDS_THRESHOLD , true); 
+				flushTimer.cycleCount = 0;
+				flushTimer.pausedTime = 0;
+				flushTimer.activityStatus = DEACTIVATED;
+				Disp->display("System Flushing Deactivated");
+			}
+			Flags.update();
+
+			if(flushTimer.activityStatus == ACTIVATED)
+			{					
+				flushOnTime = Flags.getTime(AUTO_FLUSH, true);
+				curCycleTime = (!flushTimer.cycleCount) ? flushTimer.startUpTimer : flushTimer.subsequentTimer;
+
+				if (flushOnTime >= ((flushTimer.pausedTime) ? flushTimer.pausedTime : CUSTOM_INTERVAL_SEC(curCycleTime)))
+				{
+					invokeST4(false);
+					flushTimer.activityStatus = WAIT;
+					flushTimer.pausedTime = 0;
+					flushTimer.cycleCount++;
+				}
+				else if(flushTimer.activityStatus != PAUSE && (flushOnTime>1) && (HAL_GetTick() - lastMsgDisplayed > 10000))
+				{
+					uint32_t timeRemaining = ((flushTimer.pausedTime) ? flushTimer.pausedTime : CUSTOM_INTERVAL_SEC(curCycleTime)) - flushOnTime;
+					lastMsgDisplayed = HAL_GetTick();
+					cycleCount(timeRemaining);
+				}
+			}
+		}
+	}
+	else if (Flags.flagStatus(Settings, AUTO_FLUSH) && Flags.flagStatus(Status, LEVEL_SENSOR))
+	{
+
+		if(Flags.flagStatus(Status, AUTO_FLUSH) && Flags.getTime(AUTO_FLUSH, true) >= FINISH_5M)
+		{
+			invokeST4(false);
+			Flags.setFlag(Settings, DEL_TDS_THRESHOLD , true); 
+			flushTimer.activityStatus = DEACTIVATED;
+		}	
+		flushTimer.cycleCount = 0;
+		flushTimer.pausedTime = 0;
+	}
+	else if(!Flags.flagStatus(Settings, AUTO_FLUSH) && Flags.flagStatus(Status, AUTO_FLUSH))
+	{
+		invokeST4(false);
+		Flags.setFlag(Settings, DEL_TDS_THRESHOLD , true); 
+		flushTimer.activityStatus = DEACTIVATED;
+		flushTimer.cycleCount = 0;
+		flushTimer.pausedTime = 0;
+
+	}	
+}
+
 void controlPeripherals(void)
 {
 	if(!pdsTds_isMenuLabelMatch(currentM, pdsTds_intro) && !pdsTds_isMenuLabelMatch(currentM, pdsTds_mainMenu))
 		monitorTdsDel();
+
+	autoFlushST4();
+
+
 }
 
 void controlSetup(void)
 {
 	invokeST7(true); // just to test logic
+	
 }
 
 #endif

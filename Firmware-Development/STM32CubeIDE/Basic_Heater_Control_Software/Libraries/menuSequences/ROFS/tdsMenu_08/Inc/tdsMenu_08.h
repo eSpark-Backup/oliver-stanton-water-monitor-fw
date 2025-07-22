@@ -32,6 +32,7 @@
 
 #define DEFAULT_RESIN_SAVER_INTRVL 03
 
+#if LLTDS_MENU_08 == 1
 
 typedef enum
 {
@@ -64,6 +65,7 @@ typedef struct
 
 extern autoFlushTimers flushTimer;
 
+#endif
 
 void llTds_introSetup_08(void);
 bool llTds_introPageSelection_08(uint32_t argChoice, MenuItem* argMenu);

@@ -140,6 +140,16 @@ typedef union
 	uint16_t all_flags; // Full-width member to reset all flags
 } WarningFlags;
 
+typedef union
+{
+	struct
+	{
+		uint16_t diResinSaver 		: 1;
+	};
+	uint16_t all_tempStateFlags; 	// Full-width member to reset all flags
+} tempState;
+
+
 typedef enum
 {
 	TDS1_THRESHOLD,
@@ -184,5 +194,6 @@ extern TdsValues setTDS;
 extern WarningFlags TdsWarn;
 extern WarningFlags isTdsWarningEnable;
 extern WarningFlags tempTdsWarning;
+extern tempState perpStatus;
 
 #endif /* INC_CONTROLS05_H_ */

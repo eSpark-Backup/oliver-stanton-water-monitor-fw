@@ -460,7 +460,8 @@ void FlagHandle::flagsInit()								//Implement flashRetrieve() here
 	setFlag(Status, WASTE_RATIO, true);
 	setFlag(Settings, WASTE_RATIO, true);
 #endif
-
+	setFlag(Status,   AUTO_FLUSH, false);
+	setFlag(Settings, AUTO_FLUSH, false);
 	setFlag(Settings, PUMP_1, true);
 	setFlag(Settings, DEL_TDS_SHUTDOWN, false);
 	setFlag(Settings, DEL_TEMP_SHUTDOWN, false);

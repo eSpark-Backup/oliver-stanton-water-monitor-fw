@@ -3,9 +3,9 @@
 #include "masterLog.h"
 #include "flagHandle.h"
 
-autoFlushTimers flushTimer;
 
 #if LLTDS_MENU_08 == 1
+autoFlushTimers flushTimer;
 
 // Helper function to check if the menu label matches the target threshold
 bool llTds_isMenuLabelMatch08(MenuItem *menu, const MenuItem &targetThreshold, uint8_t index = 0)

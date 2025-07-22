@@ -3,6 +3,9 @@
 #include "masterLog.h"
 #if LLPDS_TDS_MENU == 1
 
+autoFlushTimers flushTimer;
+
+
 // Helper function to check if the menu label matches the target threshold
 bool pdsTds_isMenuLabelMatch(MenuItem *menu, const MenuItem &targetThreshold, uint8_t index)
 {
@@ -56,6 +59,23 @@ void pdsTds_navigationTrue(void)
 {
 	DEBUG_RTT(LOG_INFO, "navigationTrue:");
 	setButtonStates({ENTER_OK, RODI}, false);
+}
+
+bool autoFlushOptions08(uint32_t argChoice, MenuItem *argMenu)
+{
+	if (argChoice < 3 && ButtonE.state())
+	{
+		autoFlushEnable08(argChoice == 1 ? false : true);
+	}
+	else
+		return false;
+}
+
+bool autoFlushEnable08(bool activateST4)
+{
+	Flags.setFlag(Settings, AUTO_FLUSH, activateST4);
+	DEBUG_RTT(LOG_WARNING, "AUTO_FLUSH setting Turned %s.", activateST4 ? "On" : "Off");
+	return true;
 }
 
 bool TdsThreshAdjVal(MenuItem *argMenu)
@@ -154,6 +174,52 @@ bool TDSTempAdjVal(MenuItem *argMenu)
 		return true;
 	}
 
+	return false;
+}
+bool fodOFF_08(uint32_t argChoice, MenuItem *argMenu)
+{
+	if (ButtonE.state())
+	{
+		if (Flags.flagStatus(Settings, FoD))
+		{
+			Flags.setFlag(Settings, FoD, false);
+			DEBUG_RTT(LOG_WARNING, "Fill on Demand disabled");
+		}
+		if (ButtonE.period() > SHORT_PRESS && ButtonE.period() < LONG_LONG_PRESS)
+		{
+			Disp->display("System Purification stopped.");
+			Flags.setFlag(Settings, MEM_SAVER, false);
+			Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
+			invokeST3(false);
+			invokeST5(false);
+		}
+		else if (ButtonE.period() < SINGLE_PRESS)
+		{
+			Flags.setFlag(Settings, MEM_SAVER_PAUSE, false);
+			if (Flags.flagStatus(Status, LEVEL_SENSOR) == true)
+			{
+				Flags.setFlag(Settings, MEM_SAVER, false);
+				fillOpen();
+			}
+			else if (!Flags.flagStatus(Settings, MEM_SAVER))
+			{
+				invokeST3(true);
+				invokeST5(true);
+				// calCurrentTdsReading();
+				perpStatus.diResinSaver = false;
+			}
+			else
+			{
+				Flags.setFlag(Settings, MEM_SAVER, false);
+				Flags.setFlag(Settings, MEM_SAVER_PAUSE, true);
+				Disp->display("System Purification paused.");
+				invokeST3(false);
+				invokeST5(false);
+
+			}
+		}
+		return true;
+	}
 	return false;
 }
 

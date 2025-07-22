@@ -34,6 +34,39 @@
 #define DEFAULT_RESIN_SAVER_INTRVL 03
 
 
+typedef enum
+{
+    NO_TIMER,
+    STARTUP_TIMER,
+    PRODUCTION_TIMER,
+    SUBSEQUENT_TIMER
+} flushTimerType;
+
+typedef enum
+{
+    TDS_ACTIVATION,
+    DEACTIVATED,
+    ACTIVATED,
+    READY,
+    PAUSE,
+    WAIT
+} autoflushStatusType;
+
+typedef struct
+{
+    flushTimerType selectTimer = NO_TIMER;
+    autoflushStatusType activityStatus = DEACTIVATED;
+    uint8_t cycleCount = 0;
+    uint8_t startUpTimer = 10;
+    uint8_t productionTimer = 50;
+    uint8_t subsequentTimer = 10;
+    uint32_t pausedTime = 0;
+} autoFlushTimers;
+
+extern autoFlushTimers flushTimer;
+
+
+
 void pdsTds_introSetup(void);
 bool pdsTds_introPageSelection(uint32_t argChoice, MenuItem* argMenu);
 void pdsTds_mainMenuSetup(void);
@@ -51,3 +84,6 @@ bool resetWarnLoop(uint32_t argChoice, MenuItem *argMenu);
 bool TdsThreshAdjVal(MenuItem *argMenu);
 bool TDSTempAdjVal(MenuItem *argMenu);
 bool pdsTds_isMenuLabelMatch(MenuItem *menu, const MenuItem &targetThreshold, uint8_t index = 0);
+bool fodOFF_08(uint32_t argChoice, MenuItem *argMenu);
+bool autoFlushOptions08(uint32_t argChoice, MenuItem *argMenu);
+bool autoFlushEnable08(bool activateST4);
