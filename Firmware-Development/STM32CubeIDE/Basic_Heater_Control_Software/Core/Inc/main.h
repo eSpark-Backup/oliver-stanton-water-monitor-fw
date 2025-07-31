@@ -41,6 +41,8 @@ extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim16;
+extern UART_HandleTypeDef huart3;
+
 //static TIM_HandleTypeDef htim2;
 //static TIM_HandleTypeDef htim17;
 
@@ -115,6 +117,10 @@ void Error_Handler(void);
 #define MEM_SAVER_GPIO_Port GPIOE
 #define PWM_CNTRL_Pin GPIO_PIN_12
 #define PWM_CNTRL_GPIO_Port GPIOE
+#define WBUS_TX_Pin GPIO_PIN_10
+#define WBUS_TX_GPIO_Port GPIOB
+#define WBUS_RX_Pin GPIO_PIN_11
+#define WBUS_RX_GPIO_Port GPIOB
 #define SW7_Pin GPIO_PIN_8
 #define SW7_GPIO_Port GPIOD
 #define SW7_EXTI_IRQn EXTI4_15_IRQn

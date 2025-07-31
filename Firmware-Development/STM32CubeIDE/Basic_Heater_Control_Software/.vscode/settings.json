@@ -104,6 +104,7 @@
     "streambuf": "cpp",
     "text_encoding": "cpp",
     "typeinfo": "cpp",
-    "variant": "cpp"
+    "variant": "cpp",
+    "heater_wb.h": "c"
   }
 }
