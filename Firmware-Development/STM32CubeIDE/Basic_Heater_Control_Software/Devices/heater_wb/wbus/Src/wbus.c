@@ -1,9 +1,6 @@
 #include "wbus.h"
 #include "wbus_const.h"
 
-
-
-
 #define WBMSGLEN_MAX 32
 
 /*
@@ -30,7 +27,8 @@ static unsigned char checksum(unsigned char *buf, unsigned char len, unsigned ch
  * \param len length the second data buffer.
  * \return 0 if success, 1 on error.
  */
-static int wbus_msg_send( unsigned char addr,
+ int wbus_msg_send( UART_HandleTypeDef uartHandle,
+                            unsigned char addr,
                           unsigned char cmd,
                           unsigned char *data,
                           int len,
@@ -38,7 +36,7 @@ static int wbus_msg_send( unsigned char addr,
                           int len2)
 {
   unsigned char bytes, chksum;
-  unsigned char buf[3];
+  unsigned char buf[4];
 	 
   /* Assemble packet header */
   buf[0] = addr;
@@ -51,58 +49,61 @@ static int wbus_msg_send( unsigned char addr,
 
   /* Send message */
   uint8_t dummy;
-  while (HAL_UART_Receive(&huart1, &dummy, 1, 10) == HAL_OK) {
+  while (HAL_UART_Receive(&uartHandle, &dummy, 1, 10) == HAL_OK) {
       // flush input buffer by reading out garbage
+      printf("flushed buffer\n");
   }
 
-  HAL_UART_Transmit(&huart3, buf, 3, HAL_MAX_DELAY);
-  HAL_UART_Transmit(&huart3, data, len, HAL_MAX_DELAY);
-  HAL_UART_Transmit(&huart3, data2, len2, HAL_MAX_DELAY);
-  HAL_UART_Transmit(&huart3,  &chksum, 1, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&uartHandle, buf, 3, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&uartHandle, data, len, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&uartHandle, data2, len2, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&uartHandle,  &chksum, 1, HAL_MAX_DELAY);
 
   if(data2 != NULL)
   {
-    PRINTF("Response Packet Sent: %X  %X  %X  %X  %X  %X\n", buf[0] , buf[1] , buf[2], *data , *data2, chksum );
+    printf("Response Packet Sent: %X  %X  %X  %X  %X  %X\n", buf[0] , buf[1] , buf[2], *data , *data2, chksum );
   }
   else{
-    PRINTF("Response Packet Sent: %X  %X  %X  %X  %X\n", buf[0] , buf[1] , buf[2], *data, chksum );
+    printf("Response Packet Sent: %X  %X  %X  %X  %X\n", buf[0] , buf[1] , buf[2], *data, chksum );
   }
-  /* Read and check echoed header */
-  HAL_StatusTypeDef status = HAL_UART_Receive(&huart3, buf, 3, HAL_MAX_DELAY);
-  if (status != HAL_OK) {
-      printf("wbus_msg_send() K-Line error. UART receive failed (header)\n");
-      return -1;
-  }
-  if (buf[0] != addr || buf[1] != (len + len2 + 2) || buf[2] != cmd) {
-      printf("wbus_msg_send() K-Line error: %02X %02X %02X\n", buf[0], buf[1], buf[2]);
-      return -1;
-  }
-  
-  /* Read and check echoed data */
-  for (int i = 0; i < len; i++) {
-      status = HAL_UART_Receive(&huart3, buf, 1, HAL_MAX_DELAY);
-      if (status != HAL_OK || buf[0] != data[i]) {
-          printf("wbus_msg_send() K-Line error. Data mismatch at %d: expected %02X, got %02X\n", i, data[i], buf[0]);
-          return -1;
-      }
-  }
-  
-  for (int i = 0; i < len2; i++) {
-      status = HAL_UART_Receive(&huart3, buf, 1, HAL_MAX_DELAY);
-      if (status != HAL_OK || buf[0] != data2[i]) {
-          printf("wbus_msg_send() K-Line error. Data2 mismatch at %d: expected %02X, got %02X\n", i, data2[i], buf[0]);
-          return -1;
-      }
-  }
-  
-  /* Check echoed checksum */
-  status = HAL_UART_Receive(&huart3, buf, 1, HAL_MAX_DELAY);
-  if (status != HAL_OK || buf[0] != chksum) {
-      printf("wbus_msg_send() K-Line error. Checksum mismatch: expected %02X, got %02X\n", chksum, buf[0]);
-      return -1;
-  }
-  
   return 0;
+
+  // /* Read and check echoed header */
+  // HAL_StatusTypeDef status = HAL_UART_Receive(&uartHandle, buf, 3, HAL_MAX_DELAY);
+  // if (status != HAL_OK) {
+  //     printf("wbus_msg_send() K-Line error. UART receive failed (header)\n");
+  //     return -1;
+  // }
+  // if (buf[0] != addr || buf[1] != (len + len2 + 2) || buf[2] != cmd) {
+  //     printf("wbus_msg_send() K-Line error: %02X %02X %02X\n", buf[0], buf[1], buf[2]);
+  //     return -1;
+  // }
+  
+  // /* Read and check echoed data */
+  // for (int i = 0; i < len; i++) {
+  //     status = HAL_UART_Receive(&uartHandle, buf, 1, HAL_MAX_DELAY);
+  //     if (status != HAL_OK || buf[0] != data[i]) {
+  //         printf("wbus_msg_send() K-Line error. Data mismatch at %d: expected %02X, got %02X\n", i, data[i], buf[0]);
+  //         return -1;
+  //     }
+  // }
+  
+  // for (int i = 0; i < len2; i++) {
+  //     status = HAL_UART_Receive(&uartHandle, buf, 1, HAL_MAX_DELAY);
+  //     if (status != HAL_OK || buf[0] != data2[i]) {
+  //         printf("wbus_msg_send() K-Line error. Data2 mismatch at %d: expected %02X, got %02X\n", i, data2[i], buf[0]);
+  //         return -1;
+  //     }
+  // }
+  
+  // /* Check echoed checksum */
+  // status = HAL_UART_Receive(&uartHandle, buf, 1, HAL_MAX_DELAY);
+  // if (status != HAL_OK || buf[0] != chksum) {
+  //     printf("wbus_msg_send() K-Line error. Checksum mismatch: expected %02X, got %02X\n", chksum, buf[0]);
+  //     return -1;
+  // }
+  
+  // return 0;
 }
 
 /*
@@ -114,7 +115,8 @@ static int wbus_msg_send( unsigned char addr,
          If *data is !=0, then *data amount of data bytes will  be skipped.
  * dlen: out: length of data.
  */
-static int wbus_msg_recv(unsigned char *addr,
+static int wbus_msg_recv(UART_HandleTypeDef uartHandle,
+                         unsigned char *addr,
                          unsigned char *cmd,
                          unsigned char *data,
                          int *dlen,
@@ -127,7 +129,7 @@ static int wbus_msg_recv(unsigned char *addr,
 
     // Read address header
     do {
-        status = HAL_UART_Receive(&huart3, buf, 1, HAL_MAX_DELAY);
+        status = HAL_UART_Receive(&uartHandle, buf, 1, HAL_MAX_DELAY);
         if (status != HAL_OK) {
 #ifdef HAS_PRINTF
             if (*cmd != 0) {
@@ -149,7 +151,7 @@ static int wbus_msg_recv(unsigned char *addr,
     // rs232_blocking(wbus->rs232, 0); // Optional, skip or implement UART-specific timeout behavior if needed
 
     // Read length and command bytes
-    status = HAL_UART_Receive(&huart3, buf + 1, 2, HAL_MAX_DELAY);
+    status = HAL_UART_Receive(&uartHandle, buf + 1, 2, HAL_MAX_DELAY);
     if (status != HAL_OK) {
 #ifdef HAS_PRINTF
         if (*cmd != 0) {
@@ -184,7 +186,7 @@ static int wbus_msg_recv(unsigned char *addr,
     len = buf[1] - 2 - skip;
     if (len > 0 || skip > 0) {
         for (; skip > 0; skip--) {
-            status = HAL_UART_Receive(&huart3, buf, 1, HAL_MAX_DELAY);
+            status = HAL_UART_Receive(&uartHandle, buf, 1, HAL_MAX_DELAY);
             if (status != HAL_OK) {
                 printf("wbus_msg_recv() Read error on data skip\n");
                 return -1;
@@ -193,7 +195,7 @@ static int wbus_msg_recv(unsigned char *addr,
         }
 
         if (len > 0) {
-            status = HAL_UART_Receive(&huart3, data, len, HAL_MAX_DELAY);
+            status = HAL_UART_Receive(&uartHandle, data, len, HAL_MAX_DELAY);
             if (status != HAL_OK) {
                 printf("wbus_msg_recv() Read error. len=%d skip=%d cmd=0x%02X buf[1]=0x%02X\n",
                        len, skip, *cmd, buf[1]);
@@ -210,7 +212,7 @@ static int wbus_msg_recv(unsigned char *addr,
     printf("Packet Received: %02X %d %02X %02X %02X\n", *addr, *dlen, *cmd, *data, chksum);
 
     // Read and (optionally) verify checksum
-    status = HAL_UART_Receive(&huart3, buf, 1, HAL_MAX_DELAY);
+    status = HAL_UART_Receive(&uartHandle, buf, 1, HAL_MAX_DELAY);
     if (status != HAL_OK) {
         printf("wbus_msg_recv() Checksum receive error\n");
         return -1;
@@ -226,14 +228,14 @@ static int wbus_msg_recv(unsigned char *addr,
     return 0;
 }
 
-void wbus_init()
+void wbus_init(UART_HandleTypeDef uartHandle)
 {
   /* Initialization sequence */
-    HAL_LIN_SendBreak(&huart3);      // Start BREAK
+    HAL_LIN_SendBreak(&uartHandle);      // Start BREAK
     HAL_Delay(50);
    /* Empty all queues. BRK toggling may cause a false received byte (or more than one who knows). */
     uint8_t dummy;
-    while (HAL_UART_Receive(&huart3, &dummy, 1, 10) == HAL_OK) {
+    while (HAL_UART_Receive(&uartHandle, &dummy, 1, 10) == HAL_OK) {
         // flush input buffer by reading out garbage
     }
 }
@@ -241,7 +243,8 @@ void wbus_init()
 /*
  * Send a client W-Bus request and read answer from Heater.
  */
-int wbus_io( unsigned char cmd,
+int wbus_io( UART_HandleTypeDef uartHandle,
+             unsigned char cmd,
              unsigned char *out,
              unsigned char *out2,
              int len2,
@@ -260,14 +263,14 @@ int wbus_io( unsigned char cmd,
   do {
     if (tries != 0) {
       printf("wbus_io() retry: %d\n", tries);
-      HAL_delay(500);
-      wbus_init();
+      HAL_Delay(500);
+      wbus_init(uartHandle);
     }
     
     tries++;
     /* Send Message */
     addr = (WBUS_CADDR<<4) | WBUS_HADDR;
-    err = wbus_msg_send(addr, cmd, out, len, out2, len2);
+    err = wbus_msg_send(uartHandle ,addr, cmd, out, len, out2, len2);
     
     if (err != 0) {
       printf("wbus_msg_send returned %d\n", err);
@@ -276,7 +279,7 @@ int wbus_io( unsigned char cmd,
      
     /* Receive reply */
     addr = (WBUS_HADDR<<4) | WBUS_CADDR;
-    err = wbus_msg_recv(&addr, &cmd, in, dlen, skip);
+    err = wbus_msg_recv(uartHandle ,&addr, &cmd, in, dlen, skip);
     if (err != 0) {
       printf("wbus_msg_recv returned %d\n", err);
       continue;
@@ -288,7 +291,7 @@ int wbus_io( unsigned char cmd,
 }
 
 
-int wbus_host_listen( HANDLE_WBUS wbus,
+int wbus_host_listen( UART_HandleTypeDef uartHandle,
                       unsigned char *addr,
                       unsigned char *cmd,
                       unsigned char *data,
@@ -299,8 +302,8 @@ int wbus_host_listen( HANDLE_WBUS wbus,
   do {
     *cmd = 0;
     *addr = WBUS_HADDR;
-    rs232_blocking(wbus->rs232, 1);
-    err = wbus_msg_recv(wbus, addr, cmd, data, len, 0);
+    // rs232_blocking(wbus->rs232, 1);
+    err = wbus_msg_recv(uartHandle, addr, cmd, data, len, 0);
   } while (err);
     
   return err;
@@ -309,7 +312,7 @@ int wbus_host_listen( HANDLE_WBUS wbus,
 /*
  * Send answer to W-Bus client.
  */
-int wbus_host_answer( HANDLE_WBUS wbus, 
+int wbus_host_answer( UART_HandleTypeDef uartHandle, 
                       unsigned char addr,
                       unsigned char cmd,
                       unsigned char *data,
@@ -317,50 +320,50 @@ int wbus_host_answer( HANDLE_WBUS wbus,
 {
   addr = (WBUS_HADDR<<4) | (addr>>4); 
   //printf("sending %x %x %x %x %x ... \n", addr, len+3, cmd, data[0], data[1] );
-  return wbus_msg_send(wbus, addr, cmd|0x80, data, len, NULL, 0);
+  return wbus_msg_send(uartHandle, addr, cmd|0x80, data, len, NULL, 0);
 }
 
 
 /* Overall info*/
-int wbus_get_wbinfo(HANDLE_WBINFO i)
+int wbus_get_wbinfo(UART_HandleTypeDef uartHandle ,HANDLE_WBINFO i)
 {
       int err, len;
       unsigned char tmp, tmp2[2];
     
-      wbus_init();
+      wbus_init(uartHandle);
     
-      tmp = IDENT_WB_VER; len = 1; err = wbus_io( WBUS_CMD_IDENT, &tmp, NULL, 0, &i->wbus_ver, &len, 1);
+      tmp = IDENT_WB_VER; len = 1; err = wbus_io( uartHandle , WBUS_CMD_IDENT, &tmp, NULL, 0, &i->wbus_ver, &len, 1);
       if (err) goto bail;
     
-      tmp = IDENT_DEV_NAME; len = 1; err = wbus_io( WBUS_CMD_IDENT, &tmp, NULL, 0, (unsigned char*)i->dev_name, &len, 1);
+      tmp = IDENT_DEV_NAME; len = 1; err = wbus_io(uartHandle , WBUS_CMD_IDENT, &tmp, NULL, 0, (unsigned char*)i->dev_name, &len, 1);
       if (err) goto bail;
       i->dev_name[len] = 0; /* Hack: Null terminate this string */
     #if 0
-      tmp = 3;              len = 1; err = wbus_io( WBUS_CMD_SL_RD, &tmp, NULL, 0, i->strange2, &len, 1);
+      tmp = 3;              len = 1; err = wbus_io(uartHandle , WBUS_CMD_SL_RD, &tmp, NULL, 0, i->strange2, &len, 1);
     #else
-      tmp2[0]=3; tmp2[1]=7; len = 2; err = wbus_io( WBUS_CMD_SL_RD, tmp2, NULL, 0, i->strange2, &len, 2);
+      tmp2[0]=3; tmp2[1]=7; len = 2; err = wbus_io( uartHandle ,WBUS_CMD_SL_RD, tmp2, NULL, 0, i->strange2, &len, 2);
     #endif
-      tmp = IDENT_WB_CODE;  len = 1; err = wbus_io( WBUS_CMD_IDENT, &tmp, NULL, 0, i->wbus_code, &len, 1);
-                            len = 0; err = wbus_io( WBUS_CMD_U1,  NULL, NULL, 0, i->strange, &len, 0);
+      tmp = IDENT_WB_CODE;  len = 1; err = wbus_io(uartHandle , WBUS_CMD_IDENT, &tmp, NULL, 0, i->wbus_code, &len, 1);
+                            len = 0; err = wbus_io( uartHandle ,WBUS_CMD_U1,  NULL, NULL, 0, i->strange, &len, 0);
     
       if (err) goto bail;
-      tmp = IDENT_DEV_ID;  len = 1; err = wbus_io( WBUS_CMD_IDENT, &tmp, NULL, 0, i->dev_id, &len, 1);
+      tmp = IDENT_DEV_ID;  len = 1; err = wbus_io( uartHandle ,WBUS_CMD_IDENT, &tmp, NULL, 0, i->dev_id, &len, 1);
       if (err) goto bail;
-      tmp = IDENT_HWSW_VER;len = 1; err = wbus_io( WBUS_CMD_IDENT, &tmp, NULL, 0, i->hw_ver, &len, 1);
+      tmp = IDENT_HWSW_VER;len = 1; err = wbus_io(uartHandle , WBUS_CMD_IDENT, &tmp, NULL, 0, i->hw_ver, &len, 1);
       if (err) goto bail;
-      tmp = IDENT_DATA_SET;len = 1; err = wbus_io( WBUS_CMD_IDENT, &tmp, NULL, 0, i->data_set_id, &len, 1);
+      tmp = IDENT_DATA_SET;len = 1; err = wbus_io(uartHandle , WBUS_CMD_IDENT, &tmp, NULL, 0, i->data_set_id, &len, 1);
       if (err) goto bail;
-      tmp = IDENT_DOM_CU;  len = 1; err = wbus_io( WBUS_CMD_IDENT, &tmp, NULL, 0, i->dom_cu, &len, 1);
+      tmp = IDENT_DOM_CU;  len = 1; err = wbus_io( uartHandle ,WBUS_CMD_IDENT, &tmp, NULL, 0, i->dom_cu, &len, 1);
       if (err) goto bail;
-      tmp = IDENT_DOM_HT;  len = 1; err = wbus_io( WBUS_CMD_IDENT, &tmp, NULL, 0, i->dom_ht, &len, 1);
+      tmp = IDENT_DOM_HT;  len = 1; err = wbus_io( uartHandle ,WBUS_CMD_IDENT, &tmp, NULL, 0, i->dom_ht, &len, 1);
       if (err) goto bail;
-      tmp = IDENT_U0;      len = 1; err = wbus_io( WBUS_CMD_IDENT, &tmp, NULL, 0, i->u0, &len, 1);
+      tmp = IDENT_U0;      len = 1; err = wbus_io( uartHandle ,WBUS_CMD_IDENT, &tmp, NULL, 0, i->u0, &len, 1);
       if (err) goto bail;
-      tmp = IDENT_CUSTID;  len = 1; err = wbus_io( WBUS_CMD_IDENT, &tmp, NULL, 0, i->customer_id, &len, 1);
+      tmp = IDENT_CUSTID;  len = 1; err = wbus_io( uartHandle ,WBUS_CMD_IDENT, &tmp, NULL, 0, i->customer_id, &len, 1);
       if (err) goto bail;
-      tmp = IDENT_SERIAL;  len = 1; err = wbus_io( WBUS_CMD_IDENT, &tmp, NULL, 0, i->serial, &len, 1);
+      tmp = IDENT_SERIAL;  len = 1; err = wbus_io( uartHandle ,WBUS_CMD_IDENT, &tmp, NULL, 0, i->serial, &len, 1);
       if (err) goto bail;
-      tmp = IDENT_SW_ID;   len = 1; err = wbus_io( WBUS_CMD_IDENT, &tmp, NULL, 0, i->sw_id, &len, 1);
+      tmp = IDENT_SW_ID;   len = 1; err = wbus_io( uartHandle ,WBUS_CMD_IDENT, &tmp, NULL, 0, i->sw_id, &len, 1);
     
     bail:
       return err;
@@ -410,7 +413,7 @@ void wbus_ident_print(char *str, HANDLE_WBINFO i, int line)
 }
 
 /* Sensor access */
-int wbus_sensor_read(HANDLE_WBUS wbus, HANDLE_WBSENSOR sensor, int idx)
+int wbus_sensor_read(UART_HandleTypeDef uartHandle, HANDLE_WBSENSOR sensor, int idx)
 {
   int err  = 0;
   int len;
@@ -433,10 +436,10 @@ int wbus_sensor_read(HANDLE_WBUS wbus, HANDLE_WBSENSOR sensor, int idx)
       break;	
   }
 	
-  wbus_init(wbus);
+  wbus_init(uartHandle);
 	
   sen = idx; len=1;
-  err = wbus_io(wbus, WBUS_CMD_QUERY, &sen, NULL, 0, sensor->value, &len, 1);
+  err = wbus_io(uartHandle, WBUS_CMD_QUERY, &sen, NULL, 0, sensor->value, &len, 1);
   if (err != 0)
   {
     printf("Reading sensor %d failed\n", idx);
@@ -543,23 +546,23 @@ void wbus_sensor_print(char *str, HANDLE_WBSENSOR s)
 }
 
 /* error code handling */
-int wbus_errorcodes_read(HANDLE_WBUS wbus, HANDLE_WBERR e)
+int wbus_errorcodes_read(UART_HandleTypeDef uartHandle, HANDLE_WBERR e)
 {
   int err  = 0, i, nErr, len;
   unsigned char list[32];
   unsigned char tmp[2];
 	
-  if (wbus == NULL)
-  {
-    printf("wbus_errorcodes_read() Invalid handle\n");
-    return -1;
-  }
+//   if (uartHandle == 0)
+//   {
+//     printf("wbus_errorcodes_read() Invalid handle\n");
+//     return -1;
+//   }
 
-  wbus_init(wbus); 
+  wbus_init(uartHandle); 
 	
   tmp[0] = ERR_LIST;
   len = 1;
-  err = wbus_io(wbus, WBUS_CMD_ERR, tmp, NULL, 0, list, &len, 1);
+  err = wbus_io(uartHandle, WBUS_CMD_ERR, tmp, NULL, 0, list, &len, 1);
   
   nErr = list[0];
   printf("found %d errors\n", nErr);
@@ -570,21 +573,21 @@ int wbus_errorcodes_read(HANDLE_WBUS wbus, HANDLE_WBERR e)
     len = 2;
     tmp[0] = ERR_READ;
     tmp[1] = list[i*2+1];
-    err = wbus_io(wbus, WBUS_CMD_ERR, tmp, NULL, 0, (unsigned char*)&e->errors[i].info, &len, 1);
+    err = wbus_io(uartHandle, WBUS_CMD_ERR, tmp, NULL, 0, (unsigned char*)&e->errors[i].info, &len, 1);
   }
   e->nErr = nErr;
 	 
   return err;
 }
 
-int wbus_errorcodes_clear(HANDLE_WBUS wbus)
+int wbus_errorcodes_clear(UART_HandleTypeDef uartHandle)
 {
   int err, len;
   unsigned char tmp;
 	 
-  wbus_init(wbus); 
+  wbus_init(uartHandle); 
 	
-  tmp = ERR_DEL; len = 1; err = wbus_io(wbus, WBUS_CMD_ERR, &tmp, NULL, 0, &tmp, &len, 0);
+  tmp = ERR_DEL; len = 1; err = wbus_io(uartHandle, WBUS_CMD_ERR, &tmp, NULL, 0, &tmp, &len, 0);
 	 
   return err;
 }
@@ -612,13 +615,13 @@ void wbus_errorcode_print(char *str, HANDLE_WBERR e, int i)
 
 
 /* Test */
-int wbus_test(HANDLE_WBUS wbus, unsigned char test, unsigned char secds, float value)
+int wbus_test(UART_HandleTypeDef uartHandle, unsigned char test, unsigned char secds, float value)
 {
   int err = 0;
   unsigned char tmp[4];
   int len = 4;
 
-  wbus_init(wbus);
+  wbus_init(uartHandle);
   	
   tmp[0] = test;
   tmp[1] = secds;
@@ -628,13 +631,13 @@ int wbus_test(HANDLE_WBUS wbus, unsigned char test, unsigned char secds, float v
   else
     PERCENT2WORD(tmp[2], value);
 	
-  err = wbus_io(wbus, WBUS_CMD_TEST, tmp, NULL, 0, tmp, &len, 0);
+  err = wbus_io(uartHandle, WBUS_CMD_TEST, tmp, NULL, 0, tmp, &len, 0);
 	
   return err;
 }
 
 /* Turn heater on for time minutes */
-int wbus_turnOn(HANDLE_WBUS wbus, WBUS_TURNON mode, unsigned char  time)
+int wbus_turnOn(UART_HandleTypeDef uartHandle, WBUS_TURNON mode, unsigned char  time)
 {
   int err = 0;
   unsigned char cmd;
@@ -649,30 +652,30 @@ int wbus_turnOn(HANDLE_WBUS wbus, WBUS_TURNON mode, unsigned char  time)
        return -1;
   }
   
-  wbus_init(wbus); 
+  wbus_init(uartHandle); 
   
   tmp[0] = time;
-  err = wbus_io(wbus, cmd, tmp, NULL, 0, tmp, &len, 0);
+  err = wbus_io(uartHandle, cmd, tmp, NULL, 0, tmp, &len, 0);
 	  
   return err;
 }
 
 /* Turn heater off */
-int wbus_turnOff(HANDLE_WBUS wbus)
+int wbus_turnOff(UART_HandleTypeDef uartHandle)
 {
   int err = 0;
   int len = 0;
   unsigned char tmp[2];
 	
-  wbus_init(wbus); 
+  wbus_init(uartHandle); 
 	
-  err = wbus_io(wbus, WBUS_CMD_OFF, tmp, NULL, 0, tmp, &len, 0);
+  err = wbus_io(uartHandle, WBUS_CMD_OFF, tmp, NULL, 0, tmp, &len, 0);
 	  
   return err;
 }
 
 /* Check current command */
-int wbus_check(HANDLE_WBUS wbus, WBUS_TURNON mode)
+int wbus_check(UART_HandleTypeDef uartHandle, WBUS_TURNON mode)
 {
   int err = 0;
   int len = 2;
@@ -687,9 +690,9 @@ int wbus_check(HANDLE_WBUS wbus, WBUS_TURNON mode)
   }
   tmp[1] = 0;
   
-  wbus_init(wbus); 
+  wbus_init(uartHandle); 
   
-  err = wbus_io(wbus, WBUS_CMD_CHK, tmp, NULL, 0, tmp, &len, 0);
+  err = wbus_io(uartHandle, WBUS_CMD_CHK, tmp, NULL, 0, tmp, &len, 0);
 	  
   return err;
 }
@@ -697,45 +700,45 @@ int wbus_check(HANDLE_WBUS wbus, WBUS_TURNON mode)
 /*
  * Fuel Priming
  */
-int wbus_fuelPrime(HANDLE_WBUS wbus, unsigned char time)
+int wbus_fuelPrime(UART_HandleTypeDef uartHandle, unsigned char time)
 {
   unsigned char tmp[5];
   int len;
   
-  wbus_init(wbus); 
+  wbus_init(uartHandle); 
   
   tmp[0] = 0x03;
   tmp[1] = 0x00;
   tmp[2] = time>>1;
   len = 3;
   
-  return wbus_io(wbus, WBUS_CMD_X, tmp, NULL, 0, tmp, &len, 0);
+  return wbus_io(uartHandle, WBUS_CMD_X, tmp, NULL, 0, tmp, &len, 0);
 }
 
-int wbus_eeprom_read(HANDLE_WBUS wbus, int addr, unsigned char *eeprom_data)
+int wbus_eeprom_read(UART_HandleTypeDef uartHandle, int addr, unsigned char *eeprom_data)
 {
   unsigned char tmp[1];
   int len;
   
-  wbus_init(wbus); 
+  wbus_init(uartHandle); 
   
   tmp[0] = addr;
   len = 1;
   
-  return wbus_io(wbus, WBUS_TS_ERD, tmp, NULL, 0, eeprom_data, &len, 2);
+  return wbus_io(uartHandle, WBUS_TS_ERD, tmp, NULL, 0, eeprom_data, &len, 2);
 }
 
-int wbus_eeprom_write(HANDLE_WBUS wbus, int addr, unsigned char *eeprom_data)
+int wbus_eeprom_write(UART_HandleTypeDef uartHandle, int addr, unsigned char *eeprom_data)
 {
   unsigned char tmp[3];
   int len;
   
-  wbus_init(wbus); 
+  wbus_init(uartHandle); 
   
   tmp[0] = addr;
   len = 1;
   
-  return wbus_io(wbus, WBUS_TS_EWR, tmp, eeprom_data, 1, tmp, &len, 0);
+  return wbus_io(uartHandle, WBUS_TS_EWR, tmp, eeprom_data, 1, tmp, &len, 0);
 }
 
 
@@ -764,7 +767,7 @@ void wbus_teststatic(void)
 }
 #endif
 
-int wbus_data_set_load(HANDLE_WBUS wbus, void *seq, unsigned char idx)
+int wbus_data_set_load(UART_HandleTypeDef uartHandle, void *seq, unsigned char idx)
 {
   int err = 0;
   int len = 2;
@@ -773,15 +776,15 @@ int wbus_data_set_load(HANDLE_WBUS wbus, void *seq, unsigned char idx)
   tmp[0] = DATASET_READ;
   tmp[1] = idx;
 
-  wbus_init(wbus);
+  wbus_init(uartHandle);
   
-  err = wbus_io(wbus, WBUS_CMD_DATASET, tmp, NULL, 0, seq, &len, 2);
+  err = wbus_io(uartHandle, WBUS_CMD_DATASET, tmp, NULL, 0, seq, &len, 2);
 
   return err;
 
 }
 
-int wbus_data_set_store(HANDLE_WBUS wbus, void *seq, unsigned char idx)
+int wbus_data_set_store(UART_HandleTypeDef uartHandle, void *seq, unsigned char idx)
 {
   int err = 0;
   int len = 2;
@@ -790,48 +793,48 @@ int wbus_data_set_store(HANDLE_WBUS wbus, void *seq, unsigned char idx)
   tmp[0] = DATASET_WRITE;
   tmp[1] = idx;
 
-  wbus_init(wbus);
+  wbus_init(uartHandle);
   
-  err = wbus_io(wbus, WBUS_CMD_DATASET, tmp, seq, 96, NULL, &len, 96+2);
+  err = wbus_io(uartHandle, WBUS_CMD_DATASET, tmp, seq, 96, NULL, &len, 96+2);
 
   return err;
 }
 
 /* Overall handling stuff */
 
-#ifndef WBUS_USE_MALLOC
-static struct WBUS _wbus[NO_RS232];
-#endif
+// #ifndef WBUS_USE_MALLOC
+// static struct WBUS _wbus[NO_RS232];
+// #endif
  
-int wbus_open(HANDLE_WBUS *pWbus, unsigned char dev_idx)
-{
-  HANDLE_WBUS wbus;
-  int err;
+// int wbus_open(HANDLE_WBUS *pWbus, unsigned char dev_idx)
+// {
+//   UART_HandleTypeDef uartHandle;
+//   int err;
 
-#ifdef WBUS_USE_MALLOC
-  wbus = malloc(sizeof(struct WBUS));
-#else
-  wbus = &_wbus[dev_idx];
-#endif
-  err = rs232_open(&wbus->rs232, dev_idx, 2400, RS232_FMT_8E1);
+// #ifdef WBUS_USE_MALLOC
+//   wbus = malloc(sizeof(struct WBUS));
+// #else
+//   wbus = &_wbus[dev_idx];
+// #endif
+//   err = rs232_open(&wbus->rs232, dev_idx, 2400, RS232_FMT_8E1);
     
-  if (err == 0)
-    *pWbus = wbus;
+//   if (err == 0)
+//     *pWbus = wbus;
     	 
-#ifdef WBUS_TEST
-  wbus_teststatic();
-#endif
+// #ifdef WBUS_TEST
+//   wbus_teststatic();
+// #endif
 	 
-  return err;
-}
+//   return err;
+// }
 
-void wbus_close(HANDLE_WBUS wbus)
-{
-  if (wbus == NULL)
-    return;
+// void wbus_close(UART_HandleTypeDef uartHandle)
+// {
+//   if (uartHandle == 0)
+//     return;
 	 
-  rs232_close(wbus->rs232);
-#ifdef WBUS_USE_MALLOC
-  free(wbus);
-#endif
-}
+//   rs232_close(wbus->rs232);
+// #ifdef WBUS_USE_MALLOC
+//   free(uartHandle);
+// #endif
+// }

@@ -1,10 +1,10 @@
 #pragma once
 
-
+#include "main.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+// #include "stm32f0xx_hal_uart.h"
 
 
 #ifndef __WBUS_H__
@@ -75,11 +75,12 @@ typedef wb_errors_t *HANDLE_WBERR;
 
 
 /* Overall handling stuff */
-int wbus_open(HANDLE_WBUS *pWbus, unsigned char dev_idx);
-void wbus_close(HANDLE_WBUS wbus);
+// int wbus_open(HANDLE_WBUS *pWbus, unsigned char dev_idx);
+// void wbus_close(UART_HandleTypeDef uartHandle);
 
 /* Low level W-Bus I/O */
-int wbus_io(  unsigned char cmd,
+int wbus_io( UART_HandleTypeDef uartHandle, 
+             unsigned char cmd,
              unsigned char *out,
              unsigned char *out2,
              int len2,
@@ -89,33 +90,39 @@ int wbus_io(  unsigned char cmd,
 
 #ifdef WBUS_HOST
 /* WBUS host support */
-int wbus_host_listen( HANDLE_WBUS wbus,
+int wbus_host_listen( UART_HandleTypeDef uartHandle,
                       unsigned char *addr,
                       unsigned char *cmd,
                       unsigned char *data,
                       int *len);
 
-int wbus_host_answer( HANDLE_WBUS wbus, 
+int wbus_host_answer( UART_HandleTypeDef uartHandle, 
                       unsigned char addr,
                       unsigned char cmd,
                       unsigned char *data,
                       int len);
 #endif
-
+ int wbus_msg_send( UART_HandleTypeDef uartHandle,
+                            unsigned char addr,
+                          unsigned char cmd,
+                          unsigned char *data,
+                          int len,
+                          unsigned char *data2,
+                          int len2);
 /* Hight Level I/O */
-int wbus_sensor_read(HANDLE_WBUS wbus, HANDLE_WBSENSOR s, int idx);
+int wbus_sensor_read(UART_HandleTypeDef uartHandle, HANDLE_WBSENSOR s, int idx);
 void wbus_sensor_print(char *str, HANDLE_WBSENSOR s);
 
-int wbus_get_wbinfo(HANDLE_WBINFO hInfo);
+int wbus_get_wbinfo(UART_HandleTypeDef uartHandle , HANDLE_WBINFO hInfo);
 void wbus_ident_print(char *str, HANDLE_WBINFO i, int line);
 
 /* Error code handling */
-int wbus_errorcodes_read(HANDLE_WBUS wbus, HANDLE_WBERR e);
-int wbus_errorcodes_clear(HANDLE_WBUS wbus);
+int wbus_errorcodes_read(UART_HandleTypeDef uartHandle, HANDLE_WBERR e);
+int wbus_errorcodes_clear(UART_HandleTypeDef uartHandle);
 void wbus_errorcode_print(char *str, HANDLE_WBERR e, int i);
 
 /* Test heater subsystems */
-int wbus_test(HANDLE_WBUS wbus, unsigned char test, unsigned char secds, float value);
+int wbus_test(UART_HandleTypeDef uartHandle, unsigned char test, unsigned char secds, float value);
 
 /* Turn heater on/off */
 typedef enum {
@@ -124,22 +131,22 @@ typedef enum {
   WBUS_PH
 } WBUS_TURNON;
 
-int wbus_turnOn(HANDLE_WBUS wbus, WBUS_TURNON mode, unsigned char time);
-int wbus_turnOff(HANDLE_WBUS wbus);
+int wbus_turnOn(UART_HandleTypeDef uartHandle, WBUS_TURNON mode, unsigned char time);
+int wbus_turnOff(UART_HandleTypeDef uartHandle);
 /* Check or keep alive heating process. mode is the argument that
    was passed as to wbus_turnOn() */
-int wbus_check(HANDLE_WBUS wbus, WBUS_TURNON mode);
+int wbus_check(UART_HandleTypeDef uartHandle, WBUS_TURNON mode);
 
 /*
  * Fuel Priming
  */
-int wbus_fuelPrime(HANDLE_WBUS wbus, unsigned char time);
+int wbus_fuelPrime(UART_HandleTypeDef uartHandle, unsigned char time);
 
-int wbus_eeprom_read(HANDLE_WBUS wbus, int addr, unsigned char *eeprom_data);
-int wbus_eeprom_write(HANDLE_WBUS wbus, int addr, unsigned char *eeprom_data);
+int wbus_eeprom_read(UART_HandleTypeDef uartHandle, int addr, unsigned char *eeprom_data);
+int wbus_eeprom_write(UART_HandleTypeDef uartHandle, int addr, unsigned char *eeprom_data);
 
-int wbus_data_set_load(HANDLE_WBUS wbus, void *seq, unsigned char idx);
-int wbus_data_set_store(HANDLE_WBUS wbus, void *seq, unsigned char idx);
+int wbus_data_set_load(UART_HandleTypeDef uartHandle, void *seq, unsigned char idx);
+int wbus_data_set_store(UART_HandleTypeDef uartHandle, void *seq, unsigned char idx);
 
 #endif /* __WBUS_H__ */
 

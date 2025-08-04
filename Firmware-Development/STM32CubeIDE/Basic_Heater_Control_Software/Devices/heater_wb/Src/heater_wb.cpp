@@ -1,20 +1,19 @@
 
 #include "heater_wb.h"
 
+#define UART_HANDLE huart3
 
-// HANDLE_WBUS wbus;
 wb_info_t i;
 wb_errors_t e;
 int8_t err = 0;
 int8_t test = 0, tim=1, dev = 0, sensor = 0; 
 float tval = 1.0f;
-wbtool_cmd cmd = IDLE;
 char opt;
 char text[1024];
 unsigned char eeprom_data_wr[2];
 
 typedef enum {
-	IDLE = 1,
+  IDLE = 1,
 	CMD_ID,
 	CMD_ERR_LS,
 	CMD_ERR_DEL,
@@ -30,6 +29,7 @@ typedef enum {
 	CMD_EEPROM_WR
 } wbtool_cmd; 
 
+wbtool_cmd cmd = IDLE;
 
 int heaterInit()
 {
@@ -52,7 +52,7 @@ void commandExecute(wbtool_cmd cmd)
             break;
         case CMD_ID:
             /* Retrieve device indenty info */
-            err = wbus_get_wbinfo(wbus, &i);
+            err = wbus_get_wbinfo(UART_HANDLE, &i);
             if (err == 0)
             {
               int a;
@@ -66,76 +66,76 @@ void commandExecute(wbtool_cmd cmd)
               printf("wbus_get_wbinfo() failed\n");
             }
             break;
-        // case CMD_EEPROM_RD:
-        //     {
-        //       int a;
-        //       unsigned char eeprom_data[2];
+        case CMD_EEPROM_RD:
+            {
+              int a;
+              unsigned char eeprom_data[2];
     
-        //       for (a=0; a<32; a++)
-        //       {
-        //         err = wbus_eeprom_read(wbus, a, eeprom_data);
-        //         if (err == 0) {
-        //           printf("%x ", eeprom_data[a]);
-        //         } else {
-        //           break;
-        //                     }
-        //       }
-        //     }		        
-        //         break;
-        // case CMD_ERR_LS:
-        //     /* read error codes  */
-        //     wbus_errorcodes_read(wbus, &e);
-        //     {
-        //       int a;
+              for (a=0; a<32; a++)
+              {
+                err = wbus_eeprom_read(UART_HANDLE, a, eeprom_data);
+                if (err == 0) {
+                  printf("%x ", eeprom_data[a]);
+                } else {
+                  break;
+                            }
+              }
+            }		        
+                break;
+        case CMD_ERR_LS:
+            /* read error codes  */
+            wbus_errorcodes_read(UART_HANDLE, &e);
+            {
+              int a;
               
-        //       for (a=0; a<e.nErr; a++)
-        //       {
-        //         wbus_errorcode_print(text, &e, a);
-        //         printf("%s\n", text);
-        //       }
-        //     }
-        //     break;
+              for (a=0; a<e.nErr; a++)
+              {
+                wbus_errorcode_print(text, &e, a);
+                printf("%s\n", text);
+              }
+            }
+            break;
     
-        // case CMD_ERR_DEL:
-        //     /* Delete error codes */
-        //     err = wbus_errorcodes_clear(wbus);
-        //     break;
-        // case CMD_TEST:
-        //     printf("Testing device %d for %d seconds with value %f\n", test, tim, tval);
-        //     err = wbus_test(wbus, test, tim, tval);
-        //     break;
-        // case CMD_PH:
-        //     err = wbus_turnOn(wbus, WBUS_PH, 30);
-        //     break;
-        // case CMD_SH:
-        //     err = wbus_turnOn(wbus, WBUS_SH, 30);
-        //     break;
-        // case CMD_VENT:
-        //     err = wbus_turnOn(wbus, WBUS_VENT, 30);
-        //     break;
-        // case CMD_STOP:
-        //     err = wbus_turnOff(wbus);
-        //     break;
-        // case CMD_MONITOR:
-        //     {
-        //     int i;
-        //     wb_sensor_t s;
-        //     for (i=0; i<20; i++)
-        //     {
-        //       wbus_sensor_read(wbus, &s, i);
-        //       wbus_sensor_print(text, &s);
-        //       printf("sensor[%d] %s\n", i, text);
-        //     }
-        //     }
-        //     break;
-        // case CMD_MONITOR_SINGLE:
-        //     {
-        //     wb_sensor_t s;
-        //     wbus_sensor_read(wbus, &s, sensor);
-        //     wbus_sensor_print(text, &s);
-        //     printf("sensor[%d] %s\n", sensor, text);
-        //     }
-        //     break;
+        case CMD_ERR_DEL:
+            /* Delete error codes */
+            err = wbus_errorcodes_clear(UART_HANDLE);
+            break;
+        case CMD_TEST:
+            printf("Testing device %d for %d seconds with value %f\n", test, tim, tval);
+            err = wbus_test(UART_HANDLE, test, tim, tval);
+            break;
+        case CMD_PH:
+            err = wbus_turnOn(UART_HANDLE, WBUS_PH, 30);
+            break;
+        case CMD_SH:
+            err = wbus_turnOn(UART_HANDLE, WBUS_SH, 30);
+            break;
+        case CMD_VENT:
+            err = wbus_turnOn(UART_HANDLE, WBUS_VENT, 30);
+            break;
+        case CMD_STOP:
+            err = wbus_turnOff(UART_HANDLE);
+            break;
+        case CMD_MONITOR:
+            {
+            int i;
+            wb_sensor_t s;
+            for (i=0; i<20; i++)
+            {
+              wbus_sensor_read(UART_HANDLE, &s, i);
+              wbus_sensor_print(text, &s);
+              printf("sensor[%d] %s\n", i, text);
+            }
+            }
+            break;
+        case CMD_MONITOR_SINGLE:
+            {
+            wb_sensor_t s;
+            wbus_sensor_read(UART_HANDLE, &s, sensor);
+            wbus_sensor_print(text, &s);
+            printf("sensor[%d] %s\n", sensor, text);
+            }
+            break;
         default:
             break;
             
@@ -146,7 +146,7 @@ void commandExecute(wbtool_cmd cmd)
 
 int heaterLoop()
 {
-    commandExecute();
+    commandExecute(cmd);
 }
 
 // int main(int argc, char **argv)

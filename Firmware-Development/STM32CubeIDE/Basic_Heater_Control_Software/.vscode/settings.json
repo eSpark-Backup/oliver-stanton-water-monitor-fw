@@ -105,6 +105,8 @@
     "text_encoding": "cpp",
     "typeinfo": "cpp",
     "variant": "cpp",
-    "heater_wb.h": "c"
+    "heater_wb.h": "c",
+    "stdlib.h": "c",
+    "string.h": "c"
   }
 }
