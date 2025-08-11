@@ -9,6 +9,7 @@
 
 #include "mainApp.hpp"
 #include "menu.h"
+#include "heater_wb.h"
 
 #define MAX_DEL_TDS_THRESHOLD 50
 #define DEFAULT_DEL_TDS_THRESHOLD 10
@@ -63,7 +64,7 @@
 void pumpOff();
 void pumpOn();
 
-
+bool heaterTestLoop(uint32_t argChoice, MenuItem *argMenu);
 void heaterIntroSetup();
 void heaterSettOptns();
 void heaterTogg();

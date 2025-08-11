@@ -13,6 +13,42 @@
 
 #if LL_TCHS_MENU == 1
 
+uint8_t count = 1;
+bool heaterTestLoop(uint32_t argChoice, MenuItem *argMenu) /*Added for Heater test*/
+{
+	if (ButtonE.state())
+	{	
+		sendHeaterCommand(CMD_PH,1);
+		DEBUG_RTT(LOG_INFO, "Main Heater Power ON");
+	}
+	else if (ButtonDel.state())
+	{   
+		sendHeaterCommand(CMD_STOP, 0);
+		DEBUG_RTT(LOG_INFO, "Main Heater Power off");
+
+	}
+	else if (ButtonD.state())
+	{   
+		if(count < 14)
+		{	
+			sendHeaterCommand((wbtool_cmd )count , 1);
+			DEBUG_RTT(LOG_INFO, "cycling to next command");
+			count++;
+		}
+		else
+		{
+			count=1;
+		}
+	}
+	else if (ButtonU.state())
+	{   
+		sendHeaterCommand(IDLE , 0);
+		DEBUG_RTT(LOG_INFO, "Heater command cleared");
+	}
+    else{return false;}
+
+    return true;
+}
 
 void pumpOff()
 {

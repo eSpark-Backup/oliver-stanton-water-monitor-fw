@@ -3,6 +3,37 @@
 
 #define WBMSGLEN_MAX 32
 
+#include "usbd_cdc_if.h"  // For CDC_Transmit_FS
+#include <stdio.h>
+#include <stdarg.h>
+
+#define CDC_TX_BUFFER_SIZE 256
+#define CDC_MAX_PACKET_SIZE 64  // USB FS CDC max packet size
+
+void CDC_Printf(const char *fmt, ...)
+{
+    char buffer[CDC_TX_BUFFER_SIZE];
+    va_list args;
+    va_start(args, fmt);
+    int len = vsnprintf(buffer, sizeof(buffer), fmt, args);
+    va_end(args);
+
+    if (len < 0) return; // encoding error
+    if (len > sizeof(buffer)) len = sizeof(buffer);
+
+    int offset = 0;
+    uint8_t result;
+
+    while (offset < len) {
+        int chunk = (len - offset > CDC_MAX_PACKET_SIZE) ? CDC_MAX_PACKET_SIZE : (len - offset);
+
+        do {
+            result = CDC_Transmit_FS((uint8_t *)(buffer + offset), chunk);
+        } while (result == USBD_BUSY);
+
+        offset += chunk;
+    }
+}
 /*
  * \param buf pointer to ACK message part
  * \param len length of data
@@ -51,7 +82,7 @@ static unsigned char checksum(unsigned char *buf, unsigned char len, unsigned ch
   uint8_t dummy;
   while (HAL_UART_Receive(&uartHandle, &dummy, 1, 10) == HAL_OK) {
       // flush input buffer by reading out garbage
-      printf("flushed buffer\n");
+      CDC_Printf("flushed buffer\n");
   }
 
   HAL_UART_Transmit(&uartHandle, buf, 3, HAL_MAX_DELAY);
@@ -59,29 +90,29 @@ static unsigned char checksum(unsigned char *buf, unsigned char len, unsigned ch
   HAL_UART_Transmit(&uartHandle, data2, len2, HAL_MAX_DELAY);
   HAL_UART_Transmit(&uartHandle,  &chksum, 1, HAL_MAX_DELAY);
 
-  printf("Packet Sent: ");
+  CDC_Printf("Packet Sent: ");
   for (int i = 0; i < 3; i++) { // header
-      printf("%02X ", buf[i]);
+      CDC_Printf("%02X ", buf[i]);
   }
   for (int i = 0; i < len; i++) { // first data block
-      printf("%02X ", data[i]);
+      CDC_Printf("%02X ", data[i]);
   }
   if (data2 != NULL && len2 > 0) { // optional second data block
       for (int i = 0; i < len2; i++) {
-          printf("%02X ", data2[i]);
+          CDC_Printf("%02X ", data2[i]);
       }
   }
-  printf("%02X\n", chksum); // checksum at the end
+  CDC_Printf("%02X\n", chksum); // checksum at the end
 
   
   // /* Read and check echoed header */
   // HAL_StatusTypeDef status = HAL_UART_Receive(&uartHandle, buf, 3, HAL_MAX_DELAY);
   // if (status != HAL_OK) {
-  //     printf("wbus_msg_send() K-Line error. UART receive failed (header)\n");
+  //     CDC_Printf("wbus_msg_send() K-Line error. UART receive failed (header)\n");
   //     return -1;
   // }
   // if (buf[0] != addr || buf[1] != (len + len2 + 2) || buf[2] != cmd) {
-  //     printf("wbus_msg_send() K-Line error: %02X %02X %02X\n", buf[0], buf[1], buf[2]);
+  //     CDC_Printf("wbus_msg_send() K-Line error: %02X %02X %02X\n", buf[0], buf[1], buf[2]);
   //     return -1;
   // }
   
@@ -89,7 +120,7 @@ static unsigned char checksum(unsigned char *buf, unsigned char len, unsigned ch
   // for (int i = 0; i < len; i++) {
   //     status = HAL_UART_Receive(&uartHandle, buf, 1, HAL_MAX_DELAY);
   //     if (status != HAL_OK || buf[0] != data[i]) {
-  //         printf("wbus_msg_send() K-Line error. Data mismatch at %d: expected %02X, got %02X\n", i, data[i], buf[0]);
+  //         CDC_Printf("wbus_msg_send() K-Line error. Data mismatch at %d: expected %02X, got %02X\n", i, data[i], buf[0]);
   //         return -1;
   //     }
   // }
@@ -97,7 +128,7 @@ static unsigned char checksum(unsigned char *buf, unsigned char len, unsigned ch
   // for (int i = 0; i < len2; i++) {
   //     status = HAL_UART_Receive(&uartHandle, buf, 1, HAL_MAX_DELAY);
   //     if (status != HAL_OK || buf[0] != data2[i]) {
-  //         printf("wbus_msg_send() K-Line error. Data2 mismatch at %d: expected %02X, got %02X\n", i, data2[i], buf[0]);
+  //         CDC_Printf("wbus_msg_send() K-Line error. Data2 mismatch at %d: expected %02X, got %02X\n", i, data2[i], buf[0]);
   //         return -1;
   //     }
   // }
@@ -105,7 +136,7 @@ static unsigned char checksum(unsigned char *buf, unsigned char len, unsigned ch
   // /* Check echoed checksum */
   // status = HAL_UART_Receive(&uartHandle, buf, 1, HAL_MAX_DELAY);
   // if (status != HAL_OK || buf[0] != chksum) {
-  //     printf("wbus_msg_send() K-Line error. Checksum mismatch: expected %02X, got %02X\n", chksum, buf[0]);
+  //     CDC_Printf("wbus_msg_send() K-Line error. Checksum mismatch: expected %02X, got %02X\n", chksum, buf[0]);
   //     return -1;
   // }
   
@@ -121,119 +152,6 @@ static unsigned char checksum(unsigned char *buf, unsigned char len, unsigned ch
          If *data is !=0, then *data amount of data bytes will  be skipped.
  * dlen: out: length of data.
  */
-// static int wbus_msg_recv(UART_HandleTypeDef uartHandle,
-//                          unsigned char *addr,
-//                          unsigned char *cmd,
-//                          unsigned char *data,
-//                          int *dlen,
-//                          int skip)
-// {
-//     unsigned char buf[3];
-//     unsigned char chksum;
-//     int len, printlen;
-//     HAL_StatusTypeDef status;
-
-//     // Read address header
-//     do {
-//         status = HAL_UART_Receive(&uartHandle, buf, 1, HAL_MAX_DELAY);
-//         if (status != HAL_OK) {
-// #ifdef HAS_PRINTF
-//             if (*cmd != 0) {
-//                 printf("wbus_msg_recv(): timeout\n");
-//             }
-// #endif
-//             return -1;
-//         }
-
-//         buf[1] = buf[0];
-// #ifdef WBUS_HOST
-//         if (*cmd == 0) {
-//             buf[1] &= 0x0F;
-//         }
-// #endif
-//         // Loop until we get expected address
-//     } while (buf[1] != *addr);
-
-//     // rs232_blocking(wbus->rs232, 0); // Optional, skip or implement UART-specific timeout behavior if needed
-
-//     // Read length and command bytes
-//     status = HAL_UART_Receive(&uartHandle, buf + 1, 2, HAL_MAX_DELAY);
-//     if (status != HAL_OK) {
-// #ifdef HAS_PRINTF
-//         if (*cmd != 0) {
-//             printf("wbus_msg_recv(): No addr/len error\n");
-//         }
-// #endif
-//         return -1;
-//     }
-
-// #ifdef WBUS_HOST
-//     if (*cmd != 0)
-// #endif
-//     {
-//         // Client case: check ACK
-//         if (buf[2] != (*cmd | 0x80)) {
-//             printf("wbus_msg_recv() Request %02X was rejected\n", *cmd);
-//             *dlen = 0;
-//             return 0;  // Not an error, just a NACK
-//         }
-//     }
-
-// #ifdef WBUS_HOST
-//     else {
-//         *addr = buf[0];
-//         printlen=buf[1];
-//         *cmd  = buf[2];
-//     }
-// #endif
-
-//     chksum = checksum(buf, 3, 0);
-//     printf(" buf[0]=%X   ,buf[1]= %X   ,buf[2]= %X , skip= %d\n" , buf[0],buf[1],buf[2],skip);
-//     // Calculate actual data length
-//     len = buf[1] - 2 - skip;
-//     if (len > 0 || skip > 0) {
-//         for (; skip > 0; skip--) {
-//             status = HAL_UART_Receive(&uartHandle, buf, 1, HAL_MAX_DELAY);
-//             if (status != HAL_OK) {
-//                 printf("wbus_msg_recv() Read error on data skip\n");
-//                 return -1;
-//             }
-//             chksum = checksum(buf, 1, chksum);
-//         }
-
-//         if (len > 0) {
-//             status = HAL_UART_Receive(&uartHandle, data, len, HAL_MAX_DELAY);
-//             if (status != HAL_OK) {
-//                 printf("wbus_msg_recv() Read error. len=%d skip=%d cmd=0x%02X buf[1]=0x%02X\n",
-//                        len, skip, *cmd, buf[1]);
-//                 return -1;
-//             }
-//             chksum = checksum(data, len, chksum);
-//         }
-
-//         *dlen = len;
-//     } else {
-//         *dlen = 0;
-//     }
-
-//     printf("Packet Received: %X %X %X %X %X\n", *addr, printlen, *cmd, *data, chksum);
-
-//     // Read and (optionally) verify checksum
-//     status = HAL_UART_Receive(&uartHandle, buf, 1, HAL_MAX_DELAY);
-//     if (status != HAL_OK) {
-//         printf("wbus_msg_recv() Checksum receive error\n");
-//         return -1;
-//     }
-
-//     /*
-//     if (buf[0] != chksum) {
-//         printf("wbus_msg_recv() Checksum error\n");
-//         return -1;
-//     }
-//     */
-
-//     return 0;
-// }
 
 
 static int wbus_msg_recv(UART_HandleTypeDef uartHandle,
@@ -255,7 +173,7 @@ static int wbus_msg_recv(UART_HandleTypeDef uartHandle,
     // --- Step 1: Read header ---
     status = HAL_UART_Receive(&uartHandle, header, 3, HAL_MAX_DELAY);
     if (status != HAL_OK) {
-        printf("wbus_msg_recv(): Failed to read header\n");
+        CDC_Printf("wbus_msg_recv(): Failed to read header\n");
         return -1;
     }
 
@@ -279,7 +197,7 @@ static int wbus_msg_recv(UART_HandleTypeDef uartHandle,
         unsigned char dummy;
         status = HAL_UART_Receive(&uartHandle, &dummy, 1, HAL_MAX_DELAY);
         if (status != HAL_OK) {
-            printf("wbus_msg_recv(): Error skipping bytes\n");
+            CDC_Printf("wbus_msg_recv(): Error skipping bytes\n");
             return -1;
         }
         chksum_calc ^= dummy;
@@ -290,7 +208,7 @@ static int wbus_msg_recv(UART_HandleTypeDef uartHandle,
     if (data_len > 0) {
         status = HAL_UART_Receive(&uartHandle, data, data_len, HAL_MAX_DELAY);
         if (status != HAL_OK) {
-            printf("wbus_msg_recv(): Failed to read payload\n");
+            CDC_Printf("wbus_msg_recv(): Failed to read payload\n");
             return -1;
         }
         for (int i = 0; i < data_len; i++) {
@@ -303,24 +221,24 @@ static int wbus_msg_recv(UART_HandleTypeDef uartHandle,
     // --- Step 6: Read received checksum ---
     status = HAL_UART_Receive(&uartHandle, &checksum_rx, 1, HAL_MAX_DELAY);
     if (status != HAL_OK) {
-        printf("wbus_msg_recv(): Failed to read checksum\n");
+        CDC_Printf("wbus_msg_recv(): Failed to read checksum\n");
         return -1;
     }
     packet_bytes[packet_index++] = checksum_rx;
 
     // --- Step 7: Verify checksum ---
     if (checksum_rx != chksum_calc) {
-        printf("wbus_msg_recv(): Checksum mismatch! RX=0x%02X CALC=0x%02X\n",
+        CDC_Printf("wbus_msg_recv(): Checksum mismatch! RX=0x%02X CALC=0x%02X\n",
                checksum_rx, chksum_calc);
         return -1;
     }
 
     // --- Step 8: Print full packet ---
-    printf("Packet Received: ");
+    CDC_Printf("Packet Received: ");
     for (int i = 0; i < packet_index; i++) {
-        printf("%02X ", packet_bytes[i]);
+        CDC_Printf("%02X ", packet_bytes[i]);
     }
-    printf("\n");
+    CDC_Printf("\n");
 
     return 0; // success
 }
@@ -359,7 +277,7 @@ int wbus_io( UART_HandleTypeDef uartHandle,
   tries = 0;
   do {
     if (tries != 0) {
-      printf("wbus_io() retry: %d\n", tries);
+      CDC_Printf("wbus_io() retry: %d\n", tries);
       HAL_Delay(500);
       wbus_init(uartHandle);
     }
@@ -370,7 +288,7 @@ int wbus_io( UART_HandleTypeDef uartHandle,
     err = wbus_msg_send(uartHandle ,addr, cmd, out, len, out2, len2);
     
     if (err != 0) {
-      printf("wbus_msg_send returned %d\n", err);
+      CDC_Printf("wbus_msg_send returned %d\n", err);
       continue;
     }
      
@@ -378,7 +296,7 @@ int wbus_io( UART_HandleTypeDef uartHandle,
     addr = (WBUS_HADDR<<4) | WBUS_CADDR;
     err = wbus_msg_recv(uartHandle ,&addr, &cmd, in, dlen, skip);
     if (err != 0) {
-      printf("wbus_msg_recv returned %d\n", err);
+      CDC_Printf("wbus_msg_recv returned %d\n", err);
       continue;
     }
     
@@ -416,7 +334,7 @@ int wbus_host_answer( UART_HandleTypeDef uartHandle,
                       int len)
 {
   addr = (WBUS_HADDR<<4) | (addr>>4); 
-  //printf("sending %x %x %x %x %x ... \n", addr, len+3, cmd, data[0], data[1] );
+  //CDC_Printf("sending %x %x %x %x %x ... \n", addr, len+3, cmd, data[0], data[1] );
   return wbus_msg_send(uartHandle, addr, cmd|0x80, data, len, NULL, 0);
 }
 
@@ -539,7 +457,7 @@ int wbus_sensor_read(UART_HandleTypeDef uartHandle, HANDLE_WBSENSOR sensor, int 
   err = wbus_io(uartHandle, WBUS_CMD_QUERY, &sen, NULL, 0, sensor->value, &len, 1);
   if (err != 0)
   {
-    printf("Reading sensor %d failed\n", idx);
+    CDC_Printf("Reading sensor %d failed\n", idx);
     sensor->length = 0;
     return -1;
   }
@@ -651,7 +569,7 @@ int wbus_errorcodes_read(UART_HandleTypeDef uartHandle, HANDLE_WBERR e)
 	
 //   if (uartHandle == 0)
 //   {
-//     printf("wbus_errorcodes_read() Invalid handle\n");
+//     CDC_Printf("wbus_errorcodes_read() Invalid handle\n");
 //     return -1;
 //   }
 
@@ -662,7 +580,7 @@ int wbus_errorcodes_read(UART_HandleTypeDef uartHandle, HANDLE_WBERR e)
   err = wbus_io(uartHandle, WBUS_CMD_ERR, tmp, NULL, 0, list, &len, 1);
   
   nErr = list[0];
-  printf("found %d errors\n", nErr);
+  CDC_Printf("found %d errors\n", nErr);
 
   /* Extract info from list and read data of each error */
   for (i=0; i<nErr; i++)
@@ -855,11 +773,11 @@ void wbus_teststatic(void)
   const unsigned char msg2[] = {0x4f, 0x0e, 0xd6, 0x02, 0x98, 0x00, 0x01, 0x04,
 		  0x00, 0x46, 0x35, 0x7a, 0x03, 0x97, 0x1b, 0x8e};
 	 
-  printf("Testing checksum\n");
+  CDC_Printf("Testing checksum\n");
   if (checksum(msg1, 5, 0) != 0x3c)
-    printf("Checksum on msg1 failed! chksum = %x\n", checksum(msg1, 5, 0));
+    CDC_Printf("Checksum on msg1 failed! chksum = %x\n", checksum(msg1, 5, 0));
   if (checksum(msg2, 15, 0) != 0x8e)
-    printf("Checksum on msg2 failed! chksum = %x\n", checksum(msg2, 15, 0));
+    CDC_Printf("Checksum on msg2 failed! chksum = %x\n", checksum(msg2, 15, 0));
 
 }
 #endif

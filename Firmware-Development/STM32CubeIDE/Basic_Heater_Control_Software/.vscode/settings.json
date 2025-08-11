@@ -107,6 +107,10 @@
     "variant": "cpp",
     "heater_wb.h": "c",
     "stdlib.h": "c",
-    "string.h": "c"
+    "string.h": "c",
+    "controls_ll_tchs.h": "c",
+    "main.h": "c",
+    "menu.h": "c",
+    "stdio.h": "c"
   }
 }

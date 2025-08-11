@@ -1,12 +1,24 @@
 #pragma once
 
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+	
 #include "wbus.h"
+
+#ifdef __cplusplus
+}
+#endif
+
 #include "main.h"
+#include "controls_LL_TCHS.h"
+#include "menu.h"
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
-
+#include <stdbool.h>
 
 typedef enum {
   IDLE = 1,
@@ -28,5 +40,6 @@ typedef enum {
 extern wbtool_cmd heaterCmd;
 
 
-int heaterLoop();
-void sendHeaterCommand(wbtool_cmd heaterCommand);
+void heaterLoop();
+void sendHeaterCommand(wbtool_cmd heaterCommand , uint8_t heaterOnTimeMin);
+

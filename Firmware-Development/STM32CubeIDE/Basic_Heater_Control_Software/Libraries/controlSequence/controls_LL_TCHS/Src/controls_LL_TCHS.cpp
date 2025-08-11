@@ -12,6 +12,7 @@
 #include "LL_TCHS_Menu.h"
 #include "masterLog.h"
 #include "Battery.hpp"
+#include "heater_wb.h"
 
 
 #define SECONDS_TO_MS(x) 				((x) * 1000) 						//converts seconds to milliseconds
@@ -679,19 +680,21 @@ void heaterControl()
 }
 
 void controlPeripherals(void)
-{
-	heaterControl();
-	monitorTdsCycle();
+{	
+	heaterLoop();
 
-	if(menuShifted)
-	{
-		frostActivationDecision();
-	}
+	// heaterControl();
+	// monitorTdsCycle();
 
-	if(frostPreventON && Flags.flagStatus(Settings , FROST_PREVENT))
-	{
-		frostPreventionSequence();
-	}
+	// if(menuShifted)
+	// {
+	// 	frostActivationDecision();
+	// }
+
+	// if(frostPreventON && Flags.flagStatus(Settings , FROST_PREVENT))
+	// {
+	// 	frostPreventionSequence();
+	// }
 }
 
 

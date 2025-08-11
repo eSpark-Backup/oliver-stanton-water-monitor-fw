@@ -1,70 +1,109 @@
 
 #include "heater_wb.h"
 
+
 #define UART_HANDLE huart3
 
 wb_info_t i;
 wb_errors_t e;
 int8_t err = 0;
-int8_t test = 0, tim=1, dev = 0, sensor = 0; 
+int8_t test = 0, dev = 0, sensor = 0;
+uint8_t heaterOnMins = 1; 
 float tval = 1.0f;
 char opt;
 char text[1024];
 unsigned char eeprom_data_wr[2];
+bool heaterRunning= false;
 
-typedef enum {
-  IDLE = 1,
-	CMD_ID,
-	CMD_ERR_LS,
-	CMD_ERR_DEL,
-	CMD_TEST,
-	CMD_PH, /* park heating */
-	CMD_SH, /* supplemental heating */
-	CMD_VENT, /* Ventilation */
-	CMD_CHECK,
-	CMD_STOP,
-	CMD_MONITOR,
-	CMD_MONITOR_SINGLE,
-	CMD_EEPROM_RD,
-	CMD_EEPROM_WR
-} wbtool_cmd; 
+wbtool_cmd heaterCmd = IDLE;
 
-wbtool_cmd cmd = IDLE;
 
-int heaterInit()
+void sendHeaterCommand(wbtool_cmd heaterCommand , uint8_t heaterOnTimeMin)
 {
-    /* UART INITIALIZATION*/
-
-    /* Open comunication to W-Bus device */	
-	// wbus_open(&wbus, dev);
-	// if (err) {
-	//  	printf("Error opening W-Bus\n");
-	// 	return -1;
-	// }
+    heaterCmd=heaterCommand;
+    heaterOnMins= heaterOnTimeMin;
 }
 
-void commandExecute(wbtool_cmd cmd)
+void printCurrentCommand()
 {
-    switch (cmd)
+    switch (heaterCmd)
     {
         case IDLE:
-    
+            menu.Display_Log("[Command] IDLE\n");
             break;
+
+        case CMD_ID:
+            menu.Display_Log("[Command] CMD_ID (Read Heater ID)\n");
+            break;
+
+        case CMD_EEPROM_RD:
+            menu.Display_Log("[Command] CMD_EEPROM_RD (Read EEPROM)\n");
+            break;
+
+        case CMD_ERR_LS:
+            menu.Display_Log("[Command] CMD_ERR_LS (List Error Codes)\n");
+            break;
+
+        case CMD_ERR_DEL:
+            menu.Display_Log("[Command] CMD_ERR_DEL (Delete Error Codes)\n");
+            break;
+
+        case CMD_TEST:
+            menu.Display_Log("[Command] CMD_TEST (Run Test Mode)\n");
+            break;
+
+        case CMD_PH:
+            menu.Display_Log("[Command] CMD_PH (Park Heater )\n");
+            break;
+
+        case CMD_SH:
+            menu.Display_Log("[Command] CMD_SH (Start Heater)\n");
+            break;
+
+        case CMD_VENT:
+            menu.Display_Log("[Command] CMD_VENT (Ventilation Mode)\n");
+            break;
+
+        case CMD_STOP:
+            menu.Display_Log("[Command] CMD_STOP (Stop Heater)\n");
+            break;
+
+        case CMD_MONITOR:
+            menu.Display_Log("[Command] CMD_MONITOR (Live Monitoring)\n");
+            break;
+
+        case CMD_MONITOR_SINGLE:
+            menu.Display_Log("[Command] CMD_MONITOR_SINGLE (Single Monitor Reading)\n");
+            break;
+
+        default:
+            menu.Display_Log("[Command] UNKNOWN (0x%02X)\n", heaterCmd);
+            break;
+    }
+}
+
+
+void commandExecute(void)
+{
+    switch (heaterCmd)
+    {
+        case IDLE:
+          break;
         case CMD_ID:
             /* Retrieve device indenty info */
             err = wbus_get_wbinfo(UART_HANDLE, &i);
             if (err == 0)
             {
               int a;
-              
               for (a=0; a<WB_IDENT_LINES; a++)
               {
                 wbus_ident_print(text, &i, a);
-                printf("%s\n", text);
+                menu.Display_Log("%s\n", text);
               }
             } else {
-              printf("wbus_get_wbinfo() failed\n");
+              menu.Display_Log("wbus_get_wbinfo() failed\n");
             }
+            heaterCmd = IDLE;
             break;
         case CMD_EEPROM_RD:
             {
@@ -75,13 +114,16 @@ void commandExecute(wbtool_cmd cmd)
               {
                 err = wbus_eeprom_read(UART_HANDLE, a, eeprom_data);
                 if (err == 0) {
-                  printf("%x ", eeprom_data[a]);
+                  menu.Display_Log("%x ", eeprom_data[a]);
                 } else {
+                    heaterCmd = IDLE;
+
                   break;
-                            }
+                }
               }
-            }		        
-                break;
+            }
+            heaterCmd = IDLE;
+            break;
         case CMD_ERR_LS:
             /* read error codes  */
             wbus_errorcodes_read(UART_HANDLE, &e);
@@ -91,30 +133,37 @@ void commandExecute(wbtool_cmd cmd)
               for (a=0; a<e.nErr; a++)
               {
                 wbus_errorcode_print(text, &e, a);
-                printf("%s\n", text);
+                menu.Display_Log("%s\n", text);
               }
             }
+            heaterCmd = IDLE;
             break;
     
         case CMD_ERR_DEL:
             /* Delete error codes */
             err = wbus_errorcodes_clear(UART_HANDLE);
+            heaterCmd = IDLE;
             break;
         case CMD_TEST:
-            printf("Testing device %d for %d seconds with value %f\n", test, tim, tval);
-            err = wbus_test(UART_HANDLE, test, tim, tval);
+            menu.Display_Log("Testing device %d for 1 sec with value %f\n", test , tval);
+            err = wbus_test(UART_HANDLE, test, 1, tval); //1 second
+            heaterCmd = IDLE;
             break;
         case CMD_PH:
-            err = wbus_turnOn(UART_HANDLE, WBUS_PH, 30);
+            err = wbus_turnOn(UART_HANDLE, WBUS_PH, heaterOnMins);
+            heaterRunning= true;
             break;
         case CMD_SH:
-            err = wbus_turnOn(UART_HANDLE, WBUS_SH, 30);
+            err = wbus_turnOn(UART_HANDLE, WBUS_SH, heaterOnMins);
+            heaterRunning= true;
             break;
         case CMD_VENT:
-            err = wbus_turnOn(UART_HANDLE, WBUS_VENT, 30);
+            err = wbus_turnOn(UART_HANDLE, WBUS_VENT, heaterOnMins);
+            heaterRunning= true;
             break;
         case CMD_STOP:
             err = wbus_turnOff(UART_HANDLE);
+            heaterCmd = IDLE;
             break;
         case CMD_MONITOR:
             {
@@ -124,17 +173,19 @@ void commandExecute(wbtool_cmd cmd)
             {
               wbus_sensor_read(UART_HANDLE, &s, i);
               wbus_sensor_print(text, &s);
-              printf("sensor[%d] %s\n", i, text);
+              menu.Display_Log("sensor[%d] %s\n", i, text);
             }
             }
+            heaterCmd = IDLE;
             break;
         case CMD_MONITOR_SINGLE:
             {
             wb_sensor_t s;
             wbus_sensor_read(UART_HANDLE, &s, sensor);
             wbus_sensor_print(text, &s);
-            printf("sensor[%d] %s\n", sensor, text);
+            menu.Display_Log("sensor[%d] %s\n", sensor, text);
             }
+            heaterCmd = IDLE;
             break;
         default:
             break;
@@ -143,53 +194,56 @@ void commandExecute(wbtool_cmd cmd)
 
 }
 
-
-int heaterLoop()
+int heaterUnderOperation()
 {
-    commandExecute(cmd);
+  	switch (heaterCmd) {
+		case CMD_PH:
+			err = wbus_check(UART_HANDLE, WBUS_PH);
+			break;
+		case CMD_SH:
+			err = wbus_check(UART_HANDLE, WBUS_SH);
+			break;
+		case CMD_VENT:
+			err = wbus_check(UART_HANDLE, WBUS_VENT);
+			break;
+		default:
+			err = -1;
+			break;
+		}
+		if (err) {
+		  // menu.Display_Log("stop\n");
+      heaterCmd = IDLE;
+      heaterRunning= false;
+		  return err;
+		} 
+		{
+		  wb_sensor_t s;
+		  wbus_sensor_read(UART_HANDLE, &s, 3);
+		  wbus_sensor_print(text, &s);
+		  menu.Display_Log("%s\n", text);
+		  wbus_sensor_read(UART_HANDLE, &s, 5);
+		  wbus_sensor_print(text, &s);
+		  menu.Display_Log("%s\n", text);
+		  wbus_sensor_read(UART_HANDLE, &s, 7);
+		  wbus_sensor_print(text, &s);
+		  menu.Display_Log("%s\n", text);
+		}
+		menu.Display_Log(" HEATER UNDER OPERATION\n");
+	
+	return err;
 }
 
-// int main(int argc, char **argv)
-// {
 
-// 	while (!err) {
-// 		switch (cmd) {
-// 		case CMD_CHECK:
-// 		case CMD_PH:
-// 			err = wbus_check(wbus, WBUS_PH);
-// 			break;
-// 		case CMD_SH:
-// 			err = wbus_check(wbus, WBUS_SH);
-// 			break;
-// 		case CMD_VENT:
-// 			err = wbus_check(wbus, WBUS_VENT);
-// 			break;
-// 		default:
-// 			err = -1;
-// 			break;
-// 		}
-// 		if (err) {
-// 		  printf("stop\n");
-// 		  break;
-// 		} 
-// 		{
-// 		  wb_sensor_t s;
-// 		  wbus_sensor_read(wbus, &s, 3);
-// 		  wbus_sensor_print(text, &s);
-// 		  printf("%s\n", text);
-// 		  wbus_sensor_read(wbus, &s, 5);
-// 		  wbus_sensor_print(text, &s);
-// 		  printf("%s\n", text);
-// 		  wbus_sensor_read(wbus, &s, 7);
-// 		  wbus_sensor_print(text, &s);
-// 		  printf("%s\n", text);
-// 		}
-// 		printf(" running...\n");
-// 		machine_sleep(1);
-// 	}
-	
-// 	/* Close W-Bus */
-// 	wbus_close(wbus);
-	
-// 	return err;
-// }
+void heaterLoop()
+{
+    if(!heaterRunning){
+      commandExecute();
+    }
+    else{
+      heaterUnderOperation();
+    }
+    // printCurrentCommand();
+}
+
+
+

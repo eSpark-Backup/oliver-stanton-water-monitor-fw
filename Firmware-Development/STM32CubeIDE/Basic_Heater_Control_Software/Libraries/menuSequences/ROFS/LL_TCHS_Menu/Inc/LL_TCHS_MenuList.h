@@ -27,94 +27,102 @@
 
 
 MenuItem heaterIntro = {
-	heaterIntroSetup,
-	nullptr,
-	{{"Heater Settings", nullptr, nullptr, &heaterSettingsOptns, nullptr, 3, 1}}
-};
-
-MenuItem heaterSettingsOptns = {
-	heaterSettOptns,
-	nullptr,
-	{{"Heater", nullptr, nullptr, &heaterToggle, &heaterSettingsOptns, 2, 3},
-	{"Frost Prevention", nullptr, nullptr, &frostPreventToggle, &heaterToggle, 2, 3},
-	{"PUMP 1 Status toggle for Sequence Test", nullptr, nullptr, &pumpToggleForTest, &heaterSettingsOptns, 2, 3}}
-};
-MenuItem pumpToggleForTest = {
-	heaterSettOptns,
-	nullptr,
-	{{"PUMP 1 Status On", pumpOff, nullptr, nullptr, &heaterSettingsOptns, 1, 2},
-	{"PUMP 1 Status Off", pumpOn, nullptr, nullptr, &heaterSettingsOptns, 1, 2}}
-};
-
-
-MenuItem heaterToggle = {
 	heaterTogg,
-	nullptr,
-	{{"Heater On", nullptr, nullptr, &deliveryHome, &heaterSettingsOptns, 1, 2},
-	{"Heater Off", nullptr, nullptr, &heaterOff, &heaterSettingsOptns, 1, 2}}
+	heaterTestLoop,
+	{{"Heater Test (webasto):\nButtonE- Turn On heater(park heating)\nButtonDel-Turn Off Heater\nButtonDown- Cycle commands\nButtonUp-Clear command", nullptr, nullptr, nullptr, nullptr, 1, 1}}
 };
 
 
-MenuItem heaterOff = {
-	heaterOf,
-	heaterOfLoop,
-	{{"Heater Turned OFF", nullptr, nullptr, nullptr, &heaterToggle, 1, 1}}
-};
+// MenuItem heaterIntro = {
+// 	heaterIntroSetup,
+// 	nullptr,
+// 	{{"Heater Settings", nullptr, nullptr, &heaterSettingsOptns, nullptr, 3, 1}}
+// };
+
+// MenuItem heaterSettingsOptns = {
+// 	heaterSettOptns,
+// 	nullptr,
+// 	{{"Heater", nullptr, nullptr, &heaterToggle, &heaterSettingsOptns, 2, 3},
+// 	{"Frost Prevention", nullptr, nullptr, &frostPreventToggle, &heaterToggle, 2, 3},
+// 	{"Heater Test (webasto)", nullptr, nullptr, &pumpToggleForTest, &heaterSettingsOptns, 2, 3},
+// 	{"PUMP 1 Status toggle for Sequence Test", nullptr, nullptr, &pumpToggleForTest, &heaterSettingsOptns, 2, 3}}
+// };
+// MenuItem pumpToggleForTest = {
+// 	heaterSettOptns,
+// 	nullptr,
+// 	{{"PUMP 1 Status On", pumpOff, nullptr, nullptr, &heaterSettingsOptns, 1, 2},
+// 	{"PUMP 1 Status Off", pumpOn, nullptr, nullptr, &heaterSettingsOptns, 1, 2}}
+// };
 
 
-MenuItem deliveryHome = {
-    deliveryHomeSetup,
-    deliveryHomeLoop,
-    {{"Delivery Home Screen ", nullptr, nullptr, nullptr, &heaterToggle, 1, 1}}
-};
-
-MenuItem frostPreventToggle = {
-    frostPreventToggleSetup,
-    nullptr,
-    {{"frost Prevent On", nullptr, nullptr, &frostPreventOn, &heaterSettingsOptns, 4, 2},
-    {"frost Prevent Off", nullptr, nullptr, &frostPreventOff, &heaterSettingsOptns, 1, 2}}
-};
+// MenuItem heaterToggle = {
+// 	heaterTogg,
+// 	nullptr,
+// 	{{"Heater On", nullptr, nullptr, &deliveryHome, &heaterSettingsOptns, 1, 2},
+// 	{"Heater Off", nullptr, nullptr, &heaterOff, &heaterSettingsOptns, 1, 2}}
+// };
 
 
-MenuItem frostPreventOff= {
-    frostPreventOffSetup,
-    frostPreventOffLoop,
-    {{"frost Prevent Off", nullptr, nullptr, nullptr, &frostPreventToggle, 1, 1}}
-};
+// MenuItem heaterOff = {
+// 	heaterOf,
+// 	heaterOfLoop,
+// 	{{"Heater Turned OFF", nullptr, nullptr, nullptr, &heaterToggle, 1, 1}}
+// };
 
-MenuItem frostPreventOn= {
-    frostPreventOnSetup,
-    nullptr,
-    {{"Set Frost Prevention Temperature Threshold", nullptr, nullptr, &frostPreventTempThresh, &frostPreventToggle, 1, 4},
-    {"Set Frost Prevention Temperature Timer", nullptr, nullptr, &frostPreventTimer, &frostPreventToggle, 1, 4},
-    {"Set Temperature Format", nullptr, nullptr, &TempFormat, &frostPreventToggle, 2, 4 },
-    {"Set Frost Prevention Pump Circulation Speed", nullptr, nullptr, &frostPreventPumpCircuSpeed, &frostPreventToggle, 1, 4 }}
-};
 
-MenuItem frostPreventTimer = {
-    frostPreventTimerSetup,
-    frostPreventTimerLoop,
-    {{"UP and Down keys to increase/decrease Frost Prevention Temperature Timer by 1 min", nullptr, nullptr, nullptr, &frostPreventOn, 1, 1}}
-};
+// MenuItem deliveryHome = {
+//     deliveryHomeSetup,
+//     deliveryHomeLoop,
+//     {{"Delivery Home Screen ", nullptr, nullptr, nullptr, &heaterToggle, 1, 1}}
+// };
 
-MenuItem TempFormat = {
-    TempFormatSetup,
-    nullptr,
-    {{"Celsius (°C)", celsiusSetup, nullptr, nullptr, &frostPreventOn, 1, 2},
-    {"Fahrenheit (°F)", fahrenheitSetup, nullptr, nullptr, &frostPreventOn, 1, 2}}
-};
+// MenuItem frostPreventToggle = {
+//     frostPreventToggleSetup,
+//     nullptr,
+//     {{"frost Prevent On", nullptr, nullptr, &frostPreventOn, &heaterSettingsOptns, 4, 2},
+//     {"frost Prevent Off", nullptr, nullptr, &frostPreventOff, &heaterSettingsOptns, 1, 2}}
+// };
 
-MenuItem frostPreventTempThresh = {
-    frostPreventTempThreshSetup,
-    frostPreventTempThreshLoop,
-    {{"UP and Down keys to increase/decrease Frost Prevention Temperature Threshold by 1*C", nullptr, nullptr, nullptr, &frostPreventOn, 1, 1}}
-};
 
-MenuItem frostPreventPumpCircuSpeed = {
-    frostPreventPumpCircuSpeedSetup,
-    frostPreventPumpCircuSpeedLoop,
-    {{"UP and Down keys to increase/decrease Frost Prevention Pump Circulation Speed", nullptr, nullptr, nullptr, &frostPreventOn, 1, 1}}
-};
+// MenuItem frostPreventOff= {
+//     frostPreventOffSetup,
+//     frostPreventOffLoop,
+//     {{"frost Prevent Off", nullptr, nullptr, nullptr, &frostPreventToggle, 1, 1}}
+// };
+
+// MenuItem frostPreventOn= {
+//     frostPreventOnSetup,
+//     nullptr,
+//     {{"Set Frost Prevention Temperature Threshold", nullptr, nullptr, &frostPreventTempThresh, &frostPreventToggle, 1, 4},
+//     {"Set Frost Prevention Temperature Timer", nullptr, nullptr, &frostPreventTimer, &frostPreventToggle, 1, 4},
+//     {"Set Temperature Format", nullptr, nullptr, &TempFormat, &frostPreventToggle, 2, 4 },
+//     {"Set Frost Prevention Pump Circulation Speed", nullptr, nullptr, &frostPreventPumpCircuSpeed, &frostPreventToggle, 1, 4 }}
+// };
+
+// MenuItem frostPreventTimer = {
+//     frostPreventTimerSetup,
+//     frostPreventTimerLoop,
+//     {{"UP and Down keys to increase/decrease Frost Prevention Temperature Timer by 1 min", nullptr, nullptr, nullptr, &frostPreventOn, 1, 1}}
+// };
+
+// MenuItem TempFormat = {
+//     TempFormatSetup,
+//     nullptr,
+//     {{"Celsius (°C)", celsiusSetup, nullptr, nullptr, &frostPreventOn, 1, 2},
+//     {"Fahrenheit (°F)", fahrenheitSetup, nullptr, nullptr, &frostPreventOn, 1, 2}}
+// };
+
+// MenuItem frostPreventTempThresh = {
+//     frostPreventTempThreshSetup,
+//     frostPreventTempThreshLoop,
+//     {{"UP and Down keys to increase/decrease Frost Prevention Temperature Threshold by 1*C", nullptr, nullptr, nullptr, &frostPreventOn, 1, 1}}
+// };
+
+// MenuItem frostPreventPumpCircuSpeed = {
+//     frostPreventPumpCircuSpeedSetup,
+//     frostPreventPumpCircuSpeedLoop,
+//     {{"UP and Down keys to increase/decrease Frost Prevention Pump Circulation Speed", nullptr, nullptr, nullptr, &frostPreventOn, 1, 1}}
+// };
 
 
 

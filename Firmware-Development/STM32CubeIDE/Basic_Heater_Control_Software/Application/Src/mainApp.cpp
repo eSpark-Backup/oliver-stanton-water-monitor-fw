@@ -106,11 +106,12 @@ void MainApp::setup()
 void MainApp::loop()
 {
 	didWork = invokeMenu();
+    menu.Display_Log("Testing device ");
 	controlPeripherals();
 	menu.navigateMenu(currentM, didWork);	
 	Buzzzer->Run();
 	WLED1->Run();
-	Battery.powerManager();
+	// Battery.powerManager();
 }
 
 bool MainApp::invokeMenu()
