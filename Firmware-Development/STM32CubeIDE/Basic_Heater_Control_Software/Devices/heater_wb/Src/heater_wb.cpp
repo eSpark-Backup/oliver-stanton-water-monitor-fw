@@ -29,7 +29,6 @@ void printCurrentCommand()
     switch (heaterCmd)
     {
         case IDLE:
-            menu.Display_Log("[Command] IDLE\n");
             break;
 
         case CMD_ID:
@@ -90,6 +89,7 @@ void commandExecute(void)
         case IDLE:
           break;
         case CMD_ID:
+            printCurrentCommand();            
             /* Retrieve device indenty info */
             err = wbus_get_wbinfo(UART_HANDLE, &i);
             if (err == 0)
@@ -106,6 +106,7 @@ void commandExecute(void)
             heaterCmd = IDLE;
             break;
         case CMD_EEPROM_RD:
+            printCurrentCommand();            
             {
               int a;
               unsigned char eeprom_data[2];
@@ -125,6 +126,8 @@ void commandExecute(void)
             heaterCmd = IDLE;
             break;
         case CMD_ERR_LS:
+            printCurrentCommand();            
+            
             /* read error codes  */
             wbus_errorcodes_read(UART_HANDLE, &e);
             {
@@ -140,32 +143,39 @@ void commandExecute(void)
             break;
     
         case CMD_ERR_DEL:
+            printCurrentCommand();            
             /* Delete error codes */
             err = wbus_errorcodes_clear(UART_HANDLE);
             heaterCmd = IDLE;
             break;
         case CMD_TEST:
+            printCurrentCommand();            
             menu.Display_Log("Testing device %d for 1 sec with value %f\n", test , tval);
             err = wbus_test(UART_HANDLE, test, 1, tval); //1 second
             heaterCmd = IDLE;
             break;
         case CMD_PH:
+            printCurrentCommand();            
             err = wbus_turnOn(UART_HANDLE, WBUS_PH, heaterOnMins);
             heaterRunning= true;
             break;
         case CMD_SH:
+            printCurrentCommand();            
             err = wbus_turnOn(UART_HANDLE, WBUS_SH, heaterOnMins);
             heaterRunning= true;
             break;
         case CMD_VENT:
+            printCurrentCommand();            
             err = wbus_turnOn(UART_HANDLE, WBUS_VENT, heaterOnMins);
             heaterRunning= true;
             break;
         case CMD_STOP:
+            printCurrentCommand();            
             err = wbus_turnOff(UART_HANDLE);
             heaterCmd = IDLE;
             break;
         case CMD_MONITOR:
+            printCurrentCommand();            
             {
             int i;
             wb_sensor_t s;
@@ -179,6 +189,7 @@ void commandExecute(void)
             heaterCmd = IDLE;
             break;
         case CMD_MONITOR_SINGLE:
+            printCurrentCommand();            
             {
             wb_sensor_t s;
             wbus_sensor_read(UART_HANDLE, &s, sensor);
@@ -228,7 +239,7 @@ int heaterUnderOperation()
 		  wbus_sensor_print(text, &s);
 		  menu.Display_Log("%s\n", text);
 		}
-		menu.Display_Log(" HEATER UNDER OPERATION\n");
+		menu.Display_Log(" HEATING \n");
 	
 	return err;
 }
@@ -236,12 +247,13 @@ int heaterUnderOperation()
 
 void heaterLoop()
 {
-    if(!heaterRunning){
+    // if(!heaterRunning){
       commandExecute();
-    }
-    else{
+    // }
+    // else{
       heaterUnderOperation();
-    }
+    HAL_Delay(100);
+    // }
     // printCurrentCommand();
 }
 

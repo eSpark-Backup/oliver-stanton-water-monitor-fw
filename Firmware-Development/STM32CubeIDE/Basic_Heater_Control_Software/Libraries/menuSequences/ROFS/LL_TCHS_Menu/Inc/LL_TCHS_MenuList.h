@@ -29,7 +29,7 @@
 MenuItem heaterIntro = {
 	heaterTogg,
 	heaterTestLoop,
-	{{"Heater Test (webasto):\nButtonE- Turn On heater(park heating)\nButtonDel-Turn Off Heater\nButtonDown- Cycle commands\nButtonUp-Clear command", nullptr, nullptr, nullptr, nullptr, 1, 1}}
+	{{"Heater Test (webasto):\nButtonE- Turn On heater(park heating)\nButtonDel-Turn Off Heater\nButtonDown- Cycle commands\nButtonUp-Clear command",nullptr , nullptr, &heaterIntro, nullptr, 0, 1}}
 };
 
 

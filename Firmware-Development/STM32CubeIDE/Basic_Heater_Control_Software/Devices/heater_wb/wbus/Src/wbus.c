@@ -2,6 +2,7 @@
 #include "wbus_const.h"
 
 #define WBMSGLEN_MAX 32
+#define UART_TIMEOUT_DELAY 150
 
 #include "usbd_cdc_if.h"  // For CDC_Transmit_FS
 #include <stdio.h>
@@ -85,10 +86,10 @@ static unsigned char checksum(unsigned char *buf, unsigned char len, unsigned ch
       CDC_Printf("flushed buffer\n");
   }
 
-  HAL_UART_Transmit(&uartHandle, buf, 3, HAL_MAX_DELAY);
-  HAL_UART_Transmit(&uartHandle, data, len, HAL_MAX_DELAY);
-  HAL_UART_Transmit(&uartHandle, data2, len2, HAL_MAX_DELAY);
-  HAL_UART_Transmit(&uartHandle,  &chksum, 1, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&uartHandle, buf, 3, UART_TIMEOUT_DELAY);
+  HAL_UART_Transmit(&uartHandle, data, len, UART_TIMEOUT_DELAY);
+  HAL_UART_Transmit(&uartHandle, data2, len2, UART_TIMEOUT_DELAY);
+  HAL_UART_Transmit(&uartHandle,  &chksum, 1, UART_TIMEOUT_DELAY);
 
   CDC_Printf("Packet Sent: ");
   for (int i = 0; i < 3; i++) { // header
@@ -106,39 +107,39 @@ static unsigned char checksum(unsigned char *buf, unsigned char len, unsigned ch
 
   
   // /* Read and check echoed header */
-  // HAL_StatusTypeDef status = HAL_UART_Receive(&uartHandle, buf, 3, HAL_MAX_DELAY);
-  // if (status != HAL_OK) {
-  //     CDC_Printf("wbus_msg_send() K-Line error. UART receive failed (header)\n");
-  //     return -1;
-  // }
-  // if (buf[0] != addr || buf[1] != (len + len2 + 2) || buf[2] != cmd) {
-  //     CDC_Printf("wbus_msg_send() K-Line error: %02X %02X %02X\n", buf[0], buf[1], buf[2]);
-  //     return -1;
-  // }
+  HAL_StatusTypeDef status = HAL_UART_Receive(&uartHandle, buf, 3, UART_TIMEOUT_DELAY);
+  if (status != HAL_OK) {
+      CDC_Printf("wbus_msg_send() K-Line error. UART receive failed (header)\n");
+      return -1;
+  }
+  if (buf[0] != addr || buf[1] != (len + len2 + 2) || buf[2] != cmd) {
+      CDC_Printf("wbus_msg_send() K-Line error: %02X %02X %02X\n", buf[0], buf[1], buf[2]);
+      return -1;
+  }
   
-  // /* Read and check echoed data */
-  // for (int i = 0; i < len; i++) {
-  //     status = HAL_UART_Receive(&uartHandle, buf, 1, HAL_MAX_DELAY);
-  //     if (status != HAL_OK || buf[0] != data[i]) {
-  //         CDC_Printf("wbus_msg_send() K-Line error. Data mismatch at %d: expected %02X, got %02X\n", i, data[i], buf[0]);
-  //         return -1;
-  //     }
-  // }
+  /* Read and check echoed data */
+  for (int i = 0; i < len; i++) {
+      status = HAL_UART_Receive(&uartHandle, buf, 1, UART_TIMEOUT_DELAY);
+      if (status != HAL_OK || buf[0] != data[i]) {
+          CDC_Printf("wbus_msg_send() K-Line error. Data mismatch at %d: expected %02X, got %02X\n", i, data[i], buf[0]);
+          return -1;
+      }
+  }
   
-  // for (int i = 0; i < len2; i++) {
-  //     status = HAL_UART_Receive(&uartHandle, buf, 1, HAL_MAX_DELAY);
-  //     if (status != HAL_OK || buf[0] != data2[i]) {
-  //         CDC_Printf("wbus_msg_send() K-Line error. Data2 mismatch at %d: expected %02X, got %02X\n", i, data2[i], buf[0]);
-  //         return -1;
-  //     }
-  // }
+  for (int i = 0; i < len2; i++) {
+      status = HAL_UART_Receive(&uartHandle, buf, 1, UART_TIMEOUT_DELAY);
+      if (status != HAL_OK || buf[0] != data2[i]) {
+          CDC_Printf("wbus_msg_send() K-Line error. Data2 mismatch at %d: expected %02X, got %02X\n", i, data2[i], buf[0]);
+          return -1;
+      }
+  }
   
-  // /* Check echoed checksum */
-  // status = HAL_UART_Receive(&uartHandle, buf, 1, HAL_MAX_DELAY);
-  // if (status != HAL_OK || buf[0] != chksum) {
-  //     CDC_Printf("wbus_msg_send() K-Line error. Checksum mismatch: expected %02X, got %02X\n", chksum, buf[0]);
-  //     return -1;
-  // }
+  /* Check echoed checksum */
+  status = HAL_UART_Receive(&uartHandle, buf, 1, UART_TIMEOUT_DELAY);
+  if (status != HAL_OK || buf[0] != chksum) {
+      CDC_Printf("wbus_msg_send() K-Line error. Checksum mismatch: expected %02X, got %02X\n", chksum, buf[0]);
+      return -1;
+  }
   
   return 0;
 }
@@ -171,7 +172,7 @@ static int wbus_msg_recv(UART_HandleTypeDef uartHandle,
     HAL_StatusTypeDef status;
 
     // --- Step 1: Read header ---
-    status = HAL_UART_Receive(&uartHandle, header, 3, HAL_MAX_DELAY);
+    status = HAL_UART_Receive(&uartHandle, header, 3, UART_TIMEOUT_DELAY);
     if (status != HAL_OK) {
         CDC_Printf("wbus_msg_recv(): Failed to read header\n");
         return -1;
@@ -195,7 +196,7 @@ static int wbus_msg_recv(UART_HandleTypeDef uartHandle,
     // --- Step 4: Skip bytes if needed ---
     for (int i = 0; i < skip; i++) {
         unsigned char dummy;
-        status = HAL_UART_Receive(&uartHandle, &dummy, 1, HAL_MAX_DELAY);
+        status = HAL_UART_Receive(&uartHandle, &dummy, 1, UART_TIMEOUT_DELAY);
         if (status != HAL_OK) {
             CDC_Printf("wbus_msg_recv(): Error skipping bytes\n");
             return -1;
@@ -206,7 +207,7 @@ static int wbus_msg_recv(UART_HandleTypeDef uartHandle,
 
     // --- Step 5: Read payload data ---
     if (data_len > 0) {
-        status = HAL_UART_Receive(&uartHandle, data, data_len, HAL_MAX_DELAY);
+        status = HAL_UART_Receive(&uartHandle, data, data_len, UART_TIMEOUT_DELAY);
         if (status != HAL_OK) {
             CDC_Printf("wbus_msg_recv(): Failed to read payload\n");
             return -1;
@@ -219,7 +220,7 @@ static int wbus_msg_recv(UART_HandleTypeDef uartHandle,
     *dlen = data_len;
 
     // --- Step 6: Read received checksum ---
-    status = HAL_UART_Receive(&uartHandle, &checksum_rx, 1, HAL_MAX_DELAY);
+    status = HAL_UART_Receive(&uartHandle, &checksum_rx, 1, UART_TIMEOUT_DELAY);
     if (status != HAL_OK) {
         CDC_Printf("wbus_msg_recv(): Failed to read checksum\n");
         return -1;
@@ -301,7 +302,6 @@ int wbus_io( UART_HandleTypeDef uartHandle,
     }
     
   } while (tries < 4 && err != 0);
-
   return err;
 }
 
@@ -349,7 +349,7 @@ int wbus_get_wbinfo(UART_HandleTypeDef uartHandle ,HANDLE_WBINFO i)
     
       tmp = IDENT_WB_VER; len = 1; err = wbus_io( uartHandle , WBUS_CMD_IDENT, &tmp, NULL, 0, &i->wbus_ver, &len, 1);
       if (err) goto bail;
-    
+
       tmp = IDENT_DEV_NAME; len = 1; err = wbus_io(uartHandle , WBUS_CMD_IDENT, &tmp, NULL, 0, (unsigned char*)i->dev_name, &len, 1);
       if (err) goto bail;
       i->dev_name[len] = 0; /* Hack: Null terminate this string */
